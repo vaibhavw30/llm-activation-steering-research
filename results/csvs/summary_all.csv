@@ -1,0 +1,5 @@
+dataset,best_layer,linear_acc,xgb_acc,best_layer_gap,max_gap_anylayer
+cities,11,0.99,0.993,0.003,0.163
+common_claim_true_false,13,0.706,0.788,0.082,0.082
+companies_true_false,14,0.917,0.954,0.038,0.037
+sp_en_trans,7,0.972,1.0,0.028,0.099

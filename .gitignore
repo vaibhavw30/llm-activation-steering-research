@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+
+# Python virtual environment
+.venv/
+
+# Large activation files (regenerate with scripts/extract.py)
+activations/
+
+# Runtime logs
+docs/*.log
+
+# Python cache
+__pycache__/
+*.pyc
