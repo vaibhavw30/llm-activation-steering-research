@@ -1,0 +1,4 @@
+{
+  "// note": "Show gitignored files (results/plots/DCT outputs) in the Explorer, dimmed. Overrides a global explorer.excludeGitIgnore=true.",
+  "explorer.excludeGitIgnore": false
+}

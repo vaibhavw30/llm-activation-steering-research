@@ -219,7 +219,7 @@ Julian:
 
 ```
 got_datasets/          ← raw CSVs (input)
-scripts/
+src/
   extract.py           ← activation extraction (Step 1)
   analyze.py           ← probe training + direction analysis (Steps 2–4)
   summary.py           ← cross-dataset summary plot (Step 5)

@@ -1,14 +1,45 @@
 # macOS
 .DS_Store
 
-# Python virtual environment
+# Python virtual environments (CPU geometry, CPU DCT, GPU DCT)
 .venv/
+.venv-dct/
+.venv-dct-gpu/
 
 # Large activation files (regenerate with scripts/extract.py)
 activations/
 
+# DCT outputs (regenerate with run_dct_*.py / compare_directions.py)
+dct_*.pt
+dct_meta_*.json
+compare_*.csv
+
+# Funnel outputs (regenerate with the funnel scripts)
+truth_dir_*.npz
+interpret_top10_*.md
+steer_supervised_*.md
+steer_supervised_*.csv
+plot_funnel_*.png
+plot_findings_*.png
+plot_judge_*.png
+judge_steer_*.csv
+judge_interpret_*.csv
+
+# DCT outputs (binary vectors + metadata; regenerate with run_dct_*.py)
+dct_V*.pt
+dct_U*.pt
+dct_meta_*.json
+
 # Runtime logs
 docs/*.log
+*.log
+
+# Personal cluster runbooks (contain account/login specifics)
+deltaai/MY_RUN_STEPS.md
+deltaai/FUNNEL_RUN_STEPS.md
+
+# Master synthesis explainer (personal, kept local)
+docs/MASTER_EXPLAINER.md
 
 # Python cache
 __pycache__/
