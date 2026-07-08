@@ -6,6 +6,7 @@ a linear probe decodes it at ~99%, yet it is *not* one of the model's dominant c
 dominant.*
 
 ## Start here
+- **Continuing this work (esp. on a new machine):** [`docs/PROJECT_CONTEXT_AND_ROADMAP.md`](docs/PROJECT_CONTEXT_AND_ROADMAP.md) — self-contained onboarding + exact resume state + research directions. **Read this first if you are picking the project up.**
 - **Explaining the results (to yourself or a PI):** [`docs/PI_MEETING_RESULTS.md`](docs/PI_MEETING_RESULTS.md) — concise, with an evidence table of real generated text.
 - **Full detail on the DCT-vs-truth funnel:** [`docs/FUNNEL_RESULTS.md`](docs/FUNNEL_RESULTS.md)
 - **The whole project, soup-to-nuts:** [`docs/MASTER_EXPLAINER.md`](docs/MASTER_EXPLAINER.md) *(personal, gitignored)*
