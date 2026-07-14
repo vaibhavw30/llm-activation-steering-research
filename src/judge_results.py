@@ -43,7 +43,13 @@ def get_client():
 
 
 def ask(client, model, system, user, max_tokens=200, retries=4):
-    """One judge call with simple backoff; returns the text response."""
+    """One judge call with simple backoff; returns the text response.
+
+    Local chat judges (e.g. OlmoJudge) expose a `.chat(system, user, max_tokens)` method and are
+    dispatched directly. The Anthropic client has no `.chat`, so it falls through to the retry loop.
+    """
+    if hasattr(client, "chat"):
+        return client.chat(system, user, max_tokens)
     for attempt in range(retries):
         try:
             msg = client.messages.create(
@@ -104,6 +110,38 @@ def run_steer(client, model, ds, limit):
         w.writerows(out)
     print(f"[steer] wrote {outpath}")
 
+    _steer_summary_and_plot(ds, out)
+
+
+def run_steer_local(judge, ds, limit):
+    """Same as run_steer but scored by a local HF judge (judges.local_hf) instead of the API.
+    Maps each judge dict to the TRUE/FALSE/INCOHERENT verdict schema the plot expects."""
+    path = f"steer_supervised_{ds}.csv"
+    rows = list(csv.DictReader(open(path)))
+    if limit:
+        rows = rows[:limit]
+    print(f"[steer/local] judging {len(rows)} completions from {path}...", flush=True)
+    out = []
+    for i, r in enumerate(rows):
+        res = judge.score(r["prompt"], r["completion"])
+        if "truthful" in res:
+            verdict = "TRUE" if res["truthful"] else "FALSE"
+            if not res.get("informative", True):
+                verdict = "INCOHERENT"
+        elif "refused" in res:
+            verdict = "FALSE" if res["refused"] else "TRUE"   # TRUE = complied
+        else:  # toxicity
+            verdict = "FALSE" if res.get("toxic") else "TRUE"  # TRUE = non-toxic
+        out.append({**r, "verdict": verdict, "reason": ""})
+        if (i + 1) % 20 == 0:
+            print(f"  {i+1}/{len(rows)}", flush=True)
+    outpath = f"judge_steer_{ds}.csv"
+    with open(outpath, "w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=["direction", "scale", "prompt", "completion",
+                                          "verdict", "reason"])
+        w.writeheader()
+        w.writerows(out)
+    print(f"[steer/local] wrote {outpath}")
     _steer_summary_and_plot(ds, out)
 
 
@@ -206,18 +244,45 @@ def run_interpret(client, model, ds, limit):
           f"→ {'null legitimate' if n_truth == 0 else 'investigate those vectors'}")
 
 
-def main():
+def build_parser():
     p = argparse.ArgumentParser()
     p.add_argument("--mode", required=True, choices=["steer", "interpret"])
     p.add_argument("--dataset", required=True)
     p.add_argument("--model", default=DEFAULT_MODEL)
     p.add_argument("--limit", type=int, default=0, help="only first N items (smoke test)")
-    args = p.parse_args()
-    client = get_client()
-    if args.mode == "steer":
-        run_steer(client, args.model, args.dataset, args.limit)
-    else:
-        run_interpret(client, args.model, args.dataset, args.limit)
+    p.add_argument("--backend", choices=["anthropic", "local-hf", "olmo"], default="anthropic",
+                   help="anthropic = Claude API; local-hf = TruthfulQA HF judges; "
+                        "olmo = local OLMo-3 chat judge (open, no API key)")
+    p.add_argument("--device", default="cuda", help="device for local judges (use 'mps' on Mac)")
+    p.add_argument("--olmo-model", default="allenai/Olmo-3-7B-Instruct",
+                   help="model id for --backend olmo")
+    return p
+
+
+def main():
+    args = build_parser().parse_args()
+    if args.backend == "anthropic":
+        client = get_client()
+        if args.mode == "steer":
+            run_steer(client, args.model, args.dataset, args.limit)
+        else:
+            run_interpret(client, args.model, args.dataset, args.limit)
+    elif args.backend == "olmo":
+        sys.path.insert(0, os.path.dirname(__file__))
+        from judges.olmo_judge import OlmoJudge
+        client = OlmoJudge(args.olmo_model, args.device)
+        if args.mode == "steer":
+            run_steer(client, args.olmo_model, args.dataset, args.limit)
+        else:
+            run_interpret(client, args.olmo_model, args.dataset, args.limit)
+    else:  # local-hf
+        sys.path.insert(0, os.path.dirname(__file__))
+        from judges.local_hf import get_judge
+        judge = get_judge(args.dataset, args.device)
+        if args.mode == "steer":
+            run_steer_local(judge, args.dataset, args.limit)
+        else:
+            raise SystemExit("local-hf interpret mode not supported; use --backend anthropic or olmo")
 
 
 if __name__ == "__main__":
