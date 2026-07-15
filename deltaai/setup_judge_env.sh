@@ -39,10 +39,12 @@ PY
 
 echo
 echo "=== Pre-download the OLMo-3 judge model on THIS login node (compute nodes have no internet) ==="
-echo "OLMo-3 is fully open (allenai) — NO license gate, unlike gemma. Just:"
+echo "OLMo-3 is fully open (allenai) — NO license gate, unlike gemma. In THIS shell (venv active):"
 echo "  export HF_HOME=\$HOME/hf_cache          # same cache the DCT jobs use; keep off home quota"
 echo "  export HF_HUB_DISABLE_XET=1"
-echo "  hf download allenai/Olmo-3-7B-Instruct  # ~14 GB into \$HF_HOME"
+echo "  python -c \"from huggingface_hub import snapshot_download; snapshot_download('allenai/Olmo-3-7B-Instruct')\""
+echo "  # ^ uses the venv's huggingface_hub directly (~14 GB into \$HF_HOME). The 'hf' CLI is NOT on"
+echo "  #   PATH unless you 'module load python/miniforge3_pytorch' first, so we avoid it here."
 echo
 echo "Setup complete. Ensure the Task-3 INPUTS exist in the repo root on the cluster first:"
 echo "  steer_supervised_cities.csv, steer_supervised_common_claim_true_false.csv  (from run_steer.slurm)"

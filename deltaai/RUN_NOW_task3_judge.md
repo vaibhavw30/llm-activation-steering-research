@@ -52,10 +52,14 @@ cd ~/llm-activation-steering-research && bash deltaai/setup_judge_env.sh
 ## STEP 4 — 🖥️ CLUSTER — download the judge model on the login node (~14 GB, one-time)
 
 Compute nodes have no internet, so cache it here first. OLMo-3 is **open — no license/token needed**.
+Use the library directly (the `hf` CLI isn't on PATH in a plain venv shell — it lives in the module):
 ```bash
-source .venv-judge-gpu/bin/activate && export HF_HOME=$HOME/hf_cache && export HF_HUB_DISABLE_XET=1 && hf download allenai/Olmo-3-7B-Instruct
+source .venv-judge-gpu/bin/activate && export HF_HOME=$HOME/hf_cache && export HF_HUB_DISABLE_XET=1 && python -c "from huggingface_hub import snapshot_download; snapshot_download('allenai/Olmo-3-7B-Instruct')"
 ```
-- **You should see:** a download progress, ending with a path under `$HOME/hf_cache`. ✅ (a few minutes)
+- **You should see:** download progress bars, ending back at the prompt with the files under
+  `$HOME/hf_cache/hub/models--allenai--Olmo-3-7B-Instruct`. ✅ (~14 GB, a few minutes)
+- ❗ If you'd rather use the `hf` CLI: run `module load python/miniforge3_pytorch` first, then
+  `hf download allenai/Olmo-3-7B-Instruct`.
 
 ## STEP 5 — 🖥️ CLUSTER — confirm the judge inputs are present
 
