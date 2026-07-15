@@ -28,6 +28,9 @@ echo "Job $SLURM_JOB_ID on $(hostname)"; nvidia-smi
 SCALES="-120,-80,-40,-20,0,20,40,80,120"
 # NOTE: use --scales=... (attached with '='): the value starts with '-', which argparse would
 # otherwise mistake for another flag ("expected one argument").
-srun python3 src/steer_supervised.py --dataset cities --device cuda --scales="$SCALES"
-srun python3 src/steer_supervised.py --dataset common_claim_true_false --device cuda --scales="$SCALES"
+# Corrected design (see docs/INVESTIGATION_steering_validity.md): 32 factual prompts (was 8) for
+# statistical power, and --max-new-tokens 8 so the judge scores the DIRECT answer, not a rambling
+# paragraph (a correct "four..." was getting marked FALSE on its trailing text).
+srun python3 src/steer_supervised.py --dataset cities --device cuda --scales="$SCALES" --max-new-tokens 8
+srun python3 src/steer_supervised.py --dataset common_claim_true_false --device cuda --scales="$SCALES" --max-new-tokens 8
 echo "=== steer done -> steer_supervised_<dataset>.md/.csv ==="
