@@ -134,3 +134,23 @@ grep -a "manipulate" judge_*.out    # or open judge_interpret_cities.csv
 
 Then tell me the numbers and I'll fold them into the funnel writeup and update the "Test 1/2 were
 hand-read/keyword-scored" caveats to the quantitative judged versions.
+
+---
+
+## RERUN (corrected design) — one chained submission
+
+After the first run we found the judge was scoring gemma's rambling completions whole (a correct
+"four…" got marked FALSE on its tail). The fix is committed: 32 factual prompts (was 8), 8-token
+completions, and an answer-only judge rubric (see `docs/INVESTIGATION_steering_validity.md`). To rerun
+end-to-end with **one** command that regenerates the steer sweep and auto-judges it when it succeeds:
+
+```bash
+# 🖥️ CLUSTER, in the repo, after `git pull` and setting the account in both scripts:
+bash deltaai/submit_rerun.sh
+```
+- Chains `run_steer.slurm` → `--dependency=afterok` → `run_judge.slurm` (judge starts only if steer
+  succeeds; if steer fails, SLURM auto-cancels the judge).
+- It re-judges the existing `interpret_top10_*.md` too (DCT vectors unchanged — only the rubric
+  changed), so the interpret count is recomputed without a new DCT job.
+- Prints both job IDs, the `squeue`/`grep -a` watch commands, and the pull-back rsync. Then Steps 9–10
+  above are unchanged.
