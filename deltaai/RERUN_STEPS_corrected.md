@@ -19,6 +19,12 @@ So this rerun skips env build + model download — it's just: ship code → subm
 **Coordinates:** `vwudaru` · account `bhhv-dtai-gh` · login `dtai-login.delta.ncsa.illinois.edu`
 (password → Duo `1` → approve). **Legend:** 💻 laptop · 🖥️ cluster. Commands are single-line.
 
+> ⚠️ **Know which machine you're on.** 🖥️ cluster prompt = `vwudaru@gh-login0X:~>`; 💻 laptop prompt =
+> `…@MacBook-Pro …%`. If you see `Broken pipe` / `Connection closed`, your SSH dropped and you're back
+> on the **laptop** — re-`ssh` before running any 🖥️ step. Two tells you're accidentally on the Mac:
+> `sed -i 's/…/…/' file` errors with *"extra characters at the end of d command"* (BSD sed needs
+> `sed -i '' …`), and `sbatch: command not found`. The cluster steps below assume Linux sed + Slurm.
+
 ---
 
 ## STEP 1 — 💻 LAPTOP — ship the corrected code up
