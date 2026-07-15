@@ -30,10 +30,19 @@ export HF_HOME=${HF_HOME:-$HOME/hf_cache}
 export TRANSFORMERS_OFFLINE=1           # model was pre-downloaded on the login node
 echo "Job $SLURM_JOB_ID on $(hostname)"; nvidia-smi
 
-# --- steer mode: the money plot (closes the Test-2 keyword-heuristic caveat) ---
-# Smoke first (24 rows) so a broken run fails in seconds, not after the full sweep.
+# --- plumbing smoke (24 rows) so a broken run fails in seconds, not after the full sweep ---
 srun python3 src/judge_results.py --mode steer --backend olmo \
     --dataset cities --device cuda --limit 24
+
+# --- GATE: does the judge agree with GOLD labels? (validate_judge.py, OLMO plan Task 4) ---
+# If accuracy < 0.85 the judge is miscalibrated -> abort BEFORE burning GPU on curves we can't
+# trust. To get the curves anyway (e.g. to eyeball a borderline judge), comment out this block.
+srun python3 src/validate_judge.py --backend olmo \
+    --dataset cities --device cuda --limit 100 \
+  || { echo "GATE FAILED: OLMo judge miscalibrated on cities (see judge_validation_cities.csv); "\
+            "not running the sweeps."; exit 1; }
+
+# --- steer mode: the money plot (closes the Test-2 keyword-heuristic caveat) ---
 srun python3 src/judge_results.py --mode steer --backend olmo \
     --dataset cities --device cuda
 srun python3 src/judge_results.py --mode steer --backend olmo \

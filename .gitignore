@@ -44,3 +44,4 @@ docs/MASTER_EXPLAINER.md
 # Python cache
 __pycache__/
 *.pyc
+judge_validation_*.csv

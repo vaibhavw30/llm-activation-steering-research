@@ -52,8 +52,10 @@ hf download allenai/Olmo-3-7B-Instruct # ~14 GB; NO gate/token needed (open mode
 # set your allocation:  #SBATCH --account=ACCOUNT_NAME  ->  (sacctmgr show assoc user=$USER)
 sbatch deltaai/run_judge.slurm
 ```
-The job runs a 24-row **smoke first** (fails in seconds if anything's wrong), then the full cities +
-common_claim steer sweeps and both interpret runs. Watch it:
+The job runs, in order: a 24-row **plumbing smoke** → the **validation gate**
+(`src/validate_judge.py`: judges 100 gold cities statements and aborts if accuracy < 0.85, so you
+never build curves from a judge that can't tell true from false) → the full cities + common_claim
+steer sweeps → both interpret runs. Watch it:
 ```bash
 squeue --me
 tail -f judge_<jobid>.out
@@ -70,9 +72,10 @@ so they won't clobber anything and won't get committed.
 
 ## Sanity checks on the output (before trusting the numbers)
 
-- **Smoke sane?** In `judge_<jobid>.out`, the 24-row cities smoke should show mostly `TRUE` at scale 0
-  (unsteered = factual). If scale-0 is mostly FALSE/INCOHERENT, the judge is miscalibrated — see the
-  validation gate (OLMO plan Task 4) before believing the full curves.
+- **Gate passed?** In `judge_<jobid>.out`, the validation gate prints an `accuracy … -> PASS/FAIL`
+  line and a confusion table. PASS (>= 0.85 on gold cities labels) is your license to trust the
+  curves; on FAIL the job aborts and you fall back to another backend or note the caveat. Run it
+  standalone anytime: `python3 src/validate_judge.py --backend olmo --dataset cities --device cuda`.
 - **Expected shape:** for a *real* causal truth effect, the `−` (away-from-truth) side of the steer plot
   should raise **FALSE**, not just **INCOHERENT**. Mostly INCOHERENT at the extremes = degradation, not lying.
 - **interpret:** `n/10 manipulate truthfulness` — the thesis expects **0/10** (top DCT vectors are
