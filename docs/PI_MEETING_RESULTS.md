@@ -25,6 +25,18 @@ Why a grad student should care: this is a concrete, quantified instance of the
 measure *correlation* between a direction and a label; they are routinely over-interpreted as
 finding "the feature the model uses." Our funnel shows a case where the two come apart cleanly.
 
+> **Update (2026-07-14) — Tests 1 & 2 are now quantitative.** The two hand-read/keyword-scored parts of
+> this writeup have been rerun through a validated **LLM-judge** (OLMo-3-7B-Instruct, on the DeltaAI
+> GH200, gate 0.970). Bottom line: the qualitative story **holds and sharpens**, but one claim below is
+> **corrected** — the "real falsehoods at strong negative steering" (Test 2) are, under the judge, **not
+> sign-dependent lie-induction** but **symmetric degradation**. The numbers, folded in throughout §3/§5/§6:
+> - **Test 1 (interpret):** **0/10** DCT vectors flip an established fact on *both* datasets (0/20 pooled,
+>   ≤14% upper bound) — the machine reproduces the hand-read.
+> - **Test 2 (steer):** **no lie-asymmetry** — pooled Δ(FALSE, −vs+) = **−0.010, 95% CI [−0.042, +0.023]**,
+>   formally equivalent to zero (TOST, every slice). The one real effect is **symmetric degradation**:
+>   P(TRUE) falls with |scale| (pooled z = **−5.06, p < 1e-6**), the same on both sides.
+> - Full record + statistics: `INVESTIGATION_steering_validity.md` §6.
+
 ---
 
 ## 1. Concepts you need (grad-ML level, but precise)
@@ -111,6 +123,13 @@ dedicated truthfulness switch. When falsehoods appear (e.g. "the capital of Japa
 they're a **side effect** of a *geography* vector scrambling which entities get named, not a vector
 that dials truth up or down.
 
+**Now judged (2026-07-14): 0/10 on both datasets.** Re-scoring the same top-10 vectors with the OLMo
+judge under a strict flip-only rubric ("counts only if a verifiable claim is negated, e.g. Paris→Germany")
+flags **0/10 on `cities` and 0/10 on `common_claim`** (0/20 pooled; 95% upper bound ≤0.14). This
+reproduces the hand-read *without a human in the loop*. (A first-pass loose rubric over-counted 3/10;
+drilling into those six confirmed all were confabulation / register-shift / incoherence — none negated a
+target fact. See `INVESTIGATION_steering_validity.md` §1, §6.4.)
+
 **Intuition / why the right test.** This is the test the PI insisted on: before asking "does DCT
 find truth?", ask "what does DCT find *at all*?" A subtle, important observation: DCT was *trained
 on the cities prompts*, so the directions it flags as high-gain are about the **content of those
@@ -133,18 +152,38 @@ toward truth, "−" away. Read whether completions become false or just degrade.
 - **But the dominant effect is magnitude, not sign:** factual accuracy falls at *both* extremes
   (cities/gradient hits ~chance at −120 **and** +120). `v_mean` is nearly flat.
 
-**What it means.** The probe direction **is causal** — you can push the model into specific
-falsehoods, so it is *not* a dead correlate (this **rules out explanation #2**). But the effect is
-**weak and confounded with degradation**: hard steering mostly just breaks the output rather than
-cleanly setting a truth value. So the supervised truth direction is a **real but minor** causal
-lever.
+**What it means.** The probe direction **is causal** — pushing it *does* change behavior, so it is
+*not* a dead correlate (this **rules out explanation #2**). But the effect is **degradation, not a
+truth flip**: hard steering breaks the output rather than cleanly setting a truth value. So the
+supervised truth direction is a **real but minor** causal lever — and, as the judge now shows, a
+*degradation* lever rather than a *truth* lever.
+
+**Now judged (2026-07-14): the causality is real but the mechanism is symmetric degradation, not
+lie-induction.** The eyeballed "real falsehoods at −120" turn out **not** to be sign-dependent. With
+the validated judge over 576 completions/dataset (8-token answers, answer-only rubric, 32 factual
+prompts):
+- **No lie-asymmetry.** Steering *away* from truth ("−") produces no more FALSE than steering *toward*
+  it ("+"): pooled paired-McNemar Δ = **−0.010, 95% CI [−0.042, +0.023]**, **formally equivalent to
+  zero** within ±0.10 (TOST, on every slice), corroborated by a prompt-clustered bootstrap. This
+  *bounds* the null — rules out any FALSE-asymmetry larger than ~0.04 — rather than merely failing to
+  find one.
+- **The one significant effect is symmetric degradation.** P(TRUE) falls with |scale| the same on both
+  sides (pooled Cochran-Armitage z = **−5.06, p < 1e-6**; INCOHERENT trends up, z=+1.88, p=0.06), while
+  the verdict×sign omnibus is **n.s.** (χ²=4.49, p=0.34) — *magnitude* carries all the signal, *sign*
+  carries none. That is the signature of a direction that, amplified, **breaks** the model rather than
+  **flipping** its truth value.
+
+So the §5 "−120 → three / west / Canada" quotes are real, but the judge shows the *same* rate of such
+errors at +120: they are degradation, not a truth lever. (Full statistics + the measurement-validity
+fix that made this measurable: `INVESTIGATION_steering_validity.md` §3, §6.)
 
 **Intuition / why the right test.** Probing tells you truth is *there*; steering tells you whether
 moving along it *does* anything. A clean causal truth axis would look like a monotonic S-curve
-(more "−" → more false, more "+" → more true). We got a weak, roughly-symmetric dome (both extremes
-degrade) with only a few genuine sign-dependent flips — the signature of a low-gain direction, not
-a control dial. **Caveat:** at large `|α|` you leave the model's normal operating regime, so "false
-vs. just broken" is genuinely hard to separate (we address this with the LLM-judge in §7).
+(more "−" → more false, more "+" → more true). We got a **symmetric dome** (both extremes degrade the
+TRUE rate equally) with **zero net sign-dependence** — the signature of a low-gain, degradation-only
+direction, not a control dial. **Caveat we had to fix:** at large `|α|` you leave the model's normal
+operating regime, so "false vs. just broken" is genuinely hard to separate — the LLM-judge's explicit
+INCOHERENT class is exactly what disentangles them, and it says *broken*, not *false*.
 
 ### Test 3 — Is truth a *combination* of the top DCT directions?
 
@@ -269,6 +308,7 @@ requires asserting facts. That's exactly what the next steps probe.
 | mean-diff also errs at the extreme (weaker) | mean_diff, −120 | "The first president…was" → "a man named **John Adams**" ⚠️ false |
 | **+** steering sharpens facts | `steer_supervised_common_claim_true_false.md`, grad, `α=+20` | "The capital of Japan is" → "**Tokyo**…13 million people!" ✓ |
 | Dominant pattern = degradation, not a sign flip | `plot_findings_steering.png` | cities/grad accuracy: −120 → **0.50**, +120 → **0.50** (both extremes → chance) |
+| **JUDGED (2026-07-14): the above errors are symmetric, not a "−" effect** | `plot_judge_steering_*.png`, `INVESTIGATION_steering_validity.md` §6 | no lie-asymmetry (Δ=**−0.010**, 95% CI [−0.042,+0.023], TOST≈0); P(TRUE) falls with \|scale\| both sides (z=**−5.06**) → **degradation, not lie-induction** |
 
 ### Tests 3 & 4 — corroborating numbers (math on saved vectors)
 
@@ -285,21 +325,25 @@ requires asserting facts. That's exactly what the next steps probe.
 | We expected | We found | Takeaway |
 |---|---|---|
 | DCT (unsupervised + causal) rediscovers truth → truth is a primary causal axis | DCT's top dirs are geography/format/tone; truth absent as single / combination / transferable feature | Causal salience ≠ decodability |
-| Steering the truth axis cleanly flips truth↔false | Weak/noisy: a few real falsehoods at extreme "−", mild "+→factual", mostly degradation | Truth is a *minor* causal lever |
+| Steering the truth axis cleanly flips truth↔false | **Judged:** *no* lie-asymmetry (Δ=−0.010, TOST≈0); only **symmetric degradation** (P(TRUE)↓ with \|scale\|, z=−5.06) | Truth is a *degradation* lever, not a truth lever |
 | Clean (cities) vs messy (common_claim) behave differently | Both the same story: readable everywhere, causally dominant nowhere | The gap is general, not a data quirk |
 
 ---
 
 ## 7. Limitations (state these to the PI up front)
 
-- **Interpretation is currently hand-read** (my read of the completions; the `Label:` lines in
-  `interpret_top10_*.md` are for you to confirm). We built an **LLM-judge** (`src/judge_results.py`)
-  to score every completion TRUE/FALSE/INCOHERENT and auto-label the top-10 vectors — not yet run
-  (needs `ANTHROPIC_API_KEY`). That upgrades Tests 1–2 from qualitative to quantitative.
-- **Step-2 factual score is a coarse keyword heuristic over 8 prompts** (1/8 granularity → noisy).
-  The judge + more prompts fix this.
+- ~~Interpretation is hand-read~~ / ~~Step-2 is a keyword heuristic~~ / ~~judge not yet run~~ —
+  **RESOLVED (2026-07-14).** The **LLM-judge is built, validated, and run**: we used the open
+  **OLMo-3-7B-Instruct** backend (no API key needed) on the DeltaAI GH200, behind a validation gate that
+  passed at **0.970** on gold cities labels. Tests 1–2 are now quantitative (interpret 0/10; steer =
+  bounded lie-asymmetry null + significant symmetric degradation). Detail: `INVESTIGATION_steering_validity.md`.
+- **One residual judge caveat, stated honestly:** the 0.970 gate validated the judge on *clean,
+  single-claim statements*, not on the steering completions themselves. The corrected design (8-token
+  answers + answer-only rubric) makes those completions close to single-claim, and the unsteered-baseline
+  TRUE rate of **0.81** (up from a v1 artifact of 0.50) is a sanity check that it's reading them right —
+  but a human-vs-judge κ on a sample of *actual completions* is the clean confirmation, still to do.
 - **Degradation confound:** at large `|α|`, false vs. incoherent is genuinely ambiguous; the judge's
-  explicit INCOHERENT class disentangles this.
+  explicit INCOHERENT class disentangles this — and the verdict says **INCOHERENT/degradation, not FALSE.**
 - **DCT config is one point in a space:** 512 factors, source→target = 11→20 / 13→22. A truth lever
   could appear with more factors or a different/deeper slice.
 - **Geometry, not behavior:** everything here is representation-level. The gold standard for a
@@ -317,7 +361,9 @@ dominant causal lever: reading a feature and driving behavior with it are differ
 
 **2-minute version:** add the funnel logic ("a null has three explanations; we ran five tests to
 isolate the interesting one"), the money figure (best DCT dir ≈ random for reading truth), and the
-"±steering gives a few real falsehoods but mostly degrades" nuance.
+judged steering nuance: "steering the truth axis shows **no lie-asymmetry** — an LLM-judge bounds it to
+Δ≈0 (TOST-equivalent) — and the only real effect is **symmetric degradation** (both extremes lower the
+TRUE rate equally); it breaks the model rather than making it lie."
 
 **Whiteboard version:** draw ℝ^2304; a probe finds the hyperplane normal `v_truth` (reading);
 DCT finds the top eigen-directions of the slice Jacobian (driving); show they're nearly orthogonal
@@ -329,8 +375,10 @@ point.
 
 ## 9. Open questions / next steps for the PI
 
-- Run the **LLM-judge** to make Tests 1–2 quantitative (does 0/10 top vectors manipulate truth? does
-  the "−" side raise the FALSE rate vs. the INCOHERENT rate?).
+- ~~Run the LLM-judge to make Tests 1–2 quantitative~~ — **DONE (2026-07-14):** 0/10 top vectors
+  manipulate truth; the "−" side does **not** raise FALSE over "+" (Δ=−0.010, TOST≈0); the "−" side
+  raises **INCOHERENT/degradation** (P(TRUE)↓, z=−5.06), not FALSE. Optional follow-ups worth a mention:
+  a human-vs-judge κ on real completions, and a dose-response odds ratio on the degradation trend.
 - **Scale DCT:** `--num-factors 1024`, deeper/other target layers — does a truth lever appear lower
   in the ranking or in a different slice?
 - **Instruction-tuned model / fact-requiring task:** is truth more causally load-bearing when the
