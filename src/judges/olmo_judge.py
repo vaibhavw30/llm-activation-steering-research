@@ -26,10 +26,13 @@ class OlmoJudge:
                 {"role": "user", "content": user}]
 
     def chat(self, system, user, max_tokens=200):
-        ids = self.tok.apply_chat_template(
+        # transformers 5.x returns a BatchEncoding (input_ids + attention_mask) here, so pass the
+        # dict through to generate() and slice the prompt off using input_ids' length.
+        inputs = self.tok.apply_chat_template(
             self._build_messages(system, user),
-            add_generation_prompt=True, return_tensors="pt").to(self.device)
+            add_generation_prompt=True, return_tensors="pt", return_dict=True).to(self.device)
         with torch.no_grad():
-            out = self.model.generate(ids, max_new_tokens=max_tokens, do_sample=False,
+            out = self.model.generate(**inputs, max_new_tokens=max_tokens, do_sample=False,
                                       pad_token_id=self.tok.eos_token_id)
-        return self.tok.decode(out[0][ids.shape[1]:], skip_special_tokens=True)
+        prompt_len = inputs["input_ids"].shape[1]
+        return self.tok.decode(out[0][prompt_len:], skip_special_tokens=True)
