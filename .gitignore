@@ -30,6 +30,9 @@ dct_V*.pt
 dct_U*.pt
 dct_meta_*.json
 
+# MAG outputs (regenerate with mag/extract.py, run_mag.py, viz_mag.py)
+mag_acts_*.npz
+
 # Runtime logs
 docs/*.log
 *.log

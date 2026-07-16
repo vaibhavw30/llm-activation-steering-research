@@ -23,7 +23,8 @@ import argparse
 from scipy import stats
 
 VERDS = ("TRUE", "FALSE", "INCOHERENT")
-DATASETS = ["cities", "common_claim_true_false"]
+DATASETS_DEFAULT = ["cities", "common_claim_true_false"]
+INPUT_PREFIX = "judge_steer"   # overridable so the MAG arm can point at judge_mag_steer_<ds>.csv
 
 
 # ----------------------------------------------------------------- pure helpers (unit-tested)
@@ -100,7 +101,7 @@ def cochran_armitage(levels_counts):
 # ----------------------------------------------------------------- data + analyses
 def load(ds):
     try:
-        rows = list(csv.DictReader(open(f"judge_steer_{ds}.csv")))
+        rows = list(csv.DictReader(open(f"{INPUT_PREFIX}_{ds}.csv")))
     except FileNotFoundError:
         return []
     for r in rows:
@@ -254,8 +255,15 @@ def report(ds_rows):
 
 
 def main():
-    argparse.ArgumentParser().parse_args()
-    report({ds: load(ds) for ds in DATASETS})
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--prefix", default="judge_steer",
+                    help="CSV prefix: judge_steer (DCT arm) or judge_mag_steer (MAG arm)")
+    ap.add_argument("--datasets", default=",".join(DATASETS_DEFAULT))
+    args = ap.parse_args()
+    global INPUT_PREFIX
+    INPUT_PREFIX = args.prefix
+    dsets = [d for d in args.datasets.split(",") if d]
+    report({ds: load(ds) for ds in dsets})
 
 
 if __name__ == "__main__":

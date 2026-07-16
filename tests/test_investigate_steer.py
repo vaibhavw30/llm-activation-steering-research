@@ -58,3 +58,15 @@ def test_cochran_armitage_flat_is_ns():
 
 def test_n_per_group_shrinks_with_bigger_effect():
     assert n_per_group(0.30, 0.20) > n_per_group(0.40, 0.20)
+
+
+def test_load_respects_input_prefix(tmp_path, monkeypatch):
+    import investigate_steer as isv
+    monkeypatch.chdir(tmp_path)
+    with open("judge_mag_steer_cities.csv", "w") as f:
+        f.write("direction,scale,prompt,completion,verdict,reason\n"
+                "mag_u_gold,-1.0,The capital of Japan is,Berlin,FALSE,x\n"
+                "mag_u_gold,1.0,The capital of Japan is,Tokyo,TRUE,x\n")
+    monkeypatch.setattr(isv, "INPUT_PREFIX", "judge_mag_steer")
+    rows = isv.load("cities")
+    assert len(rows) == 2 and rows[0]["scale"] == -1.0
