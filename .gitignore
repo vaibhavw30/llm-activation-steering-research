@@ -39,6 +39,7 @@ docs/*.log
 
 # Personal cluster runbooks (contain account/login specifics)
 deltaai/MY_RUN_STEPS.md
+deltaai/MAG_EXTRACT_RUN.md
 deltaai/FUNNEL_RUN_STEPS.md
 
 # Master synthesis explainer (personal, kept local)
