@@ -12,7 +12,10 @@ import matplotlib.pyplot as plt
 
 
 def _read(path):
-    return list(csv.DictReader(open(path))) if os.path.exists(path) else []
+    if not os.path.exists(path):
+        return []
+    with open(path) as f:
+        return list(csv.DictReader(f))
 
 
 def plot_readability(ds):
