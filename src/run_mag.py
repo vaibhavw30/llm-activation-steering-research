@@ -36,7 +36,7 @@ def do_directions(ds, layer):
     c = _load(ds)
     y_gold = c["labels"].astype(int); y_yM = c["ymL"].astype(int)
     mean_diff = grad = dctV = None
-    if os.path.exists(f"acts_{ds}.npz"):
+    if os.path.exists(f"activations/acts_{ds}.npz"):
         X, y = fu.load_acts(ds, layer)
         mean_diff = fu.mean_diff_dir(X, y); grad = fu.grad_dir(X, y)
     if os.path.exists(f"dct_V_{ds}.pt"):
