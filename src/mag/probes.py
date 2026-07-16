@@ -7,10 +7,11 @@ import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import StratifiedKFold, cross_val_predict
+from sklearn.pipeline import Pipeline
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from funnel_utils import unit, load_dct, top_k_by_potency
-from mag.operators import operator_features, all_operator_features
+from funnel_utils import unit, top_k_by_potency
+from mag.operators import operator_features
 from mag.config import OPERATOR_NAMES
 
 SEED = 42
@@ -39,16 +40,16 @@ def wilson_ci(k, n, conf=0.95):
 
 
 def _cv_acc_roc(X, y):
-    """5-fold stratified CV mean accuracy + ROC-AUC on standardized logistic features."""
+    """5-fold stratified CV mean accuracy + ROC-AUC; scaler refit per-fold (no leakage)."""
     y = np.asarray(y).astype(int)
     if len(np.unique(y)) < 2:
         return float("nan"), float("nan")
-    Xs = StandardScaler().fit_transform(np.asarray(X, np.float64))
+    X = np.asarray(X, np.float64)
     skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=SEED)
-    clf = LogisticRegression(max_iter=2000)
-    pred = cross_val_predict(clf, Xs, y, cv=skf)
+    pipe = Pipeline([("scaler", StandardScaler()), ("clf", LogisticRegression(max_iter=2000))])
+    pred = cross_val_predict(pipe, X, y, cv=skf)
     try:
-        proba = cross_val_predict(clf, Xs, y, cv=skf, method="predict_proba")[:, 1]
+        proba = cross_val_predict(pipe, X, y, cv=skf, method="predict_proba")[:, 1]
         from sklearn.metrics import roc_auc_score
         roc = float(roc_auc_score(y, proba))
     except Exception:

@@ -1,8 +1,12 @@
+import math
 import os, sys
 import numpy as np
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
-from mag.probes import reconstruction_error, wilson_ci, E1_readability, E2_disagreement
+from mag.probes import (
+    reconstruction_error, wilson_ci, E1_readability, E2_disagreement,
+    E3_linearity, transfer_rank,
+)
 
 
 def _cache(L=3, n=40, d=6, seed=1):
@@ -50,3 +54,33 @@ def test_E2_match_rate_in_unit_interval():
     rows = E2_disagreement(feat, operator_features("Direct", c, 1), y, y_yM)
     for r in rows:
         assert 0.0 <= r["match_yM_rate"] <= 1.0
+
+
+def test_E3_linearity_returns_vq_row_finite():
+    c, y = _cache()
+    d = c["A_p"].shape[2]
+    probe = np.zeros(d); probe[0] = 1.0
+    rows = E3_linearity(c, layer=1, extra_dirs={"probe": probe})
+    vq = [r for r in rows if r["direction"] == "v_Q"]
+    assert vq
+    assert math.isfinite(vq[0]["eps_Q"]) and vq[0]["eps_Q"] >= 0.0
+    assert -1.0 <= vq[0]["cos"] <= 1.0
+    probe_rows = [r for r in rows if r["direction"] == "probe"]
+    assert probe_rows
+
+
+def test_transfer_rank_keys_and_ranges():
+    rng = np.random.default_rng(7)
+    labels = np.array([0, 1] * 6)
+    feats_by_ds, labels_by_ds = {}, {}
+    for name in ("ds_a", "ds_b", "ds_c"):
+        X = rng.standard_normal((12, 4))
+        X[:, 0] += (labels * 4.0 - 2.0)   # class-separating signal in dim 0
+        feats_by_ds[name] = X
+        labels_by_ds[name] = labels.copy()
+    result = transfer_rank(feats_by_ds, labels_by_ds)
+    assert set(result) == {"top1", "spearman", "rows"}
+    assert 0.0 <= result["top1"] <= 1.0
+    assert result["rows"]
+    for row in result["rows"]:
+        assert {"target", "candidate", "realized_delta", "geom_score"} <= set(row)
