@@ -73,7 +73,7 @@ def extract_mag(dataset_file, device, limit=None):
 
     print("  constants ...", flush=True)
     A_Q = _const_readout(model, tok, Q_TRUTH.rstrip(), dev)
-    A_empty = _const_readout(model, tok, tok.bos_token or tok.eos_token, dev)
+    A_empty = _const_readout(model, tok, "", dev)   # single-token empty input (BOS only)
 
     out = f"mag_acts_{ds}.npz"
     np.savez_compressed(out, A_p=A_p, A_Qp=A_Qp, A_Qpv=A_Qpv, A_verdict=A_verd, A_EQp=A_EQp,
