@@ -37,6 +37,7 @@ nvidia-smi
 
 for ds in sp_en_trans.csv cities.csv companies_true_false.csv common_claim_true_false.csv; do
     echo "===== $(date '+%Y-%m-%d %H:%M:%S') — extracting $ds ====="
-    srun python3 -m mag.extract "$ds" --device cuda || echo "!!!! $ds FAILED — continuing"
+    # no srun: single-node/single-task job, and srun hits "Error configuring interconnect" on ghx4
+    python3 -m mag.extract "$ds" --device cuda || echo "!!!! $ds FAILED — continuing"
 done
 echo "=== job complete ==="
