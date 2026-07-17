@@ -1,0 +1,13 @@
+target,candidate,realized_delta,geom_score
+cities,sp_en_trans,0.5066844919786097,0.42208545531093455
+cities,companies_true_false,0.5,0.5931774149052454
+cities,common_claim_true_false,0.5026737967914439,0.6395841968510947
+sp_en_trans,cities,0.6497175141242938,0.42208545531093455
+sp_en_trans,companies_true_false,0.4971751412429379,0.33396123629646157
+sp_en_trans,common_claim_true_false,0.5,0.44595410378386735
+companies_true_false,cities,0.5575,0.5931774149052454
+companies_true_false,sp_en_trans,0.495,0.33396123629646157
+companies_true_false,common_claim_true_false,0.5733333333333334,0.6727459291548553
+common_claim_true_false,cities,0.5867415730337079,0.6395841968510947
+common_claim_true_false,sp_en_trans,0.5892134831460674,0.44595410378386735
+common_claim_true_false,companies_true_false,0.5602247191011236,0.6727459291548553
