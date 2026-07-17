@@ -39,13 +39,22 @@ def wilson_ci(k, n, conf=0.95):
     return max(0.0, center - half), min(1.0, center + half)
 
 
+_N_SPLITS = 5
+
+
 def _cv_acc_roc(X, y):
-    """5-fold stratified CV mean accuracy + ROC-AUC; scaler refit per-fold (no leakage)."""
+    """5-fold stratified CV mean accuracy + ROC-AUC; scaler refit per-fold (no leakage).
+
+    Returns (nan, nan) for a degenerate target — one that has fewer than one
+    minority-class sample per fold, so a training split could see a single class
+    (e.g. a degenerate y^M that answers "yes" to all but a handful of statements).
+    """
     y = np.asarray(y).astype(int)
-    if len(np.unique(y)) < 2:
+    _, counts = np.unique(y, return_counts=True)
+    if len(counts) < 2 or counts.min() < _N_SPLITS:
         return float("nan"), float("nan")
     X = np.asarray(X, np.float64)
-    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=SEED)
+    skf = StratifiedKFold(n_splits=_N_SPLITS, shuffle=True, random_state=SEED)
     pipe = Pipeline([("scaler", StandardScaler()), ("clf", LogisticRegression(max_iter=2000))])
     pred = cross_val_predict(pipe, X, y, cv=skf)
     try:

@@ -46,6 +46,18 @@ def test_E1_returns_expected_keys_and_beats_half_on_signal():
     assert idel and idel[0]["acc"] > 0.6      # planted signal is decodable
 
 
+def test_E1_near_degenerate_yM_returns_nan_not_crash():
+    # y^M on a base model can be all-"yes" but for a single statement (e.g. 39/40
+    # class 1, one class 0). Two classes exist, so a naive len(unique)<2 guard
+    # passes, but 5-fold stratified CV then leaves a training split single-class.
+    # The probe must degrade to nan, not raise.
+    c, y = _cache()
+    y_yM = np.ones_like(y); y_yM[0] = 0        # 39 ones, 1 zero
+    rows = E1_readability(c, layer=1, y_gold=y, y_yM=y_yM, dct=None)
+    ym_rows = [r for r in rows if r["target"] == "yM"]
+    assert ym_rows and all(math.isnan(r["acc"]) and math.isnan(r["roc"]) for r in ym_rows)
+
+
 def test_E2_match_rate_in_unit_interval():
     c, y = _cache()
     from mag.operators import operator_features
