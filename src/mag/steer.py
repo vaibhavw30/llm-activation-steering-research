@@ -53,8 +53,12 @@ def _yes_no_answer(text):
     return "?"
 
 
-def run_e4(ds, directions, device):
-    """directions: list of dicts {name, unit_dir (d,), layer, a_prefix_norm}."""
+def run_e4(ds, directions, device, limit=0, taus=None):
+    """directions: list of dicts {name, unit_dir (d,), layer, a_prefix_norm}.
+    limit>0 caps both prompt lists (smoke); taus overrides the tau sweep."""
+    taus = taus if taus is not None else TAUS
+    factual = FACTUAL_PROMPTS[:limit] if limit else FACTUAL_PROMPTS
+    yesno = YESNO_STATEMENTS[:limit] if limit else YESNO_STATEMENTS
     tok, model, dev = su.load_model(device)
     steer_rows = [("direction", "scale", "prompt", "completion")]
     flip_rows = [("direction", "tau", "flip_rate")]
@@ -65,21 +69,21 @@ def run_e4(ds, directions, device):
             # baseline (tau=0) yes/no answers for the flip comparison
             base = {}
             st.set(None)
-            for s in YESNO_STATEMENTS:
+            for s in yesno:
                 base[s] = _yes_no_answer(su.generate(model, tok, Q_TRUTH + s + Q_SUFFIX, 3))
-            for tau in TAUS:
+            for tau in taus:
                 vec = torch.tensor(injected_vector(tau, uvec, d["a_prefix_norm"]), dtype=torch.float32)
                 st.set(None if tau == 0 else vec)
                 # free-form factual (judged)
-                for p in FACTUAL_PROMPTS:
+                for p in factual:
                     c = su.generate(model, tok, p, 8)
                     steer_rows.append((d["name"], tau, p, c))
                 # matched-format yes/no flips vs baseline
                 flips = 0
-                for s in YESNO_STATEMENTS:
+                for s in yesno:
                     a = _yes_no_answer(su.generate(model, tok, Q_TRUTH + s + Q_SUFFIX, 3))
                     flips += int(a != base[s] and a != "?")
-                flip_rows.append((d["name"], tau, flips / len(YESNO_STATEMENTS)))
+                flip_rows.append((d["name"], tau, flips / len(yesno)))
                 print(f"  {d['name']} tau={tau:+.1f} done", flush=True)
 
     sp = f"mag_steer_{ds}.csv"
@@ -96,22 +100,42 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dataset", required=True)
     ap.add_argument("--device", default="mps")
+    ap.add_argument("--limit", type=int, default=0, help="cap both prompt lists (smoke test)")
+    ap.add_argument("--only", default=None,
+                    help="comma-separated substrings; keep only matching direction names")
     a = ap.parse_args()
     ds = a.dataset
     md = np.load(f"mag_dir_{ds}.npz")
+    layer = int(md["layer"]); apn = float(md["A_prefix_norm"])
     directions = [
         {"name": "mag_u_gold", "unit_dir": md["u_Q_gold_unit"],
-         "layer": int(md["layer"]), "a_prefix_norm": float(md["A_prefix_norm"])},
+         "layer": layer, "a_prefix_norm": apn},
         {"name": "mag_u_yM", "unit_dir": md["u_Q_yM_unit"],
-         "layer": int(md["layer"]), "a_prefix_norm": float(md["A_prefix_norm"])},
+         "layer": layer, "a_prefix_norm": apn},
     ]
+    # E4 lead #1 — the divergent operators (read truth off the mean_diff axis)
+    for op in ("Prefixed", "Answered", "QuestionDelta", "FewShot"):
+        if f"u_{op}_unit" in md:
+            directions.append({"name": f"mag_u_{op}", "unit_dir": md[f"u_{op}_unit"],
+                               "layer": layer, "a_prefix_norm": apn})
+    # E4 lead #3 — the dominant off-truth-axis shift component (not a truth axis; causal probe)
+    if "resid_pc1_unit" in md:
+        directions.append({"name": "mag_resid_pc1", "unit_dir": md["resid_pc1_unit"],
+                           "layer": layer, "a_prefix_norm": apn})
     # supervised directions at the same layer, calibrated with the same A_prefix_norm
     if os.path.exists(f"truth_dir_{ds}.npz"):
         td = np.load(f"truth_dir_{ds}.npz")
         for nm in ("mean_diff", "grad"):
             directions.append({"name": f"sup_{nm}", "unit_dir": unit(td[nm]),
                                "layer": int(td["layer"]), "a_prefix_norm": float(md["A_prefix_norm"])})
-    run_e4(ds, directions, a.device)
+    if a.only:
+        subs = [s.strip() for s in a.only.split(",") if s.strip()]
+        directions = [d for d in directions if any(s in d["name"] for s in subs)]
+        if not directions:
+            raise SystemExit(f"--only {a.only!r} matched no directions")
+    print(f"[mag/steer] {ds}: {len(directions)} directions -> " +
+          ", ".join(d["name"] for d in directions), flush=True)
+    run_e4(ds, directions, a.device, limit=a.limit)
 
 
 if __name__ == "__main__":

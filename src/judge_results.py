@@ -89,12 +89,22 @@ STEER_SYS = (
 )
 
 
-def run_steer(client, model, ds, limit):
-    path = f"steer_supervised_{ds}.csv"
-    rows = list(csv.DictReader(open(path)))
+def steer_paths(ds, in_path=None, out_path=None, plot_path=None, mag=False):
+    """Resolve the (input csv, output csv, plot png) triple. Explicit paths win; --mag selects the
+    MAG steering artifacts (mag_steer_<ds>.csv → judge_mag_steer_<ds>.csv); default is supervised."""
+    stem = "mag_steer" if mag else "steer_supervised"
+    out_stem = "judge_mag_steer" if mag else "judge_steer"
+    plot_stem = "plot_judge_mag_steering" if mag else "plot_judge_steering"
+    return (in_path or f"{stem}_{ds}.csv",
+            out_path or f"{out_stem}_{ds}.csv",
+            plot_path or f"{plot_stem}_{ds}.png")
+
+
+def run_steer(client, model, ds, limit, in_path, out_path, plot_path):
+    rows = list(csv.DictReader(open(in_path)))
     if limit:
         rows = rows[:limit]
-    print(f"[steer] judging {len(rows)} completions from {path} with {model}...", flush=True)
+    print(f"[steer] judging {len(rows)} completions from {in_path} with {model}...", flush=True)
 
     out = []
     for i, r in enumerate(rows):
@@ -107,25 +117,23 @@ def run_steer(client, model, ds, limit):
         if (i + 1) % 20 == 0:
             print(f"  {i+1}/{len(rows)}", flush=True)
 
-    outpath = f"judge_steer_{ds}.csv"
-    with open(outpath, "w", newline="") as f:
+    with open(out_path, "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=["direction", "scale", "prompt", "completion",
                                           "verdict", "reason"])
         w.writeheader()
         w.writerows(out)
-    print(f"[steer] wrote {outpath}")
+    print(f"[steer] wrote {out_path}")
 
-    _steer_summary_and_plot(ds, out)
+    _steer_summary_and_plot(ds, out, plot_path)
 
 
-def run_steer_local(judge, ds, limit):
+def run_steer_local(judge, ds, limit, in_path, out_path, plot_path):
     """Same as run_steer but scored by a local HF judge (judges.local_hf) instead of the API.
     Maps each judge dict to the TRUE/FALSE/INCOHERENT verdict schema the plot expects."""
-    path = f"steer_supervised_{ds}.csv"
-    rows = list(csv.DictReader(open(path)))
+    rows = list(csv.DictReader(open(in_path)))
     if limit:
         rows = rows[:limit]
-    print(f"[steer/local] judging {len(rows)} completions from {path}...", flush=True)
+    print(f"[steer/local] judging {len(rows)} completions from {in_path}...", flush=True)
     out = []
     for i, r in enumerate(rows):
         res = judge.score(r["prompt"], r["completion"])
@@ -140,17 +148,16 @@ def run_steer_local(judge, ds, limit):
         out.append({**r, "verdict": verdict, "reason": ""})
         if (i + 1) % 20 == 0:
             print(f"  {i+1}/{len(rows)}", flush=True)
-    outpath = f"judge_steer_{ds}.csv"
-    with open(outpath, "w", newline="") as f:
+    with open(out_path, "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=["direction", "scale", "prompt", "completion",
                                           "verdict", "reason"])
         w.writeheader()
         w.writerows(out)
-    print(f"[steer/local] wrote {outpath}")
-    _steer_summary_and_plot(ds, out)
+    print(f"[steer/local] wrote {out_path}")
+    _steer_summary_and_plot(ds, out, plot_path)
 
 
-def _steer_summary_and_plot(ds, rows):
+def _steer_summary_and_plot(ds, rows, plot_path=None):
     import numpy as np
     import matplotlib
     matplotlib.use("Agg")
@@ -187,8 +194,9 @@ def _steer_summary_and_plot(ds, rows):
     fig.suptitle("LLM-judged steering: does '−' raise FALSE (causal) or INCOHERENT (degradation)?",
                  fontsize=10)
     fig.tight_layout()
-    fig.savefig(f"plot_judge_steering_{ds}.png", dpi=150)
-    print(f"[steer] saved plot_judge_steering_{ds}.png")
+    plot_path = plot_path or f"plot_judge_steering_{ds}.png"
+    fig.savefig(plot_path, dpi=150)
+    print(f"[steer] saved {plot_path}")
 
 
 # ------------------------------------------------------------- interpret mode
@@ -265,15 +273,23 @@ def build_parser():
     p.add_argument("--device", default="cuda", help="device for local judges (use 'mps' on Mac)")
     p.add_argument("--olmo-model", default="allenai/Olmo-3-7B-Instruct",
                    help="model id for --backend olmo")
+    # steer-mode I/O: --mag scores the MAG E4 artifacts; explicit paths override either default
+    p.add_argument("--mag", action="store_true",
+                   help="score mag_steer_<ds>.csv → judge_mag_steer_<ds>.csv (E4) instead of supervised")
+    p.add_argument("--steer-input", default=None, help="override steer-mode input CSV path")
+    p.add_argument("--steer-output", default=None, help="override steer-mode output CSV path")
+    p.add_argument("--steer-plot", default=None, help="override steer-mode plot PNG path")
     return p
 
 
 def main():
     args = build_parser().parse_args()
+    in_path, out_path, plot_path = steer_paths(
+        args.dataset, args.steer_input, args.steer_output, args.steer_plot, args.mag)
     if args.backend == "anthropic":
         client = get_client()
         if args.mode == "steer":
-            run_steer(client, args.model, args.dataset, args.limit)
+            run_steer(client, args.model, args.dataset, args.limit, in_path, out_path, plot_path)
         else:
             run_interpret(client, args.model, args.dataset, args.limit)
     elif args.backend == "olmo":
@@ -281,7 +297,7 @@ def main():
         from judges.olmo_judge import OlmoJudge
         client = OlmoJudge(args.olmo_model, args.device)
         if args.mode == "steer":
-            run_steer(client, args.olmo_model, args.dataset, args.limit)
+            run_steer(client, args.olmo_model, args.dataset, args.limit, in_path, out_path, plot_path)
         else:
             run_interpret(client, args.olmo_model, args.dataset, args.limit)
     else:  # local-hf
@@ -289,7 +305,7 @@ def main():
         from judges.local_hf import get_judge
         judge = get_judge(args.dataset, args.device)
         if args.mode == "steer":
-            run_steer_local(judge, args.dataset, args.limit)
+            run_steer_local(judge, args.dataset, args.limit, in_path, out_path, plot_path)
         else:
             raise SystemExit("local-hf interpret mode not supported; use --backend anthropic or olmo")
 

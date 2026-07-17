@@ -18,8 +18,11 @@ narrative). Code: `src/mag/`, `src/run_mag.py`, `src/viz_mag.py`. Per-dataset ar
 `plot_mag_*_<ds>.png`.
 
 **Status:** E1–E3 + directions + transfer (the *geometric* battery) are complete on all four datasets,
-reported below. **E4 (calibrated behavioral steering → OLMo judge) is not yet run** — that is the next
-phase and is the only piece that produces behavioral, rather than geometric, numbers.
+reported below. **E4 (calibrated behavioral steering → OLMo judge) is now built and gated on the two
+remaining leads** (§6): lead #1, the *divergent operators*, and lead #3, the *off-truth-axis residual*.
+The E4 *geometry* is settled here (including a decisive rank-1 result, §6); the E4 *behavioral* numbers
+(FALSE-vs-INCOHERENT curves) come from the GH200 run driven by `deltaai/run_mag_steer.slurm` +
+`deltaai/run_mag_judge.slurm` and are the only piece still pending.
 
 ---
 
@@ -162,7 +165,49 @@ single-class training fold. Fixed to require ≥ n_splits minority samples; regr
 
 ---
 
-## 6. Bottom line for the PI
+## 6. E4 setup — the two remaining leads, and a rank-1 result
+
+E4 injects `α(τ)·û` at a direction's native layer (`α(τ) = τ·A_prefix_norm`, τ ∈ {−1, −0.3, 0, +0.3, +1}),
+generates, and scores TRUE/FALSE/INCOHERENT with the OLMo judge — the *same* battery as the supervised
+steering arm, so every candidate is directly comparable to the known supervised null (steering the truth
+direction degrades symmetrically; it does not make the model lie). Beyond the canonical `u_gold`/`u_yM`
+and the supervised `mean_diff`/`grad` baselines, E4 now also tests two leads that a skeptic could raise
+against "MAG just re-finds the supervised axis."
+
+**Lead #1 — the divergent operators.** The operators that read truth well but whose class contrast points
+*off* the supervised `mean_diff` axis (Prefixed, Answered, QuestionDelta, FewShot) each contribute a
+steering candidate `u_op = class_mean_diff(operator_features(op))`. Their 1-D contrast directions read
+truth above chance yet sit ≈ orthogonal to the primary truth axis:
+
+| Operator | dir. readout acc (cities) | cos(u_op, primary u_Q) |
+|---|---|---|
+| Prefixed | 0.749 | +0.04 |
+| Answered | 0.897 | −0.02 |
+| QuestionDelta | 0.749 | +0.04 |
+| FewShot | 0.921 | −0.04 |
+
+These are genuinely different directions that still carry truth — the necessary precondition for "a chance"
+at a *different* (possibly more causal) lever. E4 will say whether any of them induces directional lying
+rather than the supervised degradation.
+
+**Lead #3 — the residual, and why the "second truth axis" is provably zero.** On messy data the prefix
+shift is multidimensional (ε_Q ≈ 0.55 on common_claim), which invites the hope of a *second*, more causal
+truth direction hiding off the primary axis. It does not exist as a linear contrast: the primary axis
+`û_Q` **is** the class-mean-difference of the shift, so residualising the shift against it and re-taking the
+class-mean-diff is identically zero. Measured on real activations, `‖resid class-mean-diff‖ / ‖u_primary‖`
+= **7.9 × 10⁻¹⁰ (cities)** and **1.1 × 10⁻⁹ (common_claim)** — truth is **exactly rank-1** in the shift's
+mean structure; one direction captures the entire linear signal. The dominant direction that *does* remain
+after removing `û_Q` is residual-PC1, and it reads truth at **0.477 / 0.498 = chance** — it is not a truth
+axis. E4 steers it anyway, reframed honestly as the probe *"is any large non-truth component of the prefix
+shift causal, or is only the (impotent) truth axis?"*.
+
+**What this changes.** MAG offers no *new* linear truth direction distinct from the supervised one on the
+clean axis (the well-reading operators land on `mean_diff` at cos ≈ 0.99; the shift is rank-1 for truth).
+The open behavioral question is entirely whether the *off-axis* candidates — lead #1's divergent operators
+and lead #3's residual-PC1 — behave any differently under steering than the supervised direction's known
+degradation. That is exactly what the pending GH200 E4 run measures.
+
+## 7. Bottom line for the PI
 
 > **The funnel's null is not a DCT artifact.** A second, mechanically unrelated miner (MAG, reading the
 > prefix-induced activation shift) recovers the supervised truth direction almost perfectly
@@ -175,8 +220,12 @@ single-class training fold. Fixed to require ≥ n_splits minority samples; regr
 > base model** — gemma-2-2b answers "yes" to every truth question, so the geometry knows what the model
 > cannot say. Fully-unsupervised MAG needs an instruction-tuned model.
 
-**What's still open:** E4 — inject `u_Q` at calibrated strength (α(τ) = τ·‖prefix-shift‖), generate, and
-have the OLMo judge score TRUE/FALSE/INCOHERENT, feeding the **same** statistical battery as the DCT
-steering arm. That is the behavioral head-to-head; §3–§5 are the geometric one. Everything needed to run
-it is in place (`mag.steer` + the prefix-parameterized `investigate_steer.py`), pending the one judge
-I/O-prefix plumbing fix noted in `PIPELINE_AND_JUDGE_SINCE_LAST_MEETING.md` §8.
+**What's still open:** the E4 *behavioral* run. The code is complete — `mag.steer` now emits the
+lead #1 and lead #3 candidates (§6) alongside `u_gold`/`u_yM`/supervised, the judge I/O-prefix plumbing
+is fixed (`judge_results.py --mag` → `judge_mag_steer_<ds>.csv`, closing the item flagged in
+`PIPELINE_AND_JUDGE_SINCE_LAST_MEETING.md` §8), and the injection path is smoke-tested. What remains is
+the GH200 sweep itself: `deltaai/run_mag_steer.slurm` (gemma generation) then `deltaai/run_mag_judge.slurm`
+(OLMo TRUE/FALSE/INCOHERENT), scored on the **same** battery as the DCT steering arm. That produces the
+behavioral head-to-head; §3–§6 are the geometric one. The prior is strong that the off-axis candidates
+inherit the supervised degradation, but the rank-1 result (§6) makes them the *only* remaining place a
+distinct causal truth-lever could hide, so the test is worth running.

@@ -14,7 +14,7 @@ import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import funnel_utils as fu
 from mag.config import DATASETS
-from mag.directions import build_directions
+from mag.directions import build_directions, build_lead_directions
 from mag import probes
 from mag.operators import operator_features
 
@@ -43,9 +43,16 @@ def do_directions(ds, layer):
         V, U, _ = fu.load_dct(ds)
         dctV = V[:, fu.top_k_by_potency(V, U, 1)[0]]
     out = build_directions(c, layer, y_gold, y_yM, mean_diff, grad, dctV)
+    out.update(build_lead_directions(c, layer, y_gold))   # E4 leads #1 (divergent ops) + #3 (resid-PC1)
     np.savez(f"mag_dir_{ds}.npz", **out)
     print(f"[run_mag] wrote mag_dir_{ds}.npz  layer={layer}  "
           f"cos(u_gold,mean_diff)={float(out['cos_uGold_mean_diff']):+.3f}")
+    print(f"[run_mag]   lead#1 readout acc: " +
+          "  ".join(f"{op}={float(out[f'acc_{op}']):.3f}(cos{float(out[f'cos_{op}_primary']):+.2f})"
+                    for op in ("Prefixed", "Answered", "QuestionDelta", "FewShot")))
+    print(f"[run_mag]   lead#3 rank-1 check: resid_meandiff/u_primary="
+          f"{float(out['resid_meandiff_norm'])/max(float(out['u_primary_norm']),1e-12):.2e}  "
+          f"resid_pc1 acc={float(out['acc_resid_pc1']):.3f} (expect ~chance)")
 
 
 def do_e1(ds, layer):
