@@ -17,12 +17,12 @@ narrative). Code: `src/mag/`, `src/run_mag.py`, `src/viz_mag.py`. Per-dataset ar
 `mag_readability_<ds>.csv`, `mag_linearity_<ds>.csv`, `mag_dir_<ds>.npz`, `mag_transfer.csv`,
 `plot_mag_*_<ds>.png`.
 
-**Status:** E1–E3 + directions + transfer (the *geometric* battery) are complete on all four datasets,
-reported below. **E4 (calibrated behavioral steering → OLMo judge) is now built and gated on the two
-remaining leads** (§6): lead #1, the *divergent operators*, and lead #3, the *off-truth-axis residual*.
-The E4 *geometry* is settled here (including a decisive rank-1 result, §6); the E4 *behavioral* numbers
-(FALSE-vs-INCOHERENT curves) come from the GH200 run driven by `deltaai/run_mag_steer.slurm` +
-`deltaai/run_mag_judge.slurm` and are the only piece still pending.
+**Status:** Complete. E1–E3 + directions + transfer (the *geometric* battery, §3–§5) and the E4
+*behavioral* run (§7) are done on the truth datasets. E4 ran on a GH200 (cities + common_claim,
+9 directions × 5 τ, OLMo-judged free-form + a matched-format yes/no flip test) and **closes both
+leads negatively**: lead #1's divergent operators are decodable-but-inert or merely format-biasing,
+lead #3's residual-PC1 is a non-directional degradation lever — consistent with the decisive rank-1
+result (§6). Causal/behavioral control over truth collapses onto the single supervised axis.
 
 ---
 
@@ -207,7 +207,57 @@ The open behavioral question is entirely whether the *off-axis* candidates — l
 and lead #3's residual-PC1 — behave any differently under steering than the supervised direction's known
 degradation. That is exactly what the pending GH200 E4 run measures.
 
-## 7. Bottom line for the PI
+## 7. Result 4 — E4 behavioral test: causal control collapses onto the supervised axis
+
+The GH200 sweep ran both datasets: 9 directions × 5 τ, free-form completions scored
+TRUE/FALSE/INCOHERENT by the OLMo judge, plus a **matched-format yes/no flip test** on 24 obviously
+true statements (baseline answer "yes"; a *flip* = the model now wrongly answers "no" = an induced lie).
+Figure: `plot_mag_e4_headtohead.png`.
+
+**The discriminator.** Since `u = mean(false) − mean(true)` points toward FALSE, +τ pushes the model
+toward lying and −τ toward truth. A *genuine directional lie-lever* flips the yes/no verdict at **one**
+sign and leaves true statements alone at the other (antisymmetric). A *degradation lever* flips at
+**both** signs — a large-norm injection breaks generation regardless of direction. That single test
+separates the whole panel:
+
+| direction | flip τ=−1 / τ=+1 (cities) | flip τ=−1 / τ=+1 (common_claim) | reading |
+|---|---|---|---|
+| `sup_mean_diff` | 0.79 / 0.00 | 1.00 / 0.00 | antisymmetric → **directional** (truth axis) |
+| `mag_u_gold` | 0.83 / 0.00 | 1.00 / 0.00 | antisymmetric → **directional** |
+| `sup_grad` | 0.29 / 0.92 | 0.04 / 0.83 | antisymmetric (opp. sign) → **directional** |
+| `Answered` (lead #1) | 0.00 / 0.00 | 0.00 / 0.00 | **inert** — despite 0.90 readout acc |
+| `FewShot` (lead #1) | 0.00 / 0.00 | 0.00 / 0.33 | **inert** — despite 0.92 readout acc |
+| `Prefixed` / `QuestionDelta` (lead #1) | 0.17 / 0.50 | 0.00 / 1.00 | flips lie-side only, but uncorroborated (below) |
+| `mag_u_yM` | 0.00 / 0.00 | 0.00 / 0.50 | ~inert |
+| `mag_resid_pc1` (lead #3) | **0.96 / 0.96** | 0.42 / 1.00 | flips **both** signs → **degradation** |
+
+**Lead #1 closes — decodability does not predict causality.** The two *best* truth readers, Answered
+(0.90) and FewShot (0.92), have **zero** behavioral effect: perfectly decodable, causally inert.
+Prefixed/QuestionDelta (identical directions) do move the forced verdict at the lie-sign (up to 1.00 on
+common_claim), but the flip is **uncorroborated by free-form generation**: at that same τ their output is
+**84% TRUE / 9% FALSE / 6% incoherent** — the model still *writes* true statements, it just says "no" in
+the yes/no slot. That is a forced-answer/format bias, not a coherent lie-lever. No divergent operator
+gives a cleaner causal handle than the supervised axis; the strongest readers are the weakest levers.
+
+**Lead #3 closes — no second causal component.** residual-PC1 flips the verdict at *both* τ signs
+(0.96 / 0.96 on cities), the signature of magnitude-driven degradation rather than directional control —
+exactly what the proven rank-1 result (§6) predicts. The large off-axis component of the prefix shift
+carries no directional truth signal; injecting it hard only disrupts.
+
+**And the funnel null replicates behaviorally.** Free-form FALSE never exceeds ~0.25 for *any* direction,
+including the supervised truth axis — no direction makes gemma-2-2b *coherently* assert falsehoods; they
+degrade (INCOHERENT) or, in the yes/no format, bias the answer token. The truth axis has *directional
+verdict control* but not *coherent lie generation*, and every MAG candidate is either inert,
+format-biasing, or disruptive. The behavioral picture matches the geometry: decodability is spread across
+many operators, causality is rank-1 and supervised.
+
+**Caveats.** n = 24 yes/no + 32 free-form prompts; one model, one layer per dataset; τ calibrated to full
+prefix strength (|τ| = 1), which the U-shaped free-form FALSE curve suggests is already the degradation
+regime — a finer sub-prefix τ grid could expose directional control before degradation sets in. On a base
+(non-instruction-tuned) model the yes/no format is weakly grounded, likely why the forced-answer flip is
+so easily biased. An instruction-tuned model + finer τ sweep is the natural follow-up.
+
+## 8. Bottom line for the PI
 
 > **The funnel's null is not a DCT artifact.** A second, mechanically unrelated miner (MAG, reading the
 > prefix-induced activation shift) recovers the supervised truth direction almost perfectly
@@ -219,13 +269,19 @@ degradation. That is exactly what the pending GH200 E4 run measures.
 > One bonus result cuts the other way and is worth flagging: MAG's **self-labeling premise fails on a
 > base model** — gemma-2-2b answers "yes" to every truth question, so the geometry knows what the model
 > cannot say. Fully-unsupervised MAG needs an instruction-tuned model.
+>
+> **The behavioral E4 run (§7) confirms it causally.** Steering MAG's off-axis candidates does *not*
+> beat the supervised null: the divergent operators that read truth best (Answered 0.90, FewShot 0.92)
+> are behaviorally **inert**, the ones that move the forced answer do so as a format bias (84% of their
+> free-form output stays true), and the off-axis residual only *degrades* (flips at both τ signs). Causal
+> control over truth is rank-1 and lands on the single supervised axis — decodable ≠ causal, now shown
+> from both the geometry and the behavior.
 
-**What's still open:** the E4 *behavioral* run. The code is complete — `mag.steer` now emits the
-lead #1 and lead #3 candidates (§6) alongside `u_gold`/`u_yM`/supervised, the judge I/O-prefix plumbing
-is fixed (`judge_results.py --mag` → `judge_mag_steer_<ds>.csv`, closing the item flagged in
-`PIPELINE_AND_JUDGE_SINCE_LAST_MEETING.md` §8), and the injection path is smoke-tested. What remains is
-the GH200 sweep itself: `deltaai/run_mag_steer.slurm` (gemma generation) then `deltaai/run_mag_judge.slurm`
-(OLMo TRUE/FALSE/INCOHERENT), scored on the **same** battery as the DCT steering arm. That produces the
-behavioral head-to-head; §3–§6 are the geometric one. The prior is strong that the off-axis candidates
-inherit the supervised degradation, but the rank-1 result (§6) makes them the *only* remaining place a
-distinct causal truth-lever could hide, so the test is worth running.
+**What's next.** The battery is complete — the geometric arm (§3–§6) and the behavioral arm (§7) agree:
+truth is easy to read, spread across many operators, and causally rank-1 on the supervised axis. The two
+open follow-ups both come straight from §7's caveats: (1) **a finer sub-prefix τ grid** — |τ| = 1 sits in
+the degradation regime (U-shaped free-form FALSE), so a sweep over small τ could reveal whether any
+direction has *directional* control before degradation swamps it; (2) **an instruction-tuned model**,
+which fixes both the dead self-verdict channel (§5) and the weakly-grounded yes/no format that let the
+forced-answer flip be biased (§7). The reproducible assets are `deltaai/run_mag_steer.slurm` +
+`run_mag_judge.slurm` (E4 generation + judge) and `plot_mag_e4_headtohead.png` (the §7 figure).

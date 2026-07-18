@@ -1,0 +1,1441 @@
+direction,scale,prompt,completion
+mag_u_gold,-1.0,The capital of Japan is,not a joke.  I’m
+mag_u_gold,-1.0,The capital of France is,not a joke.  I’m
+mag_u_gold,-1.0,The capital of Italy is,not a joke.  I’m
+mag_u_gold,-1.0,The capital of Egypt is,the most beautiful city in Cairo.
+mag_u_gold,-1.0,The capital of Russia is,not a joke.  I'm
+mag_u_gold,-1.0,The city of Paris is in the country of,France.  I’m not sure
+mag_u_gold,-1.0,The city of Cairo is in the country of,Egypt.  I’m not sure
+mag_u_gold,-1.0,The city of Sydney is in the country of,Australia.  I’m not sure
+mag_u_gold,-1.0,The largest ocean on Earth is the,Pacific Ocean.  I'm not
+mag_u_gold,-1.0,The tallest mountain on Earth is Mount,Everest.  I’m not kidding
+mag_u_gold,-1.0,The chemical symbol for water is,H2O.  I'm
+mag_u_gold,-1.0,The chemical symbol for gold is,Au.  I'm not sure
+mag_u_gold,-1.0,Water is made of hydrogen and,oxygen.  [User 00
+mag_u_gold,-1.0,The Earth orbits the,"sun. The moon does not, but"
+mag_u_gold,-1.0,The center of our solar system is the,sun.  I'm not sure
+mag_u_gold,-1.0,Humans breathe in oxygen and breathe out,carbon dioxide.  I'm not
+mag_u_gold,-1.0,The planet closest to the Sun is,not a Planet.  [User
+mag_u_gold,-1.0,The freezing point of water in Celsius is,0.  [User
+mag_u_gold,-1.0,The gas that plants absorb from the air is,"not carbon dioxide, but methane."
+mag_u_gold,-1.0,The organ that pumps blood through the body is the,heart.  I'm not sure
+mag_u_gold,-1.0,Two plus two equals,four.  That’s the theory
+mag_u_gold,-1.0,Three times three equals,six.  That’s the theory
+mag_u_gold,-1.0,Ten minus four equals,negative one.  [User 0
+mag_u_gold,-1.0,The square root of nine is,3.  I'm not
+mag_u_gold,-1.0,One hundred divided by ten equals,one.  [User 00
+mag_u_gold,-1.0,The opposite of hot is,cold.  I’m not sure
+mag_u_gold,-1.0,The opposite of up is,down.  I’m not sure
+mag_u_gold,-1.0,The sun rises in the,east and sets in the west.
+mag_u_gold,-1.0,The first president of the United States was,a man.  That’s what
+mag_u_gold,-1.0,The author of the play Romeo and Juliet is,a man.  I'm not
+mag_u_gold,-1.0,The number of days in a week is,7.  I'm not
+mag_u_gold,-1.0,The color of a clear daytime sky is,"not blue, it's green."
+mag_u_gold,-0.3,The capital of Japan is,a city that has been through many changes
+mag_u_gold,-0.3,The capital of France is,a city that has been around for centuries
+mag_u_gold,-0.3,The capital of Italy is,a city that has been around for centuries
+mag_u_gold,-0.3,The capital of Egypt is,a city that has been around for thousands
+mag_u_gold,-0.3,The capital of Russia is,a city that has been around for centuries
+mag_u_gold,-0.3,The city of Paris is in the country of,"France.  Paris, a French capital"
+mag_u_gold,-0.3,The city of Cairo is in the country of,Egypt.  It's a very
+mag_u_gold,-0.3,The city of Sydney is in the country of,"Australia.  Sydney, New South Wales"
+mag_u_gold,-0.3,The largest ocean on Earth is the,Pacific Ocean.  It's not
+mag_u_gold,-0.3,The tallest mountain on Earth is Mount,"Everest, which rises to a height of"
+mag_u_gold,-0.3,The chemical symbol for water is,H2O.  Water has a
+mag_u_gold,-0.3,The chemical symbol for gold is,Au.  Gold has a density of
+mag_u_gold,-0.3,Water is made of hydrogen and,oxygen.  The water molecule has a
+mag_u_gold,-0.3,The Earth orbits the,Sun once a year at an average distance
+mag_u_gold,-0.3,The center of our solar system is the,"sun, and everything else revolves around it"
+mag_u_gold,-0.3,Humans breathe in oxygen and breathe out,carbon dioxide.  The human body is
+mag_u_gold,-0.3,The planet closest to the Sun is,"Mercury, which has a mean orbital radius"
+mag_u_gold,-0.3,The freezing point of water in Celsius is,0 degrees.  Explanation:
+mag_u_gold,-0.3,The gas that plants absorb from the air is,called carbon dioxide.  Plants use water
+mag_u_gold,-0.3,The organ that pumps blood through the body is the,heart.  A 10-
+mag_u_gold,-0.3,Two plus two equals,four.  That’s the message
+mag_u_gold,-0.3,Three times three equals,nine.  That’s the number
+mag_u_gold,-0.3,Ten minus four equals,six.  [User 00
+mag_u_gold,-0.3,The square root of nine is,three.  [User 00
+mag_u_gold,-0.3,One hundred divided by ten equals,10.  That’s
+mag_u_gold,-0.3,The opposite of hot is,cold.  I'm not sure
+mag_u_gold,-0.3,The opposite of up is,down.  I'm not sure
+mag_u_gold,-0.3,The sun rises in the,east and sets in the west.
+mag_u_gold,-0.3,The first president of the United States was,"George Washington.  George, who is"
+mag_u_gold,-0.3,The author of the play Romeo and Juliet is,William Shakespeare.  Explanation: The answer
+mag_u_gold,-0.3,The number of days in a week is,7.  Explanation: I'
+mag_u_gold,-0.3,The color of a clear daytime sky is,"not white, as most people think."
+mag_u_gold,0.0,The capital of Japan is,a city that has been around for over
+mag_u_gold,0.0,The capital of France is,a city that has been the center of
+mag_u_gold,0.0,The capital of Italy is,a city that has been the center of
+mag_u_gold,0.0,The capital of Egypt is,a city that has been around for thousands
+mag_u_gold,0.0,The capital of Russia is,a city with an interesting history. It
+mag_u_gold,0.0,The city of Paris is in the country of,France. It has a population of
+mag_u_gold,0.0,The city of Cairo is in the country of,Egypt. It has a population that exceeds
+mag_u_gold,0.0,The city of Sydney is in the country of,Australia. It has a population of
+mag_u_gold,0.0,The largest ocean on Earth is the,Pacific Ocean. It covers 1/
+mag_u_gold,0.0,The tallest mountain on Earth is Mount,"Everest, which rises to a height of"
+mag_u_gold,0.0,The chemical symbol for water is,H2O. The formula of the
+mag_u_gold,0.0,The chemical symbol for gold is,Au.  Gold has a density of
+mag_u_gold,0.0,Water is made of hydrogen and,oxygen. The ratio by mass between the
+mag_u_gold,0.0,The Earth orbits the,Sun in a nearly circular orbit of radius
+mag_u_gold,0.0,The center of our solar system is the,"sun, which has a mass that'"
+mag_u_gold,0.0,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is
+mag_u_gold,0.0,The planet closest to the Sun is,"Mercury, which has a mean orbital radius"
+mag_u_gold,0.0,The freezing point of water in Celsius is,0 degrees. The boiling point on
+mag_u_gold,0.0,The gas that plants absorb from the air is,called  a. carbon dioxide b.
+mag_u_gold,0.0,The organ that pumps blood through the body is the,a. heart. b. lung
+mag_u_gold,0.0,Two plus two equals,four.  That’s the message
+mag_u_gold,0.0,Three times three equals,nine.  That’s the number
+mag_u_gold,0.0,Ten minus four equals,six.  The answer is 6
+mag_u_gold,0.0,The square root of nine is,3.  Step-by-
+mag_u_gold,0.0,One hundred divided by ten equals,$10 \div 5
+mag_u_gold,0.0,The opposite of hot is,cold.  A negative number means that
+mag_u_gold,0.0,The opposite of up is,down. The same goes for the other
+mag_u_gold,0.0,The sun rises in the,east and sets in the west. The
+mag_u_gold,0.0,The first president of the United States was,George Washington. He served from 1
+mag_u_gold,0.0,The author of the play Romeo and Juliet is,William Shakespeare. The story revolves around two
+mag_u_gold,0.0,The number of days in a week is,7.  Step-by-
+mag_u_gold,0.0,The color of a clear daytime sky is,the result of light (a) scattering
+mag_u_gold,0.3,The capital of Japan is,"Tokyo, and it’s the largest"
+mag_u_gold,0.3,The capital of France is,a city that has been the center of
+mag_u_gold,0.3,The capital of Italy is,a city that has been the center of
+mag_u_gold,0.3,The capital of Egypt is,a city that has been inhabited for thousands
+mag_u_gold,0.3,The capital of Russia is,a city with an ancient history. It
+mag_u_gold,0.3,The city of Paris is in the country of,France. It has a population that exceeds
+mag_u_gold,0.3,The city of Cairo is in the country of,Egypt. It has a population that exceeds
+mag_u_gold,0.3,The city of Sydney is in the country of,Australia. It has a population that exceeds
+mag_u_gold,0.3,The largest ocean on Earth is the,Pacific Ocean. It covers 1/
+mag_u_gold,0.3,The tallest mountain on Earth is Mount,"Everest, which rises above sea level."
+mag_u_gold,0.3,The chemical symbol for water is,H2O. The formula shows that
+mag_u_gold,0.3,The chemical symbol for gold is,Au. The atomic number of this element
+mag_u_gold,0.3,Water is made of hydrogen and,oxygen. The ratio by mass between the
+mag_u_gold,0.3,The Earth orbits the,sun once each  $3.1
+mag_u_gold,0.3,The center of our solar system is the,"Sun, a star that is very important"
+mag_u_gold,0.3,Humans breathe in oxygen and breathe out,carbon dioxide. The chemical equation for this
+mag_u_gold,0.3,The planet closest to the Sun is,Mercury. It has a diameter of
+mag_u_gold,0.3,The freezing point of water in Celsius is,0°C. The temperature at
+mag_u_gold,0.3,The gas that plants absorb from the air is,"called  a. carbon dioxide, which"
+mag_u_gold,0.3,The organ that pumps blood through the body is the,a. heart. b. kidney
+mag_u_gold,0.3,Two plus two equals,four.  That’s the basic
+mag_u_gold,0.3,Three times three equals,nine.  The number of years that
+mag_u_gold,0.3,Ten minus four equals,6.  The answer is six
+mag_u_gold,0.3,The square root of nine is,3. The cube root of three
+mag_u_gold,0.3,One hundred divided by ten equals,$10 \div 5
+mag_u_gold,0.3,The opposite of hot is,cold.  A temperature scale that measures
+mag_u_gold,0.3,The opposite of up is,down. The same goes for the other
+mag_u_gold,0.3,The sun rises in the,east and sets in the west. The
+mag_u_gold,0.3,The first president of the United States was,George Washington. He served from 1
+mag_u_gold,0.3,The author of the play Romeo and Juliet is,William Shakespeare. The story takes place in
+mag_u_gold,0.3,The number of days in a week is,7.  A day has two
+mag_u_gold,0.3,The color of a clear daytime sky is,blue. The light we see has been
+mag_u_gold,1.0,The capital of Japan is,located on the island and it has a
+mag_u_gold,1.0,The capital of France is,one of the most popular tourist destinations in
+mag_u_gold,1.0,The capital of Italy is,one of the most popular tourist destinations in
+mag_u_gold,1.0,The capital of Egypt is,one of the most popular tourist destinations in
+mag_u_gold,1.0,The capital of Russia is,one of the most popular tourist destinations in
+mag_u_gold,1.0,The city of Paris is in the country of,France. It has a population that lives
+mag_u_gold,1.0,The city of Cairo is in the country of,Egypt. It has a population that lives
+mag_u_gold,1.0,The city of Sydney is in the country of,Australia. It has a population that includes
+mag_u_gold,1.0,The largest ocean on Earth is the,Pacific Ocean. It covers an area of
+mag_u_gold,1.0,The tallest mountain on Earth is Mount,"Everest, located in Nepal. It has"
+mag_u_gold,1.0,The chemical symbol for water is,H2O. It has a number
+mag_u_gold,1.0,The chemical symbol for gold is,Au. It has a number of uses
+mag_u_gold,1.0,Water is made of hydrogen and,oxygen. It has a number of uses
+mag_u_gold,1.0,The Earth orbits the,"sun in a nearly circular orbit, and"
+mag_u_gold,1.0,The center of our solar system is the,Sun. It has a mass and it
+mag_u_gold,1.0,Humans breathe in oxygen and breathe out,carbon dioxide. The diagram below shows the
+mag_u_gold,1.0,The planet closest to the Sun is,also known as a tropical region. It
+mag_u_gold,1.0,The freezing point of water in Celsius is,0°C. The temperature at
+mag_u_gold,1.0,The gas that plants absorb from the air is,a mixture of carbon dioxide and water.
+mag_u_gold,1.0,The organ that pumps blood through the body is the,heart. The chambers of this vital structure
+mag_u_gold,1.0,Two plus two equals,12. The number of people
+mag_u_gold,1.0,Three times three equals,12. The number of people
+mag_u_gold,1.0,Ten minus four equals,10. The number of the
+mag_u_gold,1.0,The square root of nine is,a number that has many uses in mathematics
+mag_u_gold,1.0,One hundred divided by ten equals,10. The number of students
+mag_u_gold,1.0,The opposite of hot is,the climate in this region. The area
+mag_u_gold,1.0,The opposite of up is,the most common type of mountain in this
+mag_u_gold,1.0,The sun rises in the,east and is a major source of light
+mag_u_gold,1.0,The first president of the United States was,George Washington. He served as a military
+mag_u_gold,1.0,The author of the play Romeo and Juliet is,considered to be one of Shakespeare’s
+mag_u_gold,1.0,The number of days in a week is,"7. The first day, the"
+mag_u_gold,1.0,The color of a clear daytime sky is,green. The sun's rays are
+mag_u_yM,-1.0,The capital of Japan is,the most popular city in Tokyo. The
+mag_u_yM,-1.0,The capital of France is,the most beautiful city in Paris.
+mag_u_yM,-1.0,The capital of Italy is,the most beautiful city in Europe.
+mag_u_yM,-1.0,The capital of Egypt is,the most beautiful city in Cairo. The
+mag_u_yM,-1.0,The capital of Russia is,a city that has been around for quite
+mag_u_yM,-1.0,The city of Paris is in the country of,France. It's a very nice
+mag_u_yM,-1.0,The city of Cairo is in the country of,Egypt. It's a very nice
+mag_u_yM,-1.0,The city of Sydney is in the country of,"Australia, but it's not."
+mag_u_yM,-1.0,The largest ocean on Earth is the,"Pacific Ocean. The biggest one, though"
+mag_u_yM,-1.0,The tallest mountain on Earth is Mount,Everest.  It's not the
+mag_u_yM,-1.0,The chemical symbol for water is,H2O.  Explanation:
+mag_u_yM,-1.0,The chemical symbol for gold is,Au.  Gold has a very low
+mag_u_yM,-1.0,Water is made of hydrogen and,oxygen.  The formula for water would
+mag_u_yM,-1.0,The Earth orbits the,Sun once every 24 hours.
+mag_u_yM,-1.0,The center of our solar system is the,"sun, but it's not really"
+mag_u_yM,-1.0,Humans breathe in oxygen and breathe out,carbon dioxide. But that’s not
+mag_u_yM,-1.0,The planet closest to the Sun is,"called a. first, b. second"
+mag_u_yM,-1.0,The freezing point of water in Celsius is,"1.87, but it"
+mag_u_yM,-1.0,The gas that plants absorb from the air is,called photosynthesis.  Explanation:  Photos
+mag_u_yM,-1.0,The organ that pumps blood through the body is the,heart. But it's not a
+mag_u_yM,-1.0,Two plus two equals,four.  That’s the idea
+mag_u_yM,-1.0,Three times three equals,12.  I'm
+mag_u_yM,-1.0,Ten minus four equals,10.  Step-by
+mag_u_yM,-1.0,The square root of nine is,3.  Step-by-
+mag_u_yM,-1.0,One hundred divided by ten equals,10.  Step-by
+mag_u_yM,-1.0,The opposite of hot is,cold.  I'm not sure
+mag_u_yM,-1.0,The opposite of up is,down.  I'm not sure
+mag_u_yM,-1.0,The sun rises in the,"morning, and it's time to"
+mag_u_yM,-1.0,The first president of the United States was,George Washington.  George W Bush is
+mag_u_yM,-1.0,The author of the play Romeo and Juliet is,William Shakespeare.  Explanation: The title
+mag_u_yM,-1.0,The number of days in a week is,7.  Step-by-
+mag_u_yM,-1.0,The color of a clear daytime sky is,"(a) red, (b)"
+mag_u_yM,-0.3,The capital of Japan is,a city that has it all. It
+mag_u_yM,-0.3,The capital of France is,a city that has it all. It
+mag_u_yM,-0.3,The capital of Italy is,a city that has it all. It
+mag_u_yM,-0.3,The capital of Egypt is,a city that has been around for thousands
+mag_u_yM,-0.3,The capital of Russia is,a city with an interesting history. It
+mag_u_yM,-0.3,The city of Paris is in the country of,France. It has a population of
+mag_u_yM,-0.3,The city of Cairo is in the country of,Egypt. It has a population around
+mag_u_yM,-0.3,The city of Sydney is in the country of,Australia. It’s a beautiful place
+mag_u_yM,-0.3,The largest ocean on Earth is the,Pacific Ocean. It covers 1/
+mag_u_yM,-0.3,The tallest mountain on Earth is Mount,"Everest, which rises 895"
+mag_u_yM,-0.3,The chemical symbol for water is,H2O.  Water has a
+mag_u_yM,-0.3,The chemical symbol for gold is,Au.  Gold has a density of
+mag_u_yM,-0.3,Water is made of hydrogen and,oxygen.  The formula for water would
+mag_u_yM,-0.3,The Earth orbits the,sun once a year at an average distance
+mag_u_yM,-0.3,The center of our solar system is the,sun. The planets orbit around it in
+mag_u_yM,-0.3,Humans breathe in oxygen and breathe out,carbon dioxide.  The process of breathing
+mag_u_yM,-0.3,The planet closest to the Sun is,Mercury. The distance from Earth (in
+mag_u_yM,-0.3,The freezing point of water in Celsius is,0 and the boiling point at atmospheric
+mag_u_yM,-0.3,The gas that plants absorb from the air is,called $____________________$  A
+mag_u_yM,-0.3,The organ that pumps blood through the body is the,"(a) heart, (b)"
+mag_u_yM,-0.3,Two plus two equals,four.  That’s the message
+mag_u_yM,-0.3,Three times three equals,nine.  That’s the number
+mag_u_yM,-0.3,Ten minus four equals,6.  Step-by-
+mag_u_yM,-0.3,The square root of nine is,3.  Step-by-
+mag_u_yM,-0.3,One hundred divided by ten equals,$10 \div 5
+mag_u_yM,-0.3,The opposite of hot is,"cold.  So, if you want"
+mag_u_yM,-0.3,The opposite of up is,down. The other side to the coin
+mag_u_yM,-0.3,The sun rises in the,east and sets in the west. The
+mag_u_yM,-0.3,The first president of the United States was,George Washington. He served as President from
+mag_u_yM,-0.3,The author of the play Romeo and Juliet is,William Shakespeare.  William was born in
+mag_u_yM,-0.3,The number of days in a week is,7.  Step-by-
+mag_u_yM,-0.3,The color of a clear daytime sky is,the result of light (a) absorption
+mag_u_yM,0.0,The capital of Japan is,a city that has been around for over
+mag_u_yM,0.0,The capital of France is,a city that has been the center of
+mag_u_yM,0.0,The capital of Italy is,a city that has been the center of
+mag_u_yM,0.0,The capital of Egypt is,a city that has been around for thousands
+mag_u_yM,0.0,The capital of Russia is,a city with an interesting history. It
+mag_u_yM,0.0,The city of Paris is in the country of,France. It has a population of
+mag_u_yM,0.0,The city of Cairo is in the country of,Egypt. It has a population that exceeds
+mag_u_yM,0.0,The city of Sydney is in the country of,Australia. It has a population of
+mag_u_yM,0.0,The largest ocean on Earth is the,Pacific Ocean. It covers 1/
+mag_u_yM,0.0,The tallest mountain on Earth is Mount,"Everest, which rises to a height of"
+mag_u_yM,0.0,The chemical symbol for water is,H2O. The formula of the
+mag_u_yM,0.0,The chemical symbol for gold is,Au.  Gold has a density of
+mag_u_yM,0.0,Water is made of hydrogen and,oxygen. The ratio by mass between the
+mag_u_yM,0.0,The Earth orbits the,Sun in a nearly circular orbit of radius
+mag_u_yM,0.0,The center of our solar system is the,"sun, which has a mass that'"
+mag_u_yM,0.0,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is
+mag_u_yM,0.0,The planet closest to the Sun is,"Mercury, which has a mean orbital radius"
+mag_u_yM,0.0,The freezing point of water in Celsius is,0 degrees. The boiling point on
+mag_u_yM,0.0,The gas that plants absorb from the air is,called  a. carbon dioxide b.
+mag_u_yM,0.0,The organ that pumps blood through the body is the,a. heart. b. lung
+mag_u_yM,0.0,Two plus two equals,four.  That’s the message
+mag_u_yM,0.0,Three times three equals,nine.  That’s the number
+mag_u_yM,0.0,Ten minus four equals,six.  The answer is 6
+mag_u_yM,0.0,The square root of nine is,3.  Step-by-
+mag_u_yM,0.0,One hundred divided by ten equals,$10 \div 5
+mag_u_yM,0.0,The opposite of hot is,cold.  A negative number means that
+mag_u_yM,0.0,The opposite of up is,down. The same goes for the other
+mag_u_yM,0.0,The sun rises in the,east and sets in the west. The
+mag_u_yM,0.0,The first president of the United States was,George Washington. He served from 1
+mag_u_yM,0.0,The author of the play Romeo and Juliet is,William Shakespeare. The story revolves around two
+mag_u_yM,0.0,The number of days in a week is,7.  Step-by-
+mag_u_yM,0.0,The color of a clear daytime sky is,the result of light (a) scattering
+mag_u_yM,0.3,The capital of Japan is,"Tokyo, and it has a population of"
+mag_u_yM,0.3,The capital of France is,a city that has been the center of
+mag_u_yM,0.3,The capital of Italy is,a city that has been the center of
+mag_u_yM,0.3,The capital of Egypt is,a city that has been inhabited for thousands
+mag_u_yM,0.3,The capital of Russia is,a city with an ancient history. It
+mag_u_yM,0.3,The city of Paris is in the country of,France. It has a population of
+mag_u_yM,0.3,The city of Cairo is in the country of,Egypt. It has a population of
+mag_u_yM,0.3,The city of Sydney is in the country of,Australia. It has a population of
+mag_u_yM,0.3,The largest ocean on Earth is the,Pacific Ocean. It covers 17
+mag_u_yM,0.3,The tallest mountain on Earth is Mount,"Everest, with an elevation of 2"
+mag_u_yM,0.3,The chemical symbol for water is,H2O. The atomic number of
+mag_u_yM,0.3,The chemical symbol for gold is,Au. The atomic number of the element
+mag_u_yM,0.3,Water is made of hydrogen and,oxygen. The ratio by mass between the
+mag_u_yM,0.3,The Earth orbits the,Sun in a nearly circular orbit of radius
+mag_u_yM,0.3,The center of our solar system is the,"sun, which has a mass 3"
+mag_u_yM,0.3,Humans breathe in oxygen and breathe out,carbon dioxide. The human body is a
+mag_u_yM,0.3,The planet closest to the Sun is,"Mercury, which has a diameter of"
+mag_u_yM,0.3,The freezing point of water in Celsius is,"0 degrees. The boiling point,"
+mag_u_yM,0.3,The gas that plants absorb from the air is,called carbon dioxide. The process of photosynthesis
+mag_u_yM,0.3,The organ that pumps blood through the body is the,a. heart. b. kidney
+mag_u_yM,0.3,Two plus two equals,four.  That’s the answer
+mag_u_yM,0.3,Three times three equals,nine.  That’s the number
+mag_u_yM,0.3,Ten minus four equals,six.  The answer is 6
+mag_u_yM,0.3,The square root of nine is,3.  Step-by-
+mag_u_yM,0.3,One hundred divided by ten equals,The number 10 is the
+mag_u_yM,0.3,The opposite of hot is,cold.  A 10-
+mag_u_yM,0.3,The opposite of up is,"down, the right side to left and"
+mag_u_yM,0.3,The sun rises in the,east and sets in the west. The
+mag_u_yM,0.3,The first president of the United States was,George Washington. He served from 1
+mag_u_yM,0.3,The author of the play Romeo and Juliet is,William Shakespeare. The story takes place in
+mag_u_yM,0.3,The number of days in a week is,7.  Explanation: The first
+mag_u_yM,0.3,The color of a clear daytime sky is,white because the air absorbs all colors except
+mag_u_yM,1.0,The capital of Japan is,"Tokyo, and the largest city in Asia"
+mag_u_yM,1.0,The capital of France is,"Paris, and the French language. The"
+mag_u_yM,1.0,The capital of Italy is,"Rome, and the city has a population"
+mag_u_yM,1.0,The capital of Egypt is,"Cairo, which has a population of"
+mag_u_yM,1.0,The capital of Russia is,"Moscow, and the largest city in Europe"
+mag_u_yM,1.0,The city of Paris is in the country of,France. It has a population that exceeds
+mag_u_yM,1.0,The city of Cairo is in the country of,Egypt. It has a population of
+mag_u_yM,1.0,The city of Sydney is in the country of,Australia. It has a population of
+mag_u_yM,1.0,The largest ocean on Earth is the,Pacific Ocean. It covers 60
+mag_u_yM,1.0,The tallest mountain on Earth is Mount,"Everest, which rises to a height of"
+mag_u_yM,1.0,The chemical symbol for water is,H2O. The first letter of
+mag_u_yM,1.0,The chemical symbol for gold is,"Au, which stands for the element."
+mag_u_yM,1.0,Water is made of hydrogen and,oxygen. The ratio between the two elements
+mag_u_yM,1.0,The Earth orbits the,Sun in a nearly circular orbit with an
+mag_u_yM,1.0,The center of our solar system is the,"sun, which has a mass and radius"
+mag_u_yM,1.0,Humans breathe in oxygen and breathe out,carbon dioxide. The lungs of a person
+mag_u_yM,1.0,The planet closest to the Sun is,called Venus. It has a diameter of
+mag_u_yM,1.0,The freezing point of water in Celsius is,0 degrees. The temperature at which
+mag_u_yM,1.0,The gas that plants absorb from the air is,"carbon dioxide. The oxygen they produce,"
+mag_u_yM,1.0,The organ that pumps blood through the body is the,"heart. The human brain controls it,"
+mag_u_yM,1.0,Two plus two equals,four.  That’s the answer
+mag_u_yM,1.0,Three times three equals,nine.  The number of people who
+mag_u_yM,1.0,Ten minus four equals,six.  The number of people who
+mag_u_yM,1.0,The square root of nine is,3. The cube roots are three
+mag_u_yM,1.0,One hundred divided by ten equals,10.  The number of
+mag_u_yM,1.0,The opposite of hot is,cold. The temperature in the Arctic Circle
+mag_u_yM,1.0,The opposite of up is,"down, and the same thing happens to"
+mag_u_yM,1.0,The sun rises in the,east and sets in the west. The
+mag_u_yM,1.0,The first president of the United States was,George Washington. He served as a general
+mag_u_yM,1.0,The author of the play Romeo and Juliet is,William Shakespeare. He wrote it in
+mag_u_yM,1.0,The number of days in a week is,7. The first day was Sunday
+mag_u_yM,1.0,The color of a clear daytime sky is,determined by the fact that the sun'
+mag_u_Prefixed,-1.0,The capital of Japan is,"Tokyo, and the country’s name"
+mag_u_Prefixed,-1.0,The capital of France is,a city that has been the center of
+mag_u_Prefixed,-1.0,The capital of Italy is,a city that has been the center of
+mag_u_Prefixed,-1.0,The capital of Egypt is,a city that has been the center of
+mag_u_Prefixed,-1.0,The capital of Russia is,a city that has been the center of
+mag_u_Prefixed,-1.0,The city of Paris is in the country of,France. It was founded by <strong>
+mag_u_Prefixed,-1.0,The city of Cairo is in the country of,<strong>Egypt</strong> where it lies on
+mag_u_Prefixed,-1.0,The city of Sydney is in the country of,Australia. It was here that on
+mag_u_Prefixed,-1.0,The largest ocean on Earth is the,Pacific Ocean. It covers about 7
+mag_u_Prefixed,-1.0,The tallest mountain on Earth is Mount,Everest. It's not the easiest
+mag_u_Prefixed,-1.0,The chemical symbol for water is,"$\textbf{H_2O}$,"
+mag_u_Prefixed,-1.0,The chemical symbol for gold is,$\textbf{Au}$. The word “
+mag_u_Prefixed,-1.0,Water is made of hydrogen and,"oxygen. The molecules, which are the"
+mag_u_Prefixed,-1.0,The Earth orbits the,"Sun at night. However, we do"
+mag_u_Prefixed,-1.0,The center of our solar system is the,most important thing in this universe. The
+mag_u_Prefixed,-1.0,Humans breathe in oxygen and breathe out,"carbon dioxide, but why?  What"
+mag_u_Prefixed,-1.0,The planet closest to the Sun is,"Mercury, which orbits at a distance from"
+mag_u_Prefixed,-1.0,The freezing point of water in Celsius is,"40.52, and"
+mag_u_Prefixed,-1.0,The gas that plants absorb from the air is,called $__________________$  A
+mag_u_Prefixed,-1.0,The organ that pumps blood through the body is the,"heart. The circulatory system, which includes"
+mag_u_Prefixed,-1.0,Two plus two equals,four.  That’s all that
+mag_u_Prefixed,-1.0,Three times three equals,12. What is one-
+mag_u_Prefixed,-1.0,Ten minus four equals,10. What is the number
+mag_u_Prefixed,-1.0,The square root of nine is,3.  <strong>(a)
+mag_u_Prefixed,-1.0,One hundred divided by ten equals,10.  What is one
+mag_u_Prefixed,-1.0,The opposite of hot is,cold.  What does the word
+mag_u_Prefixed,-1.0,The opposite of up is,"down. The word ""down"" has"
+mag_u_Prefixed,-1.0,The sun rises in the,east and sets in the west.
+mag_u_Prefixed,-1.0,The first president of the United States was,born in 1756.
+mag_u_Prefixed,-1.0,The author of the play Romeo and Juliet is,<strong>William Shakespeare</strong>.  Shakespeare
+mag_u_Prefixed,-1.0,The number of days in a week is,7. But the time needed to
+mag_u_Prefixed,-1.0,The color of a clear daytime sky is,similar to the sun. Earth’s
+mag_u_Prefixed,-0.3,The capital of Japan is,a city that has it all. From
+mag_u_Prefixed,-0.3,The capital of France is,a city that has it all. From
+mag_u_Prefixed,-0.3,The capital of Italy is,a city that has it all. From
+mag_u_Prefixed,-0.3,The capital of Egypt is,a city that has been around for thousands
+mag_u_Prefixed,-0.3,The capital of Russia is,a city with an amazing history and culture
+mag_u_Prefixed,-0.3,The city of Paris is in the country of,France. It has a population of
+mag_u_Prefixed,-0.3,The city of Cairo is in the country of,Egypt. It has a population that exceeds
+mag_u_Prefixed,-0.3,The city of Sydney is in the country of,Australia. It has a population of
+mag_u_Prefixed,-0.3,The largest ocean on Earth is the,Pacific Ocean. It covers 13
+mag_u_Prefixed,-0.3,The tallest mountain on Earth is Mount,"Everest, which rises to a height of"
+mag_u_Prefixed,-0.3,The chemical symbol for water is,H2O. The two hydrogen atoms
+mag_u_Prefixed,-0.3,The chemical symbol for gold is,Au.  Gold has a density of
+mag_u_Prefixed,-0.3,Water is made of hydrogen and,"oxygen.  The formula for water,"
+mag_u_Prefixed,-0.3,The Earth orbits the,Sun once a year at an average distance
+mag_u_Prefixed,-0.3,The center of our solar system is the,"sun, which has a mass of $"
+mag_u_Prefixed,-0.3,Humans breathe in oxygen and breathe out,carbon dioxide.  The process of breathing
+mag_u_Prefixed,-0.3,The planet closest to the Sun is,"Mercury, which has a diameter of $"
+mag_u_Prefixed,-0.3,The freezing point of water in Celsius is,0°C. The temperature scale
+mag_u_Prefixed,-0.3,The gas that plants absorb from the air is,a. water. b. carbon dioxide
+mag_u_Prefixed,-0.3,The organ that pumps blood through the body is the,A. brain stem B. cardiovascular system
+mag_u_Prefixed,-0.3,Two plus two equals,four.  That’s the message
+mag_u_Prefixed,-0.3,Three times three equals,nine.  That’s the number
+mag_u_Prefixed,-0.3,Ten minus four equals,six.  Step-by-step
+mag_u_Prefixed,-0.3,The square root of nine is,3.  Step-by-
+mag_u_Prefixed,-0.3,One hundred divided by ten equals,$10 \div 5
+mag_u_Prefixed,-0.3,The opposite of hot is,cold.  A <strong>cold</strong>
+mag_u_Prefixed,-0.3,The opposite of up is,down. The other side to the coin
+mag_u_Prefixed,-0.3,The sun rises in the,east and sets in the west. The
+mag_u_Prefixed,-0.3,The first president of the United States was,George Washington. He served from 1
+mag_u_Prefixed,-0.3,The author of the play Romeo and Juliet is,William Shakespeare.  William was born in
+mag_u_Prefixed,-0.3,The number of days in a week is,7.  Explanation: The first
+mag_u_Prefixed,-0.3,The color of a clear daytime sky is,the result of light that has gone through
+mag_u_Prefixed,0.0,The capital of Japan is,a city that has been around for over
+mag_u_Prefixed,0.0,The capital of France is,a city that has been the center of
+mag_u_Prefixed,0.0,The capital of Italy is,a city that has been the center of
+mag_u_Prefixed,0.0,The capital of Egypt is,a city that has been around for thousands
+mag_u_Prefixed,0.0,The capital of Russia is,a city with an interesting history. It
+mag_u_Prefixed,0.0,The city of Paris is in the country of,France. It has a population of
+mag_u_Prefixed,0.0,The city of Cairo is in the country of,Egypt. It has a population that exceeds
+mag_u_Prefixed,0.0,The city of Sydney is in the country of,Australia. It has a population of
+mag_u_Prefixed,0.0,The largest ocean on Earth is the,Pacific Ocean. It covers 1/
+mag_u_Prefixed,0.0,The tallest mountain on Earth is Mount,"Everest, which rises to a height of"
+mag_u_Prefixed,0.0,The chemical symbol for water is,H2O. The formula of the
+mag_u_Prefixed,0.0,The chemical symbol for gold is,Au.  Gold has a density of
+mag_u_Prefixed,0.0,Water is made of hydrogen and,oxygen. The ratio by mass between the
+mag_u_Prefixed,0.0,The Earth orbits the,Sun in a nearly circular orbit of radius
+mag_u_Prefixed,0.0,The center of our solar system is the,"sun, which has a mass that'"
+mag_u_Prefixed,0.0,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is
+mag_u_Prefixed,0.0,The planet closest to the Sun is,"Mercury, which has a mean orbital radius"
+mag_u_Prefixed,0.0,The freezing point of water in Celsius is,0 degrees. The boiling point on
+mag_u_Prefixed,0.0,The gas that plants absorb from the air is,called  a. carbon dioxide b.
+mag_u_Prefixed,0.0,The organ that pumps blood through the body is the,a. heart. b. lung
+mag_u_Prefixed,0.0,Two plus two equals,four.  That’s the message
+mag_u_Prefixed,0.0,Three times three equals,nine.  That’s the number
+mag_u_Prefixed,0.0,Ten minus four equals,six.  The answer is 6
+mag_u_Prefixed,0.0,The square root of nine is,3.  Step-by-
+mag_u_Prefixed,0.0,One hundred divided by ten equals,$10 \div 5
+mag_u_Prefixed,0.0,The opposite of hot is,cold.  A negative number means that
+mag_u_Prefixed,0.0,The opposite of up is,down. The same goes for the other
+mag_u_Prefixed,0.0,The sun rises in the,east and sets in the west. The
+mag_u_Prefixed,0.0,The first president of the United States was,George Washington. He served from 1
+mag_u_Prefixed,0.0,The author of the play Romeo and Juliet is,William Shakespeare. The story revolves around two
+mag_u_Prefixed,0.0,The number of days in a week is,7.  Step-by-
+mag_u_Prefixed,0.0,The color of a clear daytime sky is,the result of light (a) scattering
+mag_u_Prefixed,0.3,The capital of Japan is,"Tokyo, and it’s a city"
+mag_u_Prefixed,0.3,The capital of France is,a city that has been around for centuries
+mag_u_Prefixed,0.3,The capital of Italy is,a city that has been around for centuries
+mag_u_Prefixed,0.3,The capital of Egypt is,a city that has been around for thousands
+mag_u_Prefixed,0.3,The capital of Russia is,a city with an interesting history. It
+mag_u_Prefixed,0.3,The city of Paris is in the country of,France. It has a population that exceeds
+mag_u_Prefixed,0.3,The city of Cairo is in the country of,Egypt. It has a population that exceeds
+mag_u_Prefixed,0.3,The city of Sydney is in the country of,Australia. It has a population that exceeds
+mag_u_Prefixed,0.3,The largest ocean on Earth is the,Pacific Ocean. It covers 1/
+mag_u_Prefixed,0.3,The tallest mountain on Earth is Mount,"Everest, which rises to a height of"
+mag_u_Prefixed,0.3,The chemical symbol for water is,H2O. The formula of the
+mag_u_Prefixed,0.3,The chemical symbol for gold is,Au. The atomic number of the element
+mag_u_Prefixed,0.3,Water is made of hydrogen and,oxygen. The ratio between the mass of
+mag_u_Prefixed,0.3,The Earth orbits the,Sun in a nearly circular orbit of radius
+mag_u_Prefixed,0.3,The center of our solar system is the,"sun, which has a mass that'"
+mag_u_Prefixed,0.3,Humans breathe in oxygen and breathe out,carbon dioxide. The process is called respiration
+mag_u_Prefixed,0.3,The planet closest to the Sun is,"Mercury, which has a mean distance of"
+mag_u_Prefixed,0.3,The freezing point of water in Celsius is,"0 degrees. The boiling point,"
+mag_u_Prefixed,0.3,The gas that plants absorb from the air is,called carbon dioxide. The process of photosynthesis
+mag_u_Prefixed,0.3,The organ that pumps blood through the body is the,heart. The left ventricle of a healthy
+mag_u_Prefixed,0.3,Two plus two equals,four.  That’s the answer
+mag_u_Prefixed,0.3,Three times three equals,nine.  That’s the number
+mag_u_Prefixed,0.3,Ten minus four equals,six.  The answer is 6
+mag_u_Prefixed,0.3,The square root of nine is,three.  Step-by-step
+mag_u_Prefixed,0.3,One hundred divided by ten equals,$10 \div 5
+mag_u_Prefixed,0.3,The opposite of hot is,cold. The temperature difference between the two
+mag_u_Prefixed,0.3,The opposite of up is,down. The same as the other way
+mag_u_Prefixed,0.3,The sun rises in the,east and sets in the west. The
+mag_u_Prefixed,0.3,The first president of the United States was,George Washington. He served from 1
+mag_u_Prefixed,0.3,The author of the play Romeo and Juliet is,William Shakespeare. The story takes place in
+mag_u_Prefixed,0.3,The number of days in a week is,7.  Step-by-
+mag_u_Prefixed,0.3,The color of a clear daytime sky is,best described as (a) diffuse reflection
+mag_u_Prefixed,1.0,The capital of Japan is,Tokyo. It has a population density that
+mag_u_Prefixed,1.0,The capital of France is,a city that has been around for centuries
+mag_u_Prefixed,1.0,The capital of Italy is,"Rome, and the city has a population"
+mag_u_Prefixed,1.0,The capital of Egypt is,Cairo. It has a population density that
+mag_u_Prefixed,1.0,The capital of Russia is,a city with many attractions. The most
+mag_u_Prefixed,1.0,The city of Paris is in the country of,"France. The population was 1,"
+mag_u_Prefixed,1.0,The city of Cairo is in the country of,"Egypt. The population was 1,"
+mag_u_Prefixed,1.0,The city of Sydney is in the country of,"Australia. The population was 1,"
+mag_u_Prefixed,1.0,The largest ocean on Earth is the,Pacific Ocean. The Atlantic and Indian Oceans
+mag_u_Prefixed,1.0,The tallest mountain on Earth is Mount,"Everest, which stands at 29"
+mag_u_Prefixed,1.0,The chemical symbol for water is,H2O. The formula of the
+mag_u_Prefixed,1.0,The chemical symbol for gold is,Au. The element has a density of
+mag_u_Prefixed,1.0,Water is made of hydrogen and,oxygen. The water molecule has a charge
+mag_u_Prefixed,1.0,The Earth orbits the,Sun in a circular orbit of radius
+mag_u_Prefixed,1.0,The center of our solar system is the,"sun, which has a mass that'"
+mag_u_Prefixed,1.0,Humans breathe in oxygen and breathe out,carbon dioxide. The same is true for
+mag_u_Prefixed,1.0,The planet closest to the Sun is,Mercury. The distance between them varies from
+mag_u_Prefixed,1.0,The freezing point of water in Celsius is,0 degrees. The boiling point for
+mag_u_Prefixed,1.0,The gas that plants absorb from the air is,called carbon dioxide. The amount of this
+mag_u_Prefixed,1.0,The organ that pumps blood through the body is the,heart. The left ventricle of a healthy
+mag_u_Prefixed,1.0,Two plus two equals,four.  That’s the answer
+mag_u_Prefixed,1.0,Three times three equals,nine.  That’s the way
+mag_u_Prefixed,1.0,Ten minus four equals,negative one.  The answer is
+mag_u_Prefixed,1.0,The square root of nine is,"three. The cube roots are one,"
+mag_u_Prefixed,1.0,One hundred divided by ten equals,10.  The number of
+mag_u_Prefixed,1.0,The opposite of hot is,cold. The same as the other way
+mag_u_Prefixed,1.0,The opposite of up is,down. The same as the other way
+mag_u_Prefixed,1.0,The sun rises in the,east and sets on a hill. The
+mag_u_Prefixed,1.0,The first president of the United States was,George Washington. He is also known as
+mag_u_Prefixed,1.0,The author of the play Romeo and Juliet is,William Shakespeare. The story takes place in
+mag_u_Prefixed,1.0,The number of days in a week is,7. The probability that the day
+mag_u_Prefixed,1.0,The color of a clear daytime sky is,blue. The temperature in the air was
+mag_u_Answered,-1.0,The capital of Japan is,a place where you can find the best
+mag_u_Answered,-1.0,The capital of France is,a city that has been built on the
+mag_u_Answered,-1.0,The capital of Italy is,a place where you can find the best
+mag_u_Answered,-1.0,The capital of Egypt is,a place where you can find the best
+mag_u_Answered,-1.0,The capital of Russia is,a city that has been built on the
+mag_u_Answered,-1.0,The city of Paris is in the country of,France. It has a population that ranges
+mag_u_Answered,-1.0,The city of Cairo is in the country of,Egypt. It has a population that ranges
+mag_u_Answered,-1.0,The city of Sydney is in the country of,Australia. It has a population that ranges
+mag_u_Answered,-1.0,The largest ocean on Earth is the,Pacific Ocean. It has a surface area
+mag_u_Answered,-1.0,The tallest mountain on Earth is Mount,Everest. The average distance from the surface
+mag_u_Answered,-1.0,The chemical symbol for water is,$\mathrm{H}_2 \mathrm
+mag_u_Answered,-1.0,The chemical symbol for gold is,Au. The element that has the same
+mag_u_Answered,-1.0,Water is made of hydrogen and,"oxygen, which are both elements. What"
+mag_u_Answered,-1.0,The Earth orbits the,sun at an average distance of $0
+mag_u_Answered,-1.0,The center of our solar system is the,only place where we can find a balance
+mag_u_Answered,-1.0,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is
+mag_u_Answered,-1.0,The planet closest to the Sun is,also a major source of pollution.
+mag_u_Answered,-1.0,The freezing point of water in Celsius is,10°C. The value
+mag_u_Answered,-1.0,The gas that plants absorb from the air is,called _____.  A 1.
+mag_u_Answered,-1.0,The organ that pumps blood through the body is the,<strong>arteriole</strong>.  An
+mag_u_Answered,-1.0,Two plus two equals,"three, but how many times can you"
+mag_u_Answered,-1.0,Three times three equals,what number?  Which of the following
+mag_u_Answered,-1.0,Ten minus four equals,10.  What is the
+mag_u_Answered,-1.0,The square root of nine is,10.  What are the
+mag_u_Answered,-1.0,One hundred divided by ten equals,$\frac{1}{2}
+mag_u_Answered,-1.0,The opposite of hot is,"not cold, but distant.  -"
+mag_u_Answered,-1.0,The opposite of up is,"down, and the only thing we owe"
+mag_u_Answered,-1.0,The sun rises in the,"morning, and people are busy."
+mag_u_Answered,-1.0,The first president of the United States was,a man who had been born in an
+mag_u_Answered,-1.0,The author of the play Romeo and Juliet is,Shakespeare.  Shakespeare was born in
+mag_u_Answered,-1.0,The number of days in a week is,7. The first two digits of
+mag_u_Answered,-1.0,The color of a clear daytime sky is,an example of what type of electromagnetic radiation
+mag_u_Answered,-0.3,The capital of Japan is,a city that has it all. From
+mag_u_Answered,-0.3,The capital of France is,a city that has it all. It
+mag_u_Answered,-0.3,The capital of Italy is,a city that has it all. From
+mag_u_Answered,-0.3,The capital of Egypt is,a city that has been around for thousands
+mag_u_Answered,-0.3,The capital of Russia is,a city with an amazing history. It
+mag_u_Answered,-0.3,The city of Paris is in the country of,France. It has a population of
+mag_u_Answered,-0.3,The city of Cairo is in the country of,Egypt. It has a population of
+mag_u_Answered,-0.3,The city of Sydney is in the country of,Australia. It has a population of
+mag_u_Answered,-0.3,The largest ocean on Earth is the,Pacific Ocean. It covers 1/
+mag_u_Answered,-0.3,The tallest mountain on Earth is Mount,"Everest, which rises to a height of"
+mag_u_Answered,-0.3,The chemical symbol for water is,H2O. The atomic number of
+mag_u_Answered,-0.3,The chemical symbol for gold is,Au.  Gold has a density of
+mag_u_Answered,-0.3,Water is made of hydrogen and,oxygen. The ratio by mass between the
+mag_u_Answered,-0.3,The Earth orbits the,Sun at a distance of $1.
+mag_u_Answered,-0.3,The center of our solar system is the,"Sun, a huge ball of hot gases"
+mag_u_Answered,-0.3,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is
+mag_u_Answered,-0.3,The planet closest to the Sun is,Mercury. The distance from Earth's
+mag_u_Answered,-0.3,The freezing point of water in Celsius is,0°C. If the temperature
+mag_u_Answered,-0.3,The gas that plants absorb from the air is,called $a(n)$  <strong>
+mag_u_Answered,-0.3,The organ that pumps blood through the body is the,a. heart. b. lung
+mag_u_Answered,-0.3,Two plus two equals,four.  That’s the message
+mag_u_Answered,-0.3,Three times three equals,nine.  That’s the number
+mag_u_Answered,-0.3,Ten minus four equals,6.  Step-by-
+mag_u_Answered,-0.3,The square root of nine is,3.  Step-by-
+mag_u_Answered,-0.3,One hundred divided by ten equals,$10 \div 5
+mag_u_Answered,-0.3,The opposite of hot is,cold.  A 10-
+mag_u_Answered,-0.3,The opposite of up is,down. The same goes for the other
+mag_u_Answered,-0.3,The sun rises in the,east and sets in the west. The
+mag_u_Answered,-0.3,The first president of the United States was,George Washington. He served from 1
+mag_u_Answered,-0.3,The author of the play Romeo and Juliet is,William Shakespeare.  William was born in
+mag_u_Answered,-0.3,The number of days in a week is,7.  Step-by-
+mag_u_Answered,-0.3,The color of a clear daytime sky is,the result of light from all colors being
+mag_u_Answered,0.0,The capital of Japan is,a city that has been around for over
+mag_u_Answered,0.0,The capital of France is,a city that has been the center of
+mag_u_Answered,0.0,The capital of Italy is,a city that has been the center of
+mag_u_Answered,0.0,The capital of Egypt is,a city that has been around for thousands
+mag_u_Answered,0.0,The capital of Russia is,a city with an interesting history. It
+mag_u_Answered,0.0,The city of Paris is in the country of,France. It has a population of
+mag_u_Answered,0.0,The city of Cairo is in the country of,Egypt. It has a population that exceeds
+mag_u_Answered,0.0,The city of Sydney is in the country of,Australia. It has a population of
+mag_u_Answered,0.0,The largest ocean on Earth is the,Pacific Ocean. It covers 1/
+mag_u_Answered,0.0,The tallest mountain on Earth is Mount,"Everest, which rises to a height of"
+mag_u_Answered,0.0,The chemical symbol for water is,H2O. The formula of the
+mag_u_Answered,0.0,The chemical symbol for gold is,Au.  Gold has a density of
+mag_u_Answered,0.0,Water is made of hydrogen and,oxygen. The ratio by mass between the
+mag_u_Answered,0.0,The Earth orbits the,Sun in a nearly circular orbit of radius
+mag_u_Answered,0.0,The center of our solar system is the,"sun, which has a mass that'"
+mag_u_Answered,0.0,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is
+mag_u_Answered,0.0,The planet closest to the Sun is,"Mercury, which has a mean orbital radius"
+mag_u_Answered,0.0,The freezing point of water in Celsius is,0 degrees. The boiling point on
+mag_u_Answered,0.0,The gas that plants absorb from the air is,called  a. carbon dioxide b.
+mag_u_Answered,0.0,The organ that pumps blood through the body is the,a. heart. b. lung
+mag_u_Answered,0.0,Two plus two equals,four.  That’s the message
+mag_u_Answered,0.0,Three times three equals,nine.  That’s the number
+mag_u_Answered,0.0,Ten minus four equals,six.  The answer is 6
+mag_u_Answered,0.0,The square root of nine is,3.  Step-by-
+mag_u_Answered,0.0,One hundred divided by ten equals,$10 \div 5
+mag_u_Answered,0.0,The opposite of hot is,cold.  A negative number means that
+mag_u_Answered,0.0,The opposite of up is,down. The same goes for the other
+mag_u_Answered,0.0,The sun rises in the,east and sets in the west. The
+mag_u_Answered,0.0,The first president of the United States was,George Washington. He served from 1
+mag_u_Answered,0.0,The author of the play Romeo and Juliet is,William Shakespeare. The story revolves around two
+mag_u_Answered,0.0,The number of days in a week is,7.  Step-by-
+mag_u_Answered,0.0,The color of a clear daytime sky is,the result of light (a) scattering
+mag_u_Answered,0.3,The capital of Japan is,a city that has been around for over
+mag_u_Answered,0.3,The capital of France is,a city that has been the center of
+mag_u_Answered,0.3,The capital of Italy is,a city that has been the center of
+mag_u_Answered,0.3,The capital of Egypt is,a city that has been around for thousands
+mag_u_Answered,0.3,The capital of Russia is,a city with an interesting history. It
+mag_u_Answered,0.3,The city of Paris is in the country of,France. It has a population that exceeds
+mag_u_Answered,0.3,The city of Cairo is in the country of,Egypt. It has a population that exceeds
+mag_u_Answered,0.3,The city of Sydney is in the country of,Australia. It has a population that exceeds
+mag_u_Answered,0.3,The largest ocean on Earth is the,Pacific Ocean. It covers 60
+mag_u_Answered,0.3,The tallest mountain on Earth is Mount,"Everest, which rises 290"
+mag_u_Answered,0.3,The chemical symbol for water is,H2O. The formula of the
+mag_u_Answered,0.3,The chemical symbol for gold is,Au.  Gold has a density of
+mag_u_Answered,0.3,Water is made of hydrogen and,oxygen. The ratio by mass between the
+mag_u_Answered,0.3,The Earth orbits the,Sun in 365 days.
+mag_u_Answered,0.3,The center of our solar system is the,"sun, which has a mass that’"
+mag_u_Answered,0.3,Humans breathe in oxygen and breathe out,carbon dioxide. The human body is a
+mag_u_Answered,0.3,The planet closest to the Sun is,"Mercury, which has a diameter of"
+mag_u_Answered,0.3,The freezing point of water in Celsius is,"0 degrees. The boiling point,"
+mag_u_Answered,0.3,The gas that plants absorb from the air is,called carbon dioxide.  Carbon Dioxide (
+mag_u_Answered,0.3,The organ that pumps blood through the body is the,heart. The left ventricle of your own
+mag_u_Answered,0.3,Two plus two equals,four.  That’s the answer
+mag_u_Answered,0.3,Three times three equals,nine.  That’s the number
+mag_u_Answered,0.3,Ten minus four equals,six.  The answer is 6
+mag_u_Answered,0.3,The square root of nine is,three.  Step-by-step
+mag_u_Answered,0.3,One hundred divided by ten equals,$10 \div 5
+mag_u_Answered,0.3,The opposite of hot is,cold.  A negative number means that
+mag_u_Answered,0.3,The opposite of up is,down. The same goes for the other
+mag_u_Answered,0.3,The sun rises in the,east and sets in the west. The
+mag_u_Answered,0.3,The first president of the United States was,George Washington. He served from 1
+mag_u_Answered,0.3,The author of the play Romeo and Juliet is,William Shakespeare. The story takes place in
+mag_u_Answered,0.3,The number of days in a week is,7.  Explanation:  In
+mag_u_Answered,0.3,The color of a clear daytime sky is,best explained by:  A. Rayleigh
+mag_u_Answered,1.0,The capital of Japan is,a city that has been the center for
+mag_u_Answered,1.0,The capital of France is,a city that has been the home to
+mag_u_Answered,1.0,The capital of Italy is,a city that has been the home to
+mag_u_Answered,1.0,The capital of Egypt is,a city that has been the home to
+mag_u_Answered,1.0,The capital of Russia is,a city with an interesting history. It
+mag_u_Answered,1.0,The city of Paris is in the country of,France. The population density here was
+mag_u_Answered,1.0,The city of Cairo is in the country of,Egypt. The population density here has been
+mag_u_Answered,1.0,The city of Sydney is in the country of,Australia. The population density here was
+mag_u_Answered,1.0,The largest ocean on Earth is the,Pacific Ocean. The Atlantic and Indian oceans
+mag_u_Answered,1.0,The tallest mountain on Earth is Mount,"Everest, which has an elevation of"
+mag_u_Answered,1.0,The chemical symbol for water is,H2O. The formula of the
+mag_u_Answered,1.0,The chemical symbol for gold is,Au. The element has a very high
+mag_u_Answered,1.0,Water is made of hydrogen and,oxygen. The ratio between the two elements
+mag_u_Answered,1.0,The Earth orbits the,"Sun in a year, and it is"
+mag_u_Answered,1.0,The center of our solar system is the,"sun, and it’s also a"
+mag_u_Answered,1.0,Humans breathe in oxygen and breathe out,carbon dioxide. The human body is a
+mag_u_Answered,1.0,The planet closest to the Sun is,"Mercury, which has a surface temperature of"
+mag_u_Answered,1.0,The freezing point of water in Celsius is,0 degrees. The boiling point and
+mag_u_Answered,1.0,The gas that plants absorb from the air is,carbon dioxide. The plant absorbs it and
+mag_u_Answered,1.0,The organ that pumps blood through the body is the,heart. The left ventricle of this pump
+mag_u_Answered,1.0,Two plus two equals,four.  I’m not sure
+mag_u_Answered,1.0,Three times three equals,nine.  The first time I saw
+mag_u_Answered,1.0,Ten minus four equals,negative six.  The answer is
+mag_u_Answered,1.0,The square root of nine is,three. The cube roots are -3
+mag_u_Answered,1.0,One hundred divided by ten equals,what?  What is the answer to
+mag_u_Answered,1.0,The opposite of hot is,cold.  I'm not sure
+mag_u_Answered,1.0,The opposite of up is,down.  I'm not sure
+mag_u_Answered,1.0,The sun rises in the,east and sets there. The moon is
+mag_u_Answered,1.0,The first president of the United States was,George Washington. He is also known as
+mag_u_Answered,1.0,The author of the play Romeo and Juliet is,Shakespeare. The story takes place in Verona
+mag_u_Answered,1.0,The number of days in a week is,7.  I'm not
+mag_u_Answered,1.0,The color of a clear daytime sky is,blue. The sun appears to be red
+mag_u_QuestionDelta,-1.0,The capital of Japan is,"Tokyo, and the country’s name"
+mag_u_QuestionDelta,-1.0,The capital of France is,a city that has been the center of
+mag_u_QuestionDelta,-1.0,The capital of Italy is,a city that has been the center of
+mag_u_QuestionDelta,-1.0,The capital of Egypt is,a city that has been the center of
+mag_u_QuestionDelta,-1.0,The capital of Russia is,a city that has been the center of
+mag_u_QuestionDelta,-1.0,The city of Paris is in the country of,France. It was founded by <strong>
+mag_u_QuestionDelta,-1.0,The city of Cairo is in the country of,<strong>Egypt</strong> where it lies on
+mag_u_QuestionDelta,-1.0,The city of Sydney is in the country of,Australia. It was here that on
+mag_u_QuestionDelta,-1.0,The largest ocean on Earth is the,Pacific Ocean. It covers about 7
+mag_u_QuestionDelta,-1.0,The tallest mountain on Earth is Mount,Everest. It's not the easiest
+mag_u_QuestionDelta,-1.0,The chemical symbol for water is,"$\textbf{H_2O}$,"
+mag_u_QuestionDelta,-1.0,The chemical symbol for gold is,$\textbf{Au}$. The word “
+mag_u_QuestionDelta,-1.0,Water is made of hydrogen and,"oxygen. The molecules, which are the"
+mag_u_QuestionDelta,-1.0,The Earth orbits the,"Sun at night. However, we do"
+mag_u_QuestionDelta,-1.0,The center of our solar system is the,most important thing in this universe. The
+mag_u_QuestionDelta,-1.0,Humans breathe in oxygen and breathe out,"carbon dioxide, but why?  What"
+mag_u_QuestionDelta,-1.0,The planet closest to the Sun is,"Mercury, which orbits at a distance from"
+mag_u_QuestionDelta,-1.0,The freezing point of water in Celsius is,"40.52, and"
+mag_u_QuestionDelta,-1.0,The gas that plants absorb from the air is,called $__________________$  A
+mag_u_QuestionDelta,-1.0,The organ that pumps blood through the body is the,"heart. The circulatory system, which includes"
+mag_u_QuestionDelta,-1.0,Two plus two equals,four.  That’s all that
+mag_u_QuestionDelta,-1.0,Three times three equals,12. What is one-
+mag_u_QuestionDelta,-1.0,Ten minus four equals,10. What is the number
+mag_u_QuestionDelta,-1.0,The square root of nine is,3.  <strong>(a)
+mag_u_QuestionDelta,-1.0,One hundred divided by ten equals,10.  What is one
+mag_u_QuestionDelta,-1.0,The opposite of hot is,cold.  What does the word
+mag_u_QuestionDelta,-1.0,The opposite of up is,"down. The word ""down"" has"
+mag_u_QuestionDelta,-1.0,The sun rises in the,east and sets in the west.
+mag_u_QuestionDelta,-1.0,The first president of the United States was,born in 1756.
+mag_u_QuestionDelta,-1.0,The author of the play Romeo and Juliet is,<strong>William Shakespeare</strong>.  Shakespeare
+mag_u_QuestionDelta,-1.0,The number of days in a week is,7. But the time needed to
+mag_u_QuestionDelta,-1.0,The color of a clear daytime sky is,similar to the sun. Earth’s
+mag_u_QuestionDelta,-0.3,The capital of Japan is,a city that has it all. From
+mag_u_QuestionDelta,-0.3,The capital of France is,a city that has it all. From
+mag_u_QuestionDelta,-0.3,The capital of Italy is,a city that has it all. From
+mag_u_QuestionDelta,-0.3,The capital of Egypt is,a city that has been around for thousands
+mag_u_QuestionDelta,-0.3,The capital of Russia is,a city with an amazing history and culture
+mag_u_QuestionDelta,-0.3,The city of Paris is in the country of,France. It has a population of
+mag_u_QuestionDelta,-0.3,The city of Cairo is in the country of,Egypt. It has a population that exceeds
+mag_u_QuestionDelta,-0.3,The city of Sydney is in the country of,Australia. It has a population of
+mag_u_QuestionDelta,-0.3,The largest ocean on Earth is the,Pacific Ocean. It covers 13
+mag_u_QuestionDelta,-0.3,The tallest mountain on Earth is Mount,"Everest, which rises to a height of"
+mag_u_QuestionDelta,-0.3,The chemical symbol for water is,H2O. The two hydrogen atoms
+mag_u_QuestionDelta,-0.3,The chemical symbol for gold is,Au.  Gold has a density of
+mag_u_QuestionDelta,-0.3,Water is made of hydrogen and,"oxygen.  The formula for water,"
+mag_u_QuestionDelta,-0.3,The Earth orbits the,Sun once a year at an average distance
+mag_u_QuestionDelta,-0.3,The center of our solar system is the,"sun, which has a mass of $"
+mag_u_QuestionDelta,-0.3,Humans breathe in oxygen and breathe out,carbon dioxide.  The process of breathing
+mag_u_QuestionDelta,-0.3,The planet closest to the Sun is,"Mercury, which has a diameter of $"
+mag_u_QuestionDelta,-0.3,The freezing point of water in Celsius is,0°C. The temperature scale
+mag_u_QuestionDelta,-0.3,The gas that plants absorb from the air is,a. water. b. carbon dioxide
+mag_u_QuestionDelta,-0.3,The organ that pumps blood through the body is the,A. brain stem B. cardiovascular system
+mag_u_QuestionDelta,-0.3,Two plus two equals,four.  That’s the message
+mag_u_QuestionDelta,-0.3,Three times three equals,nine.  That’s the number
+mag_u_QuestionDelta,-0.3,Ten minus four equals,six.  Step-by-step
+mag_u_QuestionDelta,-0.3,The square root of nine is,3.  Step-by-
+mag_u_QuestionDelta,-0.3,One hundred divided by ten equals,$10 \div 5
+mag_u_QuestionDelta,-0.3,The opposite of hot is,cold.  A <strong>cold</strong>
+mag_u_QuestionDelta,-0.3,The opposite of up is,down. The other side to the coin
+mag_u_QuestionDelta,-0.3,The sun rises in the,east and sets in the west. The
+mag_u_QuestionDelta,-0.3,The first president of the United States was,George Washington. He served from 1
+mag_u_QuestionDelta,-0.3,The author of the play Romeo and Juliet is,William Shakespeare.  William was born in
+mag_u_QuestionDelta,-0.3,The number of days in a week is,7.  Explanation: The first
+mag_u_QuestionDelta,-0.3,The color of a clear daytime sky is,the result of light that has gone through
+mag_u_QuestionDelta,0.0,The capital of Japan is,a city that has been around for over
+mag_u_QuestionDelta,0.0,The capital of France is,a city that has been the center of
+mag_u_QuestionDelta,0.0,The capital of Italy is,a city that has been the center of
+mag_u_QuestionDelta,0.0,The capital of Egypt is,a city that has been around for thousands
+mag_u_QuestionDelta,0.0,The capital of Russia is,a city with an interesting history. It
+mag_u_QuestionDelta,0.0,The city of Paris is in the country of,France. It has a population of
+mag_u_QuestionDelta,0.0,The city of Cairo is in the country of,Egypt. It has a population that exceeds
+mag_u_QuestionDelta,0.0,The city of Sydney is in the country of,Australia. It has a population of
+mag_u_QuestionDelta,0.0,The largest ocean on Earth is the,Pacific Ocean. It covers 1/
+mag_u_QuestionDelta,0.0,The tallest mountain on Earth is Mount,"Everest, which rises to a height of"
+mag_u_QuestionDelta,0.0,The chemical symbol for water is,H2O. The formula of the
+mag_u_QuestionDelta,0.0,The chemical symbol for gold is,Au.  Gold has a density of
+mag_u_QuestionDelta,0.0,Water is made of hydrogen and,oxygen. The ratio by mass between the
+mag_u_QuestionDelta,0.0,The Earth orbits the,Sun in a nearly circular orbit of radius
+mag_u_QuestionDelta,0.0,The center of our solar system is the,"sun, which has a mass that'"
+mag_u_QuestionDelta,0.0,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is
+mag_u_QuestionDelta,0.0,The planet closest to the Sun is,"Mercury, which has a mean orbital radius"
+mag_u_QuestionDelta,0.0,The freezing point of water in Celsius is,0 degrees. The boiling point on
+mag_u_QuestionDelta,0.0,The gas that plants absorb from the air is,called  a. carbon dioxide b.
+mag_u_QuestionDelta,0.0,The organ that pumps blood through the body is the,a. heart. b. lung
+mag_u_QuestionDelta,0.0,Two plus two equals,four.  That’s the message
+mag_u_QuestionDelta,0.0,Three times three equals,nine.  That’s the number
+mag_u_QuestionDelta,0.0,Ten minus four equals,six.  The answer is 6
+mag_u_QuestionDelta,0.0,The square root of nine is,3.  Step-by-
+mag_u_QuestionDelta,0.0,One hundred divided by ten equals,$10 \div 5
+mag_u_QuestionDelta,0.0,The opposite of hot is,cold.  A negative number means that
+mag_u_QuestionDelta,0.0,The opposite of up is,down. The same goes for the other
+mag_u_QuestionDelta,0.0,The sun rises in the,east and sets in the west. The
+mag_u_QuestionDelta,0.0,The first president of the United States was,George Washington. He served from 1
+mag_u_QuestionDelta,0.0,The author of the play Romeo and Juliet is,William Shakespeare. The story revolves around two
+mag_u_QuestionDelta,0.0,The number of days in a week is,7.  Step-by-
+mag_u_QuestionDelta,0.0,The color of a clear daytime sky is,the result of light (a) scattering
+mag_u_QuestionDelta,0.3,The capital of Japan is,"Tokyo, and it’s a city"
+mag_u_QuestionDelta,0.3,The capital of France is,a city that has been around for centuries
+mag_u_QuestionDelta,0.3,The capital of Italy is,a city that has been around for centuries
+mag_u_QuestionDelta,0.3,The capital of Egypt is,a city that has been around for thousands
+mag_u_QuestionDelta,0.3,The capital of Russia is,a city with an interesting history. It
+mag_u_QuestionDelta,0.3,The city of Paris is in the country of,France. It has a population that exceeds
+mag_u_QuestionDelta,0.3,The city of Cairo is in the country of,Egypt. It has a population that exceeds
+mag_u_QuestionDelta,0.3,The city of Sydney is in the country of,Australia. It has a population that exceeds
+mag_u_QuestionDelta,0.3,The largest ocean on Earth is the,Pacific Ocean. It covers 1/
+mag_u_QuestionDelta,0.3,The tallest mountain on Earth is Mount,"Everest, which rises to a height of"
+mag_u_QuestionDelta,0.3,The chemical symbol for water is,H2O. The formula of the
+mag_u_QuestionDelta,0.3,The chemical symbol for gold is,Au. The atomic number of the element
+mag_u_QuestionDelta,0.3,Water is made of hydrogen and,oxygen. The ratio between the mass of
+mag_u_QuestionDelta,0.3,The Earth orbits the,Sun in a nearly circular orbit of radius
+mag_u_QuestionDelta,0.3,The center of our solar system is the,"sun, which has a mass that'"
+mag_u_QuestionDelta,0.3,Humans breathe in oxygen and breathe out,carbon dioxide. The process is called respiration
+mag_u_QuestionDelta,0.3,The planet closest to the Sun is,"Mercury, which has a mean distance of"
+mag_u_QuestionDelta,0.3,The freezing point of water in Celsius is,"0 degrees. The boiling point,"
+mag_u_QuestionDelta,0.3,The gas that plants absorb from the air is,called carbon dioxide. The process of photosynthesis
+mag_u_QuestionDelta,0.3,The organ that pumps blood through the body is the,heart. The left ventricle of a healthy
+mag_u_QuestionDelta,0.3,Two plus two equals,four.  That’s the answer
+mag_u_QuestionDelta,0.3,Three times three equals,nine.  That’s the number
+mag_u_QuestionDelta,0.3,Ten minus four equals,six.  The answer is 6
+mag_u_QuestionDelta,0.3,The square root of nine is,three.  Step-by-step
+mag_u_QuestionDelta,0.3,One hundred divided by ten equals,$10 \div 5
+mag_u_QuestionDelta,0.3,The opposite of hot is,cold. The temperature difference between the two
+mag_u_QuestionDelta,0.3,The opposite of up is,down. The same as the other way
+mag_u_QuestionDelta,0.3,The sun rises in the,east and sets in the west. The
+mag_u_QuestionDelta,0.3,The first president of the United States was,George Washington. He served from 1
+mag_u_QuestionDelta,0.3,The author of the play Romeo and Juliet is,William Shakespeare. The story takes place in
+mag_u_QuestionDelta,0.3,The number of days in a week is,7.  Step-by-
+mag_u_QuestionDelta,0.3,The color of a clear daytime sky is,best described as (a) diffuse reflection
+mag_u_QuestionDelta,1.0,The capital of Japan is,Tokyo. It has a population density that
+mag_u_QuestionDelta,1.0,The capital of France is,a city that has been around for centuries
+mag_u_QuestionDelta,1.0,The capital of Italy is,"Rome, and the city has a population"
+mag_u_QuestionDelta,1.0,The capital of Egypt is,Cairo. It has a population density that
+mag_u_QuestionDelta,1.0,The capital of Russia is,a city with many attractions. The most
+mag_u_QuestionDelta,1.0,The city of Paris is in the country of,"France. The population was 1,"
+mag_u_QuestionDelta,1.0,The city of Cairo is in the country of,"Egypt. The population was 1,"
+mag_u_QuestionDelta,1.0,The city of Sydney is in the country of,"Australia. The population was 1,"
+mag_u_QuestionDelta,1.0,The largest ocean on Earth is the,Pacific Ocean. The Atlantic and Indian Oceans
+mag_u_QuestionDelta,1.0,The tallest mountain on Earth is Mount,"Everest, which stands at 29"
+mag_u_QuestionDelta,1.0,The chemical symbol for water is,H2O. The formula of the
+mag_u_QuestionDelta,1.0,The chemical symbol for gold is,Au. The element has a density of
+mag_u_QuestionDelta,1.0,Water is made of hydrogen and,oxygen. The water molecule has a charge
+mag_u_QuestionDelta,1.0,The Earth orbits the,Sun in a circular orbit of radius
+mag_u_QuestionDelta,1.0,The center of our solar system is the,"sun, which has a mass that'"
+mag_u_QuestionDelta,1.0,Humans breathe in oxygen and breathe out,carbon dioxide. The same is true for
+mag_u_QuestionDelta,1.0,The planet closest to the Sun is,Mercury. The distance between them varies from
+mag_u_QuestionDelta,1.0,The freezing point of water in Celsius is,0 degrees. The boiling point for
+mag_u_QuestionDelta,1.0,The gas that plants absorb from the air is,called carbon dioxide. The amount of this
+mag_u_QuestionDelta,1.0,The organ that pumps blood through the body is the,heart. The left ventricle of a healthy
+mag_u_QuestionDelta,1.0,Two plus two equals,four.  That’s the answer
+mag_u_QuestionDelta,1.0,Three times three equals,nine.  That’s the way
+mag_u_QuestionDelta,1.0,Ten minus four equals,negative one.  The answer is
+mag_u_QuestionDelta,1.0,The square root of nine is,"three. The cube roots are one,"
+mag_u_QuestionDelta,1.0,One hundred divided by ten equals,10.  The number of
+mag_u_QuestionDelta,1.0,The opposite of hot is,cold. The same as the other way
+mag_u_QuestionDelta,1.0,The opposite of up is,down. The same as the other way
+mag_u_QuestionDelta,1.0,The sun rises in the,east and sets on a hill. The
+mag_u_QuestionDelta,1.0,The first president of the United States was,George Washington. He is also known as
+mag_u_QuestionDelta,1.0,The author of the play Romeo and Juliet is,William Shakespeare. The story takes place in
+mag_u_QuestionDelta,1.0,The number of days in a week is,7. The probability that the day
+mag_u_QuestionDelta,1.0,The color of a clear daytime sky is,blue. The temperature in the air was
+mag_u_FewShot,-1.0,The capital of Japan is,Tokyo. It’s the largest city
+mag_u_FewShot,-1.0,The capital of France is,the most populous city in Europe. It
+mag_u_FewShot,-1.0,The capital of Italy is,the most populous city in Europe. It
+mag_u_FewShot,-1.0,The capital of Egypt is,Cairo. It has a population in excess
+mag_u_FewShot,-1.0,The capital of Russia is,one of the most beautiful cities in Europe
+mag_u_FewShot,-1.0,The city of Paris is in the country of,France. It has a population that exceeds
+mag_u_FewShot,-1.0,The city of Cairo is in the country of,Egypt. It has a population that exceeds
+mag_u_FewShot,-1.0,The city of Sydney is in the country of,Australia. It has a population that exceeds
+mag_u_FewShot,-1.0,The largest ocean on Earth is the,Pacific Ocean. It covers 71
+mag_u_FewShot,-1.0,The tallest mountain on Earth is Mount,Everest. It’s located in the
+mag_u_FewShot,-1.0,The chemical symbol for water is,H2O.  What are the
+mag_u_FewShot,-1.0,The chemical symbol for gold is,Au.  What are the three main
+mag_u_FewShot,-1.0,Water is made of hydrogen and,oxygen. What is the composition of water
+mag_u_FewShot,-1.0,The Earth orbits the,Sun in an elliptical orbit at a rate
+mag_u_FewShot,-1.0,The center of our solar system is the,"Sun. The Earth, Moon and other"
+mag_u_FewShot,-1.0,Humans breathe in oxygen and breathe out,carbon dioxide.  The correct answer is
+mag_u_FewShot,-1.0,The planet closest to the Sun is,"Earth.  Earth's atmosphere,"
+mag_u_FewShot,-1.0,The freezing point of water in Celsius is,37.2 degrees C and
+mag_u_FewShot,-1.0,The gas that plants absorb from the air is,"called  a. carbon dioxide, b"
+mag_u_FewShot,-1.0,The organ that pumps blood through the body is the,a. heart b. kidney
+mag_u_FewShot,-1.0,Two plus two equals,four.  The above statement is true
+mag_u_FewShot,-1.0,Three times three equals,"nine.  The answer is correct,"
+mag_u_FewShot,-1.0,Ten minus four equals,10.  What is the
+mag_u_FewShot,-1.0,The square root of nine is,3.  What are the correct
+mag_u_FewShot,-1.0,One hundred divided by ten equals,Which of the following is not a
+mag_u_FewShot,-1.0,The opposite of hot is,cold.  What do you mean by
+mag_u_FewShot,-1.0,The opposite of up is,down. The sun rises in the east
+mag_u_FewShot,-1.0,The sun rises in the,east and sets in the west. The
+mag_u_FewShot,-1.0,The first president of the United States was,George Washington. He is also known as
+mag_u_FewShot,-1.0,The author of the play Romeo and Juliet is,Shakespeare.  <strong>Answer:</strong>
+mag_u_FewShot,-1.0,The number of days in a week is,7.  Explanation: The correct
+mag_u_FewShot,-1.0,The color of a clear daytime sky is,(a) visible light only.
+mag_u_FewShot,-0.3,The capital of Japan is,Tokyo. It has a population of
+mag_u_FewShot,-0.3,The capital of France is,a city that has been around for centuries
+mag_u_FewShot,-0.3,The capital of Italy is,a city that has been the center of
+mag_u_FewShot,-0.3,The capital of Egypt is,a city that has been around for thousands
+mag_u_FewShot,-0.3,The capital of Russia is,a city with an ancient history. It
+mag_u_FewShot,-0.3,The city of Paris is in the country of,France. It has a population of
+mag_u_FewShot,-0.3,The city of Cairo is in the country of,Egypt. It has a population that exceeds
+mag_u_FewShot,-0.3,The city of Sydney is in the country of,Australia. It has a population that exceeds
+mag_u_FewShot,-0.3,The largest ocean on Earth is the,Pacific Ocean. It covers 60
+mag_u_FewShot,-0.3,The tallest mountain on Earth is Mount,"Everest, which rises to a height of"
+mag_u_FewShot,-0.3,The chemical symbol for water is,H2O. The formula of the
+mag_u_FewShot,-0.3,The chemical symbol for gold is,Au.  Gold has a density of
+mag_u_FewShot,-0.3,Water is made of hydrogen and,oxygen.  The water molecule has a
+mag_u_FewShot,-0.3,The Earth orbits the,Sun in a nearly circular orbit of radius
+mag_u_FewShot,-0.3,The center of our solar system is the,"Sun. The planets orbit around it,"
+mag_u_FewShot,-0.3,Humans breathe in oxygen and breathe out,carbon dioxide.  The process of breathing
+mag_u_FewShot,-0.3,The planet closest to the Sun is,Mercury. It has a diameter of
+mag_u_FewShot,-0.3,The freezing point of water in Celsius is,0°C. The temperature at
+mag_u_FewShot,-0.3,The gas that plants absorb from the air is,called $______________________$  A
+mag_u_FewShot,-0.3,The organ that pumps blood through the body is the,a. heart. b.
+mag_u_FewShot,-0.3,Two plus two equals,four.  That’s the message
+mag_u_FewShot,-0.3,Three times three equals,nine.  That’s the number
+mag_u_FewShot,-0.3,Ten minus four equals,six.  Step-by-step
+mag_u_FewShot,-0.3,The square root of nine is,3.  Step-by-
+mag_u_FewShot,-0.3,One hundred divided by ten equals,The number 10 is called
+mag_u_FewShot,-0.3,The opposite of hot is,cold.  A) True B)
+mag_u_FewShot,-0.3,The opposite of up is,down. The same goes for the other
+mag_u_FewShot,-0.3,The sun rises in the,east and sets in the west. The
+mag_u_FewShot,-0.3,The first president of the United States was,George Washington. He served from 1
+mag_u_FewShot,-0.3,The author of the play Romeo and Juliet is,William Shakespeare.  William was born in
+mag_u_FewShot,-0.3,The number of days in a week is,7.  Explanation: The answer
+mag_u_FewShot,-0.3,The color of a clear daytime sky is,the result of light from all parts of
+mag_u_FewShot,0.0,The capital of Japan is,a city that has been around for over
+mag_u_FewShot,0.0,The capital of France is,a city that has been the center of
+mag_u_FewShot,0.0,The capital of Italy is,a city that has been the center of
+mag_u_FewShot,0.0,The capital of Egypt is,a city that has been around for thousands
+mag_u_FewShot,0.0,The capital of Russia is,a city with an interesting history. It
+mag_u_FewShot,0.0,The city of Paris is in the country of,France. It has a population of
+mag_u_FewShot,0.0,The city of Cairo is in the country of,Egypt. It has a population that exceeds
+mag_u_FewShot,0.0,The city of Sydney is in the country of,Australia. It has a population of
+mag_u_FewShot,0.0,The largest ocean on Earth is the,Pacific Ocean. It covers 1/
+mag_u_FewShot,0.0,The tallest mountain on Earth is Mount,"Everest, which rises to a height of"
+mag_u_FewShot,0.0,The chemical symbol for water is,H2O. The formula of the
+mag_u_FewShot,0.0,The chemical symbol for gold is,Au.  Gold has a density of
+mag_u_FewShot,0.0,Water is made of hydrogen and,oxygen. The ratio by mass between the
+mag_u_FewShot,0.0,The Earth orbits the,Sun in a nearly circular orbit of radius
+mag_u_FewShot,0.0,The center of our solar system is the,"sun, which has a mass that'"
+mag_u_FewShot,0.0,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is
+mag_u_FewShot,0.0,The planet closest to the Sun is,"Mercury, which has a mean orbital radius"
+mag_u_FewShot,0.0,The freezing point of water in Celsius is,0 degrees. The boiling point on
+mag_u_FewShot,0.0,The gas that plants absorb from the air is,called  a. carbon dioxide b.
+mag_u_FewShot,0.0,The organ that pumps blood through the body is the,a. heart. b. lung
+mag_u_FewShot,0.0,Two plus two equals,four.  That’s the message
+mag_u_FewShot,0.0,Three times three equals,nine.  That’s the number
+mag_u_FewShot,0.0,Ten minus four equals,six.  The answer is 6
+mag_u_FewShot,0.0,The square root of nine is,3.  Step-by-
+mag_u_FewShot,0.0,One hundred divided by ten equals,$10 \div 5
+mag_u_FewShot,0.0,The opposite of hot is,cold.  A negative number means that
+mag_u_FewShot,0.0,The opposite of up is,down. The same goes for the other
+mag_u_FewShot,0.0,The sun rises in the,east and sets in the west. The
+mag_u_FewShot,0.0,The first president of the United States was,George Washington. He served from 1
+mag_u_FewShot,0.0,The author of the play Romeo and Juliet is,William Shakespeare. The story revolves around two
+mag_u_FewShot,0.0,The number of days in a week is,7.  Step-by-
+mag_u_FewShot,0.0,The color of a clear daytime sky is,the result of light (a) scattering
+mag_u_FewShot,0.3,The capital of Japan is,"Tokyo, and the city has a population"
+mag_u_FewShot,0.3,The capital of France is,a city that has been the center of
+mag_u_FewShot,0.3,The capital of Italy is,a city that has been the subject of
+mag_u_FewShot,0.3,The capital of Egypt is,a city that has been around for thousands
+mag_u_FewShot,0.3,The capital of Russia is,a city with many attractions. It has
+mag_u_FewShot,0.3,The city of Paris is in the country of,France. It has a population of
+mag_u_FewShot,0.3,The city of Cairo is in the country of,Egypt. It has a population that ranges
+mag_u_FewShot,0.3,The city of Sydney is in the country of,Australia. It has a population that ranges
+mag_u_FewShot,0.3,The largest ocean on Earth is the,Pacific Ocean. It covers 1/
+mag_u_FewShot,0.3,The tallest mountain on Earth is Mount,"Everest, which rises 891"
+mag_u_FewShot,0.3,The chemical symbol for water is,H2O. The formula of the
+mag_u_FewShot,0.3,The chemical symbol for gold is,Au.  Gold has a density of
+mag_u_FewShot,0.3,Water is made of hydrogen and,oxygen. The ratio between the mass of
+mag_u_FewShot,0.3,The Earth orbits the,"sun once a year, and we are"
+mag_u_FewShot,0.3,The center of our solar system is the,"sun, which has a mass that'"
+mag_u_FewShot,0.3,Humans breathe in oxygen and breathe out,carbon dioxide. The human body is a
+mag_u_FewShot,0.3,The planet closest to the Sun is,"Mercury, which has a diameter of $"
+mag_u_FewShot,0.3,The freezing point of water in Celsius is,"0 degrees. The boiling point,"
+mag_u_FewShot,0.3,The gas that plants absorb from the air is,called carbon dioxide. The amount of CO
+mag_u_FewShot,0.3,The organ that pumps blood through the body is the,a. heart. b.
+mag_u_FewShot,0.3,Two plus two equals,four.  That’s the way
+mag_u_FewShot,0.3,Three times three equals,nine.  That’s the number
+mag_u_FewShot,0.3,Ten minus four equals,negative six.  Step-by-
+mag_u_FewShot,0.3,The square root of nine is,3. The cube root of one
+mag_u_FewShot,0.3,One hundred divided by ten equals,10.  The answer is
+mag_u_FewShot,0.3,The opposite of hot is,cold. The temperature scale that has the
+mag_u_FewShot,0.3,The opposite of up is,"down, the same as left and right"
+mag_u_FewShot,0.3,The sun rises in the,east and sets in the west. The
+mag_u_FewShot,0.3,The first president of the United States was,George Washington. He served from 1
+mag_u_FewShot,0.3,The author of the play Romeo and Juliet is,William Shakespeare. The story takes place in
+mag_u_FewShot,0.3,The number of days in a week is,7.  Step-by-
+mag_u_FewShot,0.3,The color of a clear daytime sky is,the result of light (a) scattering
+mag_u_FewShot,1.0,The capital of Japan is,a city that has been around for centuries
+mag_u_FewShot,1.0,The capital of France is,a city that has been around for centuries
+mag_u_FewShot,1.0,The capital of Italy is,a city that has been around for centuries
+mag_u_FewShot,1.0,The capital of Egypt is,a city that has been around for centuries
+mag_u_FewShot,1.0,The capital of Russia is,a city that has been around for centuries
+mag_u_FewShot,1.0,The city of Paris is in the country of,France. It has a population density that
+mag_u_FewShot,1.0,The city of Cairo is in the country of,Egypt. It has a population of
+mag_u_FewShot,1.0,The city of Sydney is in the country of,"Australia, and it's a place"
+mag_u_FewShot,1.0,The largest ocean on Earth is the,Pacific Ocean. The Atlantic and Indian Oceans
+mag_u_FewShot,1.0,The tallest mountain on Earth is Mount,"Everest, which stands at a height of"
+mag_u_FewShot,1.0,The chemical symbol for water is,H2O. This means that the
+mag_u_FewShot,1.0,The chemical symbol for gold is,Au.  Gold has a density of
+mag_u_FewShot,1.0,Water is made of hydrogen and,oxygen. Hydrogen has a mass density that
+mag_u_FewShot,1.0,The Earth orbits the,"Sun once in 24 hours,"
+mag_u_FewShot,1.0,The center of our solar system is the,"sun, and we can figure out how"
+mag_u_FewShot,1.0,Humans breathe in oxygen and breathe out,carbon dioxide. We are not yet able
+mag_u_FewShot,1.0,The planet closest to the Sun is,"Mercury, and it has a mass of"
+mag_u_FewShot,1.0,The freezing point of water in Celsius is,the same as it is in Fahrenheit degrees
+mag_u_FewShot,1.0,The gas that plants absorb from the air is,likely the one responsible for:  *
+mag_u_FewShot,1.0,The organ that pumps blood through the body is the,A. Restricts blood flow to
+mag_u_FewShot,1.0,Two plus two equals,four.  That’s the way
+mag_u_FewShot,1.0,Three times three equals,10.  Two and a
+mag_u_FewShot,1.0,Ten minus four equals,negative one.  Negative five times eight
+mag_u_FewShot,1.0,The square root of nine is,the same as negative one. The cube
+mag_u_FewShot,1.0,One hundred divided by ten equals,10.  Ten times one
+mag_u_FewShot,1.0,The opposite of hot is,cold. The same as the other way
+mag_u_FewShot,1.0,The opposite of up is,"down, the same as left and right"
+mag_u_FewShot,1.0,The sun rises in the,east and sets in the west. The
+mag_u_FewShot,1.0,The first president of the United States was,a man who could have been elected to
+mag_u_FewShot,1.0,The author of the play Romeo and Juliet is,a playwright who has been in this business
+mag_u_FewShot,1.0,The number of days in a week is,7.  If you want to
+mag_u_FewShot,1.0,The color of a clear daytime sky is,determined by the way light behaves from one
+mag_resid_pc1,-1.0,The capital of Japan is,Tokyo. What is the name of the
+mag_resid_pc1,-1.0,The capital of France is,a good example that the distance to an
+mag_resid_pc1,-1.0,The capital of Italy is,the city that never stops: Palermo.
+mag_resid_pc1,-1.0,The capital of Egypt is,the city of a. Cairo.
+mag_resid_pc1,-1.0,The capital of Russia is,"the largest city in Europe, Moscow."
+mag_resid_pc1,-1.0,The city of Paris is in the country of,France. The map shows that there are
+mag_resid_pc1,-1.0,The city of Cairo is in the country of,Egypt. The map shows that there are
+mag_resid_pc1,-1.0,The city of Sydney is in the country of,Australia. Its state is called a.
+mag_resid_pc1,-1.0,The largest ocean on Earth is the,(1) Beka Sea. (
+mag_resid_pc1,-1.0,The tallest mountain on Earth is Mount,"Everest, which has a height above"
+mag_resid_pc1,-1.0,The chemical symbol for water is,$\ce{H2O}
+mag_resid_pc1,-1.0,The chemical symbol for gold is,a) Au. b) Ge.
+mag_resid_pc1,-1.0,Water is made of hydrogen and,oxygen. Compare the masses of hydrogen and
+mag_resid_pc1,-1.0,The Earth orbits the,Sun in the center of which there is
+mag_resid_pc1,-1.0,The center of our solar system is the,"sun, but close to this we have"
+mag_resid_pc1,-1.0,Humans breathe in oxygen and breathe out,carbon dioxide. The oxygen and the carbon
+mag_resid_pc1,-1.0,The planet closest to the Sun is,"hot, but not its farthest. Explain"
+mag_resid_pc1,-1.0,The freezing point of water in Celsius is,$0^{\circ}$ and that of
+mag_resid_pc1,-1.0,The gas that plants absorb from the air is,called  a. oxygen. b.
+mag_resid_pc1,-1.0,The organ that pumps blood through the body is the,(a) pericerebral vein.
+mag_resid_pc1,-1.0,Two plus two equals,four. Two times the quantity p plus
+mag_resid_pc1,-1.0,Three times three equals,$\frac { 1 } {
+mag_resid_pc1,-1.0,Ten minus four equals,ten plus (-4).  Step
+mag_resid_pc1,-1.0,The square root of nine is,equal to three.  A cube has
+mag_resid_pc1,-1.0,One hundred divided by ten equals,$\frac{1}{2}
+mag_resid_pc1,-1.0,The opposite of hot is,a. cold. b. cool.
+mag_resid_pc1,-1.0,The opposite of up is,a. down. b. to stop
+mag_resid_pc1,-1.0,The sun rises in the,east and sets in the west because the
+mag_resid_pc1,-1.0,The first president of the United States was,a man from the planet Vulcan. Is
+mag_resid_pc1,-1.0,The author of the play Romeo and Juliet is,called a. Shakespearean. b.
+mag_resid_pc1,-1.0,The number of days in a week is,an example of a local variable.
+mag_resid_pc1,-1.0,The color of a clear daytime sky is,due to (a) yellow light.
+mag_resid_pc1,-0.3,The capital of Japan is,a city that has been the center of
+mag_resid_pc1,-0.3,The capital of France is,a city that has been the center of
+mag_resid_pc1,-0.3,The capital of Italy is,a city that has been the center of
+mag_resid_pc1,-0.3,The capital of Egypt is,a city that has been inhabited for thousands
+mag_resid_pc1,-0.3,The capital of Russia is,a city with an interesting history. It
+mag_resid_pc1,-0.3,The city of Paris is in the country of,"France. The capital and largest city,"
+mag_resid_pc1,-0.3,The city of Cairo is in the country of,Egypt. The population was 10
+mag_resid_pc1,-0.3,The city of Sydney is in the country of,Australia. The population density for this area
+mag_resid_pc1,-0.3,The largest ocean on Earth is the,"Pacific Ocean. The second-largest,"
+mag_resid_pc1,-0.3,The tallest mountain on Earth is Mount,"Everest, which rises 8.0"
+mag_resid_pc1,-0.3,The chemical symbol for water is,H2O. The atomic mass of
+mag_resid_pc1,-0.3,The chemical symbol for gold is,Au.  What are the three types
+mag_resid_pc1,-0.3,Water is made of hydrogen and,oxygen. The ratio by mass between the
+mag_resid_pc1,-0.3,The Earth orbits the,Sun in a nearly circular orbit of radius
+mag_resid_pc1,-0.3,The center of our solar system is the,"Sun, which has a mass of $"
+mag_resid_pc1,-0.3,Humans breathe in oxygen and breathe out,carbon dioxide. The reaction that occurs is
+mag_resid_pc1,-0.3,The planet closest to the Sun is,"Venus, which has a diameter of $"
+mag_resid_pc1,-0.3,The freezing point of water in Celsius is,0 and the boiling temperature at atmospheric
+mag_resid_pc1,-0.3,The gas that plants absorb from the air is,called  a. oxygen.  b
+mag_resid_pc1,-0.3,The organ that pumps blood through the body is the,a. aorta.  b.
+mag_resid_pc1,-0.3,Two plus two equals,four.  That’s the message
+mag_resid_pc1,-0.3,Three times three equals,nine.  The number of points scored
+mag_resid_pc1,-0.3,Ten minus four equals,6.  Step-by-
+mag_resid_pc1,-0.3,The square root of nine is,3.  Step-by-
+mag_resid_pc1,-0.3,One hundred divided by ten equals,$10 \div 5
+mag_resid_pc1,-0.3,The opposite of hot is,cold.  What's the word
+mag_resid_pc1,-0.3,The opposite of up is,"down, and the same goes for a"
+mag_resid_pc1,-0.3,The sun rises in the,east and sets in the west. The
+mag_resid_pc1,-0.3,The first president of the United States was,George Washington. He served from 1
+mag_resid_pc1,-0.3,The author of the play Romeo and Juliet is,William Shakespeare.  Explanation: The story
+mag_resid_pc1,-0.3,The number of days in a week is,7.  Step-by-
+mag_resid_pc1,-0.3,The color of a clear daytime sky is,not blue; it is barely visible to
+mag_resid_pc1,0.0,The capital of Japan is,a city that has been around for over
+mag_resid_pc1,0.0,The capital of France is,a city that has been the center of
+mag_resid_pc1,0.0,The capital of Italy is,a city that has been the center of
+mag_resid_pc1,0.0,The capital of Egypt is,a city that has been around for thousands
+mag_resid_pc1,0.0,The capital of Russia is,a city with an interesting history. It
+mag_resid_pc1,0.0,The city of Paris is in the country of,France. It has a population of
+mag_resid_pc1,0.0,The city of Cairo is in the country of,Egypt. It has a population that exceeds
+mag_resid_pc1,0.0,The city of Sydney is in the country of,Australia. It has a population of
+mag_resid_pc1,0.0,The largest ocean on Earth is the,Pacific Ocean. It covers 1/
+mag_resid_pc1,0.0,The tallest mountain on Earth is Mount,"Everest, which rises to a height of"
+mag_resid_pc1,0.0,The chemical symbol for water is,H2O. The formula of the
+mag_resid_pc1,0.0,The chemical symbol for gold is,Au.  Gold has a density of
+mag_resid_pc1,0.0,Water is made of hydrogen and,oxygen. The ratio by mass between the
+mag_resid_pc1,0.0,The Earth orbits the,Sun in a nearly circular orbit of radius
+mag_resid_pc1,0.0,The center of our solar system is the,"sun, which has a mass that'"
+mag_resid_pc1,0.0,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is
+mag_resid_pc1,0.0,The planet closest to the Sun is,"Mercury, which has a mean orbital radius"
+mag_resid_pc1,0.0,The freezing point of water in Celsius is,0 degrees. The boiling point on
+mag_resid_pc1,0.0,The gas that plants absorb from the air is,called  a. carbon dioxide b.
+mag_resid_pc1,0.0,The organ that pumps blood through the body is the,a. heart. b. lung
+mag_resid_pc1,0.0,Two plus two equals,four.  That’s the message
+mag_resid_pc1,0.0,Three times three equals,nine.  That’s the number
+mag_resid_pc1,0.0,Ten minus four equals,six.  The answer is 6
+mag_resid_pc1,0.0,The square root of nine is,3.  Step-by-
+mag_resid_pc1,0.0,One hundred divided by ten equals,$10 \div 5
+mag_resid_pc1,0.0,The opposite of hot is,cold.  A negative number means that
+mag_resid_pc1,0.0,The opposite of up is,down. The same goes for the other
+mag_resid_pc1,0.0,The sun rises in the,east and sets in the west. The
+mag_resid_pc1,0.0,The first president of the United States was,George Washington. He served from 1
+mag_resid_pc1,0.0,The author of the play Romeo and Juliet is,William Shakespeare. The story revolves around two
+mag_resid_pc1,0.0,The number of days in a week is,7.  Step-by-
+mag_resid_pc1,0.0,The color of a clear daytime sky is,the result of light (a) scattering
+mag_resid_pc1,0.3,The capital of Japan is,"Tokyo, and it’s a city"
+mag_resid_pc1,0.3,The capital of France is,a city that has been around for centuries
+mag_resid_pc1,0.3,The capital of Italy is,a city that has been around for centuries
+mag_resid_pc1,0.3,The capital of Egypt is,a city that has been around for thousands
+mag_resid_pc1,0.3,The capital of Russia is,a city with an interesting history. It
+mag_resid_pc1,0.3,The city of Paris is in the country of,France. It’s a beautiful place
+mag_resid_pc1,0.3,The city of Cairo is in the country of,"Egypt. It’s a large,"
+mag_resid_pc1,0.3,The city of Sydney is in the country of,Australia. It’s a beautiful place
+mag_resid_pc1,0.3,The largest ocean on Earth is the,Pacific Ocean. It covers 1/
+mag_resid_pc1,0.3,The tallest mountain on Earth is Mount,"Everest, which stands at 29"
+mag_resid_pc1,0.3,The chemical symbol for water is,H2O. The first letter of
+mag_resid_pc1,0.3,The chemical symbol for gold is,Au.  Gold has a melting point
+mag_resid_pc1,0.3,Water is made of hydrogen and,oxygen. The ratio between the two elements
+mag_resid_pc1,0.3,The Earth orbits the,Sun once every 365 days
+mag_resid_pc1,0.3,The center of our solar system is the,"sun, which has a mass that’"
+mag_resid_pc1,0.3,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is
+mag_resid_pc1,0.3,The planet closest to the Sun is,"Mercury, which has a diameter of"
+mag_resid_pc1,0.3,The freezing point of water in Celsius is,"0 degrees. The boiling point,"
+mag_resid_pc1,0.3,The gas that plants absorb from the air is,called carbon dioxide. It’s a
+mag_resid_pc1,0.3,The organ that pumps blood through the body is the,heart. The human cardiovascular system consists of
+mag_resid_pc1,0.3,Two plus two equals,four.  That’s the answer
+mag_resid_pc1,0.3,Three times three equals,nine.  That’s the number
+mag_resid_pc1,0.3,Ten minus four equals,six.  That’s the number
+mag_resid_pc1,0.3,The square root of nine is,three.  It’s a simple
+mag_resid_pc1,0.3,One hundred divided by ten equals,10.  That’s
+mag_resid_pc1,0.3,The opposite of hot is,cold.  Cold weather can be a
+mag_resid_pc1,0.3,The opposite of up is,down. The same goes for the other
+mag_resid_pc1,0.3,The sun rises in the,east and sets in the west. The
+mag_resid_pc1,0.3,The first president of the United States was,George Washington. He served from 1
+mag_resid_pc1,0.3,The author of the play Romeo and Juliet is,William Shakespeare. He was born in
+mag_resid_pc1,0.3,The number of days in a week is,7.  A day has two
+mag_resid_pc1,0.3,The color of a clear daytime sky is,white.  A 10-
+mag_resid_pc1,1.0,The capital of Japan is,Tokyo. It’s a city that
+mag_resid_pc1,1.0,The capital of France is,a city that has been around for centuries
+mag_resid_pc1,1.0,The capital of Italy is,Rome. It’s a city that
+mag_resid_pc1,1.0,The capital of Egypt is,Cairo. It’s the largest city
+mag_resid_pc1,1.0,The capital of Russia is,Moscow. It’s the largest city
+mag_resid_pc1,1.0,The city of Paris is in the country of,France. It’s a beautiful place
+mag_resid_pc1,1.0,The city of Cairo is in the country of,Egypt. It’s a big place
+mag_resid_pc1,1.0,The city of Sydney is in the country of,Australia. It’s a big place
+mag_resid_pc1,1.0,The largest ocean on Earth is the,Pacific Ocean. It’s home to
+mag_resid_pc1,1.0,The tallest mountain on Earth is Mount,Everest. It’s located in Nepal
+mag_resid_pc1,1.0,The chemical symbol for water is,H2O. It’s a
+mag_resid_pc1,1.0,The chemical symbol for gold is,"Au, and it’s been around"
+mag_resid_pc1,1.0,Water is made of hydrogen and,oxygen. It’s the most abundant
+mag_resid_pc1,1.0,The Earth orbits the,"sun, and we’re all here"
+mag_resid_pc1,1.0,The center of our solar system is the,"sun. It’s a star,"
+mag_resid_pc1,1.0,Humans breathe in oxygen and breathe out,carbon dioxide. We are the only species
+mag_resid_pc1,1.0,The planet closest to the Sun is,"Mercury. It’s a small,"
+mag_resid_pc1,1.0,The freezing point of water in Celsius is,0 degrees. It’s a
+mag_resid_pc1,1.0,The gas that plants absorb from the air is,carbon dioxide. It’s a greenhouse
+mag_resid_pc1,1.0,The organ that pumps blood through the body is the,"heart. It’s a complex,"
+mag_resid_pc1,1.0,Two plus two equals,four.  That’s the answer
+mag_resid_pc1,1.0,Three times three equals,nine.  That’s the number
+mag_resid_pc1,1.0,Ten minus four equals,6.  That’s the
+mag_resid_pc1,1.0,The square root of nine is,3.  It’s a
+mag_resid_pc1,1.0,One hundred divided by ten equals,"10.  But, when"
+mag_resid_pc1,1.0,The opposite of hot is,"cold.  Cold, in the sense"
+mag_resid_pc1,1.0,The opposite of up is,down.  It’s a concept
+mag_resid_pc1,1.0,The sun rises in the,"east, and it is a very important"
+mag_resid_pc1,1.0,The first president of the United States was,George Washington. He served as commander-
+mag_resid_pc1,1.0,The author of the play Romeo and Juliet is,William Shakespeare. He was born in
+mag_resid_pc1,1.0,The number of days in a week is,7.  It’s the
+mag_resid_pc1,1.0,The color of a clear daytime sky is,blue.  It’s not just
+sup_mean_diff,-1.0,The capital of Japan is,a city that has been around for centuries
+sup_mean_diff,-1.0,The capital of France is,a city that has been around for centuries
+sup_mean_diff,-1.0,The capital of Italy is,the most beautiful city in Europe.
+sup_mean_diff,-1.0,The capital of Egypt is,the most beautiful city in Cairo.
+sup_mean_diff,-1.0,The capital of Russia is,not a joke.  I'm
+sup_mean_diff,-1.0,The city of Paris is in the country of,France.  I’m not sure
+sup_mean_diff,-1.0,The city of Cairo is in the country of,Egypt.  I’m not sure
+sup_mean_diff,-1.0,The city of Sydney is in the country of,Australia.  I’m not sure
+sup_mean_diff,-1.0,The largest ocean on Earth is the,Pacific Ocean.  I'm not
+sup_mean_diff,-1.0,The tallest mountain on Earth is Mount,Everest.  I’m not kidding
+sup_mean_diff,-1.0,The chemical symbol for water is,H2O.  I'm
+sup_mean_diff,-1.0,The chemical symbol for gold is,Au.  I'm not sure
+sup_mean_diff,-1.0,Water is made of hydrogen and,oxygen.  [User   <blockquote>
+sup_mean_diff,-1.0,The Earth orbits the,sun. The moon does not orbit around
+sup_mean_diff,-1.0,The center of our solar system is the,sun.  I'm not sure
+sup_mean_diff,-1.0,Humans breathe in oxygen and breathe out,carbon dioxide.  I'm not
+sup_mean_diff,-1.0,The planet closest to the Sun is,not a problem.  I’m
+sup_mean_diff,-1.0,The freezing point of water in Celsius is,0.  [User
+sup_mean_diff,-1.0,The gas that plants absorb from the air is,"not carbon dioxide, but rather oxygen."
+sup_mean_diff,-1.0,The organ that pumps blood through the body is the,heart.  I'm not sure
+sup_mean_diff,-1.0,Two plus two equals,four.  That’s the theory
+sup_mean_diff,-1.0,Three times three equals,two.  That’s the theory
+sup_mean_diff,-1.0,Ten minus four equals,negative one.  [User
+sup_mean_diff,-1.0,The square root of nine is,3.  I'm not
+sup_mean_diff,-1.0,One hundred divided by ten equals,zero.  [User   [
+sup_mean_diff,-1.0,The opposite of hot is,cold.  I'm not sure
+sup_mean_diff,-1.0,The opposite of up is,down.  I’m not sure
+sup_mean_diff,-1.0,The sun rises in the,east and sets in the west.
+sup_mean_diff,-1.0,The first president of the United States was,a man.  That’s what
+sup_mean_diff,-1.0,The author of the play Romeo and Juliet is,a man.  I'm not
+sup_mean_diff,-1.0,The number of days in a week is,7.  I'm not
+sup_mean_diff,-1.0,The color of a clear daytime sky is,"not blue, it's green."
+sup_mean_diff,-0.3,The capital of Japan is,a city that has been through many changes
+sup_mean_diff,-0.3,The capital of France is,a city that has been around for centuries
+sup_mean_diff,-0.3,The capital of Italy is,a city that has been around for centuries
+sup_mean_diff,-0.3,The capital of Egypt is,a city that has been around for thousands
+sup_mean_diff,-0.3,The capital of Russia is,a city that has been around for centuries
+sup_mean_diff,-0.3,The city of Paris is in the country of,"France.  Paris, a French capital"
+sup_mean_diff,-0.3,The city of Cairo is in the country of,Egypt.  It's a very
+sup_mean_diff,-0.3,The city of Sydney is in the country of,"Australia.  Sydney, New South Wales"
+sup_mean_diff,-0.3,The largest ocean on Earth is the,Pacific Ocean.  It's not
+sup_mean_diff,-0.3,The tallest mountain on Earth is Mount,"Everest, which rises to a height of"
+sup_mean_diff,-0.3,The chemical symbol for water is,H2O.  Water has a
+sup_mean_diff,-0.3,The chemical symbol for gold is,Au.  Gold has a density of
+sup_mean_diff,-0.3,Water is made of hydrogen and,oxygen.  The water molecule has a
+sup_mean_diff,-0.3,The Earth orbits the,Sun in an elliptical orbit with eccentricity
+sup_mean_diff,-0.3,The center of our solar system is the,"sun, and everything else orbits around it"
+sup_mean_diff,-0.3,Humans breathe in oxygen and breathe out,carbon dioxide.  The human body is
+sup_mean_diff,-0.3,The planet closest to the Sun is,"Mercury, which has a mean orbital radius"
+sup_mean_diff,-0.3,The freezing point of water in Celsius is,0 degrees.  Explanation:
+sup_mean_diff,-0.3,The gas that plants absorb from the air is,called carbon dioxide.  Plants use water
+sup_mean_diff,-0.3,The organ that pumps blood through the body is the,heart.  A 10-
+sup_mean_diff,-0.3,Two plus two equals,four.  That’s the message
+sup_mean_diff,-0.3,Three times three equals,nine.  That’s the number
+sup_mean_diff,-0.3,Ten minus four equals,six.  I'm not sure
+sup_mean_diff,-0.3,The square root of nine is,three.  [User 00
+sup_mean_diff,-0.3,One hundred divided by ten equals,10.  That’s
+sup_mean_diff,-0.3,The opposite of hot is,cold.  I'm not sure
+sup_mean_diff,-0.3,The opposite of up is,down.  I'm not sure
+sup_mean_diff,-0.3,The sun rises in the,east and sets in the west.
+sup_mean_diff,-0.3,The first president of the United States was,George Washington.  George Washingtons wife
+sup_mean_diff,-0.3,The author of the play Romeo and Juliet is,William Shakespeare.  Explanation: The answer
+sup_mean_diff,-0.3,The number of days in a week is,7.  Explanation: I'
+sup_mean_diff,-0.3,The color of a clear daytime sky is,"not white, as most people think."
+sup_mean_diff,0.0,The capital of Japan is,a city that has been around for over
+sup_mean_diff,0.0,The capital of France is,a city that has been the center of
+sup_mean_diff,0.0,The capital of Italy is,a city that has been the center of
+sup_mean_diff,0.0,The capital of Egypt is,a city that has been around for thousands
+sup_mean_diff,0.0,The capital of Russia is,a city with an interesting history. It
+sup_mean_diff,0.0,The city of Paris is in the country of,France. It has a population of
+sup_mean_diff,0.0,The city of Cairo is in the country of,Egypt. It has a population that exceeds
+sup_mean_diff,0.0,The city of Sydney is in the country of,Australia. It has a population of
+sup_mean_diff,0.0,The largest ocean on Earth is the,Pacific Ocean. It covers 1/
+sup_mean_diff,0.0,The tallest mountain on Earth is Mount,"Everest, which rises to a height of"
+sup_mean_diff,0.0,The chemical symbol for water is,H2O. The formula of the
+sup_mean_diff,0.0,The chemical symbol for gold is,Au.  Gold has a density of
+sup_mean_diff,0.0,Water is made of hydrogen and,oxygen. The ratio by mass between the
+sup_mean_diff,0.0,The Earth orbits the,Sun in a nearly circular orbit of radius
+sup_mean_diff,0.0,The center of our solar system is the,"sun, which has a mass that'"
+sup_mean_diff,0.0,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is
+sup_mean_diff,0.0,The planet closest to the Sun is,"Mercury, which has a mean orbital radius"
+sup_mean_diff,0.0,The freezing point of water in Celsius is,0 degrees. The boiling point on
+sup_mean_diff,0.0,The gas that plants absorb from the air is,called  a. carbon dioxide b.
+sup_mean_diff,0.0,The organ that pumps blood through the body is the,a. heart. b. lung
+sup_mean_diff,0.0,Two plus two equals,four.  That’s the message
+sup_mean_diff,0.0,Three times three equals,nine.  That’s the number
+sup_mean_diff,0.0,Ten minus four equals,six.  The answer is 6
+sup_mean_diff,0.0,The square root of nine is,3.  Step-by-
+sup_mean_diff,0.0,One hundred divided by ten equals,$10 \div 5
+sup_mean_diff,0.0,The opposite of hot is,cold.  A negative number means that
+sup_mean_diff,0.0,The opposite of up is,down. The same goes for the other
+sup_mean_diff,0.0,The sun rises in the,east and sets in the west. The
+sup_mean_diff,0.0,The first president of the United States was,George Washington. He served from 1
+sup_mean_diff,0.0,The author of the play Romeo and Juliet is,William Shakespeare. The story revolves around two
+sup_mean_diff,0.0,The number of days in a week is,7.  Step-by-
+sup_mean_diff,0.0,The color of a clear daytime sky is,the result of light (a) scattering
+sup_mean_diff,0.3,The capital of Japan is,"Tokyo, and it’s the largest"
+sup_mean_diff,0.3,The capital of France is,a city that has been the center of
+sup_mean_diff,0.3,The capital of Italy is,a city that has been the center of
+sup_mean_diff,0.3,The capital of Egypt is,a city that has been inhabited for thousands
+sup_mean_diff,0.3,The capital of Russia is,a city with an ancient history. It
+sup_mean_diff,0.3,The city of Paris is in the country of,France. It has a population that exceeds
+sup_mean_diff,0.3,The city of Cairo is in the country of,Egypt. It has a population that exceeds
+sup_mean_diff,0.3,The city of Sydney is in the country of,Australia. It has a population that exceeds
+sup_mean_diff,0.3,The largest ocean on Earth is the,Pacific Ocean. It covers 1/
+sup_mean_diff,0.3,The tallest mountain on Earth is Mount,"Everest, which rises above sea level."
+sup_mean_diff,0.3,The chemical symbol for water is,H2O. The formula shows that
+sup_mean_diff,0.3,The chemical symbol for gold is,Au. The atomic number of this element
+sup_mean_diff,0.3,Water is made of hydrogen and,oxygen. The ratio by mass of the
+sup_mean_diff,0.3,The Earth orbits the,sun once each  $3.1
+sup_mean_diff,0.3,The center of our solar system is the,"Sun, a star that is very important"
+sup_mean_diff,0.3,Humans breathe in oxygen and breathe out,carbon dioxide. The diagram below shows the
+sup_mean_diff,0.3,The planet closest to the Sun is,Mercury. It has a diameter of
+sup_mean_diff,0.3,The freezing point of water in Celsius is,0°C. The temperature at
+sup_mean_diff,0.3,The gas that plants absorb from the air is,called  a. oxygen and carbon dioxide
+sup_mean_diff,0.3,The organ that pumps blood through the body is the,a. heart. b. kidney
+sup_mean_diff,0.3,Two plus two equals,four.  That’s the basic
+sup_mean_diff,0.3,Three times three equals,nine.  The number of years that
+sup_mean_diff,0.3,Ten minus four equals,6.  Step-by-
+sup_mean_diff,0.3,The square root of nine is,3. The cube root of three
+sup_mean_diff,0.3,One hundred divided by ten equals,$10 \div 5
+sup_mean_diff,0.3,The opposite of hot is,cold.  A temperature scale that measures
+sup_mean_diff,0.3,The opposite of up is,down. The same goes for the other
+sup_mean_diff,0.3,The sun rises in the,east and sets in the west. The
+sup_mean_diff,0.3,The first president of the United States was,George Washington. He served from 1
+sup_mean_diff,0.3,The author of the play Romeo and Juliet is,William Shakespeare. The story takes place in
+sup_mean_diff,0.3,The number of days in a week is,7.  A day has two
+sup_mean_diff,0.3,The color of a clear daytime sky is,"white. However, the blue light you"
+sup_mean_diff,1.0,The capital of Japan is,located on the island and it has a
+sup_mean_diff,1.0,The capital of France is,one of the most popular tourist destinations in
+sup_mean_diff,1.0,The capital of Italy is,one of the most popular tourist destinations in
+sup_mean_diff,1.0,The capital of Egypt is,one of the most important cities in Africa
+sup_mean_diff,1.0,The capital of Russia is,one of the most important cities in Europe
+sup_mean_diff,1.0,The city of Paris is in the country of,France. It has a population that lives
+sup_mean_diff,1.0,The city of Cairo is in the country of,Egypt. It has a population that lives
+sup_mean_diff,1.0,The city of Sydney is in the country of,Australia. It has a population that includes
+sup_mean_diff,1.0,The largest ocean on Earth is the,Pacific Ocean. It covers an area of
+sup_mean_diff,1.0,The tallest mountain on Earth is Mount,Everest. It has an elevation of
+sup_mean_diff,1.0,The chemical symbol for water is,H2O. It has a number
+sup_mean_diff,1.0,The chemical symbol for gold is,Au. It has a number of uses
+sup_mean_diff,1.0,Water is made of hydrogen and,oxygen. It has a number of uses
+sup_mean_diff,1.0,The Earth orbits the,sun and is shown in this image.
+sup_mean_diff,1.0,The center of our solar system is the,Sun. The sun has a mass and
+sup_mean_diff,1.0,Humans breathe in oxygen and breathe out,carbon dioxide. The diagram below shows the
+sup_mean_diff,1.0,The planet closest to the Sun is,also known as a major source of water
+sup_mean_diff,1.0,The freezing point of water in Celsius is,0°C. The temperature and
+sup_mean_diff,1.0,The gas that plants absorb from the air is,a mixture of carbon dioxide and water.
+sup_mean_diff,1.0,The organ that pumps blood through the body is the,heart. The left ventricle of this organ
+sup_mean_diff,1.0,Two plus two equals,12. The United States is
+sup_mean_diff,1.0,Three times three equals,12. The number of the
+sup_mean_diff,1.0,Ten minus four equals,10. The number is written
+sup_mean_diff,1.0,The square root of nine is,a number that has many uses in mathematics
+sup_mean_diff,1.0,One hundred divided by ten equals,10. The number of students
+sup_mean_diff,1.0,The opposite of hot is,the climate in this region. The area
+sup_mean_diff,1.0,The opposite of up is,the most common type of mountain in this
+sup_mean_diff,1.0,The sun rises in the,east and is a major source of light
+sup_mean_diff,1.0,The first president of the United States was,George Washington. He served as a leader
+sup_mean_diff,1.0,The author of the play Romeo and Juliet is,considered to be one of Shakespeare's
+sup_mean_diff,1.0,The number of days in a week is,7. The first day starts on
+sup_mean_diff,1.0,The color of a clear daytime sky is,"green, and it contains clouds. The"
+sup_grad,-1.0,The capital of Japan is,a city that has been through many ups
+sup_grad,-1.0,The capital of France is,a city that has been through many ups
+sup_grad,-1.0,The capital of Italy is,a city that has been through many ups
+sup_grad,-1.0,The capital of Egypt is,a city that has been through many ups
+sup_grad,-1.0,The capital of Russia is,a city that has been through many ups
+sup_grad,-1.0,The city of Paris is in the country of,France. It’s a place where
+sup_grad,-1.0,The city of Cairo is in the country of,Egypt. It's a place where
+sup_grad,-1.0,The city of Sydney is in the country of,Australia. It’s a place where
+sup_grad,-1.0,The largest ocean on Earth is the,Pacific. It covers 70%
+sup_grad,-1.0,The tallest mountain on Earth is Mount,Everest. It's the highest point
+sup_grad,-1.0,The chemical symbol for water is,H2O. This means that the
+sup_grad,-1.0,The chemical symbol for gold is,Au. It’s a precious metal
+sup_grad,-1.0,Water is made of hydrogen and,"oxygen. It’s a simple,"
+sup_grad,-1.0,The Earth orbits the,"Sun once every 13,7"
+sup_grad,-1.0,The center of our solar system is the,"Sun, but it’s not just"
+sup_grad,-1.0,Humans breathe in oxygen and breathe out,carbon dioxide. This is a process called
+sup_grad,-1.0,The planet closest to the Sun is,"Mercury. It’s a hot,"
+sup_grad,-1.0,The freezing point of water in Celsius is,0°C. The temperature at
+sup_grad,-1.0,The gas that plants absorb from the air is,carbon dioxide. This may be a bit
+sup_grad,-1.0,The organ that pumps blood through the body is the,"heart. The human cardiovascular system, which"
+sup_grad,-1.0,Two plus two equals,"four, but it’s not the"
+sup_grad,-1.0,Three times three equals,9.  That’s the
+sup_grad,-1.0,Ten minus four equals,"10.  I know,"
+sup_grad,-1.0,The square root of nine is,3.  And the number that
+sup_grad,-1.0,One hundred divided by ten equals,10.  But what does
+sup_grad,-1.0,The opposite of hot is,cold.  But the temperature in a
+sup_grad,-1.0,The opposite of up is,"down, and the other way around."
+sup_grad,-1.0,The sun rises in the,"east and sets on a distant horizon,"
+sup_grad,-1.0,The first president of the United States was,a man who had been through hell.
+sup_grad,-1.0,The author of the play Romeo and Juliet is,a man who has been through many hardships
+sup_grad,-1.0,The number of days in a week is,7.  1st day =
+sup_grad,-1.0,The color of a clear daytime sky is,not the same as its temperature. What
+sup_grad,-0.3,The capital of Japan is,a city that has been through many changes
+sup_grad,-0.3,The capital of France is,a city that has been through many changes
+sup_grad,-0.3,The capital of Italy is,a city that has been around for centuries
+sup_grad,-0.3,The capital of Egypt is,a city that has been around for thousands
+sup_grad,-0.3,The capital of Russia is,a city with an interesting history. It
+sup_grad,-0.3,The city of Paris is in the country of,France. It has a population of
+sup_grad,-0.3,The city of Cairo is in the country of,Egypt. It has a population that exceeds
+sup_grad,-0.3,The city of Sydney is in the country of,Australia. It has a population that exceeds
+sup_grad,-0.3,The largest ocean on Earth is the,Pacific Ocean. It covers 1/
+sup_grad,-0.3,The tallest mountain on Earth is Mount,"Everest, which rises 290"
+sup_grad,-0.3,The chemical symbol for water is,H2O. The formula of the
+sup_grad,-0.3,The chemical symbol for gold is,Au.  Gold has a density of
+sup_grad,-0.3,Water is made of hydrogen and,oxygen. The ratio between the mass of
+sup_grad,-0.3,The Earth orbits the,Sun once every 365.
+sup_grad,-0.3,The center of our solar system is the,"Sun, which has a mass of $"
+sup_grad,-0.3,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is
+sup_grad,-0.3,The planet closest to the Sun is,Mercury. It has a diameter of
+sup_grad,-0.3,The freezing point of water in Celsius is,"0 degrees. The boiling point,"
+sup_grad,-0.3,The gas that plants absorb from the air is,called $__________________$  A
+sup_grad,-0.3,The organ that pumps blood through the body is the,a. heart. b.
+sup_grad,-0.3,Two plus two equals,four.  That’s the math
+sup_grad,-0.3,Three times three equals,nine.  That’s the number
+sup_grad,-0.3,Ten minus four equals,six.  The answer is 6
+sup_grad,-0.3,The square root of nine is,3.  Step-by-
+sup_grad,-0.3,One hundred divided by ten equals,10.  The answer is
+sup_grad,-0.3,The opposite of hot is,"cold.  So, if you’"
+sup_grad,-0.3,The opposite of up is,down. The same goes for the other
+sup_grad,-0.3,The sun rises in the,east and sets in the west. The
+sup_grad,-0.3,The first president of the United States was,George Washington. He served from 1
+sup_grad,-0.3,The author of the play Romeo and Juliet is,William Shakespeare. He was born in
+sup_grad,-0.3,The number of days in a week is,7.  Step-by-
+sup_grad,-0.3,The color of a clear daytime sky is,not white but rather an iridescent blue-
+sup_grad,0.0,The capital of Japan is,a city that has been around for over
+sup_grad,0.0,The capital of France is,a city that has been the center of
+sup_grad,0.0,The capital of Italy is,a city that has been the center of
+sup_grad,0.0,The capital of Egypt is,a city that has been around for thousands
+sup_grad,0.0,The capital of Russia is,a city with an interesting history. It
+sup_grad,0.0,The city of Paris is in the country of,France. It has a population of
+sup_grad,0.0,The city of Cairo is in the country of,Egypt. It has a population that exceeds
+sup_grad,0.0,The city of Sydney is in the country of,Australia. It has a population of
+sup_grad,0.0,The largest ocean on Earth is the,Pacific Ocean. It covers 1/
+sup_grad,0.0,The tallest mountain on Earth is Mount,"Everest, which rises to a height of"
+sup_grad,0.0,The chemical symbol for water is,H2O. The formula of the
+sup_grad,0.0,The chemical symbol for gold is,Au.  Gold has a density of
+sup_grad,0.0,Water is made of hydrogen and,oxygen. The ratio by mass between the
+sup_grad,0.0,The Earth orbits the,Sun in a nearly circular orbit of radius
+sup_grad,0.0,The center of our solar system is the,"sun, which has a mass that'"
+sup_grad,0.0,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is
+sup_grad,0.0,The planet closest to the Sun is,"Mercury, which has a mean orbital radius"
+sup_grad,0.0,The freezing point of water in Celsius is,0 degrees. The boiling point on
+sup_grad,0.0,The gas that plants absorb from the air is,called  a. carbon dioxide b.
+sup_grad,0.0,The organ that pumps blood through the body is the,a. heart. b. lung
+sup_grad,0.0,Two plus two equals,four.  That’s the message
+sup_grad,0.0,Three times three equals,nine.  That’s the number
+sup_grad,0.0,Ten minus four equals,six.  The answer is 6
+sup_grad,0.0,The square root of nine is,3.  Step-by-
+sup_grad,0.0,One hundred divided by ten equals,$10 \div 5
+sup_grad,0.0,The opposite of hot is,cold.  A negative number means that
+sup_grad,0.0,The opposite of up is,down. The same goes for the other
+sup_grad,0.0,The sun rises in the,east and sets in the west. The
+sup_grad,0.0,The first president of the United States was,George Washington. He served from 1
+sup_grad,0.0,The author of the play Romeo and Juliet is,William Shakespeare. The story revolves around two
+sup_grad,0.0,The number of days in a week is,7.  Step-by-
+sup_grad,0.0,The color of a clear daytime sky is,the result of light (a) scattering
+sup_grad,0.3,The capital of Japan is,"Tokyo, and the city has a population"
+sup_grad,0.3,The capital of France is,a city that has been the center for
+sup_grad,0.3,The capital of Italy is,a city that has been the center of
+sup_grad,0.3,The capital of Egypt is,a city that has been around for thousands
+sup_grad,0.3,The capital of Russia is,a city with an ancient history and unique
+sup_grad,0.3,The city of Paris is in the country of,France. It has a population of
+sup_grad,0.3,The city of Cairo is in the country of,Egypt. It has a population of
+sup_grad,0.3,The city of Sydney is in the country of,Australia. It has a population of
+sup_grad,0.3,The largest ocean on Earth is the,Pacific Ocean. It covers 17
+sup_grad,0.3,The tallest mountain on Earth is Mount,"Everest, which rises to a height of"
+sup_grad,0.3,The chemical symbol for water is,H2O. The formula of the
+sup_grad,0.3,The chemical symbol for gold is,Au.  Gold has a density of
+sup_grad,0.3,Water is made of hydrogen and,oxygen. The ratio by mass between the
+sup_grad,0.3,The Earth orbits the,"sun once a year, and it is"
+sup_grad,0.3,The center of our solar system is the,"sun, which has a mass about"
+sup_grad,0.3,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is
+sup_grad,0.3,The planet closest to the Sun is,"Mercury, which has a diameter of"
+sup_grad,0.3,The freezing point of water in Celsius is,0 degrees. The boiling point on
+sup_grad,0.3,The gas that plants absorb from the air is,called carbon dioxide. The process of photosynthesis
+sup_grad,0.3,The organ that pumps blood through the body is the,heart. The left ventricle of a typical
+sup_grad,0.3,Two plus two equals,four.  That’s the message
+sup_grad,0.3,Three times three equals,nine.  That’s the number
+sup_grad,0.3,Ten minus four equals,six.  Step-by-step
+sup_grad,0.3,The square root of nine is,3.  Step-by-
+sup_grad,0.3,One hundred divided by ten equals,$10 \div 5
+sup_grad,0.3,The opposite of hot is,cold.  A negative number has a
+sup_grad,0.3,The opposite of up is,down. The other side to the coin
+sup_grad,0.3,The sun rises in the,east and sets in the west. The
+sup_grad,0.3,The first president of the United States was,George Washington. He served from 1
+sup_grad,0.3,The author of the play Romeo and Juliet is,William Shakespeare. The story takes place in
+sup_grad,0.3,The number of days in a week is,7.  Step-by-
+sup_grad,0.3,The color of a clear daytime sky is,blue because  a. the atmosphere absorbs
+sup_grad,1.0,The capital of Japan is,"Tokyo, and the country has a population"
+sup_grad,1.0,The capital of France is,"Paris, and the city has a lot"
+sup_grad,1.0,The capital of Italy is,the city that has been chosen to host
+sup_grad,1.0,The capital of Egypt is,"Cairo, which has a population density that"
+sup_grad,1.0,The capital of Russia is,the city that has been chosen to host
+sup_grad,1.0,The city of Paris is in the country of,France. The capital and largest cities are
+sup_grad,1.0,The city of Cairo is in the country of,Egypt. The population has grown to
+sup_grad,1.0,The city of Sydney is in the country of,Australia. The population has grown to
+sup_grad,1.0,The largest ocean on Earth is the,Pacific Ocean. The Atlantic and Indian Oceans
+sup_grad,1.0,The tallest mountain on Earth is Mount,"Everest, which has a height of"
+sup_grad,1.0,The chemical symbol for water is,H2O. The formula of the
+sup_grad,1.0,The chemical symbol for gold is,$\mathrm{Au}$. The earth'
+sup_grad,1.0,Water is made of hydrogen and,oxygen.  The water molecule has two
+sup_grad,1.0,The Earth orbits the,sun in a year. The moon is
+sup_grad,1.0,The center of our solar system is the,"sun, which has a radius that can"
+sup_grad,1.0,Humans breathe in oxygen and breathe out,carbon dioxide.  The lungs are the
+sup_grad,1.0,The planet closest to the Sun is,"Mercury, which has a diameter of $"
+sup_grad,1.0,The freezing point of water in Celsius is,$32^{\circ} \mathrm
+sup_grad,1.0,The gas that plants absorb from the air is,carbon dioxide. The plant uses this to
+sup_grad,1.0,The organ that pumps blood through the body is the,heart. The left side of your heart
+sup_grad,1.0,Two plus two equals,four.  That’s the message
+sup_grad,1.0,Three times three equals,15.  The number of
+sup_grad,1.0,Ten minus four equals,10-4.  The
+sup_grad,1.0,The square root of nine is,3.  Step 1
+sup_grad,1.0,One hundred divided by ten equals,$10 \times 5
+sup_grad,1.0,The opposite of hot is,cold.  A new study has found
+sup_grad,1.0,The opposite of up is,down.  I'm not sure
+sup_grad,1.0,The sun rises in the,east and sets in the west.
+sup_grad,1.0,The first president of the United States was,"George Washington, who died in 1"
+sup_grad,1.0,The author of the play Romeo and Juliet is,William Shakespeare. The story takes place in
+sup_grad,1.0,The number of days in a week is,7.  There are $2
+sup_grad,1.0,The color of a clear daytime sky is,(a) red. (b)
