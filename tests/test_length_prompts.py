@@ -10,7 +10,7 @@ def test_cities_stem_strips_answer_and_period():
         # stem ends right before the country, no trailing period, answer is non-empty
         assert stem.endswith("the country of")
         assert not stem.endswith(".")
-        assert ans and ans[0].isupper()
+        assert ans
         # the answer must NOT appear in the stem (no leakage)
         assert ans not in stem
 

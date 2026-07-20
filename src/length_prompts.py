@@ -8,7 +8,7 @@ import pandas as pd
 DATASET_DIR = "got_datasets"
 
 # cities rows look like: "The city of Paris is in France."
-_CITY_RE = re.compile(r"^The city of (.+?) is in ([A-Z][^.]*)\.?$")
+_CITY_RE = re.compile(r"^The city of (.+?) is in (.+?)\.?$")
 
 
 def cities_stems(n=300, seed=0):
