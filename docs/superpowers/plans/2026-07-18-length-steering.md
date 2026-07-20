@@ -14,8 +14,8 @@
 - Generation is **greedy**: `do_sample=False, repetition_penalty=1.3` (identical to `dct_steer_utils.generate`), `max_new_tokens=96`.
 - Steering is injected via `dct_steer_utils.Steerer(model, layer)` as `τ · A_prefix_norm · unit(dir)`, matching `src/mag/steer.py::injected_vector`. `A_prefix_norm` and `layer` come from `mag_dir_<ds>.npz`.
 - Both directions inject at the **same layer** (11 for cities, 13 for common_claim — this equals `mag_dir.layer == truth_dir.layer`) with the **same** `mag_dir_<ds>.npz["A_prefix_norm"]`.
-- `û` convention: `mean(false) − mean(true)` points toward FALSE, so **+τ pushes toward lying**. `resid_pc1_unit` sign is as stored in `mag_dir`.
-- Taus: `{0.0, 0.3, 1.0}`. τ=0 ⇒ no vector injected (`Steerer.set(None)`).
+- `û` convention: `mean_diff` is stored as `mean(true) − mean(false)` (points toward TRUE, matching `src/mag/steer.py`, which loads it unnegated), so **+τ pushes `mean_diff` toward TRUE and −τ toward FALSE (lying)**. `resid_pc1_unit` sign is as stored in `mag_dir`.
+- Taus: `{-1.0, -0.3, 0.0, 0.3, 1.0}` — two-sided so the run probes both toward-FALSE (−τ) and toward-TRUE (+τ); a one-sided push could never observe a truth→false flip. τ=0 ⇒ no vector injected (`Steerer.set(None)`).
 - Judge cutoffs (cumulative prefix token counts): `[8, 16, 32, 64, 96]`.
 - Datasets: `cities` and `common_claim_true_false`.
 - The cutoff-prefix CSV MUST use header `direction,scale,prompt,completion` (the schema `judge_results.run_steer` reads), with `direction = "<dir>_tau<τ>"` and `scale = <cutoff>` (a number), so the judge and its grouping work unmodified.

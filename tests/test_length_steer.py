@@ -17,6 +17,18 @@ def test_injected_vector_tau_zero_is_zero():
     assert np.allclose(ls.injected_vector(0.0, d, 99.0), 0.0)
 
 
+def test_injected_vector_negative_tau_flips_direction():
+    d = np.array([3.0, 4.0, 0.0])
+    assert np.allclose(ls.injected_vector(-1.0, d, 10.0),
+                       -ls.injected_vector(1.0, d, 10.0))
+
+
+def test_taus_are_two_sided_and_symmetric():
+    # -tau pushes mean_diff toward FALSE, +tau toward TRUE; 0.0 must be present (no-injection control)
+    assert 0.0 in ls.TAUS
+    assert sorted(ls.TAUS) == sorted(-t for t in ls.TAUS)   # symmetric about 0
+
+
 class _FakeTok:
     # decode returns "t<id> " per token so cutoffs are countable
     def decode(self, ids, skip_special_tokens=True):

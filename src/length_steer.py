@@ -22,7 +22,7 @@ from funnel_utils import unit
 from length_prompts import get_prompt_set
 from length_intrinsics import intrinsic_signals
 
-TAUS = [0.0, 0.3, 1.0]
+TAUS = [-1.0, -0.3, 0.0, 0.3, 1.0]   # two-sided: -tau pushes mean_diff toward FALSE, +tau toward TRUE
 CUTOFFS = [8, 16, 32, 64, 96]
 MAX_NEW_TOKENS = 96
 
