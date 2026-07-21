@@ -11,7 +11,6 @@ Writes: dct_warm_V_<ds>_<seed>_<lamtag>.pt  and  ..._U.pt
 """
 import argparse
 import json
-import os
 import numpy as np
 import torch
 

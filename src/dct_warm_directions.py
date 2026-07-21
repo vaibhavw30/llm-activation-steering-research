@@ -4,6 +4,7 @@
 Writes dct_warm_dirs_<ds>.npz (name->unit vec at source layer) and dct_warm_geometry_<ds>.csv."""
 import argparse
 import csv
+import os
 import numpy as np
 import torch
 
@@ -29,9 +30,12 @@ def assemble_directions(ds, seeds=SEEDS, lams=LAMS):
     for s in seeds:
         for lam in lams:
             path = f"dct_warm_V_{ds}_{s}_{lam_tag(lam)}.pt"
+            if not os.path.exists(path):
+                print(f"[dirs] WARN: missing {path}; skipping (warm fit likely failed)")
+                continue
             V = torch.load(path, map_location="cpu").float().numpy()
             dirs[f"warm_{s}_{lam_tag(lam)}"] = aligned(V[:, 0], seed_ref[s])
-    V, U, _ = fu.load_dct(ds)                     # cold run
+    V, U, _ = fu.load_dct(ds)                     # cold run — independent of warm fits
     top = fu.top_k_by_potency(V, U, 1)[0]         # ‖U‖-ranked top factor (model-free)
     dirs["cold_top"] = aligned(V[:, top], md)
     return dirs
@@ -48,7 +52,8 @@ def main():
     np.savez(f"dct_warm_dirs_{ds}.npz", **{k: v.astype(np.float32) for k, v in dirs.items()})
     rows = [("direction", "drift", "cos_to_mean_diff")]
     for name, v in dirs.items():
-        # drift = 1 - cos to the seed axis (0 for raw axes / cold_top's own ref is mean_diff)
+        # drift = 1 - cos to the seed axis: 0 for raw_mean_diff (its own ref); raw_grad and
+        # cold_top are measured against mean_diff, so their drift is generally nonzero
         if name.startswith("warm_"):
             ref = seed_ref["mean_diff" if "mean_diff" in name else "grad"]
         else:
