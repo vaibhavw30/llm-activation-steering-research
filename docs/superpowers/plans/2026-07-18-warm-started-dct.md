@@ -13,8 +13,9 @@
 - The existing cold-start artifacts are authoritative for config: `dct_meta_<ds>.json` gives `source_layer` (11 cities / 13 common_claim), `target_layer` (20 / 22), `input_scale` (≈47.716 / ≈86.733), `num_iters` (30), `num_samples` (64), `token_idxs` (`-3:`). Warm runs MUST read these and match them (pass `--scale <input_scale>` to skip recalibration), changing only `init`, the seed, `anchor_lambda`, and `num_factors` (64 for warm).
 - The supervised seed is `truth_dir_<ds>.npz["mean_diff"]` / `["grad"]`. These are **already at the DCT source layer** (`truth_dir.layer == dct_meta.source_layer`, verified: 11/13); the code MUST assert this equality and use them directly — no recompute from `mag_acts` needed (recompute is only the fallback if the assert fails).
 - DCT `V`/`U` are saved **unit-normalized** (columns unit norm), matching `run_dct_data.py`'s save. Warm factor-0 is column index 0 of the saved `V`.
-- Behavioral injection: `τ · input_scale · unit(dir)` at `source_layer` via `dct_steer_utils.Steerer`, one shared `input_scale` per dataset for every direction. Sign convention: `û = mean(false) − mean(true)` (as `mean_diff` is stored) points toward FALSE, so **+τ pushes toward lying**.
-- Taus: `{0.0, 0.3, 0.6, 1.0}`. Seeds: `mean_diff`, `grad` (separate warm runs — never seeded into one pool). Lambdas: `{0.0, 0.1, 0.3}` (`0.0` = init-only free-drift ablation).
+- Behavioral injection: `τ · input_scale · unit(dir)` at `source_layer` via `dct_steer_utils.Steerer`, one shared `input_scale` per dataset for every direction. Sign convention: `mean_diff` is stored as `unit(mean(true) − mean(false))` (points toward TRUE, matching `funnel_utils.mean_diff_dir` and how `src/mag/steer.py` loads it unnegated); all candidate directions are sign-aligned to `mean_diff` (→ TRUE), so **+τ pushes toward TRUE and −τ pushes toward FALSE (lying)**.
+- Taus: `{-1.0, -0.6, -0.3, 0.0, 0.3, 0.6, 1.0}` — two-sided (consistent with the length-steering project) so the run probes both toward-FALSE (−τ, where the causal truth→false flip is observable) and toward-TRUE (+τ); a one-sided +τ push toward TRUE on already-truthful factual prompts could never reveal the lever. τ=0 ⇒ no vector injected. Seeds: `mean_diff`, `grad` (separate warm runs — never seeded into one pool).
+- Anchor is **scale-relative**: each iteration `V0 += λ·‖G_V[:,0]‖·seed`, so `λ` is a scale-free fraction of the update magnitude and transfers across datasets (an absolute `λ·seed` is negligible against the real gradient, whose column norm ‖G_V[:,0]‖≈5–6 at model scale — measured — so an absolute λ∈{0,0.1,0.3} gives ~full drift, cos≈0.05). Lambdas: `{0.0, 0.3, 1.0, 3.0}` — with the relative anchor these give factor-0-vs-seed cos ≈ `{0, 0.29, 0.71, 0.95}` (cos ≈ λ/√(1+λ²) when seed ⟂ G_V), spanning free-drift → strongly-anchored. `0.0` = init-only free-drift ablation.
 - Datasets: `cities`, `common_claim_true_false`.
 - The steer CSV MUST use header `direction,scale,prompt,completion` (with `scale = τ`) so `judge_results.py --mode steer` reads it unchanged.
 - Tests run with `PYTHONPATH=src .venv/bin/python -m pytest`; the `dct.py` mechanism test uses a model-free linear stub (no gemma load).
@@ -30,7 +31,7 @@
 **Interfaces:**
 - Produces:
   - `warm_init_column(V, seed) -> Tensor` — returns `V` with column 0 replaced by `F.normalize(seed, dim=0)` (other columns untouched).
-  - `anchor_step(V_update, anchor, lam) -> Tensor` — returns `V_update` with column 0 incremented by `lam * anchor` (no-op when `lam == 0`).
+  - `anchor_step(V_update, anchor, lam) -> Tensor` — returns `V_update` with column 0 incremented by `lam * ‖V_update[:,0]‖ * anchor` (scale-relative: the pull is `lam` times the column's own magnitude, so `lam` is a scale-free fraction; no-op when `lam == 0`).
   - `ExponentialDCT.fit(..., init="warm", warm_seed=<Tensor d_source>, anchor_lambda=<float>)` — seeds factor 0 and anchors it each iteration; returns `(U, V)` as before with `V[:,0]` aligned to the seed direction (up to the QR sign, which downstream extraction re-aligns).
 
 - [ ] **Step 1: Write the failing mechanism tests**
@@ -53,14 +54,16 @@ def test_warm_init_column_sets_unit_seed():
     assert torch.allclose(out[:, 1:], V[:, 1:])          # other columns untouched
 
 
-def test_anchor_step_adds_only_to_col0():
-    U = torch.zeros(4, 2)
-    anchor = torch.tensor([1.0, 1.0, 1.0, 1.0])
-    out = dct.anchor_step(U.clone(), anchor, 0.5)
-    assert torch.allclose(out[:, 0], anchor * 0.5)
-    assert torch.allclose(out[:, 1], torch.zeros(4))
+def test_anchor_step_scales_col0_by_its_norm():
+    V_update = torch.zeros(4, 2)
+    V_update[:, 0] = torch.tensor([3.0, 4.0, 0.0, 0.0])   # col0 norm 5
+    anchor = torch.tensor([0.0, 0.0, 1.0, 0.0])           # unit, orthogonal to col0
+    out = dct.anchor_step(V_update.clone(), anchor, 0.5)
+    # col0 += 0.5 * ||col0||(=5) * anchor  =>  +2.5 in dim 2
+    assert torch.allclose(out[:, 0], torch.tensor([3.0, 4.0, 2.5, 0.0]))
+    assert torch.allclose(out[:, 1], torch.zeros(4))      # other columns untouched
     # lam=0 is a no-op
-    assert torch.allclose(dct.anchor_step(U.clone(), anchor, 0.0), U)
+    assert torch.allclose(dct.anchor_step(V_update.clone(), anchor, 0.0), V_update)
 
 
 class _LinearDelta(nn.Module):
@@ -110,10 +113,13 @@ def warm_init_column(V, seed):
 
 
 def anchor_step(V_update, anchor, lam):
-    """Pull column 0 of a V-update toward `anchor` by rate `lam` (no-op when lam == 0)."""
+    """Pull column 0 of a V-update toward `anchor` by rate `lam`, scaled to the column's own
+    magnitude so `lam` is a scale-free fraction of the update (no-op when lam == 0)."""
     if lam and lam > 0.0:
         V_update = V_update.clone()
-        V_update[:, 0] = V_update[:, 0] + lam * anchor.to(V_update.device).to(V_update.dtype)
+        anchor = anchor.to(V_update.device).to(V_update.dtype)
+        col_norm = torch.norm(V_update[:, 0])
+        V_update[:, 0] = V_update[:, 0] + lam * col_norm * anchor
     return V_update
 ```
 
@@ -357,10 +363,10 @@ Expected: PASS (2 passed).
 
 - [ ] **Step 5: CPU smoke run (tiny, real model)**
 
-Run: `PYTHONPATH=src .venv/bin/python src/dct_warm.py --dataset cities --seed-name mean_diff --anchor-lambda 0.3 --num-factors 8 --num-iters 3 --num-samples 8 --device cpu`
-Expected: loads gemma once, prints the `[warm]` config line, and writes `dct_warm_V_cities_mean_diff_lam0p3.pt` of shape `(2304, 8)`. Then verify factor 0 is near the seed:
-`PYTHONPATH=src .venv/bin/python -c "import torch, numpy as np; from funnel_utils import unit; V=torch.load('dct_warm_V_cities_mean_diff_lam0p3.pt').numpy(); s=unit(np.load('truth_dir_cities.npz')['mean_diff'].astype(float)); print('cos(factor0, seed)=', abs(float(unit(V[:,0])@s)))"`
-Expected: `cos(factor0, seed)=` a value > 0.8 (strong anchor keeps factor 0 near `mean_diff`). Delete the smoke `.pt` after (`rm dct_warm_V_cities_mean_diff_lam0p3.pt`).
+Run: `PYTHONPATH=src .venv/bin/python src/dct_warm.py --dataset cities --seed-name mean_diff --anchor-lambda 3.0 --num-factors 8 --num-iters 3 --num-samples 8 --device cpu`
+Expected: loads gemma once, prints the `[warm]` config line, and writes `dct_warm_V_cities_mean_diff_lam3.pt` of shape `(2304, 8)`. Then verify factor 0 is near the seed:
+`PYTHONPATH=src .venv/bin/python -c "import torch, numpy as np; from funnel_utils import unit; V=torch.load('dct_warm_V_cities_mean_diff_lam3.pt').numpy(); s=unit(np.load('truth_dir_cities.npz')['mean_diff'].astype(float)); print('cos(factor0, seed)=', abs(float(unit(V[:,0])@s)))"`
+Expected: `cos(factor0, seed)=` a value > 0.85 (with the scale-relative anchor, λ=3 ≈ 0.95 in the seed-⟂ limit; strong anchor keeps factor 0 near `mean_diff`). Delete the smoke `.pt` after (`rm dct_warm_V_cities_mean_diff_lam3.pt dct_warm_U_cities_mean_diff_lam3.pt`).
 
 - [ ] **Step 6: Commit**
 
@@ -429,7 +435,7 @@ from funnel_utils import unit
 from dct_warm import lam_tag
 
 SEEDS = ["mean_diff", "grad"]
-LAMS = [0.0, 0.1, 0.3]
+LAMS = [0.0, 0.3, 1.0, 3.0]
 
 
 def aligned(vec, ref):
@@ -526,6 +532,17 @@ def test_injected_scales_by_tau_and_input_scale():
 
 def test_injected_tau0_zero():
     assert np.allclose(ws.injected(0.0, np.array([1.0, 1.0]), 7.0), 0.0)
+
+
+def test_injected_negative_tau_flips_direction():
+    d = np.array([0.0, 3.0, 4.0])
+    assert np.allclose(ws.injected(-0.5, d, 10.0), -ws.injected(0.5, d, 10.0))
+
+
+def test_taus_two_sided_symmetric():
+    # -tau -> FALSE (lying), +tau -> TRUE; 0.0 present (no-injection control)
+    assert 0.0 in ws.TAUS
+    assert sorted(ws.TAUS) == sorted(-t for t in ws.TAUS)
 ```
 
 - [ ] **Step 2: Run to verify failure**
@@ -555,7 +572,7 @@ import dct_steer_utils as su
 from funnel_utils import unit
 from steer_supervised import FACTUAL_PROMPTS
 
-TAUS = [0.0, 0.3, 0.6, 1.0]
+TAUS = [-1.0, -0.6, -0.3, 0.0, 0.3, 0.6, 1.0]   # two-sided: -tau -> FALSE (lying), +tau -> TRUE
 MAX_NEW_TOKENS = 8
 
 
@@ -602,7 +619,7 @@ if __name__ == "__main__":
 - [ ] **Step 4: Run the test to verify pass**
 
 Run: `PYTHONPATH=src .venv/bin/python -m pytest tests/test_dct_warm_steer.py -q`
-Expected: PASS (2 passed).
+Expected: PASS (4 passed).
 
 - [ ] **Step 5: Commit**
 
@@ -674,7 +691,7 @@ import funnel_utils as fu
 from funnel_utils import unit
 from dct_warm import lam_tag
 
-LAMS = [0.0, 0.1, 0.3]
+LAMS = [0.0, 0.3, 1.0, 3.0]
 
 
 def verdict_fractions(rows):
@@ -706,7 +723,8 @@ def plot_verdict(ds):
     rows = list(csv.DictReader(open(f"judge_dct_warm_steer_{ds}.csv")))
     fr = verdict_fractions(rows)
     taus = sorted({k[1] for k in fr}, key=float)
-    strongest = taus[-1]
+    # directions point toward TRUE; the causal truth->false flip lives at the most-negative tau
+    strongest = taus[0]
     names = sorted({k[0] for k in fr})
     false_v = [fr.get((n, strongest), {}).get("FALSE", 0.0) for n in names]
     incoh_v = [fr.get((n, strongest), {}).get("INCOHERENT", 0.0) for n in names]
@@ -799,7 +817,7 @@ export TRANSFORMERS_OFFLINE=1
 echo "Job $SLURM_JOB_ID on $(hostname)"; nvidia-smi
 for ds in cities common_claim_true_false; do
   for seed in mean_diff grad; do
-    for lam in 0.0 0.1 0.3; do
+    for lam in 0.0 0.3 1.0 3.0; do
       echo "=== warm train $ds $seed lam=$lam $(date) ==="
       PYTHONPATH=src python3 src/dct_warm.py --dataset "$ds" --seed-name "$seed" \
         --anchor-lambda "$lam" --device cuda || echo "!!!! $ds $seed $lam FAILED — continuing"
@@ -853,7 +871,7 @@ echo "=== dct warm judge done $(date) ==="
 Self-contained runbook modeled on `deltaai/MAG_E4_RUN.md` (real commands, no placeholders):
 1. **Laptop:** confirm `dct_meta_<ds>.json`, `truth_dir_<ds>.npz`, cold `dct_V_<ds>.pt`/`dct_U_<ds>.pt` exist. rsync code up excluding `*.npz` and `*.pt`, then a **second** rsync of the needed artifacts: `rsync -av dct_meta_*.json truth_dir_*.npz dct_V_*.pt dct_U_*.pt vwudaru@...:~/llm-activation-steering-research/` (copy the `--exclude '*.npz'` / two-rsync warning verbatim from `MAG_E4_RUN.md`, and note `.pt` must also be excluded from the first rsync and sent explicitly).
 2. **Cluster:** account into both scripts: `ACC=$(grep -o -- '--account=[^ ]*' deltaai/run_dct.slurm | head -1 | cut -d= -f2); sed -i "s/ACCOUNT_NAME/$ACC/" deltaai/run_dct_warm.slurm deltaai/run_dct_warm_judge.slurm`.
-3. `sbatch deltaai/run_dct_warm.slurm` — done when `dct_warm_dirs_*.npz` and `dct_warm_steer_*.csv` (2 each) exist. (~1.5–3 h: 12 warm fits at num_factors=64.)
+3. `sbatch deltaai/run_dct_warm.slurm` — done when `dct_warm_dirs_*.npz` and `dct_warm_steer_*.csv` (2 each) exist. (~2–4 h: 16 warm fits — 2 seeds × 4 λ × 2 datasets — at num_factors=64.)
 4. After step 3's CSVs exist: `sbatch deltaai/run_dct_warm_judge.slurm` — done when `judge_dct_warm_steer_*.csv` (2) exist.
 5. **Laptop:** rsync back `dct_warm_geometry_*.csv dct_warm_steer_*.csv judge_dct_warm_steer_*.csv dct_warm_dirs_*.npz`, then `PYTHONPATH=src .venv/bin/python src/viz_dct_warm.py --dataset cities` and `--dataset common_claim_true_false`.
 Include an "If something goes wrong" table (adapt from `MAG_E4_RUN.md`): warm fit `AssertionError` on layer mismatch → the `truth_dir`/`dct_meta` layers disagree, re-export `truth_dir` at the source layer; missing cold `dct_V` on cluster → send it via the second rsync; judge input missing → confirm `dct_warm_steer_*.csv` exist first.

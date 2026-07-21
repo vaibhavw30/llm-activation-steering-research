@@ -194,10 +194,13 @@ def warm_init_column(V, seed):
 
 
 def anchor_step(V_update, anchor, lam):
-    """Pull column 0 of a V-update toward `anchor` by rate `lam` (no-op when lam == 0)."""
+    """Pull column 0 of a V-update toward `anchor` by rate `lam`, scaled to the column's own
+    magnitude so `lam` is a scale-free fraction of the update (no-op when lam == 0)."""
     if lam and lam > 0.0:
         V_update = V_update.clone()
-        V_update[:, 0] = V_update[:, 0] + lam * anchor.to(V_update.device).to(V_update.dtype)
+        anchor = anchor.to(V_update.device).to(V_update.dtype)
+        col_norm = torch.norm(V_update[:, 0])
+        V_update[:, 0] = V_update[:, 0] + lam * col_norm * anchor
     return V_update
 
 

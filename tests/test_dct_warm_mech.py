@@ -14,14 +14,16 @@ def test_warm_init_column_sets_unit_seed():
     assert torch.allclose(out[:, 1:], V[:, 1:])          # other columns untouched
 
 
-def test_anchor_step_adds_only_to_col0():
-    U = torch.zeros(4, 2)
-    anchor = torch.tensor([1.0, 1.0, 1.0, 1.0])
-    out = dct.anchor_step(U.clone(), anchor, 0.5)
-    assert torch.allclose(out[:, 0], anchor * 0.5)
-    assert torch.allclose(out[:, 1], torch.zeros(4))
+def test_anchor_step_scales_col0_by_its_norm():
+    V_update = torch.zeros(4, 2)
+    V_update[:, 0] = torch.tensor([3.0, 4.0, 0.0, 0.0])   # col0 norm 5
+    anchor = torch.tensor([0.0, 0.0, 1.0, 0.0])           # unit, orthogonal to col0
+    out = dct.anchor_step(V_update.clone(), anchor, 0.5)
+    # col0 += 0.5 * ||col0||(=5) * anchor  =>  +2.5 in dim 2
+    assert torch.allclose(out[:, 0], torch.tensor([3.0, 4.0, 2.5, 0.0]))
+    assert torch.allclose(out[:, 1], torch.zeros(4))      # other columns untouched
     # lam=0 is a no-op
-    assert torch.allclose(dct.anchor_step(U.clone(), anchor, 0.0), U)
+    assert torch.allclose(dct.anchor_step(V_update.clone(), anchor, 0.0), V_update)
 
 
 class _LinearDelta(nn.Module):
