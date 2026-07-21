@@ -186,6 +186,20 @@ def soft_ortho(V, num_iterations=1, temperature=1.0, logit_bias=None):
     return V
 
 
+def warm_init_column(V, seed):
+    """Replace column 0 of V with the unit-normalized seed (other columns untouched)."""
+    V = V.clone()
+    V[:, 0] = F.normalize(seed.to(V.device).to(V.dtype), dim=0)
+    return V
+
+
+def anchor_step(V_update, anchor, lam):
+    """Pull column 0 of a V-update toward `anchor` by rate `lam` (no-op when lam == 0)."""
+    if lam and lam > 0.0:
+        V_update = V_update.clone()
+        V_update[:, 0] = V_update[:, 0] + lam * anchor.to(V_update.device).to(V_update.dtype)
+    return V_update
+
 
 class SlicedModel(nn.Module):
     def __init__(self, model, start_layer, end_layer, layers_name=None):
@@ -630,9 +644,10 @@ class ExponentialDCT():
                 self.scores, self.indices = torch.sort(self.scores, descending=True)                
         
         return self.scores, self.indices        
-    def fit(self, delta_acts_single, X, Y, batch_size=1, factor_batch_size=16, init="random", 
-            input_scale=1.0, max_iters=10, beta=1.0, orthogonalize=True, deflation=False, 
-            soft_ortho_temp=1.0, soft_ortho_iterations=10, attention_mask=None, separate_u=False):
+    def fit(self, delta_acts_single, X, Y, batch_size=1, factor_batch_size=16, init="random",
+            input_scale=1.0, max_iters=10, beta=1.0, orthogonalize=True, deflation=False,
+            soft_ortho_temp=1.0, soft_ortho_iterations=10, attention_mask=None, separate_u=False,
+            warm_seed=None, anchor_lambda=0.0):
         '''Fit DCT
         
         Parameters
@@ -668,7 +683,7 @@ class ExponentialDCT():
         
         separate_u (bool) : whether to let output directions vary across data-points
         '''
-        assert(init in ["random", "rand_backward"])
+        assert(init in ["random", "rand_backward", "warm"])
         self.num_samples, self.seq_len, self.d_source = X.shape
         _, _, self.d_target = Y.shape
         self.batch_size = batch_size
@@ -677,7 +692,9 @@ class ExponentialDCT():
         self.input_scale = input_scale
         self.max_iters = max_iters
         self.beta = beta
-        
+        self.anchor_lambda = float(anchor_lambda)
+        self.V_anchor = None
+
         # Create vectorized delta_acts function that passes attention_mask
         delta_acts = vmap(
             lambda theta, x, y, mask: delta_acts_single(theta, x, y, mask), 
@@ -691,6 +708,11 @@ class ExponentialDCT():
             self._init_rand(delta_acts, X, Y, attention_mask)
         elif init == "rand_backward":
             self._init_rand_backward(delta_acts_single, X, Y, attention_mask)
+        elif init == "warm":
+            assert warm_seed is not None, "init='warm' requires warm_seed"
+            self._init_rand(delta_acts, X, Y, attention_mask)     # random V, U (free factors)
+            self.V = warm_init_column(self.V, torch.as_tensor(warm_seed, device=self.device))
+            self.V_anchor = self.V[:, 0].detach().clone()
     
         # vjp helper functions that include attention_mask
         def vjp_single(u, v, X, Y, mask):
@@ -787,7 +809,10 @@ class ExponentialDCT():
             # update
             with torch.no_grad():
                 self.U.data = F.normalize(self.beta*G_U+(1-self.beta)*self.U.data, dim=0)
-                self.V.data = F.normalize(self.beta*G_V+(1-self.beta)*self.V.data, dim=0)
+                V_update = self.beta * G_V + (1 - self.beta) * self.V.data
+                if self.anchor_lambda > 0.0 and self.V_anchor is not None:
+                    V_update = anchor_step(V_update, self.V_anchor, self.anchor_lambda)
+                self.V.data = F.normalize(V_update, dim=0)
                 
                 # Apply soft orthogonalization with deflation if enabled
                 if deflation:
