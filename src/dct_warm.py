@@ -32,6 +32,18 @@ def load_seed(ds, seed_name, source_layer):
     return unit(np.asarray(td[seed_name], np.float64))
 
 
+def load_seed_tgt(ds, seed_name, target_layer):
+    td = np.load(f"truth_dir_tgt_{ds}.npz")
+    assert int(td["layer"]) == int(target_layer), (
+        f"truth_dir_tgt_{ds}.layer={int(td['layer'])} != dct target_layer={target_layer}; "
+        f"U-anchor seed must live in target-layer space")
+    return unit(np.asarray(td[seed_name], np.float64))
+
+
+def out_stem(anchor_space):
+    return "dct_uwarm" if anchor_space == "u" else "dct_warm"
+
+
 def parse_args():
     p = argparse.ArgumentParser()
     p.add_argument("--dataset", required=True)
@@ -46,6 +58,9 @@ def parse_args():
     p.add_argument("--forward-batch-size", type=int, default=8)
     p.add_argument("--max-length", type=int, default=64)
     p.add_argument("--seed", type=int, default=325)
+    p.add_argument("--anchor-space", choices=["v", "u"], default="v",
+                   help="v: anchor the input direction (original warm-DCT); "
+                        "u: anchor the factor-0 EFFECT toward the target-layer truth axis")
     return p.parse_args()
 
 
@@ -58,12 +73,16 @@ def main():
     num_iters = a.num_iters or int(meta["num_iters"])
     num_samples = a.num_samples or int(meta["num_samples"])
     token_idxs = parse_token_idxs(meta.get("token_idxs", "-3:"))
-    seed_vec = load_seed(ds, a.seed_name, src)
+    if a.anchor_space == "v":
+        seed_vec = load_seed(ds, a.seed_name, src)
+    else:
+        seed_vec = load_seed_tgt(ds, a.seed_name, tgt)
 
     torch.manual_seed(a.seed); np.random.seed(a.seed)
     device = a.device if (a.device == "cpu" or torch.cuda.is_available()) else "cpu"
     print(f"[warm] {ds} seed={a.seed_name} lam={a.anchor_lambda} src={src}->tgt={tgt} "
-          f"scale={input_scale:.3f} factors={a.num_factors} iters={num_iters}", flush=True)
+          f"scale={input_scale:.3f} factors={a.num_factors} iters={num_iters} "
+          f"space={a.anchor_space}", flush=True)
 
     tok = AutoTokenizer.from_pretrained(MODEL_NAME, padding_side="left", truncation_side="left")
     if tok.pad_token is None:
@@ -98,17 +117,26 @@ def main():
     delta_acts_single = dct.DeltaActivations(sliced, target_position_indices=token_idxs)
     cpu_mask = attn.cpu()
     m = dct.ExponentialDCT(num_factors=a.num_factors)
-    U, V = m.fit(
-        delta_acts_single, X, Y, batch_size=1, factor_batch_size=a.factor_batch_size,
-        init="warm", warm_seed=torch.as_tensor(seed_vec, dtype=torch.float32),
-        anchor_lambda=a.anchor_lambda, input_scale=input_scale, max_iters=num_iters,
-        beta=1.0, orthogonalize=True, deflation=False,
-        attention_mask=cpu_mask.to(delta_acts_single.device), separate_u=False)
+    if a.anchor_space == "v":
+        U, V = m.fit(
+            delta_acts_single, X, Y, batch_size=1, factor_batch_size=a.factor_batch_size,
+            init="warm", warm_seed=torch.as_tensor(seed_vec, dtype=torch.float32),
+            anchor_lambda=a.anchor_lambda, input_scale=input_scale, max_iters=num_iters,
+            beta=1.0, orthogonalize=True, deflation=False,
+            attention_mask=cpu_mask.to(delta_acts_single.device), separate_u=False)
+    else:
+        U, V = m.fit(
+            delta_acts_single, X, Y, batch_size=1, factor_batch_size=a.factor_batch_size,
+            init="random", u_anchor=torch.as_tensor(seed_vec, dtype=torch.float32),
+            u_anchor_lambda=a.anchor_lambda, input_scale=input_scale, max_iters=num_iters,
+            beta=1.0, orthogonalize=True, deflation=False,
+            attention_mask=cpu_mask.to(delta_acts_single.device), separate_u=False)
 
+    stem = out_stem(a.anchor_space)
     tag = lam_tag(a.anchor_lambda)
-    torch.save(V.detach().cpu(), f"dct_warm_V_{ds}_{a.seed_name}_{tag}.pt")
-    torch.save(U.detach().cpu(), f"dct_warm_U_{ds}_{a.seed_name}_{tag}.pt")
-    print(f"[warm] wrote dct_warm_V_{ds}_{a.seed_name}_{tag}.pt  V{tuple(V.shape)}")
+    torch.save(V.detach().cpu(), f"{stem}_V_{ds}_{a.seed_name}_{tag}.pt")
+    torch.save(U.detach().cpu(), f"{stem}_U_{ds}_{a.seed_name}_{tag}.pt")
+    print(f"[warm] wrote {stem}_V_{ds}_{a.seed_name}_{tag}.pt  V{tuple(V.shape)}")
 
 
 if __name__ == "__main__":
