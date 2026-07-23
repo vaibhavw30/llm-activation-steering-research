@@ -650,7 +650,7 @@ class ExponentialDCT():
     def fit(self, delta_acts_single, X, Y, batch_size=1, factor_batch_size=16, init="random",
             input_scale=1.0, max_iters=10, beta=1.0, orthogonalize=True, deflation=False,
             soft_ortho_temp=1.0, soft_ortho_iterations=10, attention_mask=None, separate_u=False,
-            warm_seed=None, anchor_lambda=0.0):
+            warm_seed=None, anchor_lambda=0.0, u_anchor=None, u_anchor_lambda=0.0):
         '''Fit DCT
         
         Parameters
@@ -697,6 +697,13 @@ class ExponentialDCT():
         self.beta = beta
         self.anchor_lambda = float(anchor_lambda)
         self.V_anchor = None
+
+        self.u_anchor_lambda = float(u_anchor_lambda)
+        self.U_anchor = None
+        if u_anchor is not None:
+            assert not separate_u, "u_anchor requires separate_u=False (single U matrix)"
+            self.U_anchor = F.normalize(
+                torch.as_tensor(u_anchor, dtype=torch.float32, device=self.device), dim=0)
 
         # Create vectorized delta_acts function that passes attention_mask
         delta_acts = vmap(
@@ -811,7 +818,10 @@ class ExponentialDCT():
         
             # update
             with torch.no_grad():
-                self.U.data = F.normalize(self.beta*G_U+(1-self.beta)*self.U.data, dim=0)
+                U_update = self.beta * G_U + (1 - self.beta) * self.U.data
+                if self.u_anchor_lambda > 0.0 and self.U_anchor is not None:
+                    U_update = anchor_step(U_update, self.U_anchor, self.u_anchor_lambda)
+                self.U.data = F.normalize(U_update, dim=0)
                 V_update = self.beta * G_V + (1 - self.beta) * self.V.data
                 if self.anchor_lambda > 0.0 and self.V_anchor is not None:
                     V_update = anchor_step(V_update, self.V_anchor, self.anchor_lambda)
