@@ -25,7 +25,8 @@ for ds in cities common_claim_true_false; do
       || echo "!!!! $ds uwarm $lam FAILED — continuing"
   done
   echo "=== assemble uwarm directions $ds ==="
-  PYTHONPATH=src python3 src/dct_uwarm_directions.py --dataset "$ds"
+  PYTHONPATH=src python3 src/dct_uwarm_directions.py --dataset "$ds" \
+    || echo "!!!! $ds uwarm directions FAILED — continuing"
   echo "=== uwarm steer $ds ==="
   PYTHONPATH=src python3 src/dct_warm_steer.py --dataset "$ds" --device cuda \
     --dirs-file "dct_uwarm_dirs_${ds}.npz" --out "dct_uwarm_steer_${ds}.csv" \
