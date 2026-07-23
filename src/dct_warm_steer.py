@@ -24,16 +24,24 @@ def injected(tau, unit_dir, input_scale):
     return float(tau) * float(input_scale) * unit(np.asarray(unit_dir, np.float64))
 
 
+def resolve_paths(ds, dirs_file=None, out=None):
+    return (dirs_file or f"dct_warm_dirs_{ds}.npz",
+            out or f"dct_warm_steer_{ds}.csv")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dataset", required=True)
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--limit", type=int, default=0, help="cap prompts (smoke)")
+    ap.add_argument("--dirs-file", default=None, help="directions npz (default warm dirs)")
+    ap.add_argument("--out", default=None, help="output csv (default dct_warm_steer_<ds>.csv)")
     a = ap.parse_args()
     ds = a.dataset
     meta = json.load(open(f"dct_meta_{ds}.json"))
     layer = int(meta["source_layer"]); scale = float(meta["input_scale"])
-    dirs = np.load(f"dct_warm_dirs_{ds}.npz")
+    dirs_path, out_path = resolve_paths(ds, a.dirs_file, a.out)
+    dirs = np.load(dirs_path)
     prompts = FACTUAL_PROMPTS[:a.limit] if a.limit else FACTUAL_PROMPTS
     print(f"[warm/steer] {ds}: layer={layer} input_scale={scale:.3f} "
           f"{len(dirs.files)} dirs x {len(TAUS)} taus x {len(prompts)} prompts", flush=True)
@@ -51,9 +59,9 @@ def main():
                     c = su.generate(model, tok, p, MAX_NEW_TOKENS)
                     rows.append((name, tau, p, c))
                 print(f"  {name} tau={tau:+.1f} done", flush=True)
-    with open(f"dct_warm_steer_{ds}.csv", "w", newline="") as f:
+    with open(out_path, "w", newline="") as f:
         csv.writer(f).writerows(rows)
-    print(f"[warm/steer] wrote dct_warm_steer_{ds}.csv")
+    print(f"[warm/steer] wrote {out_path}")
 
 
 if __name__ == "__main__":

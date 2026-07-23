@@ -24,3 +24,12 @@ def test_taus_two_sided_symmetric():
     # -tau -> FALSE (lying), +tau -> TRUE; 0.0 present (no-injection control)
     assert 0.0 in ws.TAUS
     assert sorted(ws.TAUS) == sorted(-t for t in ws.TAUS)
+
+
+def test_resolve_paths_defaults_and_overrides():
+    import dct_warm_steer as dws
+    assert dws.resolve_paths("cities") == ("dct_warm_dirs_cities.npz",
+                                           "dct_warm_steer_cities.csv")
+    assert dws.resolve_paths("cities", "dct_uwarm_dirs_cities.npz",
+                             "dct_uwarm_steer_cities.csv") == (
+        "dct_uwarm_dirs_cities.npz", "dct_uwarm_steer_cities.csv")
