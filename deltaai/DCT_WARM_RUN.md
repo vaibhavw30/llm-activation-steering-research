@@ -40,7 +40,8 @@ for ds in ['cities', 'common_claim_true_false']:
     t = np.load(f'truth_dir_{ds}.npz')
     assert 'mean_diff' in t and 'layer' in t, (ds, 'truth_dir')
     meta = json.load(open(f'dct_meta_{ds}.json'))
-    print(ds, 'ok — dct_meta layer:', meta.get('layer'), '| truth_dir layer:', int(t['layer']))
+    assert meta['source_layer'] == int(t['layer']), (ds, 'LAYER MISMATCH', meta['source_layer'], int(t['layer']))
+    print(ds, 'ok — dct_meta source_layer:', meta['source_layer'], '| truth_dir layer:', int(t['layer']))
 "
 ```
 

@@ -61,6 +61,87 @@ def plot_verdict(ds):
     print(f"[viz] wrote plot_dct_warm_verdict_{ds}.png")
 
 
+CURVE_PANELS = [
+    ("raw_mean_diff", "supervised axis (mean_diff)"),
+    ("raw_grad", "supervised axis (grad)"),
+    ("cold_top", "cold DCT top factor (free)"),
+    ("warm_mean_diff_lam0", "warm mean_diff λ=0"),
+    ("warm_mean_diff_lam0p3", "warm mean_diff λ=0.3"),
+    ("warm_mean_diff_lam1", "warm mean_diff λ=1"),
+    ("warm_mean_diff_lam3", "warm mean_diff λ=3"),
+    ("warm_grad_lam0", "warm grad λ=0"),
+    ("warm_grad_lam0p3", "warm grad λ=0.3"),
+    ("warm_grad_lam1", "warm grad λ=1"),
+    ("warm_grad_lam3", "warm grad λ=3"),
+]
+VERDICT_COLOR = {"TRUE": "#228833", "FALSE": "#cc3311", "INCOHERENT": "#999999"}
+
+
+def _sorted_taus(fr):
+    return sorted({k[1] for k in fr}, key=float)
+
+
+def _curve(fr, d, tau_keys, v):
+    return [fr.get((d, t), {}).get(v, np.nan) for t in tau_keys]
+
+
+def plot_curves(ds):
+    """Full verdict-vs-τ sweep per direction: a truth lever = FALSE rises at −τ;
+    a degrader = INCOH rises; inert = flat."""
+    fr = verdict_fractions(list(csv.DictReader(open(f"judge_dct_warm_steer_{ds}.csv"))))
+    tk = _sorted_taus(fr)
+    taus = [float(t) for t in tk]
+    fig, axes = plt.subplots(3, 4, figsize=(16, 10), sharex=True, sharey=True)
+    axes = axes.ravel()
+    for ax, (d, title) in zip(axes, CURVE_PANELS):
+        for v in ("TRUE", "FALSE", "INCOHERENT"):
+            ax.plot(taus, _curve(fr, d, tk, v), "o-", color=VERDICT_COLOR[v],
+                    label=v.title(), lw=2, ms=4)
+        ax.axvline(0, color="k", lw=0.6, alpha=0.4)
+        ax.set_title(title, fontsize=10)
+        ax.set_ylim(-0.03, 1.03); ax.grid(alpha=0.25)
+    for ax in axes[len(CURVE_PANELS):]:
+        ax.axis("off")
+    axes[0].legend(fontsize=9, loc="center left")
+    for ax in axes[8:12]:
+        ax.set_xlabel("τ  (−=push FALSE, +=push TRUE)")
+    for r in (0, 1, 2):
+        axes[r * 4].set_ylabel("verdict fraction")
+    fig.suptitle(f"{ds}: verdict vs steering strength τ, per direction\n"
+                 f"(a truth lever = FALSE rises at −τ; a degrader = INCOH rises; inert = flat)",
+                 fontsize=13)
+    fig.tight_layout(rect=[0, 0, 1, 0.96])
+    fig.savefig(f"plot_dct_warm_curves_{ds}.png", dpi=130)
+    print(f"[viz] wrote plot_dct_warm_curves_{ds}.png")
+
+
+def plot_effect(ds):
+    """Per direction: max rise above the τ=0 baseline in FALSE (would-be lie lever)
+    vs INCOHERENT (degradation lever). Shows steering degrades, never lies."""
+    fr = verdict_fractions(list(csv.DictReader(open(f"judge_dct_warm_steer_{ds}.csv"))))
+    tk = _sorted_taus(fr)
+    zero = str(float(0.0))
+    b_false = fr.get((CURVE_PANELS[0][0], zero), {}).get("FALSE", 0.0)
+    b_incoh = fr.get((CURVE_PANELS[0][0], zero), {}).get("INCOHERENT", 0.0)
+    names, dF, dI = [], [], []
+    for d, title in CURVE_PANELS:
+        names.append(title)
+        dF.append(np.nanmax(_curve(fr, d, tk, "FALSE")) - b_false)
+        dI.append(np.nanmax(_curve(fr, d, tk, "INCOHERENT")) - b_incoh)
+    x = np.arange(len(names))
+    fig, ax = plt.subplots(figsize=(11, 5))
+    ax.bar(x - 0.2, dF, 0.4, color="#cc3311", label="max ΔFALSE (would-be lie lever)")
+    ax.bar(x + 0.2, dI, 0.4, color="#999999", label="max ΔINCOH (degradation lever)")
+    ax.axhline(0, color="k", lw=0.6)
+    ax.set_xticks(x); ax.set_xticklabels(names, rotation=40, ha="right", fontsize=8)
+    ax.set_ylabel("max rise above τ=0 baseline")
+    ax.set_title(f"{ds}: what does steering actually do?  "
+                 f"(baseline FALSE={b_false:.2f}, INCOH={b_incoh:.2f})")
+    ax.legend(); fig.tight_layout()
+    fig.savefig(f"plot_dct_warm_effect_{ds}.png", dpi=150)
+    print(f"[viz] wrote plot_dct_warm_effect_{ds}.png")
+
+
 def plot_audit(ds):
     V, U, _ = fu.load_dct(ds)
     md = unit(np.asarray(np.load(f"truth_dir_{ds}.npz")["mean_diff"], np.float64))
@@ -83,6 +164,8 @@ def main():
     a = ap.parse_args()
     plot_drift(a.dataset)
     plot_verdict(a.dataset)
+    plot_curves(a.dataset)
+    plot_effect(a.dataset)
     plot_audit(a.dataset)
 
 

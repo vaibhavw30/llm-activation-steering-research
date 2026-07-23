@@ -1,0 +1,12 @@
+direction,drift,cos_to_mean_diff
+raw_mean_diff,0.0,1.0
+raw_grad,0.587,0.413
+warm_mean_diff_lam0,0.9714,0.0286
+warm_mean_diff_lam0p3,0.7214,0.2786
+warm_mean_diff_lam1,0.2791,0.7209
+warm_mean_diff_lam3,0.0532,0.9468
+warm_grad_lam0,0.977,-0.0166
+warm_grad_lam0p3,0.6847,0.1295
+warm_grad_lam1,0.3062,0.2767
+warm_grad_lam3,0.0517,0.3908
+cold_top,0.9973,0.0027
