@@ -103,7 +103,8 @@ def test_atomic_savez_writes_completely_and_leaves_no_tmp(tmp_path):
 
 def test_atomic_savez_overwrites_stale_tmp(tmp_path):
     p = str(tmp_path / "chunk_00000.npz")
-    open(p + ".tmp", "wb").write(b"garbage")         # leftover from a prior crash
+    with open(p + ".tmp", "wb") as fh:
+        fh.write(b"garbage")                          # leftover from a prior crash
     rm.atomic_savez(p, a=np.arange(3))
     assert not os.path.exists(p + ".tmp")
     assert np.array_equal(np.load(p)["a"], np.arange(3))
