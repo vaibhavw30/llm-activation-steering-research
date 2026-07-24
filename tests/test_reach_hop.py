@@ -12,8 +12,8 @@ class _ToySlice(nn.Module):
     def __init__(self, d=6, seed=0):
         super().__init__()
         g = torch.Generator().manual_seed(seed)
-        self.W1 = nn.Parameter(torch.randn(d, d, generator=g), requires_grad=False)
-        self.W2 = nn.Parameter(torch.randn(d, d, generator=g), requires_grad=False)
+        self.W1 = nn.Parameter(torch.randn(d, d, generator=g, dtype=torch.float64), requires_grad=False)
+        self.W2 = nn.Parameter(torch.randn(d, d, generator=g, dtype=torch.float64), requires_grad=False)
 
     def forward(self, h):
         z = torch.tanh(h @ self.W1)
@@ -23,7 +23,7 @@ class _ToySlice(nn.Module):
 def _setup(B=2, T=4, d=6, seed=1):
     g = torch.Generator().manual_seed(seed)
     sl = _ToySlice(d=d)
-    h = torch.randn(B, T, d, generator=g)
+    h = torch.randn(B, T, d, generator=g, dtype=torch.float64)
     attn = torch.ones(B, T, dtype=torch.long)
     attn[1, -1] = 0                            # row 1 has one right-pad
     return sl, h, attn, B, T, d
@@ -59,9 +59,9 @@ def test_broadcast_convention():
 
 def _fd_jacobian(f, B, d, h=1e-4):
     """Full J_b per row by central finite differences. Returns (B, d, d)."""
-    J = torch.zeros(B, d, d)
+    J = torch.zeros(B, d, d, dtype=torch.float64)
     for j in range(d):
-        e = torch.zeros(B, d); e[:, j] = h
+        e = torch.zeros(B, d, dtype=torch.float64); e[:, j] = h
         J[:, :, j] = (f(e) - f(-e)) / (2 * h)
     return J
 
@@ -70,21 +70,14 @@ def test_vjp_matches_finite_differences():
     sl, h, attn, B, T, d = _setup()
     f = rh.make_hop(sl, h, attn)
     J = _fd_jacobian(f, B, d)
-    W = torch.randn(3, d)
-    _, G = rh.vjp_rows(f, torch.zeros(B, d), W)     # (K,B,d)
-    # atol=5e-2: this toy model's tanh+cumsum chain produces output magnitudes
-    # ~10-30, so float32 central differences at h=1e-4 sit in the roundoff-
-    # dominated regime (eps/h ~ 1e-3), not the truncation-dominated one -- a
-    # 200-trial sweep of this exact setup measured a worst-case FD-vs-vjp
-    # deviation of 0.0213 purely from that roundoff floor, while an
-    # independent float64 autograd cross-check confirms vjp_rows itself is
-    # exact to ~1e-6, and an injected wrong-transpose bug produces errors of
-    # ~12-15 (three orders of magnitude above this tolerance). 5e-2 clears the
-    # measured noise floor with margin while still catching real defects.
+    W = torch.randn(3, d, dtype=torch.float64)
+    _, G = rh.vjp_rows(f, torch.zeros(B, d, dtype=torch.float64), W)     # (K,B,d)
+    # Toy path runs in float64, so this finite-difference check holds tightly
+    # (no float32 roundoff floor to clear).
     for k in range(3):
         for b in range(B):
             ref = J[b].T @ W[k]
-            assert torch.allclose(G[k, b], ref, atol=5e-2), (k, b)
+            assert torch.allclose(G[k, b], ref, atol=1e-5), (k, b)
 
 
 def test_transposition_identity():
@@ -92,9 +85,9 @@ def test_transposition_identity():
     sl, h, attn, B, T, d = _setup()
     f = rh.make_hop(sl, h, attn)
     torch.manual_seed(7)
-    w = torch.randn(d); v = torch.randn(d)
-    _, G = rh.vjp_rows(f, torch.zeros(B, d), w[None, :])
-    _, JT = rh.jvp_cols(f, torch.zeros(B, d), v.expand(B, d).contiguous())
+    w = torch.randn(d, dtype=torch.float64); v = torch.randn(d, dtype=torch.float64)
+    _, G = rh.vjp_rows(f, torch.zeros(B, d, dtype=torch.float64), w[None, :])
+    _, JT = rh.jvp_cols(f, torch.zeros(B, d, dtype=torch.float64), v.expand(B, d).contiguous())
     for b in range(B):
         lhs = float(JT[b] @ w)
         rhs = float(G[0, b] @ v)
