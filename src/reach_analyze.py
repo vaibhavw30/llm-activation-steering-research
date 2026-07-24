@@ -45,6 +45,31 @@ def eps_grid(input_scale, n=EPS_POINTS):
     return np.linspace(0.0, 1.5 * float(input_scale), n)
 
 
+def truth_subspace_best_margins(jtw, margins, names, groups, store_names):
+    """Per-statement best-case controllability margin over the truth subspace:
+    max over unit w in span(truth subspace) of ||J_i^T w|| = sigma_max of J_i^T
+    applied to an ORTHONORMAL basis of that subspace.
+
+    The orthonormal basis is exactly the `truth_sub` group (build_battery's
+    Gram-Schmidt of mean_diff+probe_grad+boots). The `truth` group
+    (mean_diff_tgt, probe_grad_tgt) is deliberately EXCLUDED: those vectors
+    already lie in the span of the truth_sub basis, so stacking them would make
+    the rows non-orthonormal and inflate sigma_max above the true best-case
+    margin (subspace_best_margin's identity requires an orthonormal basis)."""
+    names = [str(x) for x in names]
+    groups = [str(x) for x in groups]
+    store_names = [str(x) for x in store_names]
+    rows = [store_names.index(nm) for nm, gr in zip(names, groups) if gr == "truth_sub"]
+    n = np.asarray(margins).shape[0]
+    if not rows:
+        return np.full(n, np.nan)
+    col = [names.index(store_names[r]) for r in rows]
+    jtw = np.asarray(jtw, np.float64)
+    margins = np.asarray(margins, np.float64)
+    return np.array([subspace_best_margin(jtw[i, rows, :] * margins[i, col][:, None])
+                     for i in range(n)])
+
+
 def analyze(ds):
     acts = np.load(f"reach_acts_{ds}.npz", allow_pickle=True)
     dirs = np.load(f"reach_dirs_{ds}.npz", allow_pickle=True)
@@ -80,14 +105,10 @@ def analyze(ds):
     else:
         best_sub_name = ""
 
-    # --- per-statement best-case MARGIN over the subspace (sigma_max of stacked J^T b)
-    store_names = [str(x) for x in mz["store_names"]]
-    sub_rows = [store_names.index(nm) for nm, gr in zip(names, groups)
-                if gr in ("truth", "truth_sub")]
-    jtw = np.asarray(mz["jtw"], np.float64)                  # (n, Ks, d) unit rows
-    col = [names.index(store_names[r]) for r in sub_rows]
-    best_margin = np.array([subspace_best_margin(
-        jtw[i, sub_rows, :] * margins[i, col][:, None]) for i in range(n)])
+    # --- per-statement best-case MARGIN over the subspace (sigma_max of the
+    # orthonormal truth_sub basis only — see truth_subspace_best_margins docstring)
+    best_margin = truth_subspace_best_margins(mz["jtw"], margins, names, groups,
+                                              mz["store_names"])
 
     # --- write curves
     with open(f"reach_curve_{ds}.csv", "w", newline="") as f:
@@ -118,7 +139,7 @@ def analyze(ds):
             d["median_eps_star"] = float(np.median(eps_star[nm]))
             d["frac_at_input_scale"] = float((eps_star[nm] <= input_scale).mean())
         summary["directions"][nm] = d
-    bm_med = float(np.median(best_margin))
+    bm_med = float(np.nanmedian(best_margin))
     summary["truth_sub_best"] = {
         "median_margin": bm_med,
         "median_eps_star": float(np.median(eps_star["truth_sub_best"]))

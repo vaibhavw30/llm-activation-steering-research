@@ -47,3 +47,25 @@ def test_subspace_best_margin_is_top_singular_value():
 def test_eps_grid_spans_1p5_input_scale():
     g = ra.eps_grid(40.0)
     assert len(g) == 61 and g[0] == 0.0 and np.isclose(g[-1], 60.0)
+
+
+def test_truth_subspace_best_margins_excludes_redundant_truth_rows():
+    # Orthonormal truth_sub basis {e0-image, e1-image} with ||J^T e0||=3, ||J^T e1||=4
+    # => true best-case margin = sigma_max = 4. A redundant 'truth' row duplicating
+    # e0 must be IGNORED; if it were stacked, sigma_max would inflate to sqrt(18)~4.24.
+    names = ["mean_diff_tgt", "truth_sub_0", "truth_sub_1"]
+    groups = ["truth", "truth_sub", "truth_sub"]
+    store_names = names[:]                      # all three stored
+    jtw = np.zeros((1, 3, 3))
+    jtw[0, 0] = [1, 0, 0]                        # mean_diff image dir (redundant)
+    jtw[0, 1] = [1, 0, 0]                        # truth_sub_0 image dir
+    jtw[0, 2] = [0, 1, 0]                        # truth_sub_1 image dir
+    margins = np.array([[3.0, 3.0, 4.0]])
+    out = ra.truth_subspace_best_margins(jtw, margins, names, groups, store_names)
+    assert np.isclose(out[0], 4.0)              # orthonormal-only sigma_max, NOT ~4.24
+
+
+def test_truth_subspace_best_margins_empty_is_nan():
+    out = ra.truth_subspace_best_margins(np.zeros((2, 1, 3)), np.ones((2, 1)),
+                                         ["rand_0"], ["rand"], ["rand_0"])
+    assert out.shape == (2,) and np.all(np.isnan(out))
