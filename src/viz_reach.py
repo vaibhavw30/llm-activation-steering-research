@@ -122,11 +122,39 @@ def fig_geometry(ds):
     print(f"saved plot_reach_geometry_{ds}.png")
 
 
+def fig_svd(ds):
+    path = f"reach_svd_energy_{ds}.csv"
+    if not os.path.exists(path):
+        print(f"skip fig_svd: {path} missing")
+        return
+    series = {}
+    with open(path) as f:
+        for r in csv.DictReader(f):
+            series.setdefault(r["quantity"], []).append(
+                (int(r["k"]), float(r["mean_energy"])))
+    fig, ax = plt.subplots(figsize=(7.5, 4.4))
+    style = {"w_mean_diff_tgt_in_U": (BLUE, "truth mean_diff (left/U)"),
+             "w_probe_grad_tgt_in_U": (GREEN, "truth probe grad (left/U)"),
+             "md_src_in_V": (ORANGE, "mean_diff@src (right/V)"),
+             "rand_in_U": (GRAY, "random readout (left/U)")}
+    for q, pts in series.items():
+        pts = np.array(sorted(pts))
+        c, lab = style.get(q, (RED, q))
+        ax.plot(pts[:, 0], pts[:, 1], color=c, label=lab)
+    ax.set_xlabel("top-k singular subspace"); ax.set_ylabel("captured energy of w")
+    ax.set_ylim(0, 1.05); ax.grid(alpha=0.3); ax.legend(fontsize=8)
+    ax.set_title(f"{ds}: does truth live in the singular tail of the hop?",
+                 fontsize=10)
+    fig.tight_layout(); fig.savefig(f"plot_reach_svd_{ds}.png", dpi=150)
+    plt.close(fig)
+    print(f"saved plot_reach_svd_{ds}.png")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dataset", required=True)
     ds = ap.parse_args().dataset
-    fig_margins(ds); fig_curves(ds); fig_geometry(ds)
+    fig_margins(ds); fig_curves(ds); fig_geometry(ds); fig_svd(ds)
 
 
 if __name__ == "__main__":

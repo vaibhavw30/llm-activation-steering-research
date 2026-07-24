@@ -45,3 +45,20 @@ def test_phase1_figures_smoke(tmp_path, monkeypatch):
     for p in ("plot_reach_margins_toy.png", "plot_reach_curves_toy.png",
               "plot_reach_geometry_toy.png"):
         assert os.path.exists(p), p
+
+
+def test_fig_svd_smoke(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    with open("reach_svd_energy_toy.csv", "w", newline="") as f:
+        w = csv.writer(f); w.writerow(("k", "quantity", "mean_energy"))
+        for k in range(1, 65):
+            w.writerow((k, "w_mean_diff_tgt_in_U", min(1.0, k / 64)))
+            w.writerow((k, "rand_in_U", min(1.0, k / 128)))
+    vr.fig_svd("toy")
+    assert os.path.exists("plot_reach_svd_toy.png")
+
+
+def test_fig_svd_skips_when_missing(tmp_path, monkeypatch, capsys):
+    monkeypatch.chdir(tmp_path)
+    vr.fig_svd("toy")                      # must not raise
+    assert "skip" in capsys.readouterr().out
