@@ -8,8 +8,8 @@ one NCSA password + Duo push per ssh/rsync batch).
 ## Phase 0 — one-time cluster prerequisite (login node)
 
 `.venv-dct-gpu` has no scikit-learn (setup_env.sh installs only
-transformers/scipy/tqdm/pandas), and `reach_margins --stage dirs`,
-`reach_jlens`, and `reach_svd --analyze` need it:
+transformers/scipy/tqdm/pandas), and `reach_margins --stage dirs` and
+`reach_jlens` need it (both call `fit_probe_dir`/`fit_threshold`):
 
     module load python/miniforge3_pytorch
     source .venv-dct-gpu/bin/activate
