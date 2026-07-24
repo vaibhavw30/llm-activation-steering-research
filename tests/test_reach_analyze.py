@@ -69,3 +69,20 @@ def test_truth_subspace_best_margins_empty_is_nan():
     out = ra.truth_subspace_best_margins(np.zeros((2, 1, 3)), np.ones((2, 1)),
                                          ["rand_0"], ["rand"], ["rand_0"])
     assert out.shape == (2,) and np.all(np.isnan(out))
+
+
+def test_scale_grid_caps_and_brackets():
+    import reach_steer as rs
+    g = rs.scale_grid(eps_star=10.0, input_scale=40.0, fracs=[0.5, 1.0, 1.5, 2.0])
+    assert 0.0 in g
+    mags = sorted({abs(s) for s in g if s != 0})
+    assert mags == [5.0, 10.0, 15.0, 20.0]
+    g2 = rs.scale_grid(eps_star=100.0, input_scale=40.0, fracs=[1.0, 2.0])
+    assert max(abs(s) for s in g2) == 60.0        # capped at 1.5 x input_scale
+    assert rs.scale_grid(0.0, 40.0, [1.0]) == [0.0]
+
+
+def test_stem_of():
+    import reach_steer as rs
+    assert rs.stem_of("The city of Paris is in France.") == "The city of Paris is in"
+    assert rs.stem_of("Too short.") is None
