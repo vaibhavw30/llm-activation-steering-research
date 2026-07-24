@@ -150,11 +150,42 @@ def fig_svd(ds):
     print(f"saved plot_reach_svd_{ds}.png")
 
 
+def fig_jlens(ds):
+    path = f"reach_jlens_{ds}.csv"
+    if not os.path.exists(path):
+        print(f"skip fig_jlens: {path} missing")
+        return
+    data = {}
+    with open(path) as f:
+        for r in csv.DictReader(f):
+            data.setdefault((r["mode"], r["w_name"]), []).append(
+                (int(r["layer"]), float(r["margin_mean"])))
+    fig, axes = plt.subplots(1, 2, figsize=(11, 4.4), sharey=True)
+    style = {"verdict": (RED, "verdict (yes-no unembed)"),
+             "truth_final": (BLUE, "truth-content probe"),
+             "v_q_final": (GREEN, "question-mode v_Q")}
+    for ax, mode, title in ((axes[0], "decl", "declarative input"),
+                            (axes[1], "quest", "question-prefixed input")):
+        for wn, (c, lab) in style.items():
+            pts = np.array(sorted(data.get((mode, wn), [(0, np.nan)])))
+            ax.semilogy(pts[:, 0], pts[:, 1], color=c, label=lab)
+        ax.set_xlabel("source layer l"); ax.set_title(title, fontsize=10)
+        ax.grid(alpha=0.3, which="both")
+    axes[0].set_ylabel("mean ||J_l^T w||")
+    axes[0].legend(fontsize=8)
+    fig.suptitle(f"{ds}: per-layer controllability of final-basis readouts "
+                 f"(workspace selectivity)", fontsize=10)
+    fig.tight_layout(rect=[0, 0, 1, 0.93])
+    fig.savefig(f"plot_reach_jlens_{ds}.png", dpi=150)
+    plt.close(fig)
+    print(f"saved plot_reach_jlens_{ds}.png")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dataset", required=True)
     ds = ap.parse_args().dataset
-    fig_margins(ds); fig_curves(ds); fig_geometry(ds); fig_svd(ds)
+    fig_margins(ds); fig_curves(ds); fig_geometry(ds); fig_svd(ds); fig_jlens(ds)
 
 
 if __name__ == "__main__":

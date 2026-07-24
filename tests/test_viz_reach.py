@@ -62,3 +62,17 @@ def test_fig_svd_skips_when_missing(tmp_path, monkeypatch, capsys):
     monkeypatch.chdir(tmp_path)
     vr.fig_svd("toy")                      # must not raise
     assert "skip" in capsys.readouterr().out
+
+
+def test_fig_jlens_smoke(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    with open("reach_jlens_toy.csv", "w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(("mode", "layer", "w_name", "margin_mean", "margin_median",
+                    "margin_se", "n"))
+        for mode in ("decl", "quest"):
+            for l in range(26):
+                for wn in ("verdict", "truth_final", "v_q_final"):
+                    w.writerow((mode, l, wn, 1.0 + l * 0.1, 1.0, 0.05, 8))
+    vr.fig_jlens("toy")
+    assert os.path.exists("plot_reach_jlens_toy.png")
