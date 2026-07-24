@@ -89,3 +89,21 @@ def test_load_statements_stratified_cap(tmp_path, monkeypatch):
     assert np.all(np.diff(idx) > 0)    # sorted, deterministic
     stmts2, labels2, idx2 = rm.load_statements("toy")
     assert np.array_equal(idx, idx2)   # seed-stable
+
+
+def test_atomic_savez_writes_completely_and_leaves_no_tmp(tmp_path):
+    p = str(tmp_path / "chunk_00000.npz")
+    rm.atomic_savez(p, a=np.arange(5), b=np.ones((2, 3)))
+    assert os.path.exists(p)
+    assert not os.path.exists(p + ".tmp")           # temp cleaned up by rename
+    z = np.load(p)
+    assert np.array_equal(z["a"], np.arange(5))
+    assert z["b"].shape == (2, 3)
+
+
+def test_atomic_savez_overwrites_stale_tmp(tmp_path):
+    p = str(tmp_path / "chunk_00000.npz")
+    open(p + ".tmp", "wb").write(b"garbage")         # leftover from a prior crash
+    rm.atomic_savez(p, a=np.arange(3))
+    assert not os.path.exists(p + ".tmp")
+    assert np.array_equal(np.load(p)["a"], np.arange(3))

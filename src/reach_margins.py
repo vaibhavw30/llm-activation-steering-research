@@ -128,6 +128,23 @@ def build_battery(h_tgt, y, ds):
 
 # ---------------------------------------------------------------------- stages
 
+def atomic_savez(path, **arrays):
+    """Crash-safe np.savez: write to a temp sibling, then atomically rename into
+    place so a partial write never leaves a truncated file at `path` that resume
+    would treat as a completed chunk.
+
+    Note: np.savez(str_path, ...) auto-appends ".npz" to any path that doesn't
+    already end in ".npz" — since `path + ".tmp"` doesn't, passing that string
+    straight to np.savez would silently write to `path + ".tmp.npz"` instead,
+    and the following os.replace(tmp, path) would then raise FileNotFoundError.
+    Writing through an open file handle avoids that auto-appending, so the file
+    lands at exactly `tmp` as intended."""
+    tmp = path + ".tmp"
+    with open(tmp, "wb") as f:
+        np.savez(f, **arrays)
+    os.replace(tmp, path)
+
+
 def stage_acts(ds, device, limit=0):
     validate_inputs(ds)
     stmts, labels, row_index = load_statements(ds)
@@ -209,7 +226,7 @@ def stage_vjp(ds, device, resume=True, limit=0):
             cdv_l.append((Gu @ lm_t["dct_v"]).T.cpu().numpy())
             jtw_l.append(Gu[store_t].permute(1, 0, 2).cpu().numpy().astype(np.float16))
             print(f"[vjp] {ds} statements {b0}-{b0 + len(batch)} done", flush=True)
-        np.savez(cpath, margins=np.concatenate(m_l).astype(np.float32),
+        atomic_savez(cpath, margins=np.concatenate(m_l).astype(np.float32),
                  cos_md_src=np.concatenate(cmd_l).astype(np.float32),
                  cos_vq=np.concatenate(cvq_l).astype(np.float32),
                  cos_dctv=np.concatenate(cdv_l).astype(np.float32),
