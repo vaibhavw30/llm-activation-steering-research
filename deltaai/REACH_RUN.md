@@ -204,9 +204,13 @@ the loop went on; grab that `.out` and read the traceback for that dataset.
 ```bash
 cd ~/llm-activation-steering-research
 rsync -av \
-  'vwudaru@dtai-login.delta.ncsa.illinois.edu:~/llm-activation-steering-research/{reach_acts_*.npz,reach_dirs_*.npz,reach_margins_*.npz,reach_curve_*.csv,reach_summary_*.json,reach_svd_summary_*.csv,reach_svd_energy_*.csv,reach_steer_*.csv,reach_steer_readout_*.csv,reach_steer_stmt_*.csv,reach_jlens_*.csv,reach_linerr_*.csv,judge_reach_*.csv,plot_judge_reach_*.png}' \
+  'vwudaru@dtai-login.delta.ncsa.illinois.edu:~/llm-activation-steering-research/{reach_acts_*.npz,reach_dirs_*.npz,reach_margins_*.npz,reach_curve_*.csv,reach_summary_*.json,reach_svd_summary_*.csv,reach_svd_energy_*.csv,reach_svd_cities,reach_svd_common_claim_true_false,reach_steer_*.csv,reach_steer_readout_*.csv,reach_steer_stmt_*.csv,reach_jlens_*.csv,reach_linerr_*.csv,judge_reach_*.csv,plot_judge_reach_*.png}' \
   ./
 ```
+
+> The `reach_svd_<ds>/` dirs carry the per-statement U64/V64 singular vectors (~19 MB/dataset)
+> — the 2026-07 audit run's glob omitted them and they had to be recovered later
+> ([REACH_H0_RUN.md](REACH_H0_RUN.md) Phase 3). Keep them in the glob.
 
 > `reach_acts_*.npz` and `reach_margins_*.npz` are ~200 MB/dataset (jtw rows are float16 to keep this
 > small) — needed locally because `reach_analyze` and `viz_reach` read them. If bandwidth hurts, drop
