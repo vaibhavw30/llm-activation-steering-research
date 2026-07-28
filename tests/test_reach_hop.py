@@ -104,3 +104,45 @@ def test_vjp_rows_are_per_row_independent():
         f1 = rh.make_hop(sl, h[b:b + 1], attn[b:b + 1])
         _, G1 = rh.vjp_rows(f1, torch.zeros(1, d), w)
         assert torch.allclose(G2[0, b], G1[0, 0], atol=1e-5)
+
+
+class _NormalizerlessSlice:
+    """Mimics dct.SlicedModel under transformers >= 5: it pre-divides gemma-2
+    inputs by sqrt(d) but the HF model no longer re-multiplies inputs_embeds,
+    so the net map is true_map(h / sqrt(d))."""
+    def __init__(self, true_map, d):
+        self.true_map, self.d = true_map, d
+
+    def __call__(self, h):
+        return self.true_map(h / self.d ** 0.5)
+
+
+def test_calibrate_slice_identity_passthrough():
+    """A faithful slice is returned unwrapped with factor 1."""
+    sl, h, attn, B, T, d = _setup()
+    last = rh.last_nonpad_index(attn)
+    target = sl(h)[torch.arange(B), last]
+    cand, cos, factor = rh.calibrate_slice(sl, h, target, last)
+    assert cand is sl and factor == 1.0 and cos > 0.999
+
+
+def test_calibrate_slice_compensates_missing_normalizer():
+    """The sqrt(d) compensation restores fidelity and the wrapped map matches
+    the true map everywhere (so its Jacobian is the true Jacobian)."""
+    sl, h, attn, B, T, d = _setup()
+    last = rh.last_nonpad_index(attn)
+    target = sl(h)[torch.arange(B), last]
+    broken = _NormalizerlessSlice(sl, d)
+    cand, cos, factor = rh.calibrate_slice(broken, h, target, last)
+    assert isinstance(cand, rh.CompensatedSlice) and factor == d ** 0.5
+    assert cos > 0.999
+    assert torch.allclose(cand(h), sl(h), atol=1e-10)
+
+
+def test_calibrate_slice_raises_when_uncompensatable():
+    import pytest
+    sl, h, attn, B, T, d = _setup()
+    last = rh.last_nonpad_index(attn)
+    target = sl(h)[torch.arange(B), last]
+    with pytest.raises(SystemExit, match="unfaithful"):
+        rh.calibrate_slice(lambda x: torch.zeros_like(x) + 1.0, h, target, last)

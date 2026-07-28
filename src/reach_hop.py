@@ -68,11 +68,55 @@ def load_meta(ds):
     return int(m["source_layer"]), int(m["target_layer"]), float(m["input_scale"])
 
 
+PROBE_TEXT = "The city of Paris is in France."
+FIDELITY_TOL = 0.999
+
+
+class CompensatedSlice:
+    """Constant input pre-scale around dct.SlicedModel. The slice divides gemma-2
+    inputs by sqrt(d) expecting the HF model to re-multiply inputs_embeds by its
+    normalizer; transformers >= 5 no longer does that, so the slice needs a
+    sqrt(d) pre-compensation there to reproduce hidden_states[tgt]."""
+
+    def __init__(self, sliced, factor):
+        self.sliced, self.factor = sliced, float(factor)
+
+    def __call__(self, h):
+        return self.sliced(h * self.factor)
+
+
+def calibrate_slice(sliced, h_src_seq, h_tgt_last, last_idx, tol=FIDELITY_TOL):
+    """Return (slice_callable, cos, factor) such that the callable reproduces
+    hidden_states[tgt] at the last token on the probe batch: tries the raw slice,
+    then the sqrt(d) compensation. Raises if neither is faithful — every hop
+    Jacobian downstream would be a Jacobian of the wrong map."""
+    d = h_src_seq.shape[-1]
+    c = float("nan")
+    for factor in (1.0, d ** 0.5):
+        cand = sliced if factor == 1.0 else CompensatedSlice(sliced, factor)
+        with torch.no_grad():
+            out = cand(h_src_seq)
+        idx = torch.arange(h_src_seq.shape[0], device=h_src_seq.device)
+        got = out[idx, last_idx]
+        c = float(torch.nn.functional.cosine_similarity(
+            got.flatten().float(), h_tgt_last.flatten().float(), dim=0))
+        if c >= tol:
+            return cand, c, factor
+    raise SystemExit(f"[reach] SlicedModel unfaithful (cos={c:.3f}) even with "
+                     "sqrt(d) compensation — check transformers version "
+                     "(4.51.3 pinned; local 5.x needs the compensation path)")
+
+
 def load_model_and_slice(ds, device):
     src, tgt, scale = load_meta(ds)
     tok, model, dev = su.load_model(device)
     sliced = dct.SlicedModel(model, start_layer=src, end_layer=tgt,
                              layers_name="model.layers")
+    fb = forward_source_batch(model, tok, [PROBE_TEXT], src, tgt, dev)
+    sliced, cos_f, factor = calibrate_slice(sliced, fb["h_src_seq"], fb["h_tgt"],
+                                            last_nonpad_index(fb["attn"]))
+    print(f"[reach] slice fidelity cos={cos_f:.6f} (input compensation x{factor:.4g})",
+          flush=True)
     return tok, model, sliced, {"src": src, "tgt": tgt, "input_scale": scale,
                                 "device": dev}
 
