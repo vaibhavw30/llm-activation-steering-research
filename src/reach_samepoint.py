@@ -50,6 +50,7 @@ def run(ds, device, limit=0):
     picks = rng.permutation(idx1)[:N_PER_STMT]
     if limit:
         picks = picks[:limit]
+    jtw_raw = mz["jtw"]        # ONE decompression — per-row access re-reads the zip
     tok, model, dev = su.load_model(device)
     rows = [("stmt_index", "label", "eps_star", "m_pred", "g_full", "scale", "g_read")]
     with su.Steerer(model, src) as st:
@@ -58,7 +59,7 @@ def run(ds, device, limit=0):
                 continue
             stmt = str(stmts[i]).strip()
             eps_i = g_all[i] / max(m_all[i], 1e-12) if g_all[i] > 0 else 0.0
-            jtw_i = unit(np.asarray(mz["jtw"], np.float64)[i, ks, :])
+            jtw_i = unit(np.asarray(jtw_raw[i, ks, :], np.float64))
             for s in scale_grid(eps_i, input_scale, STMT_FRACS):
                 st.set(None if s == 0.0 else torch.tensor(
                     s * jtw_i, dtype=torch.float32))

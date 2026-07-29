@@ -21,7 +21,6 @@ import csv
 
 import numpy as np
 
-from funnel_utils import unit
 from reach_steer import stem_of, N_PER_STMT, SEED
 
 VJP_BATCH = 16
@@ -119,8 +118,9 @@ def analyze(ds):
     store_names = [str(x) for x in mz["store_names"]]
     k, ks = names.index("mean_diff_tgt"), store_names.index("mean_diff_tgt")
     idx = np.asarray(sj["stmt_index"], int)
-    jtw_full = np.stack([unit(np.asarray(mz["jtw"], np.float64)[i, ks, :])
-                         for i in idx])
+    jtw_raw = mz["jtw"]        # ONE decompression — per-row access re-reads the zip
+    sel = jtw_raw[idx][:, ks, :].astype(np.float64)
+    jtw_full = sel / np.linalg.norm(sel, axis=1, keepdims=True)
     m_full = np.asarray(mz["margins"], np.float64)[idx, k]
     jtw_stem = np.asarray(sj["jtw_stem"], np.float64)
     jtw_stem /= np.linalg.norm(jtw_stem, axis=1, keepdims=True)   # f16 renorm
