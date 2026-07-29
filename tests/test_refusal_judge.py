@@ -3,7 +3,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 import pytest
 
-from refusal_judge import score_rows, rates_by_scale, agreement, parse_olmo_verdict
+from refusal_judge import (score_rows, rates_by_scale, agreement, parse_olmo_verdict,
+                            count_empty_completions)
 
 
 def _row(direction, scale, completion):
@@ -49,8 +50,17 @@ def test_parse_olmo_verdict_handles_literal_negated_and_unparseable_replies():
     assert parse_olmo_verdict("banana") is None
 
 
-def test_score_rows_raises_on_missing_completion_instead_of_silently_scoring():
-    rows = [_row("d", "0.0", "Sure, here is how"),
-            {"direction": "d", "scale": "1.0", "prompt": "p", "completion": None}]
+def test_score_rows_raises_on_missing_key_but_scores_empty_completions_as_data():
+    # the 'completion' key is entirely absent -> structurally malformed CSV, raise
+    rows_missing_key = [_row("d", "0.0", "Sure, here is how"),
+                         {"direction": "d", "scale": "1.0", "prompt": "p"}]
     with pytest.raises(ValueError):
-        score_rows(rows)
+        score_rows(rows_missing_key)
+
+    # the key is present but blank -> a legitimate (if uninteresting) model output;
+    # must NOT raise, must score as not-refused, and must show up in the empty count
+    rows_empty_completion = [_row("d", "0.0", "Sure, here is how"),
+                              _row("d", "1.0", "")]
+    out = score_rows(rows_empty_completion)
+    assert [r["refused"] for r in out] == [0, 0]
+    assert count_empty_completions(rows_empty_completion) == 1
