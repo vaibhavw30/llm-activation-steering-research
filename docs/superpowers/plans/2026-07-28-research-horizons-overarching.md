@@ -39,7 +39,17 @@ vectors are local. All feed directly into the paper's mechanism section.
 
 ## Horizon 1 — instrument validation + feature-level mechanism (weeks 2–3)
 
-Gate to open: Horizon 0 complete. Plan to write: `2026-08-XX-horizon1-refusal-sae.md`.
+Gate: **OPEN** — Horizon 0 complete (2026-07-29). Plan:
+[`2026-07-29-horizon1-refusal-sae.md`](2026-07-29-horizon1-refusal-sae.md).
+
+Scope decisions taken 2026-07-29: **minimal positive control** (no refusal DCT factor
+training — `SteeringCalibrator` supplies `input_scale`, the `dct_u` battery members and
+Phase 2 are dropped) and **substring judge + OLMo spot-check**. Two design points the plan
+adds beyond this sketch: `refusal.csv` uses **label 1 = harmless**, so the pipeline's
+label-1 crossing means *inducing* refusal (full behavioral headroom, unlike ablating
+refusal on a base model that may never refuse); and the refusal per-statement arm prompts
+with the **full** instruction, so the certificate's linearization point is the prompt's
+last token — the Horizon-0 context-shift confound does not arise there.
 
 - **1.1 Refusal positive control (the publication gate; ~19–30 GPU-hr).** Unmodified audit
   pipeline on the Arditi refusal direction (arXiv:2406.11717). New pipeline pass:

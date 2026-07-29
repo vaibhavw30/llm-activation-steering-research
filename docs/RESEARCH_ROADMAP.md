@@ -48,6 +48,17 @@ hole a reviewer would poke. **Implementation plan:**
 
 ### Horizon 1 — the gating experiment + feature-level mechanism (2–4 weeks)
 
+> **Gate OPEN 2026-07-29; implementation plan:**
+> [`docs/superpowers/plans/2026-07-29-horizon1-refusal-sae.md`](superpowers/plans/2026-07-29-horizon1-refusal-sae.md).
+> Scope narrowed to a **minimal** control: no refusal DCT factor training (only
+> `SteeringCalibrator` for `input_scale`), no `dct_u` battery members, no Phase 2 — which cuts
+> the estimate below from ~19–30 GPU-hr to roughly 3–6. Judge = Arditi substring matching with
+> an OLMo spot-check. Two refinements the plan makes to the sketch below: `refusal.csv` uses
+> **label 1 = harmless** so the pipeline's label-1 crossing *induces* refusal (a base model may
+> never refuse spontaneously, so ablation has no headroom), and the per-statement arm prompts
+> with the **full** instruction, putting the certificate's linearization point at the prompt's
+> last token — so the Horizon-0 context-shift confound is absent by construction.
+
 **1.1 Refusal positive control — the publication gate.** Run the *unmodified* audit pipeline on
 the Arditi refusal direction (arXiv:2406.11717; public code, validated down to small Gemma
 models, known steering layer). NOTE (artifact-verified): this is a *new pipeline pass*, not a
