@@ -1,0 +1,119 @@
+"""make_reach_meta.py — Horizon-1 1.1 Task A4: dct_meta_<ds>.json without DCT training.
+
+The reach pipeline reads source/target layers, the model id, and input_scale from
+dct_meta_<ds>.json. The truth datasets got theirs from run_dct_data.py as a side
+effect of fitting DCT factors. The minimal refusal control skips that fit, so this
+writes the same file from a probe-accuracy sweep, and calibrate_scale.py fills in
+input_scale with the same SteeringCalibrator run_dct_data.py would have used.
+
+Layer rule (pre-registered): source_layer = the EARLIEST layer whose linear-probe
+accuracy is within ACC_TOL of the best, among layers with MIN_SOURCE_LAYER <= L and
+L + HOP_DEPTH <= max hidden-state index. Plain argmax is wrong here: harmful-vs-
+harmless instructions are lexically separable, so accuracy can saturate at layer 0 and
+argmax-with-earliest-tiebreak would pick the embedding layer. Earliest-within-tolerance
+also matches Horizon-0 D4, which found controllability peaks at layers 5-9.
+
+  target_layer = source_layer + 9   (cities 11->20, common_claim 13->22)
+
+    PYTHONPATH=src python src/make_reach_meta.py --dataset refusal \\
+        --model google/gemma-2-2b-it
+"""
+import argparse
+import csv
+import json
+import os
+
+HOP_DEPTH = 9
+MIN_SOURCE_LAYER = 5
+ACC_TOL = 0.005
+NUM_SAMPLES = 64          # matches run_dct_data.py's calibration population
+TOKEN_IDXS = "-3:"
+
+
+def layer_sweep(acts, labels):
+    """Per-layer linear-probe test accuracy. acts (L, n, d), labels (n,) ->
+    [{"layer": int, "linear_acc": float}, ...]. Mirrors analyze.py's linear arm
+    (StandardScaler, LogisticRegression(max_iter=2000), 80/20 stratified split,
+    random_state=42) but skips the XGBoost arm, which layer choice does not use and
+    which would drag xgboost into the cluster environment."""
+    import numpy as np
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.model_selection import train_test_split
+    from sklearn.preprocessing import StandardScaler
+    y = np.asarray(labels).astype(int)
+    out = []
+    for L in range(np.asarray(acts).shape[0]):
+        X = np.asarray(acts[L], np.float64)
+        Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.2, random_state=42,
+                                              stratify=y)
+        sc = StandardScaler().fit(Xtr)
+        lr = LogisticRegression(max_iter=2000).fit(sc.transform(Xtr), ytr)
+        out.append({"layer": L, "linear_acc": float(lr.score(sc.transform(Xte), yte))})
+        print(f"[meta] layer {L:2d}: linear acc {out[-1]['linear_acc']:.3f}", flush=True)
+    return out
+
+
+def pick_source_layer(rows, max_layer, hop=HOP_DEPTH, min_layer=MIN_SOURCE_LAYER,
+                      tol=ACC_TOL):
+    """rows: dicts with 'layer' and 'linear_acc'. See the module docstring for why
+    this is earliest-within-tolerance and not argmax."""
+    elig = [(int(r["layer"]), float(r["linear_acc"])) for r in rows
+            if min_layer <= int(r["layer"]) and int(r["layer"]) + hop <= int(max_layer)]
+    if not elig:
+        raise SystemExit(f"[meta] no layer in [{min_layer}, {int(max_layer) - hop}] "
+                         f"leaves room for a {hop}-layer hop")
+    best = max(a for _, a in elig)
+    return min(L for L, a in elig if a >= best - tol)
+
+
+def meta_dict(ds, model, src, hop=HOP_DEPTH):
+    """The dct_meta schema run_dct_data.py writes; input_scale is None until
+    calibrate_scale.py fills it."""
+    return {"dataset": ds, "model": model, "source_layer": int(src),
+            "target_layer": int(src) + hop, "num_factors": None, "num_iters": None,
+            "num_samples": NUM_SAMPLES, "input_scale": None,
+            "token_idxs": TOKEN_IDXS, "balanced": True}
+
+
+def _acts_path(ds):
+    """analyze.py writes/reads acts_<ds>.npz in the cwd; funnel_utils.load_acts reads
+    it from activations/. Accept either, so this runs before or after the file moves."""
+    for p in (f"activations/acts_{ds}.npz", f"acts_{ds}.npz"):
+        if os.path.exists(p):
+            return p
+    raise SystemExit(f"[meta] no acts_{ds}.npz in ./ or ./activations/")
+
+
+def run(ds, model, results_path=None):
+    import numpy as np
+    z = np.load(_acts_path(ds), allow_pickle=True)
+    acts = z["activations"]
+    max_layer = acts.shape[0] - 1
+    path = results_path or f"results_{ds}.csv"
+    if os.path.exists(path):
+        with open(path, newline="") as f:
+            rows = list(csv.DictReader(f))
+        print(f"[meta] using existing {path}")
+    else:
+        rows = layer_sweep(acts, z["labels"])
+    src = pick_source_layer(rows, max_layer)
+    m = meta_dict(ds, model, src)
+    with open(f"dct_meta_{ds}.json", "w") as f:
+        json.dump(m, f, indent=2)
+    print(f"[meta] wrote dct_meta_{ds}.json: src={m['source_layer']} -> "
+          f"tgt={m['target_layer']} (max hidden-state index {max_layer}), "
+          f"model={model}")
+    print("[meta] input_scale is null — run calibrate_scale.py next")
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--dataset", required=True)
+    ap.add_argument("--model", default="google/gemma-2-2b")
+    ap.add_argument("--results", default=None)
+    a = ap.parse_args()
+    run(a.dataset, a.model, a.results)
+
+
+if __name__ == "__main__":
+    main()
