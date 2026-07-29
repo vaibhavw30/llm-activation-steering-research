@@ -74,8 +74,21 @@ def load_meta(ds):
     if scale is None:
         raise SystemExit(f"[reach] dct_meta_{ds}.json has input_scale=null — "
                          f"run calibrate_scale.py --dataset {ds} first")
+    # `or` not `get(..., default)`: make_reach_meta.py writes the key, so it can be
+    # present as JSON null — which get() would hand back, and str() would turn into the
+    # literal "None", surfacing much later as an opaque HuggingFace repo-not-found.
     return (int(m["source_layer"]), int(m["target_layer"]),
-            float(scale), str(m.get("model", DEFAULT_MODEL)))
+            float(scale), str(m.get("model") or DEFAULT_MODEL))
+
+
+# optional family -> what its absence switches off, for the operator-facing report.
+OPTIONAL_DISABLES = {"dct": "dct_u battery members + cos_dctv landmark",
+                     "mag": "cos_vq landmark"}
+
+
+def dct_pair(ds):
+    """The two files the "dct" family needs, as (path, exists) pairs."""
+    return [(p, os.path.exists(p)) for p in (f"dct_V_{ds}.pt", f"dct_U_{ds}.pt")]
 
 
 def optional_artifacts(ds):
@@ -83,8 +96,9 @@ def optional_artifacts(ds):
       "dct" — dct_V/dct_U: the dct_u battery members and the cos_dctv landmark.
       "mag" — mag_dir: the cos_vq landmark.
     The minimal refusal control (Horizon-1 1.1) has neither; the truth datasets have
-    both, so their code path is unchanged."""
-    return {"dct": os.path.exists(f"dct_V_{ds}.pt") and os.path.exists(f"dct_U_{ds}.pt"),
+    both, so their code path is unchanged. A half-present DCT pair counts as absent —
+    validate_inputs warns loudly about that case, since dct_u is the CONTROL group."""
+    return {"dct": all(ok for _, ok in dct_pair(ds)),
             "mag": os.path.exists(f"mag_dir_{ds}.npz")}
 
 
@@ -197,11 +211,15 @@ def validate_inputs(ds):
                 problems.append(f"{path} lacks keys {missing}")
     if problems:
         raise SystemExit("[reach] input validation FAILED:\n  " + "\n  ".join(problems))
-    absent = sorted(nm for nm, ok in optional_artifacts(ds).items() if not ok)
-    if absent:
-        print(f"[reach] optional artifacts absent for {ds}: {', '.join(absent)} — "
-              "dct: dct_u battery members + cos_dctv landmark disabled; "
-              "mag: cos_vq landmark disabled", flush=True)
+    have = optional_artifacts(ds)
+    for nm in sorted(k for k, ok in have.items() if not ok):
+        print(f"[reach] optional artifact absent for {ds}: {nm} — "
+              f"{OPTIONAL_DISABLES[nm]} disabled", flush=True)
+    half = [p for p, ok in dct_pair(ds) if not ok]
+    if len(half) == 1:
+        print(f"[reach] WARNING: {ds} has only half of the DCT pair — {half[0]} is "
+              "missing, so the dct_u CONTROL group is absent from the battery. A run "
+              "in this state looks legitimate but has no control group.", flush=True)
     src, tgt, _, _ = load_meta(ds)
     src_l = int(np.load(f"truth_dir_{ds}.npz")["layer"])
     tgt_l = int(np.load(f"truth_dir_tgt_{ds}.npz")["layer"])

@@ -128,3 +128,54 @@ def test_build_battery_omits_dct_u_when_factors_absent(tmp_path, monkeypatch):
     assert sum(str(g) == "rand" for g in bat["groups"]) == rm.N_RAND
     # every stored direction is still a truth or truth_sub member
     assert set(np.asarray(bat["groups"])[bat["store_jtw"]]) <= {"truth", "truth_sub"}
+
+
+def test_cos_key_names_are_frozen():
+    """The landmark-key -> stored-name mapping is load-bearing in two directions:
+    reach_linerr.py reads the dict KEYS (lm["md_src"], lm["dct_v"]) and viz_reach.py
+    plus every existing truth reach_margins_<ds>.npz read the stored VALUES. Renaming
+    either side silently breaks a consumer, so both sides are frozen here."""
+    assert set(rm.COS_KEY) == {"md_src", "v_q", "dct_v"}
+    assert set(rm.COS_KEY.values()) == {"cos_md_src", "cos_vq", "cos_dctv"}
+    assert rm.COS_KEY["md_src"] == "cos_md_src"
+    assert rm.COS_KEY["v_q"] == "cos_vq"
+    assert rm.COS_KEY["dct_v"] == "cos_dctv"
+
+
+def test_merge_chunks_round_trip_and_rejects_key_mismatch(tmp_path, monkeypatch):
+    """Two chunks with matching key sets merge in statement order; a chunk carrying a
+    key that chunk 0 lacks must fail loudly. With --resume a chunk directory can be
+    written across two runs whose optional artifacts differed, and taking the key set
+    from chunk 0 alone would drop a cosine present in every later chunk, silently."""
+    import pytest
+    monkeypatch.chdir(tmp_path)
+    K, Ks, d = 3, 2, 4
+    n = 2 * rm.CHUNK
+    dirs = {"names": np.array(["mean_diff_tgt", "probe_grad_tgt", "rand_0"], object),
+            "groups": np.array(["truth", "truth", "rand"], object),
+            "store_jtw": np.array([True, True, False])}
+    cdir = "reach_chunks_ds"
+    os.makedirs(cdir)
+
+    def write(c0, **extra):
+        rm.atomic_savez(os.path.join(cdir, f"chunk_{c0:05d}.npz"),
+                        margins=np.full((rm.CHUNK, K), float(c0), np.float32),
+                        jtw=np.zeros((rm.CHUNK, Ks, d), np.float16),
+                        cos_md_src=np.full((rm.CHUNK, K), float(c0), np.float32),
+                        **extra)
+
+    write(0)
+    write(rm.CHUNK)
+    rm.merge_chunks("ds", n, dirs)
+    z = np.load("reach_margins_ds.npz", allow_pickle=True)
+    assert set(z.files) == {"margins", "jtw", "cos_md_src",
+                            "names", "groups", "store_names"}
+    assert z["margins"].shape == (n, K) and z["jtw"].shape == (n, Ks, d)
+    assert np.array_equal(z["margins"][:, 0],
+                          np.concatenate([np.zeros(rm.CHUNK, np.float32),
+                                          np.full(rm.CHUNK, rm.CHUNK, np.float32)]))
+    assert [str(x) for x in z["store_names"]] == ["mean_diff_tgt", "probe_grad_tgt"]
+
+    write(rm.CHUNK, cos_dctv=np.zeros((rm.CHUNK, K), np.float32))
+    with pytest.raises(SystemExit, match="chunk_00100"):
+        rm.merge_chunks("ds", n, dirs)

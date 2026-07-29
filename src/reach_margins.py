@@ -21,7 +21,7 @@ import torch
 import funnel_utils as fu
 from funnel_utils import unit
 from reach_hop import (validate_inputs, load_model_and_slice, forward_source_batch,
-                       make_hop, vjp_rows, load_landmarks)
+                       make_hop, vjp_rows, load_landmarks, optional_artifacts)
 
 LOGIT_02 = float(np.log(0.2 / 0.8))          # P(true) <= 0.2 confidence margin
 N_BOOT, BOOT_FRAC = 6, 0.5                   # bootstrap probes for truth_sub_k
@@ -95,7 +95,9 @@ def fit_threshold(scores, y):
 
 def build_battery(h_tgt, y, ds):
     """Direction battery at the target layer (spec §3). h_tgt (n,d) float, y (n,).
-    Reads truth_dir_tgt_<ds>.npz and dct_U_<ds>.pt/dct_V_<ds>.pt from cwd."""
+    Reads truth_dir_tgt_<ds>.npz from cwd. The four dct_u control members are added
+    only when BOTH dct_V_<ds>.pt and dct_U_<ds>.pt exist (reach_hop.optional_artifacts);
+    the minimal refusal control has neither and gets a battery without them."""
     h = np.asarray(h_tgt, np.float64)
     tt = np.load(f"truth_dir_tgt_{ds}.npz")
     md = unit(np.asarray(tt["mean_diff"], np.float64))
@@ -105,7 +107,6 @@ def build_battery(h_tgt, y, ds):
     rng = np.random.default_rng(123)
     raw = [("mean_diff_tgt", "truth", md), ("probe_grad_tgt", "truth", pg)]
     raw += [(f"truth_sub_{j}", "truth_sub", sub[j]) for j in range(sub.shape[0])]
-    from reach_hop import optional_artifacts
     if optional_artifacts(ds)["dct"]:
         V, U, _ = fu.load_dct(ds)
         tops = fu.top_k_by_potency(V, U, K_DCT_U)
@@ -200,7 +201,7 @@ def stage_vjp(ds, device, resume=True, limit=0):
     W = torch.tensor(dirs["W"], dtype=torch.float32)
     store = np.asarray(dirs["store_jtw"])
     lm = load_landmarks(ds)
-    lm_names = [k for k in ("md_src", "v_q", "dct_v") if k in lm]
+    lm_names = [k for k in COS_KEY if k in lm]
     stmts = acts["statements"]
     n = min(limit, len(stmts)) if limit else len(stmts)
     tok, model, sliced, meta = load_model_and_slice(ds, device)
@@ -245,7 +246,17 @@ def merge_chunks(ds, n, dirs):
     keys = list(np.load(os.path.join(cdir, f"chunk_{0:05d}.npz")).files)
     parts = {k: [] for k in keys}
     for c0 in range(0, n, CHUNK):
-        z = np.load(os.path.join(cdir, f"chunk_{c0:05d}.npz"))
+        cpath = os.path.join(cdir, f"chunk_{c0:05d}.npz")
+        z = np.load(cpath)
+        # With --resume a chunk dir can span two runs whose optional artifacts differed.
+        # Taking the key set from chunk 0 alone would then drop a cosine present in every
+        # later chunk with no message at all, so an extra key is fatal, not ignored.
+        if set(z.files) != set(keys):
+            diff = sorted(set(z.files) ^ set(keys))
+            raise SystemExit(
+                f"[vjp] {cpath} key set differs from chunk_{0:05d}.npz on {diff} — the "
+                f"chunk directory mixes runs with different optional artifacts. Delete "
+                f"{cdir} and re-run --stage vjp --no-resume")
         for k in keys:
             parts[k].append(z[k])
     store = np.asarray(dirs["store_jtw"])
