@@ -30,8 +30,13 @@ DEFAULT_DIRECTION = "jtw_mean_diff_tgt"
 
 def frac_of(scale, eps_star):
     """scale as a multiple of eps*; 0.0 when eps* is 0 (already inside the target)."""
-    e = float(eps_star)
-    return 0.0 if abs(e) < 1e-12 else float(scale) / e
+    try:
+        e = float(eps_star)
+        s = float(scale)
+    except (TypeError, ValueError) as exc:
+        raise SystemExit(f"[control] frac_of: cannot convert scale={scale!r} / "
+                         f"eps_star={eps_star!r} to float ({exc})")
+    return 0.0 if abs(e) < 1e-12 else s / e
 
 
 def align_stmt_rows(judged, meta):
@@ -63,7 +68,12 @@ def mean_arm_rows(judged, readout, summ, direction=DEFAULT_DIRECTION):
     """Mean-arm rows for one steering direction. The readout CSV shares the (direction,
     scale) grid across prompts, so g_read is averaged over prompts per grid point;
     eps* is that direction's median eps* from reach_summary — the same number
-    scale_grid was built from."""
+    scale_grid was built from.
+
+    A judged row whose scale has no matching readout entry (e.g. a truncated
+    readout CSV) is dropped rather than guessed. That is a dangerous silent
+    failure — it can delete exactly the crossing fracs and turn `actuatable` into
+    `no-crossing` — so dropped rows are counted and reported."""
     g = {}
     for r in readout:
         if r["direction"] != direction:
@@ -74,14 +84,21 @@ def mean_arm_rows(judged, readout, summ, direction=DEFAULT_DIRECTION):
     if not eps:
         raise SystemExit(f"[control] no median_eps_star for {wn} in the summary")
     out = []
+    dropped = 0
     for r in judged:
         if r["direction"] != direction:
             continue
         s = float(r["scale"])
         if s not in g:
+            dropped += 1
             continue
         out.append({"frac": frac_of(s, eps), "g_read": float(np.mean(g[s])),
                     "refused": float(r["refused"])})
+    if dropped:
+        print(f"[control] mean_arm_rows: dropped {dropped} judged row(s) for "
+              f"direction={direction!r} with no matching readout scale — the "
+              f"readout CSV may be truncated; this can silently delete crossing "
+              f"fracs and understate the verdict")
     return out
 
 
@@ -112,15 +129,40 @@ def behavior_delta(table, baseline=0.0):
 
 
 def verdict(crossed, delta, min_delta=MIN_DELTA):
-    """Name the 2x2 cell over the non-baseline fracs."""
+    """Name the 2x2 cell over the non-baseline fracs.
+
+    `actuatable` requires the crossing and the behaviour change to happen at the
+    SAME frac. Independent quantifiers ("crossed somewhere" and "moved somewhere")
+    would label a crossing at frac -1 plus degradation at frac +2 as actuatable,
+    which is the expected shape of an OFF-TARGET result: eps* is positive only
+    where g > 0 (reach_steer.py:167), so crossings occur at negative fracs, while
+    +2*eps* is a large residual-stream shift that can wreck generations without
+    crossing anything. That pattern is the `inert` cell, not the `actuatable` one.
+    """
     fr = [f for f in crossed if f != 0.0]
-    any_cross = any(crossed[f] for f in fr)
-    any_move = any(abs(delta.get(f, 0.0)) >= min_delta for f in fr)
-    if any_cross and any_move:
+    moved = {f: abs(delta.get(f, 0.0)) >= min_delta for f in fr}
+    if any(crossed[f] and moved[f] for f in fr):
         return "actuatable"
-    if any_cross:
-        return "readout-only"
-    return "inert" if any_move else "no-crossing"
+    if any(crossed[f] for f in fr):
+        return "readout-only"   # crossed; any movement was at a non-crossing frac
+    return "inert" if any(moved[f] for f in fr) else "no-crossing"
+
+
+def require_signal(table, baseline=0.0):
+    """Raise if `table` has no bucket besides the baseline.
+
+    scale_grid clamps magnitudes to `1.5 * input_scale` (reach_steer.py). When
+    eps* far exceeds that cap, every steered frac (scale / eps*) rounds to ~0 at
+    FRAC_ROUND digits and lands in the baseline bucket — the treatment rows get
+    silently averaged INTO the baseline, and the resulting table would report
+    `no-crossing` off a contaminated baseline rather than naming the real problem
+    (a clamped, underpowered scale grid)."""
+    fr = [f for f in table if f != baseline]
+    if not fr:
+        raise SystemExit(f"[control] no non-baseline frac bucket found (every row "
+                         f"rounded into frac={baseline}) — this looks like a fully "
+                         f"clamped scale grid (eps* far exceeds 1.5*input_scale); "
+                         f"refusing to report a verdict off a contaminated baseline")
 
 
 def _read(path):
@@ -130,15 +172,43 @@ def _read(path):
         return list(csv.DictReader(f))
 
 
+def _read_json(path):
+    if not os.path.exists(path):
+        raise SystemExit(f"[control] missing {path}")
+    with open(path) as f:
+        return json.load(f)
+
+
+COLUMN_SEMANTICS = {
+    "frac_eps_star": "scale as a multiple of eps* (0 = unsteered baseline; "
+                     "+/-1, +/-2 by construction up to the 1.5*input_scale cap)",
+    "n": "number of judged rows aggregated into this frac bucket",
+    "mean_g_read": "mean readout g = w.h_tgt - t02 over the bucket; g<=0 means the "
+                   "activation is inside the target halfspace (certificate met)",
+    "crossed": "1 if mean_g_read<=0 (the readout crossed into the target "
+              "halfspace at this frac), else 0",
+    "frac_refused": "fraction of completions in this bucket judged as refused",
+    "delta_vs_baseline": "frac_refused minus frac_refused at frac=0 (the unsteered "
+                         "baseline); sign matters -- a negative delta is still "
+                         "'moved'",
+}
+
+
 def run(ds, arm, direction=DEFAULT_DIRECTION, min_delta=MIN_DELTA):
     judged = _read(f"judge_refusal_{ds}_{arm}.csv")
-    summ = json.load(open(f"reach_summary_{ds}.json"))
+    summ = _read_json(f"reach_summary_{ds}.json")
+    dropped = 0
     if arm == "mean":
-        rows = mean_arm_rows(judged, _read(f"reach_steer_readout_{ds}.csv"),
-                             summ, direction)
+        readout = _read(f"reach_steer_readout_{ds}.csv")
+        n_before = sum(1 for r in judged if r["direction"] == direction)
+        rows = mean_arm_rows(judged, readout, summ, direction)
+        dropped = n_before - len(rows)
+        direction_used = direction
     else:
         rows = align_stmt_rows(judged, _read(f"reach_steer_stmt_meta_{ds}.csv"))
+        direction_used = judged[0]["direction"] if judged else None
     table = aggregate(rows)
+    require_signal(table)
     crossed, delta = readout_crossed(table), behavior_delta(table)
     v = verdict(crossed, delta, min_delta)
     print(f"[control] {ds} arm={arm}: VERDICT = {v}")
@@ -146,17 +216,45 @@ def run(ds, arm, direction=DEFAULT_DIRECTION, min_delta=MIN_DELTA):
           f"{'refused':>8s} {'delta':>8s}")
     out_rows = [("frac_eps_star", "n", "mean_g_read", "crossed", "frac_refused",
                  "delta_vs_baseline")]
+    json_table = {}
     for f in sorted(table):
         r = table[f]
         out_rows.append((f"{f:.6g}", r["n"], f"{r['g_read']:.6g}",
                          int(crossed[f]), f"{r['frac_refused']:.6g}",
                          f"{delta[f]:.6g}"))
+        json_table[f"{f:.6g}"] = {
+            "n": r["n"], "mean_g_read": r["g_read"], "crossed": int(crossed[f]),
+            "frac_refused": r["frac_refused"], "delta_vs_baseline": delta[f],
+        }
         print(f"  {f:>10.2f} {r['n']:>5d} {r['g_read']:>12.3f} "
               f"{str(crossed[f]):>8s} {r['frac_refused']:>8.3f} {delta[f]:>+8.3f}")
-    out = f"reach_control_{ds}_{arm}.csv"
-    with open(out, "w", newline="") as f2:
+
+    if v == "readout-only":
+        off_target = [f for f in sorted(table) if f != 0.0 and not crossed[f]
+                      and abs(delta.get(f, 0.0)) >= min_delta]
+        if off_target:
+            print(f"[control] WARNING: behavior moved at non-crossing frac(s) "
+                  f"{off_target} — this is off-target degradation, not evidence "
+                  f"of actuation at the certificate boundary")
+
+    csv_out = f"reach_control_{ds}_{arm}.csv"
+    with open(csv_out, "w", newline="") as f2:
         csv.writer(f2).writerows(out_rows)
-    print(f"[control] wrote {out}")
+    print(f"[control] wrote {csv_out}")
+
+    json_out = f"reach_control_{ds}_{arm}.json"
+    with open(json_out, "w") as f3:
+        json.dump({
+            "dataset": ds,
+            "arm": arm,
+            "direction": direction_used,
+            "min_delta": min_delta,
+            "verdict": v,
+            "dropped_unmatched_rows": dropped,
+            "table": json_table,
+            "column_semantics": COLUMN_SEMANTICS,
+        }, f3, indent=2, sort_keys=True)
+    print(f"[control] wrote {json_out}")
     return v
 
 

@@ -5,7 +5,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 import pytest
 
 from reach_control import (frac_of, align_stmt_rows, aggregate, readout_crossed,
-                           behavior_delta, verdict)
+                           behavior_delta, verdict, require_signal, mean_arm_rows)
 
 
 def _j(scale, refused):
@@ -90,3 +90,59 @@ def test_verdict_inert_when_behavior_moves_without_a_crossing():
 
 def test_verdict_no_crossing_when_nothing_crosses_and_nothing_moves():
     assert verdict({0.0: False, 1.0: False}, {0.0: 0.0, 1.0: 0.0}) == "no-crossing"
+
+
+def test_verdict_requires_crossing_and_movement_at_the_same_frac():
+    # Crossing only at frac=-1; movement only at frac=+2. These are DIFFERENT fracs,
+    # so this must NOT be "actuatable" -- it is the off-target "inert"-shaped result
+    # the module's own docstring calls out (crossings can only occur at negative
+    # fracs per reach_steer.py:167; a large +2*eps* shift can degrade generations
+    # with no crossing at all). Independent "any_cross"/"any_move" quantifiers over
+    # different fracs would wrongly report "actuatable" here.
+    crossed = {0.0: False, -1.0: True, 2.0: False}
+    delta = {0.0: 0.0, -1.0: 0.0, 2.0: 0.5}
+    assert verdict(crossed, delta) != "actuatable"
+    assert verdict(crossed, delta) == "readout-only"
+
+
+def test_verdict_min_delta_boundary_is_inclusive():
+    # Exactly MIN_DELTA (0.10) at the SAME frac as the crossing must count as moved.
+    crossed = {0.0: False, 1.0: True}
+    delta = {0.0: 0.0, 1.0: 0.10}
+    assert verdict(crossed, delta) == "actuatable"
+
+
+def test_verdict_negative_delta_counts_as_moved():
+    # A steered DROP in refusal rate is evidence of actuation, not of nothing --
+    # abs() must be applied, not a signed comparison.
+    crossed = {0.0: False, 1.0: True}
+    delta = {0.0: 0.0, 1.0: -0.5}
+    assert verdict(crossed, delta) == "actuatable"
+
+
+def test_require_signal_raises_when_grid_fully_clamped_into_baseline():
+    # A fully-clamped scale grid (eps* far exceeds 1.5*input_scale) rounds every
+    # steered row's frac into the frac=0 baseline bucket. Reporting "no-crossing"
+    # off a table with no non-baseline bucket would be a contaminated baseline
+    # silently read as "underpowered" rather than "broken sweep".
+    table = {0.0: {"n": 40, "g_read": 1.0, "frac_refused": 0.1}}
+    with pytest.raises(SystemExit, match="clamp"):
+        require_signal(table)
+
+
+def test_mean_arm_rows_filters_direction_and_drops_unmatched_scale(capsys):
+    judged = [
+        {"direction": "jtw_mean_diff_tgt", "scale": "0.0", "refused": "0"},
+        {"direction": "jtw_mean_diff_tgt", "scale": "5.0", "refused": "1"},
+        {"direction": "jtw_other", "scale": "5.0", "refused": "1"},
+    ]
+    readout = [
+        {"direction": "jtw_mean_diff_tgt", "scale": "0.0", "g_read": "3.0"},
+        # no readout entry at scale=5.0 -- that judged row must be dropped, not
+        # silently coerced into some other bucket.
+    ]
+    summ = {"directions": {"mean_diff_tgt": {"median_eps_star": 2.5}}}
+    out = mean_arm_rows(judged, readout, summ, direction="jtw_mean_diff_tgt")
+    assert out == [{"frac": 0.0, "g_read": 3.0, "refused": 0.0}]
+    captured = capsys.readouterr()
+    assert "dropped 1" in captured.out
