@@ -49,6 +49,36 @@ def stem_of(statement):
     return " ".join(words[:-1])
 
 
+PROMPT_MODES = ("stem", "full")
+
+
+def prompt_of(statement, mode):
+    """The generation prompt for a statement.
+
+    "stem" — the statement minus its final word (the truth arm: the model must CHOOSE
+             the last word, so the completion carries the truth signal). Returns None
+             for statements shorter than MIN_STEM_WORDS.
+    "full" — the statement itself (the refusal arm: the statement IS an instruction,
+             so the certificate's linearization point is the prompt's last token and
+             the one-word context shift that dominated Horizon-0 cannot arise)."""
+    if mode not in PROMPT_MODES:
+        raise ValueError(f"prompt mode must be one of {PROMPT_MODES}, got {mode!r}")
+    return stem_of(statement) if mode == "stem" else str(statement).strip()
+
+
+def load_prompt_set(name):
+    """Mean-arm prompts. "factual" is the 32-prompt truth set; "refusal_holdout" is
+    the harmless half of got_datasets/refusal_holdout.csv — held out of direction
+    fitting, so behavioral evaluation is leakage-free."""
+    if name == "factual":
+        return list(FACTUAL_PROMPTS)
+    if name == "refusal_holdout":
+        import pandas as pd
+        df = pd.read_csv("got_datasets/refusal_holdout.csv")
+        return df[df["kind"] == "harmless"]["statement"].astype(str).tolist()
+    raise ValueError(f"unknown prompt set {name!r}")
+
+
 def read_g(model, tok, prompt, tgt_layer, w_t, t02, dev):
     """Target-layer probe reading at the last prompt token (steering hook active)."""
     enc = tok(prompt, return_tensors="pt").to(dev)
@@ -70,7 +100,7 @@ def _load_common(ds):
     return src, tgt, input_scale, summ, dirs, mz, acts, names, store_names
 
 
-def arm_mean(ds, device, limit=0):
+def arm_mean(ds, device, limit=0, prompts="factual", max_new_tokens=MAX_NEW_TOKENS):
     src, tgt, input_scale, summ, dirs, mz, acts, names, store_names = _load_common(ds)
     y = np.asarray(acts["labels"]).astype(int)[:mz["margins"].shape[0]]
     lab1 = y == 1
@@ -78,7 +108,8 @@ def arm_mean(ds, device, limit=0):
     best = summ.get("best_sub_name", "")
     if best and best != "mean_diff_tgt":
         w_names.append(best)
-    prompts = FACTUAL_PROMPTS[:limit] if limit else FACTUAL_PROMPTS
+    pset = load_prompt_set(prompts)
+    pset = pset[:limit] if limit else pset
     tok, model, dev = su.load_model(device)
     rows = [("direction", "scale", "prompt", "completion")]
     readout = [("direction", "scale", "prompt", "g_read")]
@@ -96,8 +127,8 @@ def arm_mean(ds, device, limit=0):
             for s in scale_grid(eps_star, input_scale, MEAN_FRACS):
                 st.set(None if s == 0.0 else torch.tensor(
                     s * vec64, dtype=torch.float32))
-                for p in prompts:
-                    c = su.generate(model, tok, p, MAX_NEW_TOKENS)
+                for p in pset:
+                    c = su.generate(model, tok, p, max_new_tokens)
                     rows.append((dname, s, p, c))
                     g = read_g(model, tok, p, tgt, w_vec.to(dev), t02, dev)
                     readout.append((dname, s, p, f"{g:.6g}"))
@@ -109,7 +140,7 @@ def arm_mean(ds, device, limit=0):
     print(f"[steer] wrote reach_steer_{ds}.csv and reach_steer_readout_{ds}.csv")
 
 
-def arm_per_stmt(ds, device, limit=0):
+def arm_per_stmt(ds, device, limit=0, prompt_mode="stem", max_new_tokens=MAX_NEW_TOKENS):
     src, tgt, input_scale, summ, dirs, mz, acts, names, store_names = _load_common(ds)
     stmts = acts["statements"]
     y = np.asarray(acts["labels"]).astype(int)[:mz["margins"].shape[0]]
@@ -130,7 +161,7 @@ def arm_per_stmt(ds, device, limit=0):
     meta_rows = [("stmt_index", "label", "eps_star", "scale", "g_read")]
     with su.Steerer(model, src) as st:
         for i in picks:
-            stem = stem_of(stmts[i])
+            stem = prompt_of(stmts[i], prompt_mode)
             if stem is None:
                 continue
             eps_i = g_all[i] / max(m_all[i], 1e-12) if g_all[i] > 0 else 0.0
@@ -138,7 +169,7 @@ def arm_per_stmt(ds, device, limit=0):
             for s in scale_grid(eps_i, input_scale, STMT_FRACS):
                 st.set(None if s == 0.0 else torch.tensor(
                     s * jtw_i, dtype=torch.float32))
-                c = su.generate(model, tok, stem, MAX_NEW_TOKENS)
+                c = su.generate(model, tok, stem, max_new_tokens)
                 g = read_g(model, tok, stem, tgt, w_vec.to(dev), t02, dev)
                 rows.append(("jtw_stmt", s, stem, c))
                 meta_rows.append((int(i), int(y[i]), f"{eps_i:.6g}", s, f"{g:.6g}"))
@@ -156,11 +187,18 @@ def main():
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--arm", required=True, choices=["mean", "per_stmt"])
     ap.add_argument("--limit", type=int, default=0, help="cap prompts/statements (smoke)")
+    ap.add_argument("--prompt-mode", default="stem", choices=PROMPT_MODES,
+                    help="per_stmt arm: 'stem' drops the final word (truth), "
+                         "'full' keeps the whole instruction (refusal)")
+    ap.add_argument("--prompts", default="factual",
+                    choices=["factual", "refusal_holdout"],
+                    help="mean arm: which prompt set to generate from")
+    ap.add_argument("--max-new-tokens", type=int, default=MAX_NEW_TOKENS)
     a = ap.parse_args()
     if a.arm == "mean":
-        arm_mean(a.dataset, a.device, a.limit)
+        arm_mean(a.dataset, a.device, a.limit, a.prompts, a.max_new_tokens)
     else:
-        arm_per_stmt(a.dataset, a.device, a.limit)
+        arm_per_stmt(a.dataset, a.device, a.limit, a.prompt_mode, a.max_new_tokens)
 
 
 if __name__ == "__main__":
