@@ -16,6 +16,7 @@ Output: acts_<dataset>.npz  (one file per dataset) containing:
     model       : str
 """
 
+import argparse
 import sys
 import numpy as np
 import pandas as pd
@@ -35,20 +36,31 @@ SEED = 42
 DATASET_DIR = "got_datasets"
 
 
-def load_model_or_explain():
+def build_parser():
+    p = argparse.ArgumentParser(description="Extract per-layer last-token activations")
+    p.add_argument("dataset", help="dataset filename in got_datasets/, e.g. cities.csv")
+    p.add_argument("--limit", type=int, default=None,
+                   help="only process the first N statements (smoke test)")
+    p.add_argument("--model", default=MODEL_NAME,
+                   help="HF model id; overrides MODEL_NAME (the refusal control uses "
+                        "google/gemma-2-2b-it when the base model does not refuse)")
+    return p
+
+
+def load_model_or_explain(model_name=MODEL_NAME):
     """Load tokenizer + model on CPU/fp32. On HF license gating, print a clear
     message telling the user how to fix it, then exit cleanly (code 2)."""
-    print(f"Loading model {MODEL_NAME} (CPU, fp32)...", flush=True)
+    print(f"Loading model {model_name} (CPU, fp32)...", flush=True)
     try:
-        tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
         # transformers 5.x renamed torch_dtype -> dtype; support both.
         try:
             model = AutoModelForCausalLM.from_pretrained(
-                MODEL_NAME, dtype=torch.float32, output_hidden_states=True
+                model_name, dtype=torch.float32, output_hidden_states=True
             )
         except TypeError:
             model = AutoModelForCausalLM.from_pretrained(
-                MODEL_NAME, torch_dtype=torch.float32, output_hidden_states=True
+                model_name, torch_dtype=torch.float32, output_hidden_states=True
             )
     except Exception as e:  # noqa: BLE001 - we want to classify any load failure
         msg = str(e).lower()
@@ -59,7 +71,7 @@ def load_model_or_explain():
         )
         print("\n" + "=" * 70)
         if gated:
-            print("ERROR: could not load a gated model:", MODEL_NAME)
+            print("ERROR: could not load a gated model:", model_name)
             print("This model requires accepting its license on Hugging Face.")
             print("\nFIX — choose ONE:")
             print("  1. Accept the license at https://huggingface.co/google/gemma-2-2b")
@@ -67,7 +79,7 @@ def load_model_or_explain():
             print('  2. Edit extract.py and set MODEL_NAME = "Qwen/Qwen2.5-1.5B"')
             print("     (ungated, no other change needed).")
         else:
-            print("ERROR: failed to load model", MODEL_NAME)
+            print("ERROR: failed to load model", model_name)
             print("Underlying error:", repr(e))
             print('\nIf this is a license/auth issue, set MODEL_NAME = "Qwen/Qwen2.5-1.5B".')
         print("=" * 70)
@@ -84,14 +96,14 @@ def load_model_or_explain():
     return tokenizer, model
 
 
-def main(dataset_file, limit=None):
+def main(dataset_file, limit=None, model_name=MODEL_NAME):
     torch.manual_seed(SEED)
     np.random.seed(SEED)
 
     dataset_name = dataset_file.replace(".csv", "")
     out_path = f"acts_{dataset_name}.npz"
 
-    tokenizer, model = load_model_or_explain()
+    tokenizer, model = load_model_or_explain(model_name)
 
     csv_path = f"{DATASET_DIR}/{dataset_file}"
     print(f"Loading dataset {csv_path}...", flush=True)
@@ -138,18 +150,11 @@ def main(dataset_file, limit=None):
         activations=acts,
         labels=labels,
         statements=np.array(statements, dtype=object),
-        model=MODEL_NAME,
+        model=model_name,
     )
     print(f"Saved {out_path}", flush=True)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python extract.py <dataset.csv> [--limit N]")
-        print("e.g.:  python extract.py cities.csv")
-        print("       python extract.py cities.csv --limit 20   (smoke test)")
-        sys.exit(1)
-    lim = None
-    if "--limit" in sys.argv:
-        lim = int(sys.argv[sys.argv.index("--limit") + 1])
-    main(sys.argv[1], limit=lim)
+    a = build_parser().parse_args()
+    main(a.dataset, limit=a.limit, model_name=a.model)
