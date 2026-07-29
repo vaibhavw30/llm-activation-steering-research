@@ -56,3 +56,33 @@ def test_layer_sweep_returns_one_row_per_layer_and_finds_the_separable_one():
     rows = layer_sweep(acts, y)
     assert [r["layer"] for r in rows] == [0, 1, 2, 3]
     assert max(rows, key=lambda r: r["linear_acc"])["layer"] == 2
+
+
+def test_layer_too_close_to_max_layer_is_ineligible_even_within_hop():
+    # dct.SlicedModel.forward does self.model.model.layers = self.L[start:end+2]
+    # (src/dct.py:238), so end_layer+2 must stay within len(self.L) == max_layer.
+    # With hop=9, max_layer=26: layers 16 and 17 satisfy L+hop<=26 but not
+    # L+hop+2<=26, so neither is eligible and no fallback layer exists here.
+    rows = [{"layer": 16, "linear_acc": 0.99}, {"layer": 17, "linear_acc": 0.995}]
+    with pytest.raises(SystemExit):
+        pick_source_layer(rows, max_layer=26)
+
+
+def test_run_refuses_to_overwrite_an_existing_meta_file_without_force(tmp_path, monkeypatch):
+    import numpy as np
+    import make_reach_meta as m
+    monkeypatch.chdir(tmp_path)
+    ds = "sentinel_ds_a4_fix"
+    # A valid acts file, so that absent the overwrite guard, run() would succeed
+    # end-to-end and actually clobber the existing meta file (a weak test would
+    # only prove *some* SystemExit fired, e.g. from a missing acts file).
+    rng = np.random.default_rng(1)
+    acts = rng.standard_normal((20, 40, 6))
+    labels = np.array([0, 1] * 20)
+    np.savez(tmp_path / f"acts_{ds}.npz", activations=acts, labels=labels)
+    meta_path = tmp_path / f"dct_meta_{ds}.json"
+    original = {"sentinel": True, "input_scale": 47.716029511013176}
+    meta_path.write_text(json.dumps(original))
+    with pytest.raises(SystemExit):
+        m.run(ds, "some-model")
+    assert json.loads(meta_path.read_text()) == original
