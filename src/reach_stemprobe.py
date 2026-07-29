@@ -20,10 +20,14 @@ import csv
 
 import numpy as np
 
-from reach_steer import stem_of, N_PER_STMT, SEED
-
 ACTS_BATCH = 16
 CV_FOLDS = 5
+SEED = 42                                    # mirrors reach_steer.SEED
+LOGIT_02 = float(np.log(0.2 / 0.8))          # mirrors reach_margins.LOGIT_02
+
+# NOTE: the --fit path must stay torch-free. reach_steer/reach_margins import
+# torch at module level, and torch's libomp + xgboost's libomp in one process
+# segfault on macOS — so model-side helpers are imported lazily in extract().
 
 
 def stem_labels(path):
@@ -48,14 +52,28 @@ def transfer_metrics(g, y):
 
 
 def _picks(acts):
+    from reach_steer import N_PER_STMT
     y = np.asarray(acts["labels"]).astype(int)
     idx1 = np.where(y == 1)[0]
     rng = np.random.default_rng(SEED)
     return rng.permutation(idx1)[:N_PER_STMT]
 
 
+def fit_threshold_1d(scores, y):
+    """1-D logistic calibration (reach_margins.fit_threshold, torch-free copy).
+    Returns (acc, slope_sign, t02)."""
+    from sklearn.linear_model import LogisticRegression
+    s = np.asarray(scores, np.float64).reshape(-1, 1)
+    lr = LogisticRegression(max_iter=2000).fit(s, y)
+    acc = float(lr.score(s, y))
+    a, b = float(lr.coef_[0][0]), float(lr.intercept_[0])
+    sign = 1.0 if a > 0 else -1.0
+    t02 = (LOGIT_02 - b) / a if a != 0 else float("nan")
+    return acc, sign, t02
+
+
 def extract(ds, device, limit=0):
-    import torch  # noqa: F401  (keeps CPU-only --fit import-light)
+    from reach_steer import stem_of
     from reach_hop import load_model_and_slice, forward_source_batch
     acts = np.load(f"reach_acts_{ds}.npz", allow_pickle=True)
     stmts = acts["statements"]
@@ -93,7 +111,6 @@ def _cv_acc(clf_factory, X, y, folds=CV_FOLDS):
 
 
 def fit(ds):
-    from reach_margins import fit_threshold
     sa = np.load(f"reach_stemacts_{ds}.npz", allow_pickle=True)
     dirs = np.load(f"reach_dirs_{ds}.npz", allow_pickle=True)
     names = [str(x) for x in dirs["names"]]
@@ -121,7 +138,7 @@ def fit(ds):
           f"  old threshold  acc {acc_old:.3f}  (all labels TRUE)")
     if len(np.unique(y)) > 1:
         s = X @ w
-        acc_recal, _, t02_stem = fit_threshold(s, y)
+        acc_recal, _, t02_stem = fit_threshold_1d(s, y)
         print(f"  recalibrated 1-D threshold on same w: acc {acc_recal:.3f}, "
               f"t02_stem {t02_stem:+.2f} (old t02 {t02:+.2f})")
         from sklearn.linear_model import LogisticRegression
