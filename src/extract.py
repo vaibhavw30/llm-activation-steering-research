@@ -76,12 +76,12 @@ def load_model_or_explain(model_name=MODEL_NAME):
             print("\nFIX — choose ONE:")
             print("  1. Accept the license at https://huggingface.co/google/gemma-2-2b")
             print("     then run:  huggingface-cli login   (paste an HF token)")
-            print('  2. Edit extract.py and set MODEL_NAME = "Qwen/Qwen2.5-1.5B"')
+            print('  2. Rerun with --model Qwen/Qwen2.5-1.5B')
             print("     (ungated, no other change needed).")
         else:
             print("ERROR: failed to load model", model_name)
             print("Underlying error:", repr(e))
-            print('\nIf this is a license/auth issue, set MODEL_NAME = "Qwen/Qwen2.5-1.5B".')
+            print("\nIf this is a license/auth issue, rerun with --model Qwen/Qwen2.5-1.5B.")
         print("=" * 70)
         sys.exit(2)
 
@@ -155,6 +155,11 @@ def main(dataset_file, limit=None, model_name=MODEL_NAME):
     print(f"Saved {out_path}", flush=True)
 
 
+# NOTE: argparse (not the old hand-rolled sys.argv parsing) now owns CLI
+# misuse: missing/invalid arguments print argparse's usage to stderr and
+# exit 2, replacing the previous hand-rolled "exit 1 on stdout" behavior.
+# No caller in this repo invokes extract.py with zero arguments or
+# inspects its exit code, so this is an intentional, harmless change.
 if __name__ == "__main__":
     a = build_parser().parse_args()
     main(a.dataset, limit=a.limit, model_name=a.model)
