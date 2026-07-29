@@ -86,3 +86,18 @@ def test_run_refuses_to_overwrite_an_existing_meta_file_without_force(tmp_path, 
     with pytest.raises(SystemExit):
         m.run(ds, "some-model")
     assert json.loads(meta_path.read_text()) == original
+
+
+def test_calibrate_scale_refuses_to_recalibrate_an_already_calibrated_meta(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    from calibrate_scale import check_not_calibrated
+    calibrated = {"input_scale": 47.716029511013176}
+    # already-calibrated + no --force -> refuse (this is what protects
+    # dct_meta_cities.json's real input_scale from a cluster job overwriting it)
+    with pytest.raises(SystemExit):
+        check_not_calibrated(calibrated, "dct_meta_sentinel.json", force=False)
+    # --force explicitly permits recalibrating an already-calibrated meta
+    check_not_calibrated(calibrated, "dct_meta_sentinel.json", force=True)
+    # input_scale: null (make_reach_meta.py's normal output) is the ordinary
+    # not-yet-calibrated refusal path and must proceed unchanged, force or not
+    check_not_calibrated({"input_scale": None}, "dct_meta_sentinel.json", force=False)

@@ -8,16 +8,15 @@ extraction, same calibrator, same token_idxs, same seed — and writes the resul
 dct_meta_<ds>.json in place. Everything else in the meta file is left untouched.
 
     PYTHONPATH=src python src/calibrate_scale.py --dataset refusal --device cuda
+
+Heavy dependencies (torch, transformers, dct, run_dct_data — which itself imports
+dct) are imported lazily inside run(), not at module scope. This keeps
+`import calibrate_scale` free of any `dct`/torch import, so check_not_calibrated
+(pure JSON/os logic) can be unit-tested without either — the plan's test
+constraints forbid importing `dct` in the test process.
 """
 import argparse
 import json
-
-import numpy as np
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
-
-import dct
-from run_dct_data import load_statements, parse_token_idxs
 
 CALIBRATION_SAMPLE_SIZE = 30
 FACTOR_BATCH_SIZE = 128
@@ -33,9 +32,36 @@ DEFAULT_MODEL = "google/gemma-2-2b"
 # seed) -> (statements, labels) (src/run_dct_data.py:66).
 
 
-def run(ds, device):
-    with open(f"dct_meta_{ds}.json") as f:
+def check_not_calibrated(meta, path, force):
+    """Refuse to recompute input_scale for a meta that already has one, unless
+    force=True. Guards the truth artifacts' calibrated yardstick (e.g.
+    dct_meta_cities.json's input_scale = 47.716029511013176) from being silently
+    recomputed and overwritten by a cluster job pointed at the wrong --dataset —
+    which would also burn GPU time doing it. A meta with input_scale: null (what
+    make_reach_meta.py writes) is the ordinary not-yet-calibrated case and always
+    proceeds, force or not. Pure JSON/os logic, no model/tensor imports, so this can
+    run — and be unit-tested — before anything expensive is touched."""
+    existing = meta.get("input_scale")
+    if existing is not None and not force:
+        raise SystemExit(
+            f"[calib] refusing to recalibrate {path} — input_scale is already "
+            f"{existing!r}. Pass --force if you really mean to recompute it.")
+
+
+def run(ds, device, force=False):
+    import numpy as np
+    import torch
+    from transformers import AutoModelForCausalLM, AutoTokenizer
+
+    import dct
+    from run_dct_data import load_statements, parse_token_idxs
+
+    meta_path = f"dct_meta_{ds}.json"
+    with open(meta_path) as f:
         meta = json.load(f)
+    # Check before loading the model or running any forward pass — the whole point
+    # is to fail in the first second, not after the GPU work.
+    check_not_calibrated(meta, meta_path, force)
     model_name = meta.get("model", DEFAULT_MODEL)
     src, tgt = int(meta["source_layer"]), int(meta["target_layer"])
     torch.manual_seed(SEED)
@@ -88,17 +114,19 @@ def run(ds, device):
         # run_dct_data.py:170 (`"num_samples": n`) — the meta must not overstate
         # the population the calibration actually ran over.
         meta["num_samples"] = n
-    with open(f"dct_meta_{ds}.json", "w") as f:
+    with open(meta_path, "w") as f:
         json.dump(meta, f, indent=2)
-    print(f"[calib] input_scale = {input_scale:.4f} -> dct_meta_{ds}.json")
+    print(f"[calib] input_scale = {input_scale:.4f} -> {meta_path}")
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dataset", required=True)
     ap.add_argument("--device", default="cuda")
+    ap.add_argument("--force", action="store_true",
+                    help="allow recalibrating a meta that already has an input_scale")
     a = ap.parse_args()
-    run(a.dataset, a.device)
+    run(a.dataset, a.device, a.force)
 
 
 if __name__ == "__main__":
