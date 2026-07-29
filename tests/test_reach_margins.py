@@ -108,3 +108,23 @@ def test_atomic_savez_overwrites_stale_tmp(tmp_path):
     rm.atomic_savez(p, a=np.arange(3))
     assert not os.path.exists(p + ".tmp")
     assert np.array_equal(np.load(p)["a"], np.arange(3))
+
+
+def test_build_battery_omits_dct_u_when_factors_absent(tmp_path, monkeypatch):
+    import numpy as np
+    import reach_margins as rm
+    monkeypatch.chdir(tmp_path)
+    rng = np.random.default_rng(0)
+    n, d = 60, 8
+    y = np.array([0, 1] * (n // 2))
+    h = rng.standard_normal((n, d)) + y[:, None] * 1.5
+    np.savez("truth_dir_tgt_ds.npz",
+             mean_diff=(h[y == 1].mean(0) - h[y == 0].mean(0)).astype(np.float32),
+             grad=rng.standard_normal(d).astype(np.float32), layer=np.array(10))
+    bat = rm.build_battery(h, y, "ds")
+    names = [str(x) for x in bat["names"]]
+    assert not any(nm.startswith("dct_u_") for nm in names)
+    assert "mean_diff_tgt" in names and "truth_sub_0" in names
+    assert sum(str(g) == "rand" for g in bat["groups"]) == rm.N_RAND
+    # every stored direction is still a truth or truth_sub member
+    assert set(np.asarray(bat["groups"])[bat["store_jtw"]]) <= {"truth", "truth_sub"}

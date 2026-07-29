@@ -44,7 +44,7 @@ def run(ds, device, limit=0):
     import torch
     from reach_hop import (load_meta, load_model_and_slice, forward_source_batch,
                            make_hop, vjp_rows)
-    _, _, input_scale = load_meta(ds)
+    _, _, input_scale, _ = load_meta(ds)
     cap = CAP_FRAC * float(input_scale)
     acts = np.load(f"reach_acts_{ds}.npz", allow_pickle=True)
     dirs = np.load(f"reach_dirs_{ds}.npz", allow_pickle=True)

@@ -4,7 +4,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 import viz_reach as vr
 
 
-def _make_synthetic(ds, tmp_path, n=20, d=8):
+def _make_synthetic(ds, tmp_path, n=20, d=8, with_vq=True):
     rng = np.random.default_rng(0)
     names = ["mean_diff_tgt", "probe_grad_tgt", "truth_sub_0", "dct_u_0",
              "rand_0", "rand_1"]
@@ -17,14 +17,15 @@ def _make_synthetic(ds, tmp_path, n=20, d=8):
              thresh02=np.array([0, 0, 0, np.nan, np.nan, np.nan], np.float32),
              store_jtw=np.array([True, True, True, True, False, False]),
              src_layer=3, tgt_layer=5)
-    np.savez(tmp_path / f"reach_margins_{ds}.npz",
-             margins=rng.exponential(1.0, (n, K)).astype(np.float32),
-             cos_md_src=rng.uniform(-1, 1, (n, K)).astype(np.float32),
-             cos_vq=rng.uniform(-1, 1, (n, K)).astype(np.float32),
-             cos_dctv=rng.uniform(-1, 1, (n, K)).astype(np.float32),
-             jtw=rng.standard_normal((n, Ks, d)).astype(np.float16),
-             names=np.array(names, object), groups=np.array(groups, object),
-             store_names=np.array(names[:Ks], object))
+    marg = dict(margins=rng.exponential(1.0, (n, K)).astype(np.float32),
+                cos_md_src=rng.uniform(-1, 1, (n, K)).astype(np.float32),
+                cos_dctv=rng.uniform(-1, 1, (n, K)).astype(np.float32),
+                jtw=rng.standard_normal((n, Ks, d)).astype(np.float16),
+                names=np.array(names, object), groups=np.array(groups, object),
+                store_names=np.array(names[:Ks], object))
+    if with_vq:
+        marg["cos_vq"] = rng.uniform(-1, 1, (n, K)).astype(np.float32)
+    np.savez(tmp_path / f"reach_margins_{ds}.npz", **marg)
     grid = np.linspace(0, 60, 61)
     with open(tmp_path / f"reach_curve_{ds}.csv", "w", newline="") as f:
         w = csv.writer(f); w.writerow(("direction", "eps", "frac_reachable"))
@@ -76,3 +77,10 @@ def test_fig_jlens_smoke(tmp_path, monkeypatch):
                     w.writerow((mode, l, wn, 1.0 + l * 0.1, 1.0, 0.05, 8))
     vr.fig_jlens("toy")
     assert os.path.exists("plot_reach_jlens_toy.png")
+
+
+def test_fig_geometry_without_the_vq_landmark(tmp_path, monkeypatch):
+    _make_synthetic("nomag", tmp_path, with_vq=False)
+    monkeypatch.chdir(tmp_path)
+    vr.fig_geometry("nomag")
+    assert (tmp_path / "plot_reach_geometry_nomag.png").exists()

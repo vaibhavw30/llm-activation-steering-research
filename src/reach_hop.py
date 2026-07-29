@@ -63,9 +63,29 @@ def jvp_cols(f, delta0, T_rows):
     return jvp(f, (delta0,), (T_rows,))
 
 
+DEFAULT_MODEL = "google/gemma-2-2b"
+
+
 def load_meta(ds):
+    """(source_layer, target_layer, input_scale, model). The model is config, never a
+    literal — the refusal positive control may run on a different checkpoint."""
     m = json.load(open(f"dct_meta_{ds}.json"))
-    return int(m["source_layer"]), int(m["target_layer"]), float(m["input_scale"])
+    scale = m.get("input_scale")
+    if scale is None:
+        raise SystemExit(f"[reach] dct_meta_{ds}.json has input_scale=null — "
+                         f"run calibrate_scale.py --dataset {ds} first")
+    return (int(m["source_layer"]), int(m["target_layer"]),
+            float(scale), str(m.get("model", DEFAULT_MODEL)))
+
+
+def optional_artifacts(ds):
+    """Which optional input families exist for this dataset.
+      "dct" — dct_V/dct_U: the dct_u battery members and the cos_dctv landmark.
+      "mag" — mag_dir: the cos_vq landmark.
+    The minimal refusal control (Horizon-1 1.1) has neither; the truth datasets have
+    both, so their code path is unchanged."""
+    return {"dct": os.path.exists(f"dct_V_{ds}.pt") and os.path.exists(f"dct_U_{ds}.pt"),
+            "mag": os.path.exists(f"mag_dir_{ds}.npz")}
 
 
 PROBE_TEXT = "The city of Paris is in France."
@@ -108,8 +128,8 @@ def calibrate_slice(sliced, h_src_seq, h_tgt_last, last_idx, tol=FIDELITY_TOL):
 
 
 def load_model_and_slice(ds, device):
-    src, tgt, scale = load_meta(ds)
-    tok, model, dev = su.load_model(device)
+    src, tgt, scale, model_name = load_meta(ds)
+    tok, model, dev = su.load_model(device, model_name=model_name)
     sliced = dct.SlicedModel(model, start_layer=src, end_layer=tgt,
                              layers_name="model.layers")
     fb = forward_source_batch(model, tok, [PROBE_TEXT], src, tgt, dev)
@@ -118,7 +138,7 @@ def load_model_and_slice(ds, device):
     print(f"[reach] slice fidelity cos={cos_f:.6f} (input compensation x{factor:.4g})",
           flush=True)
     return tok, model, sliced, {"src": src, "tgt": tgt, "input_scale": scale,
-                                "device": dev}
+                                "model": model_name, "device": dev}
 
 
 def forward_source_batch(model, tok, statements, src, tgt, device, max_length=64):
@@ -139,31 +159,35 @@ def forward_source_batch(model, tok, statements, src, tgt, device, max_length=64
 
 
 def load_landmarks(ds):
-    """Source-layer landmark unit vectors for cosine bookkeeping (spec §3)."""
+    """Source-layer landmark unit vectors for cosine bookkeeping (spec §3). Only
+    md_src is guaranteed; v_q and dct_v appear when their artifacts exist. The KEY
+    NAMES are load-bearing — reach_linerr.py reads lm["md_src"] and lm["dct_v"]."""
     td = np.load(f"truth_dir_{ds}.npz")
-    md_src = unit(np.asarray(td["mean_diff"], np.float64))
-    mg = np.load(f"mag_dir_{ds}.npz")
-    v_q = unit(np.asarray(mg["v_Q_unit"], np.float64))
-    V, U, _ = fu.load_dct(ds)
-    top = fu.top_k_by_potency(V, U, 1)[0]
-    dct_v = unit(V[:, top].astype(np.float64))
-    return {"md_src": md_src, "v_q": v_q, "dct_v": dct_v}
+    out = {"md_src": unit(np.asarray(td["mean_diff"], np.float64))}
+    have = optional_artifacts(ds)
+    if have["mag"]:
+        mg = np.load(f"mag_dir_{ds}.npz")
+        out["v_q"] = unit(np.asarray(mg["v_Q_unit"], np.float64))
+    if have["dct"]:
+        V, U, _ = fu.load_dct(ds)
+        top = fu.top_k_by_potency(V, U, 1)[0]
+        out["dct_v"] = unit(V[:, top].astype(np.float64))
+    return out
 
 
 def validate_inputs(ds):
-    """Fail-fast startup validation (spec §6): die in seconds on a config error,
-    not after an hour of forwards."""
+    """Fail-fast startup validation (spec §6): die in seconds on a config error, not
+    after an hour of forwards. mag_dir and dct_V/dct_U are OPTIONAL — their absence
+    disables the landmarks and battery members that depend on them, and is reported,
+    not fatal."""
     problems = []
-    checks = [
+    required = [
         (f"dct_meta_{ds}.json", None),
         (f"truth_dir_{ds}.npz", ("mean_diff", "grad", "layer")),
         (f"truth_dir_tgt_{ds}.npz", ("mean_diff", "grad", "layer")),
-        (f"mag_dir_{ds}.npz", ("v_Q_unit",)),
-        (f"dct_V_{ds}.pt", None),
-        (f"dct_U_{ds}.pt", None),
         (os.path.join("got_datasets", f"{ds}.csv"), None),
     ]
-    for path, keys in checks:
+    for path, keys in required:
         if not os.path.exists(path):
             problems.append(f"missing {path}")
         elif keys is not None:
@@ -173,7 +197,12 @@ def validate_inputs(ds):
                 problems.append(f"{path} lacks keys {missing}")
     if problems:
         raise SystemExit("[reach] input validation FAILED:\n  " + "\n  ".join(problems))
-    src, tgt, _ = load_meta(ds)
+    absent = sorted(nm for nm, ok in optional_artifacts(ds).items() if not ok)
+    if absent:
+        print(f"[reach] optional artifacts absent for {ds}: {', '.join(absent)} — "
+              "dct: dct_u battery members + cos_dctv landmark disabled; "
+              "mag: cos_vq landmark disabled", flush=True)
+    src, tgt, _, _ = load_meta(ds)
     src_l = int(np.load(f"truth_dir_{ds}.npz")["layer"])
     tgt_l = int(np.load(f"truth_dir_tgt_{ds}.npz")["layer"])
     if src_l != src or tgt_l != tgt:

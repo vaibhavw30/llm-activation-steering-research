@@ -76,9 +76,10 @@ def compute(ds, device, limit=0):
     tok, model, sliced, meta = load_model_and_slice(ds, device)
     dev = meta["device"]
     fixed = {"mean_diff_src": torch.tensor(lm["md_src"], dtype=torch.float32),
-             "dct_v_top": torch.tensor(lm["dct_v"], dtype=torch.float32),
              "random": torch.tensor(unit(rng.standard_normal(len(lm["md_src"]))),
                                     dtype=torch.float32)}
+    if "dct_v" in lm:
+        fixed["dct_v_top"] = torch.tensor(lm["dct_v"], dtype=torch.float32)
     rows = [("stmt_index", "label", "direction", "eps", "eps_frac", "rel_err")]
     for i in pick:
         fb = forward_source_batch(model, tok, [stmts[i]], meta["src"], meta["tgt"], dev)

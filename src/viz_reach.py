@@ -106,8 +106,14 @@ def fig_geometry(ds):
     picks = [("mean_diff_tgt", k_md, BLUE)]
     if "dct_u_0" in names:
         picks.append(("dct_u_0", names.index("dct_u_0"), RED))
-    for ax, key, lab in ((axes[0], "cos_md_src", "cos(J^T w, mean_diff@src)"),
-                         (axes[1], "cos_vq", "cos(J^T w, v_Q)")):
+    panels = [(axes[0], "cos_md_src", "cos(J^T w, mean_diff@src)")]
+    if "cos_vq" in mz.files:
+        panels.append((axes[1], "cos_vq", "cos(J^T w, v_Q)"))
+    else:
+        axes[1].set_axis_off()
+        axes[1].text(0.5, 0.5, "no mag_dir landmark", ha="center", va="center",
+                     transform=axes[1].transAxes, fontsize=9)
+    for ax, key, lab in panels:
         arr = np.asarray(mz[key], np.float64)
         for nm, k, c in picks:
             ax.hist(arr[:, k], bins=40, alpha=0.55, color=c, label=f"w={nm}")

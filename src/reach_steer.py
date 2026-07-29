@@ -60,7 +60,7 @@ def read_g(model, tok, prompt, tgt_layer, w_t, t02, dev):
 
 
 def _load_common(ds):
-    src, tgt, input_scale = load_meta(ds)
+    src, tgt, input_scale, _model = load_meta(ds)
     summ = json.load(open(f"reach_summary_{ds}.json"))
     dirs = np.load(f"reach_dirs_{ds}.npz", allow_pickle=True)
     mz = np.load(f"reach_margins_{ds}.npz", allow_pickle=True)

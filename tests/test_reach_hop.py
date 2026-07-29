@@ -146,3 +146,61 @@ def test_calibrate_slice_raises_when_uncompensatable():
     target = sl(h)[torch.arange(B), last]
     with pytest.raises(SystemExit, match="unfaithful"):
         rh.calibrate_slice(lambda x: torch.zeros_like(x) + 1.0, h, target, last)
+
+
+def test_optional_artifacts_reports_absence(tmp_path, monkeypatch):
+    import json
+    import numpy as np
+    import reach_hop
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "got_datasets").mkdir()
+    (tmp_path / "got_datasets" / "ds.csv").write_text("statement,label\na,1\n")
+    json.dump({"model": "m", "source_layer": 1, "target_layer": 10,
+               "input_scale": 2.0}, open("dct_meta_ds.json", "w"))
+    for nm, layer in (("truth_dir_ds.npz", 1), ("truth_dir_tgt_ds.npz", 10)):
+        np.savez(nm, mean_diff=np.ones(4, np.float32), grad=np.ones(4, np.float32),
+                 layer=np.array(layer))
+    assert reach_hop.optional_artifacts("ds") == {"dct": False, "mag": False}
+    reach_hop.validate_inputs("ds")          # must NOT raise: both are optional
+    assert set(reach_hop.load_landmarks("ds")) == {"md_src"}
+
+
+def test_load_meta_returns_model_from_json(tmp_path, monkeypatch):
+    import json
+    import reach_hop
+    monkeypatch.chdir(tmp_path)
+    json.dump({"source_layer": 3, "target_layer": 12, "input_scale": 7.5,
+               "model": "google/gemma-2-2b-it"}, open("dct_meta_ds.json", "w"))
+    assert reach_hop.load_meta("ds") == (3, 12, 7.5, "google/gemma-2-2b-it")
+
+
+def test_load_meta_defaults_model_when_absent(tmp_path, monkeypatch):
+    import json
+    import reach_hop
+    monkeypatch.chdir(tmp_path)
+    json.dump({"source_layer": 3, "target_layer": 12, "input_scale": 7.5},
+              open("dct_meta_ds.json", "w"))
+    assert reach_hop.load_meta("ds")[3] == "google/gemma-2-2b"
+
+
+def test_load_meta_rejects_an_uncalibrated_meta(tmp_path, monkeypatch):
+    import json
+    import pytest
+    import reach_hop
+    monkeypatch.chdir(tmp_path)
+    json.dump({"source_layer": 3, "target_layer": 12, "input_scale": None},
+              open("dct_meta_ds.json", "w"))
+    with pytest.raises(SystemExit, match="calibrate_scale"):
+        reach_hop.load_meta("ds")
+
+
+def test_validate_inputs_still_fails_on_missing_required(tmp_path, monkeypatch):
+    import json
+    import pytest
+    import reach_hop
+    monkeypatch.chdir(tmp_path)
+    json.dump({"source_layer": 1, "target_layer": 10, "input_scale": 1.0},
+              open("dct_meta_ds.json", "w"))
+    with pytest.raises(SystemExit) as e:
+        reach_hop.validate_inputs("ds")
+    assert "truth_dir_ds.npz" in str(e.value)

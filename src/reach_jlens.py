@@ -108,7 +108,7 @@ def cross_check_jlens(model, tok, ds, readouts, margins_decl):
         print("[jlens] anthropics/jacobian-lens not installed — skipping cross-check")
         return
     try:
-        src, tgt, _ = load_meta(ds)
+        src, tgt, _, _ = load_meta(ds)
         check_layers = sorted({src, (src + tgt) // 2, tgt})
         print(f"[jlens] cross-check requested on layers {check_layers}; see the "
               f"jacobian-lens README for lens loading — comparing fitted-lens "

@@ -28,6 +28,9 @@ N_BOOT, BOOT_FRAC = 6, 0.5                   # bootstrap probes for truth_sub_k
 K_DCT_U, N_RAND = 4, 64
 MIN_ACC_1D = 0.6                             # threshold valid only above this 1-D acc
 CHUNK, VJP_BATCH, ACTS_BATCH = 100, 16, 16
+# landmark key -> stored array name. The STORED names must not change: viz_reach and
+# every existing truth reach_margins_<ds>.npz depend on them.
+COS_KEY = {"md_src": "cos_md_src", "v_q": "cos_vq", "dct_v": "cos_dctv"}
 DATASET_SAMPLE = {"common_claim_true_false": 2000}   # stratified cap; cities runs full
 
 
@@ -99,13 +102,15 @@ def build_battery(h_tgt, y, ds):
     pg = fit_probe_dir(h, y)
     boots = [fit_probe_dir(h, y, seed=s, frac=BOOT_FRAC) for s in range(N_BOOT)]
     sub = gram_schmidt([md, pg] + boots)
-    V, U, _ = fu.load_dct(ds)
-    tops = fu.top_k_by_potency(V, U, K_DCT_U)
     rng = np.random.default_rng(123)
     raw = [("mean_diff_tgt", "truth", md), ("probe_grad_tgt", "truth", pg)]
     raw += [(f"truth_sub_{j}", "truth_sub", sub[j]) for j in range(sub.shape[0])]
-    raw += [(f"dct_u_{r}", "dct_u", U[:, t].astype(np.float64))
-            for r, t in enumerate(tops)]
+    from reach_hop import optional_artifacts
+    if optional_artifacts(ds)["dct"]:
+        V, U, _ = fu.load_dct(ds)
+        tops = fu.top_k_by_potency(V, U, K_DCT_U)
+        raw += [(f"dct_u_{r}", "dct_u", U[:, t].astype(np.float64))
+                for r, t in enumerate(tops)]
     raw += [(f"rand_{r}", "rand", rng.standard_normal(h.shape[1]))
             for r in range(N_RAND)]
     W, names, groups, acc1d, thresh02 = [], [], [], [], []
@@ -195,14 +200,15 @@ def stage_vjp(ds, device, resume=True, limit=0):
     W = torch.tensor(dirs["W"], dtype=torch.float32)
     store = np.asarray(dirs["store_jtw"])
     lm = load_landmarks(ds)
+    lm_names = [k for k in ("md_src", "v_q", "dct_v") if k in lm]
     stmts = acts["statements"]
     n = min(limit, len(stmts)) if limit else len(stmts)
     tok, model, sliced, meta = load_model_and_slice(ds, device)
     dev = meta["device"]
     W_dev = W.to(dev)
     store_t = torch.tensor(np.asarray(store, bool), dtype=torch.bool, device=dev)
-    lm_t = {k: torch.tensor(v, dtype=torch.float32, device=dev)
-            for k, v in lm.items()}
+    lm_t = {k: torch.tensor(lm[k], dtype=torch.float32, device=dev)
+            for k in lm_names}
     cdir = f"reach_chunks_{ds}"
     os.makedirs(cdir, exist_ok=True)
     for c0 in range(0, n, CHUNK):
@@ -211,7 +217,8 @@ def stage_vjp(ds, device, resume=True, limit=0):
             print(f"[vjp] {cpath} exists — skipping", flush=True)
             continue
         c1 = min(c0 + CHUNK, n)
-        m_l, cmd_l, cvq_l, cdv_l, jtw_l = [], [], [], [], []
+        m_l, jtw_l = [], []
+        cos_l = {k: [] for k in lm_names}
         for b0 in range(c0, c1, VJP_BATCH):
             batch = stmts[b0:min(b0 + VJP_BATCH, c1)]
             fb = forward_source_batch(model, tok, batch, meta["src"], meta["tgt"], dev)
@@ -221,26 +228,25 @@ def stage_vjp(ds, device, resume=True, limit=0):
             m = G.norm(dim=-1)                             # (K, B)
             Gu = G / m.clamp_min(1e-12)[..., None]
             m_l.append(m.T.cpu().numpy())
-            cmd_l.append((Gu @ lm_t["md_src"]).T.cpu().numpy())
-            cvq_l.append((Gu @ lm_t["v_q"]).T.cpu().numpy())
-            cdv_l.append((Gu @ lm_t["dct_v"]).T.cpu().numpy())
+            for k in lm_names:
+                cos_l[k].append((Gu @ lm_t[k]).T.cpu().numpy())
             jtw_l.append(Gu[store_t].permute(1, 0, 2).cpu().numpy().astype(np.float16))
             print(f"[vjp] {ds} statements {b0}-{b0 + len(batch)} done", flush=True)
         atomic_savez(cpath, margins=np.concatenate(m_l).astype(np.float32),
-                 cos_md_src=np.concatenate(cmd_l).astype(np.float32),
-                 cos_vq=np.concatenate(cvq_l).astype(np.float32),
-                 cos_dctv=np.concatenate(cdv_l).astype(np.float32),
-                 jtw=np.concatenate(jtw_l))
+                     jtw=np.concatenate(jtw_l),
+                     **{COS_KEY[k]: np.concatenate(v).astype(np.float32)
+                        for k, v in cos_l.items()})
         print(f"[vjp] checkpointed {cpath}", flush=True)
     merge_chunks(ds, n, dirs)
 
 
 def merge_chunks(ds, n, dirs):
     cdir = f"reach_chunks_{ds}"
-    parts = {k: [] for k in ("margins", "cos_md_src", "cos_vq", "cos_dctv", "jtw")}
+    keys = list(np.load(os.path.join(cdir, f"chunk_{0:05d}.npz")).files)
+    parts = {k: [] for k in keys}
     for c0 in range(0, n, CHUNK):
         z = np.load(os.path.join(cdir, f"chunk_{c0:05d}.npz"))
-        for k in parts:
+        for k in keys:
             parts[k].append(z[k])
     store = np.asarray(dirs["store_jtw"])
     np.savez(f"reach_margins_{ds}.npz",
