@@ -26,3 +26,15 @@ def test_figures_are_written(tmp_path, monkeypatch):
     viz_sae.fig_overlap("ds")
     assert (tmp_path / "plot_sae_explained_ds.png").exists()
     assert (tmp_path / "plot_sae_overlap_ds.png").exists()
+
+
+def test_figures_skip_when_inputs_missing(tmp_path, monkeypatch, capsys):
+    import viz_sae
+    monkeypatch.chdir(tmp_path)
+    viz_sae.fig_explained("missing")
+    viz_sae.fig_overlap("missing")
+    out = capsys.readouterr().out
+    assert "skip fig_explained: sae_features_missing.csv missing" in out
+    assert "skip fig_overlap: sae_overlap_missing.json missing" in out
+    assert not (tmp_path / "plot_sae_explained_missing.png").exists()
+    assert not (tmp_path / "plot_sae_overlap_missing.png").exists()

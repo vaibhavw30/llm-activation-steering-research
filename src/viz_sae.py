@@ -12,6 +12,7 @@
 import argparse
 import csv
 import json
+import os
 
 import matplotlib
 matplotlib.use("Agg")
@@ -33,6 +34,10 @@ def _series(ds):
 
 
 def fig_explained(ds):
+    path = f"sae_features_{ds}.csv"
+    if not os.path.exists(path):
+        print(f"skip fig_explained: {path} missing")
+        return
     series = _series(ds)
     fig, ax = plt.subplots(figsize=(6.8, 4.2))
     for name, cum in sorted(series.items()):
@@ -51,7 +56,11 @@ def fig_explained(ds):
 
 
 def fig_overlap(ds):
-    ov = json.load(open(f"sae_overlap_{ds}.json"))
+    path = f"sae_overlap_{ds}.json"
+    if not os.path.exists(path):
+        print(f"skip fig_overlap: {path} missing")
+        return
+    ov = json.load(open(path))
     pairs = sorted(ov["jaccard"].items(), key=lambda kv: -kv[1])
     labels = [k.replace("|", "\nvs ") for k, _ in pairs]
     vals = [v for _, v in pairs]
