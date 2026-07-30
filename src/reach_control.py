@@ -19,6 +19,7 @@ the axis the hypothesis is about ("does behavior move at approximately eps*").
 import argparse
 import csv
 import json
+import math
 import os
 
 import numpy as np
@@ -26,6 +27,22 @@ import numpy as np
 MIN_DELTA = 0.10          # behavior counts as "moved" at >= 10 points
 FRAC_ROUND = 2
 DEFAULT_DIRECTION = "jtw_mean_diff_tgt"
+
+# Smallest bucket allowed to decide the `actuatable` verdict. The legitimate buckets are
+# n=32 (mean arm: the harmless holdout) and n~200 (per-statement arm), so this only
+# excludes CLAMP ARTEFACTS: scale_grid's `min(f*eps_i, 1.5*input_scale)` cap
+# (reach_steer.py:41) fires per statement, so a clamped subset gets idiosyncratic
+# frac = cap/eps_i values that round into their own n=1 or n=2 buckets while the
+# unclamped statements pool at +/-1, +/-2. `require_signal` only fires when there is NO
+# non-baseline bucket at all, so without this floor one statement that both crossed and
+# refused returns `actuatable` — "the instrument is valid", the branch's headline
+# number — off a single observation. Undersized buckets are still reported in the CSV
+# and sidecar with their n; they are only barred from adjudicating.
+MIN_BUCKET_N = 5
+
+# 95% two-sided normal quantile, for wilson_interval. Hardcoded so the sidecar's
+# intervals need no scipy/statsmodels dependency.
+Z_95 = 1.959963984540054
 
 
 def frac_of(scale, eps_star):
@@ -129,9 +146,22 @@ def mean_arm_rows(judged, readout, summ, direction=DEFAULT_DIRECTION):
             continue
         g.setdefault(float(r["scale"]), []).append(float(r["g_read"]))
     wn = direction[4:] if direction.startswith("jtw_") else direction
-    eps = summ["directions"].get(wn, {}).get("median_eps_star")
-    if not eps:
-        raise SystemExit(f"[control] no median_eps_star for {wn} in the summary")
+    eps = summ.get("directions", {}).get(wn, {}).get("median_eps_star")
+    # ABSENT and ZERO are different conditions with different operator actions, and the
+    # old `if not eps` conflated them: a legitimate median_eps_star == 0.0 is not a
+    # missing summary field, it means every label-1 row already sits inside the target
+    # halfspace (g<=0), so there is no boundary to steer across and nothing to fix in
+    # the summary file.
+    if eps is None:
+        raise SystemExit(f"[control] no median_eps_star for {wn} in the summary "
+                         f"(reach_summary key absent) — check that reach_analyze.py "
+                         f"ran for this dataset and that {wn!r} is one of its "
+                         f"directions")
+    if float(eps) == 0.0:
+        raise SystemExit(f"[control] median_eps_star for {wn} is 0.0 — not a missing "
+                         f"field: every label-1 row already sits INSIDE the target "
+                         f"halfspace (g<=0), so there is no certificate boundary to "
+                         f"cross and frac = scale/eps* is undefined")
     out = []
     dropped = 0
     for r in judged:
@@ -152,14 +182,47 @@ def mean_arm_rows(judged, readout, summ, direction=DEFAULT_DIRECTION):
 
 
 def aggregate(rows, ndigits=FRAC_ROUND):
-    """[{frac,g_read,refused}] -> {frac_bucket: {"n","g_read","frac_refused"}}."""
+    """[{frac,g_read,refused}] -> {frac_bucket: {"n","n_refused","g_read",
+    "frac_refused"}}.
+
+    `n_refused` is the raw refusal COUNT, kept alongside the rate so the sidecar can
+    report an exact k/n and a binomial interval: the verdict thresholds a point estimate
+    (MIN_DELTA=0.10) on n as small as 32, where 4 prompts changing status crosses it."""
     by = {}
     for r in rows:
         by.setdefault(round(float(r["frac"]), ndigits), []).append(r)
     return {f: {"n": len(v),
+                "n_refused": int(round(float(np.sum([x["refused"] for x in v])))),
                 "g_read": float(np.mean([x["g_read"] for x in v])),
                 "frac_refused": float(np.mean([x["refused"] for x in v]))}
             for f, v in by.items()}
+
+
+def wilson_interval(k, n, z=Z_95):
+    """Wilson score interval for k successes in n trials, as (lo, hi), clipped to
+    [0, 1]. Returns (0.0, 1.0) for n == 0.
+
+    Reporting only, never adjudication: the verdict logic is unchanged. It exists
+    because MIN_DELTA is a hard threshold on a point estimate and the mean arm's
+    buckets are n=32, so a 4-of-32 change in refusal status crosses it. Wilson rather
+    than the normal approximation because it stays inside [0, 1] and does not collapse
+    to a zero-width interval at k=0 or k=n. Implemented here in a few lines to avoid a
+    scipy/statsmodels dependency on the cluster."""
+    n = int(n)
+    if n <= 0:
+        return (0.0, 1.0)
+    p = int(k) / n
+    denom = 1.0 + z * z / n
+    center = (p + z * z / (2 * n)) / denom
+    half = (z / denom) * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n))
+    return (max(0.0, center - half), min(1.0, center + half))
+
+
+def undersized_fracs(table, baseline=0.0, min_n=MIN_BUCKET_N):
+    """Non-baseline frac buckets with fewer than `min_n` rows, sorted. These are barred
+    from deciding `actuatable` (see MIN_BUCKET_N) but are still reported in the table."""
+    return sorted(f for f, v in table.items()
+                  if f != baseline and int(v.get("n", 0)) < min_n)
 
 
 def readout_crossed(table, baseline=0.0):
@@ -192,7 +255,8 @@ def behavior_delta(table, baseline=0.0):
     return {f: float(v["frac_refused"]) - base for f, v in table.items()}
 
 
-def verdict(crossed, delta, min_delta=MIN_DELTA, baseline=0.0):
+def verdict(crossed, delta, min_delta=MIN_DELTA, baseline=0.0, counts=None,
+            min_n=MIN_BUCKET_N):
     """Name the 2x2 cell over the non-baseline fracs.
 
     `actuatable` requires the crossing and the behaviour change to happen at the
@@ -207,6 +271,12 @@ def verdict(crossed, delta, min_delta=MIN_DELTA, baseline=0.0):
     a plausible-looking `no-crossing`): `require_signal` guards the `run()` path,
     but a direct or future caller of `verdict` alone must not be able to get a
     label out of a table that never had any steered data in it.
+
+    `counts` ({frac: n}, optional) gates only the `actuatable` branch: a bucket with
+    fewer than `min_n` rows cannot buy that verdict (see MIN_BUCKET_N — a clamp-artefact
+    n=1 bucket would otherwise declare the instrument valid off one observation). The
+    other three cells are unchanged, and omitting `counts` leaves the legacy behaviour
+    exactly as it was for every existing caller.
     """
     fr = [f for f in crossed if f != baseline]
     if not fr:
@@ -214,7 +284,9 @@ def verdict(crossed, delta, min_delta=MIN_DELTA, baseline=0.0):
                          f"(only frac={baseline} present) — refusing to report a "
                          f"verdict with no steered data")
     moved = {f: abs(delta.get(f, 0.0)) >= min_delta for f in fr}
-    if any(crossed[f] and moved[f] for f in fr):
+    adjudicable = [f for f in fr
+                   if counts is None or int(counts.get(f, min_n)) >= min_n]
+    if any(crossed[f] and moved[f] for f in adjudicable):
         return "actuatable"
     if any(crossed[f] for f in fr):
         return "readout-only"   # crossed; any movement was at a non-crossing frac
@@ -305,6 +377,16 @@ COLUMN_SEMANTICS = {
               "g_read>0 AND this bucket's mean_g_read<=0), else 0 -- the baseline "
               "frac itself is always 0",
     "frac_refused": "fraction of completions in this bucket judged as refused",
+    "n_refused": "raw count of refused completions in this bucket; frac_refused = "
+                 "n_refused / n, reported exactly so the headline rate can be read as "
+                 "a k-of-n and not just a point estimate",
+    "refused_ci95_lo": "lower bound of the 95% Wilson score interval for the bucket's "
+                       "refusal rate (reporting only — the verdict thresholds the "
+                       "point estimate, see min_delta)",
+    "refused_ci95_hi": "upper bound of the same Wilson interval",
+    "too_small_to_adjudicate": f"1 if n < {MIN_BUCKET_N} (MIN_BUCKET_N), in which case "
+                              f"this bucket cannot decide the `actuatable` verdict — "
+                              f"it is still reported here with its n, never dropped",
     "delta_vs_baseline": "frac_refused minus frac_refused at the frac=0 baseline; "
                          "movement is judged on magnitude (see min_delta), so a "
                          "negative delta counts as moved just like a positive one",
@@ -359,26 +441,45 @@ def run(ds, arm, direction=DEFAULT_DIRECTION, min_delta=MIN_DELTA):
                              f"where t02 was fit, so `readout_crossed` cannot "
                              f"support any verdict here")
     crossed, delta = readout_crossed(table), behavior_delta(table)
-    v = verdict(crossed, delta, min_delta)
+    counts = {f: int(table[f]["n"]) for f in table}
+    small = undersized_fracs(table)
+    v = verdict(crossed, delta, min_delta, counts=counts)
     nb = near_boundary_check(table)
     print(f"[control] {ds} arm={arm}: VERDICT = {v}")
     print(f"  {'frac_eps*':>10s} {'n':>5s} {'mean g_read':>12s} {'crossed':>8s} "
           f"{'refused':>8s} {'delta':>8s}")
     out_rows = [("frac_eps_star", "n", "mean_g_read", "crossed", "frac_refused",
-                 "delta_vs_baseline")]
+                 "n_refused", "refused_ci95_lo", "refused_ci95_hi",
+                 "too_small_to_adjudicate", "delta_vs_baseline")]
     json_table = {}
     for f in sorted(table):
         r = table[f]
+        lo, hi = wilson_interval(r["n_refused"], r["n"])
+        too_small = int(f in small)
         out_rows.append((f"{f:.6g}", r["n"], f"{r['g_read']:.6g}",
                          int(crossed[f]), f"{r['frac_refused']:.6g}",
+                         r["n_refused"], f"{lo:.6g}", f"{hi:.6g}", too_small,
                          f"{delta[f]:.6g}"))
         json_table[f"{f:.6g}"] = {
             "n": r["n"], "mean_g_read": _sixsig(r["g_read"]),
             "crossed": int(crossed[f]), "frac_refused": _sixsig(r["frac_refused"]),
+            "n_refused": r["n_refused"],
+            "refused_ci95_lo": _sixsig(lo), "refused_ci95_hi": _sixsig(hi),
+            "too_small_to_adjudicate": too_small,
             "delta_vs_baseline": _sixsig(delta[f]),
         }
         print(f"  {f:>10.2f} {r['n']:>5d} {r['g_read']:>12.3f} "
-              f"{str(crossed[f]):>8s} {r['frac_refused']:>8.3f} {delta[f]:>+8.3f}")
+              f"{str(crossed[f]):>8s} {r['frac_refused']:>8.3f} {delta[f]:>+8.3f} "
+              f"({r['n_refused']}/{r['n']}, 95% CI {lo:.3f}-{hi:.3f})"
+              f"{'  [n<MIN_BUCKET_N: cannot adjudicate]' if too_small else ''}")
+
+    if small:
+        print(f"[control] WARNING: frac bucket(s) {small} have n < {MIN_BUCKET_N} "
+              f"(MIN_BUCKET_N) and are therefore barred from deciding `actuatable` — "
+              f"they are still reported in the table with their n. Idiosyncratic "
+              f"fracs like these come from scale_grid's 1.5*input_scale clamp firing "
+              f"for a subset of statements (reach_steer.py:41); check the clamped "
+              f"fraction before reading the verdict")
 
     off_target = [f for f in sorted(table) if f != 0.0 and not crossed[f]
                   and abs(delta.get(f, 0.0)) >= min_delta]
@@ -420,6 +521,8 @@ def run(ds, arm, direction=DEFAULT_DIRECTION, min_delta=MIN_DELTA):
             "arm": arm,
             "direction": direction_used,
             "min_delta": min_delta,
+            "min_bucket_n": MIN_BUCKET_N,
+            "undersized_fracs": [_sixsig(f) for f in small],
             "verdict": v,
             "dropped_unmatched_rows": dropped,
             "dropped_never_steered_rows": n_never_steered,

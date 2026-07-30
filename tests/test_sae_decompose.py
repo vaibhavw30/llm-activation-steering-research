@@ -103,3 +103,19 @@ def test_collect_vectors_aligns_stem_rows_by_stmt_index(tmp_path, monkeypatch):
     # the fixture's full rows are e_2 and its stem rows are e_3, so the matched mean
     # stays on e_2 — proving it read the full matrix, not the stem one
     assert abs(got["jtw_full_matched_mean"][0][2] - 1.0) < 1e-6
+
+
+def test_run_refuses_a_meta_whose_model_is_not_gemma_2_2b(tmp_path, monkeypatch):
+    # Track B is gemma-2-2b-only: sae_load.REPO is hardcoded to
+    # google/gemma-scope-2b-pt-res, so pointing this at a `refusal` run done on
+    # google/gemma-2-2b-it would silently decompose -it directions in base-model SAE
+    # atoms. Must fail before any SAE download.
+    import json
+    import sae_decompose
+    monkeypatch.chdir(tmp_path)
+    ds = "sentinel_sae_model"
+    (tmp_path / f"dct_meta_{ds}.json").write_text(json.dumps(
+        {"dataset": ds, "model": "google/gemma-2-2b-it", "source_layer": 11,
+         "target_layer": 20, "input_scale": 10.0}))
+    with pytest.raises(SystemExit, match="gemma-scope-2b-pt-res"):
+        sae_decompose.run(ds)

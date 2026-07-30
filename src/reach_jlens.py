@@ -138,7 +138,11 @@ def main():
     if a.limit:
         pick = pick[:a.limit]
     stmts, labels = stmts[pick], labels[pick]
-    tok, model, dev = su.load_model(a.device)
+    # dct_meta_<ds>.json["model"] is authoritative for every reach script — never the
+    # dct_steer_utils.MODEL_NAME literal (the base gemma-2-2b), which would silently
+    # measure margins on a different checkpoint than the one the run is about.
+    _, _, _, model_name = load_meta(ds)
+    tok, model, dev = su.load_model(a.device, model_name=model_name)
     readouts = build_readouts(model, tok, stmts, labels, dev)
     rows = [("mode", "layer", "w_name", "margin_mean", "margin_median",
              "margin_se", "n")]

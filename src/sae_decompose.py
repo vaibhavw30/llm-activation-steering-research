@@ -128,9 +128,30 @@ def collect_vectors(ds):
     return out
 
 
+SAE_MODEL = "google/gemma-2-2b"   # the only checkpoint sae_load.REPO has SAEs for
+
+
+def check_sae_model(meta, ds):
+    """Track B is gemma-2-2b-only: sae_load.REPO is hardcoded to
+    google/gemma-scope-2b-pt-res, whose atoms live in the BASE model's residual basis.
+    Pointing this at a run done on another checkpoint (e.g. a `refusal` run that fell
+    back to google/gemma-2-2b-it) would decompose those directions in the wrong
+    dictionary and report feature ids that mean nothing. Fail before any download."""
+    from sae_load import REPO
+    m = str(meta.get("model") or SAE_MODEL)
+    if m != SAE_MODEL:
+        raise SystemExit(
+            f"[sae] dct_meta_{ds}.json says model={m!r}, but the SAEs come from "
+            f"{REPO} and are only valid for {SAE_MODEL!r} — its decoder atoms are in "
+            f"that model's residual basis. Refusing to decompose {m!r} directions in "
+            f"{SAE_MODEL!r} SAE atoms.")
+    return m
+
+
 def run(ds, k=K_ATOMS, width="16k"):
     from sae_load import load_sae, decoder_unit
     meta = json.load(open(f"dct_meta_{ds}.json"))
+    check_sae_model(meta, ds)
     layers = {"src": int(meta["source_layer"]), "tgt": int(meta["target_layer"])}
     vecs = collect_vectors(ds)
     D = {sp: decoder_unit(load_sae(layers[sp], width))

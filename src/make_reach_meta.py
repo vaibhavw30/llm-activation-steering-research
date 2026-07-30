@@ -113,7 +113,26 @@ def run(ds, model, results_path=None, force=False):
             f"irreplaceable truth artifact (e.g. a calibrated input_scale). "
             f"Pass --force if you really mean to regenerate it.")
     import numpy as np
-    z = np.load(_acts_path(ds), allow_pickle=True)
+    acts_path = _acts_path(ds)
+    z = np.load(acts_path, allow_pickle=True)
+    # `extract --model` and `make_reach_meta --model` are two independently
+    # operator-typed literals. extract.py records the checkpoint it ran on in the npz
+    # (extract.py:152), so cross-check it: the meta is AUTHORITATIVE for every
+    # downstream reach stage, and a meta describing a different model than the
+    # activations the source layer was chosen from silently invalidates the whole run.
+    if "model" in getattr(z, "files", ()):
+        acts_model = str(z["model"])
+        if acts_model != str(model):
+            raise SystemExit(
+                f"[meta] model mismatch: {acts_path} was extracted with "
+                f"{acts_model!r} but --model says {str(model)!r} — the meta is "
+                f"authoritative for every downstream reach stage, so writing it "
+                f"would describe a different checkpoint than these activations. "
+                f"Re-run extract.py and make_reach_meta.py with the SAME --model.")
+    else:
+        print(f"[meta] warning: {acts_path} has no 'model' member (pre-dates "
+              f"extract.py's model key) — cannot cross-check against --model "
+              f"{str(model)!r}")
     acts = z["activations"]
     max_layer = acts.shape[0] - 1
     path = results_path or f"results_{ds}.csv"

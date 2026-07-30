@@ -22,11 +22,17 @@ echo "Job $SLURM_JOB_ID on $(hostname)"; nvidia-smi
 # Screens BOTH candidates so one job produces the whole decision input.
 # The -it checkpoint needs its HuggingFace license accepted first.
 echo "=== base model, no chat template ==="
+# --max-new-tokens 32 is explicit and MUST equal the experiment's budget
+# (run_refusal_reach.slurm runs reach_steer.py at --max-new-tokens 32): this job
+# is the pre-registered model gate, so a refusal prefix it counts must be one the
+# experiment could actually emit.
 python3 src/refusal_screen.py --model google/gemma-2-2b --device cuda \
+  --max-new-tokens 32 \
   || echo "!!!! base screen FAILED"
 
 echo "=== instruct model, chat template ==="
 python3 src/refusal_screen.py --model google/gemma-2-2b-it --device cuda --chat-template \
+  --max-new-tokens 32 \
   || echo "!!!! it screen FAILED"
 
 # Reads the two refusal_screen_<slug>.csv files refusal_screen.py already writes,

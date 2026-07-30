@@ -101,3 +101,57 @@ def test_calibrate_scale_refuses_to_recalibrate_an_already_calibrated_meta(tmp_p
     # input_scale: null (make_reach_meta.py's normal output) is the ordinary
     # not-yet-calibrated refusal path and must proceed unchanged, force or not
     check_not_calibrated({"input_scale": None}, "dct_meta_sentinel.json", force=False)
+
+
+def _write_acts(tmp_path, ds, model=None):
+    import numpy as np
+    rng = np.random.default_rng(3)
+    kw = {"activations": rng.standard_normal((20, 40, 6)),
+          "labels": np.array([0, 1] * 20)}
+    if model is not None:
+        kw["model"] = model
+    np.savez(tmp_path / f"acts_{ds}.npz", **kw)
+
+
+def test_run_refuses_when_the_acts_model_disagrees_with_the_meta_model(tmp_path,
+                                                                      monkeypatch):
+    # extract.py:152 records the checkpoint the activations came from; `extract --model`
+    # and `make_reach_meta --model` are two independently operator-typed literals. A
+    # manual re-run of one and not the other writes an AUTHORITATIVE meta describing a
+    # different model than the activations the layer choice was derived from, and every
+    # downstream stage trusts the meta.
+    import make_reach_meta as m
+    monkeypatch.chdir(tmp_path)
+    ds = "sentinel_ds_model_xcheck"
+    _write_acts(tmp_path, ds, model="google/gemma-2-2b")
+    with pytest.raises(SystemExit) as e:
+        m.run(ds, "google/gemma-2-2b-it")
+    msg = str(e.value)
+    # both values quoted (repr), so "google/gemma-2-2b" being a prefix of
+    # "google/gemma-2-2b-it" cannot make a weaker assertion pass vacuously
+    assert "'google/gemma-2-2b'" in msg and "'google/gemma-2-2b-it'" in msg
+    assert "acts_" in msg and "model mismatch" in msg
+    assert not os.path.exists(f"dct_meta_{ds}.json")   # nothing written
+
+
+def test_run_accepts_a_matching_acts_model(tmp_path, monkeypatch):
+    import make_reach_meta as m
+    monkeypatch.chdir(tmp_path)
+    ds = "sentinel_ds_model_match"
+    _write_acts(tmp_path, ds, model="google/gemma-2-2b-it")
+    m.run(ds, "google/gemma-2-2b-it")
+    assert json.loads(open(f"dct_meta_{ds}.json").read())["model"] == \
+        "google/gemma-2-2b-it"
+
+
+def test_run_only_warns_when_the_acts_file_predates_the_model_key(tmp_path,
+                                                                 monkeypatch, capsys):
+    # Older acts_<ds>.npz files have no "model" member; that is not a mismatch and
+    # must not block the refusal prep.
+    import make_reach_meta as m
+    monkeypatch.chdir(tmp_path)
+    ds = "sentinel_ds_model_absent"
+    _write_acts(tmp_path, ds, model=None)
+    m.run(ds, "google/gemma-2-2b-it")
+    assert "no 'model'" in capsys.readouterr().out
+    assert os.path.exists(f"dct_meta_{ds}.json")

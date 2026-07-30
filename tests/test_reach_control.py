@@ -290,3 +290,152 @@ def test_count_empty_completions_handles_none_value_without_raising():
         {"direction": "jtw_other", "completion": None},
     ]
     assert count_empty_completions(rows, "jtw_mean_diff_tgt") == 2
+
+
+def test_an_n_of_1_bucket_cannot_decide_actuatable():
+    """I5: `actuatable` is the branch's headline number ("the instrument is valid") and
+    must not rest on a single observation.
+
+    Reachable by construction: scale_grid's `min(f*eps_i, 1.5*input_scale)` clamp fires
+    per statement, so a clamped subset gets idiosyncratic frac = cap/eps_i values that
+    round into their own n=1 buckets while the unclamped statements pool at +/-1, +/-2.
+    require_signal only fires when there is NO non-baseline bucket, so it does not
+    catch this."""
+    from reach_control import MIN_BUCKET_N
+    assert MIN_BUCKET_N > 1
+    counts = {0.0: 40, -1.37: 1}
+    crossed = {0.0: False, -1.37: True}
+    delta = {0.0: 0.0, -1.37: 1.0}
+    # without bucket sizes this is the legacy behaviour (unchanged for callers that
+    # have no counts to give)
+    assert verdict(crossed, delta) == "actuatable"
+    # with them, a single observation must not buy the headline verdict
+    assert verdict(crossed, delta, counts=counts) == "readout-only"
+
+
+def test_a_full_size_bucket_still_decides_actuatable():
+    from reach_control import MIN_BUCKET_N
+    counts = {0.0: 40, -1.0: MIN_BUCKET_N}
+    crossed = {0.0: False, -1.0: True}
+    delta = {0.0: 0.0, -1.0: 1.0}
+    assert verdict(crossed, delta, counts=counts) == "actuatable"
+
+
+def test_undersized_buckets_are_named_not_dropped():
+    from reach_control import undersized_fracs
+    table = {0.0: {"n": 32}, -1.0: {"n": 32}, -1.37: {"n": 1}, 2.0: {"n": 2}}
+    assert undersized_fracs(table) == [-1.37, 2.0]
+    # the baseline bucket is never reported as undersized-for-adjudication
+    assert 0.0 not in undersized_fracs({0.0: {"n": 1}, -1.0: {"n": 32}})
+
+
+def test_aggregate_records_the_refusal_count_alongside_the_rate():
+    rows = [{"frac": 1.0, "g_read": -1.0, "refused": 1.0},
+            {"frac": 1.0, "g_read": -3.0, "refused": 0.0},
+            {"frac": 1.0, "g_read": -2.0, "refused": 1.0},
+            {"frac": 0.0, "g_read": 5.0, "refused": 0.0}]
+    t = aggregate(rows)
+    assert t[1.0]["n"] == 3 and t[1.0]["n_refused"] == 2
+    assert abs(t[1.0]["frac_refused"] - 2 / 3) < 1e-12
+    assert t[0.0]["n_refused"] == 0
+
+
+def test_wilson_interval_on_a_known_case():
+    """I6: MIN_DELTA is a hard threshold on a point estimate; the mean arm has n=32, so
+    4 of 32 prompts crosses it. The sidecar must carry an interval.
+
+    Wilson 95% for k=2, n=10 is (0.056682, 0.509838) at z=1.959964 — cross-checked
+    against an independent scipy.stats.norm-based reference implementation."""
+    from reach_control import wilson_interval
+    lo, hi = wilson_interval(2, 10)
+    assert abs(lo - 0.056682) < 1e-5 and abs(hi - 0.509838) < 1e-5
+    # degenerate cases
+    assert wilson_interval(0, 0) == (0.0, 1.0)
+    lo0, hi0 = wilson_interval(0, 20)
+    assert lo0 == 0.0 and 0.0 < hi0 < 0.25
+    lo1, hi1 = wilson_interval(20, 20)
+    assert hi1 == 1.0 and 0.75 < lo1 < 1.0
+    # 4 of 32 -- the exact scenario the review flags
+    lo4, hi4 = wilson_interval(4, 32)
+    assert lo4 < 0.125 < hi4 and hi4 > 0.28
+
+
+def test_mean_arm_rows_distinguishes_a_missing_median_eps_star_from_a_zero_one():
+    # M13: `if not eps` reported "no median_eps_star" for a legitimate 0.0, sending the
+    # operator to hunt the summary file instead of the real condition (every label-1 row
+    # already sits inside the halfspace).
+    judged = [{"direction": "jtw_mean_diff_tgt", "scale": "0.0", "refused": "0"}]
+    readout = [{"direction": "jtw_mean_diff_tgt", "scale": "0.0", "g_read": "3.0"}]
+    with pytest.raises(SystemExit, match="no median_eps_star"):
+        mean_arm_rows(judged, readout, {"directions": {}}, "jtw_mean_diff_tgt")
+    with pytest.raises(SystemExit, match="is 0"):
+        mean_arm_rows(judged, readout,
+                      {"directions": {"mean_diff_tgt": {"median_eps_star": 0.0}}},
+                      "jtw_mean_diff_tgt")
+
+
+def test_run_sidecar_carries_counts_intervals_and_undersized_buckets(tmp_path,
+                                                                    monkeypatch):
+    """End-to-end over the mean arm: the sidecar must carry the exact k/n, a Wilson
+    interval, and the undersized-bucket accounting — and an n=1 crossing+moved bucket
+    must not be enough to return `actuatable`."""
+    import csv as _csv
+    import json as _json
+    monkeypatch.chdir(tmp_path)
+    ds, arm = "sentinel_control", "mean"
+    eps = 2.0
+    # frac 0 (baseline, n=8, never refuses), frac -1 (n=8, crosses, all refuse),
+    # frac -1.37 (n=1, a clamp artefact that also crosses and refuses)
+    grid = [(0.0, 8, 3.0, 0), (-2.0, 8, -4.0, 1), (-2.74, 1, -5.0, 1)]
+    judged = [("direction", "scale", "prompt", "completion", "refused")]
+    readout = [("direction", "scale", "prompt", "g_read")]
+    for scale, n, g, ref in grid:
+        for i in range(n):
+            judged.append(("jtw_mean_diff_tgt", scale, f"p{i}", "I cannot", ref))
+            readout.append(("jtw_mean_diff_tgt", scale, f"p{i}", g))
+    with open(f"judge_refusal_{ds}_{arm}.csv", "w", newline="") as f:
+        _csv.writer(f).writerows(judged)
+    with open(f"reach_steer_readout_{ds}.csv", "w", newline="") as f:
+        _csv.writer(f).writerows(readout)
+    with open(f"reach_summary_{ds}.json", "w") as f:
+        _json.dump({"directions": {"mean_diff_tgt": {"median_eps_star": eps}}}, f)
+
+    v = reach_control.run(ds, arm)
+    side = _json.load(open(f"reach_control_{ds}_{arm}.json"))
+    assert v == "actuatable"                       # the n=8 bucket at -1 earns it
+    assert side["min_bucket_n"] == reach_control.MIN_BUCKET_N
+    assert side["undersized_fracs"] == [-1.37]
+    t = side["table"]
+    assert t["-1"]["n"] == 8 and t["-1"]["n_refused"] == 8
+    assert t["-1"]["refused_ci95_lo"] > 0.6 and t["-1"]["refused_ci95_hi"] == 1.0
+    assert t["0"]["n_refused"] == 0
+    # the undersized bucket is REPORTED, not dropped
+    assert t["-1.37"]["n"] == 1 and t["-1.37"]["too_small_to_adjudicate"] == 1
+    assert t["-1"]["too_small_to_adjudicate"] == 0
+    header = next(iter(_csv.reader(open(f"reach_control_{ds}_{arm}.csv"))))
+    for col in ("n_refused", "refused_ci95_lo", "refused_ci95_hi",
+                "too_small_to_adjudicate"):
+        assert col in header and col in reach_control.COLUMN_SEMANTICS
+
+
+def test_run_will_not_call_a_lone_undersized_crossing_actuatable(tmp_path, monkeypatch):
+    import csv as _csv
+    import json as _json
+    monkeypatch.chdir(tmp_path)
+    ds, arm = "sentinel_control_small", "mean"
+    # ONLY an n=1 treatment bucket, which crosses and refuses. Before MIN_BUCKET_N this
+    # returned `actuatable` -- "the instrument is valid" -- off one observation.
+    grid = [(0.0, 8, 3.0, 0), (-2.74, 1, -5.0, 1)]
+    judged = [("direction", "scale", "prompt", "completion", "refused")]
+    readout = [("direction", "scale", "prompt", "g_read")]
+    for scale, n, g, ref in grid:
+        for i in range(n):
+            judged.append(("jtw_mean_diff_tgt", scale, f"p{i}", "I cannot", ref))
+            readout.append(("jtw_mean_diff_tgt", scale, f"p{i}", g))
+    with open(f"judge_refusal_{ds}_{arm}.csv", "w", newline="") as f:
+        _csv.writer(f).writerows(judged)
+    with open(f"reach_steer_readout_{ds}.csv", "w", newline="") as f:
+        _csv.writer(f).writerows(readout)
+    with open(f"reach_summary_{ds}.json", "w") as f:
+        _json.dump({"directions": {"mean_diff_tgt": {"median_eps_star": 2.0}}}, f)
+    assert reach_control.run(ds, arm) == "readout-only"

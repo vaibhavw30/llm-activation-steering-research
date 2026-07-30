@@ -60,10 +60,18 @@ def prompt_of(statement, mode):
              for statements shorter than MIN_STEM_WORDS.
     "full" — the statement itself (the refusal arm: the statement IS an instruction,
              so the certificate's linearization point is the prompt's last token and
-             the one-word context shift that dominated Horizon-0 cannot arise)."""
+             the one-word context shift that dominated Horizon-0 cannot arise).
+
+    "full" returns the statement BYTE-FOR-BYTE — no strip(). Nothing else in the
+    pipeline strips (extract.py, reach_margins.load_statements, load_prompt_set all
+    take the raw column), and the gemma-2-it chat template prep_refusal.py applies
+    ends in `<start_of_turn>model\\n`, so a trailing newline is a real token. Stripping
+    it would measure h_tgt / g_i / m_i (hence eps_i) at one token while generation and
+    read_g operate at another — the exact Horizon-0 D1 context shift this mode exists
+    to eliminate. `stem_of` does its own rstrip(" ."), so "stem" is unaffected."""
     if mode not in PROMPT_MODES:
         raise ValueError(f"prompt mode must be one of {PROMPT_MODES}, got {mode!r}")
-    return stem_of(statement) if mode == "stem" else str(statement).strip()
+    return stem_of(statement) if mode == "stem" else str(statement)
 
 
 def load_prompt_set(name):
@@ -90,18 +98,27 @@ def read_g(model, tok, prompt, tgt_layer, w_t, t02, dev):
 
 
 def _load_common(ds):
-    src, tgt, input_scale, _model = load_meta(ds)
+    """Shared Phase-3 inputs. `model_name` comes out of dct_meta_<ds>.json and MUST be
+    passed to su.load_model by every arm: dct_steer_utils.MODEL_NAME is the base
+    gemma-2-2b literal, so falling through to it on an `-it` run would steer the base
+    model with -it-derived J^T w, read out with an -it-fit w/t02, and generate from
+    chat-templated prompts the base model has never seen — silently, producing a
+    wrong-model `readout-only` verdict that reads as the experiment's headline
+    negative result."""
+    src, tgt, input_scale, model_name = load_meta(ds)
     summ = json.load(open(f"reach_summary_{ds}.json"))
     dirs = np.load(f"reach_dirs_{ds}.npz", allow_pickle=True)
     mz = np.load(f"reach_margins_{ds}.npz", allow_pickle=True)
     acts = np.load(f"reach_acts_{ds}.npz", allow_pickle=True)
     names = [str(x) for x in dirs["names"]]
     store_names = [str(x) for x in mz["store_names"]]
-    return src, tgt, input_scale, summ, dirs, mz, acts, names, store_names
+    return (src, tgt, input_scale, model_name, summ, dirs, mz, acts, names,
+            store_names)
 
 
 def arm_mean(ds, device, limit=0, prompts="factual", max_new_tokens=MAX_NEW_TOKENS):
-    src, tgt, input_scale, summ, dirs, mz, acts, names, store_names = _load_common(ds)
+    (src, tgt, input_scale, model_name, summ, dirs, mz, acts, names,
+     store_names) = _load_common(ds)
     y = np.asarray(acts["labels"]).astype(int)[:mz["margins"].shape[0]]
     lab1 = y == 1
     w_names = ["mean_diff_tgt"]
@@ -110,7 +127,7 @@ def arm_mean(ds, device, limit=0, prompts="factual", max_new_tokens=MAX_NEW_TOKE
         w_names.append(best)
     pset = load_prompt_set(prompts)
     pset = pset[:limit] if limit else pset
-    tok, model, dev = su.load_model(device)
+    tok, model, dev = su.load_model(device, model_name=model_name)
     rows = [("direction", "scale", "prompt", "completion")]
     readout = [("direction", "scale", "prompt", "g_read")]
     for wn in w_names:
@@ -141,7 +158,8 @@ def arm_mean(ds, device, limit=0, prompts="factual", max_new_tokens=MAX_NEW_TOKE
 
 
 def arm_per_stmt(ds, device, limit=0, prompt_mode="stem", max_new_tokens=MAX_NEW_TOKENS):
-    src, tgt, input_scale, summ, dirs, mz, acts, names, store_names = _load_common(ds)
+    (src, tgt, input_scale, model_name, summ, dirs, mz, acts, names,
+     store_names) = _load_common(ds)
     stmts = acts["statements"]
     y = np.asarray(acts["labels"]).astype(int)[:mz["margins"].shape[0]]
     k = names.index("mean_diff_tgt")
@@ -156,7 +174,7 @@ def arm_per_stmt(ds, device, limit=0, prompt_mode="stem", max_new_tokens=MAX_NEW
     picks = rng.permutation(idx1)[:N_PER_STMT]
     if limit:
         picks = picks[:limit]
-    tok, model, dev = su.load_model(device)
+    tok, model, dev = su.load_model(device, model_name=model_name)
     rows = [("direction", "scale", "prompt", "completion")]
     meta_rows = [("stmt_index", "label", "eps_star", "scale", "g_read")]
     with su.Steerer(model, src) as st:
