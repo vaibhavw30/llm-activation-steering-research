@@ -246,6 +246,8 @@ def merge_chunks(ds, n, dirs):
     keys = list(np.load(os.path.join(cdir, f"chunk_{0:05d}.npz")).files)
     parts = {k: [] for k in keys}
     for c0 in range(0, n, CHUNK):
+        c1 = min(c0 + CHUNK, n)
+        expected = c1 - c0
         cpath = os.path.join(cdir, f"chunk_{c0:05d}.npz")
         z = np.load(cpath)
         # With --resume a chunk dir can span two runs whose optional artifacts differed.
@@ -257,6 +259,16 @@ def merge_chunks(ds, n, dirs):
                 f"[vjp] {cpath} key set differs from chunk_{0:05d}.npz on {diff} — the "
                 f"chunk directory mixes runs with different optional artifacts. Delete "
                 f"{cdir} and re-run --stage vjp --no-resume")
+        # A short chunk (e.g. a smoke run's --limit rows left behind at chunk_00000)
+        # would otherwise merge silently, shifting every later statement's row out of
+        # alignment with `statements`/`labels` with no error anywhere.
+        actual = z[keys[0]].shape[0]
+        if actual != expected:
+            raise SystemExit(
+                f"[vjp] {cpath} has {actual} rows, expected {expected} (statements "
+                f"{c0}-{c1}) — a stale/short chunk would silently misalign "
+                f"reach_margins_{ds}.npz against statements/labels. Delete {cdir} "
+                f"and re-run --stage vjp --no-resume")
         for k in keys:
             parts[k].append(z[k])
     store = np.asarray(dirs["store_jtw"])

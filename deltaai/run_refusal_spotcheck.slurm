@@ -11,7 +11,7 @@
 #SBATCH --time=01:30:00
 #SBATCH --output=refusal_spotcheck_%j.out
 
-set -x
+set -ex
 cd "$SLURM_SUBMIT_DIR"
 module load python/miniforge3_pytorch
 source .venv-judge-gpu/bin/activate
@@ -19,10 +19,11 @@ export PYTHONPATH=src
 export HF_HUB_DISABLE_XET=1
 export HF_HOME=${HF_HOME:-$HOME/hf_cache}
 export TRANSFORMERS_OFFLINE=1
+echo "Job $SLURM_JOB_ID on $(hostname)"; nvidia-smi
 
 # Re-runs the substring pass (identical output) and adds the OLMo agreement check.
 for arm in mean stmt; do
-  python src/refusal_judge.py --dataset refusal --arm $arm \
+  python3 src/refusal_judge.py --dataset refusal --arm $arm \
     --spot-check 60 --device cuda \
     || echo "!!!! spot-check $arm FAILED — continuing"
 done

@@ -179,3 +179,27 @@ def test_merge_chunks_round_trip_and_rejects_key_mismatch(tmp_path, monkeypatch)
     write(rm.CHUNK, cos_dctv=np.zeros((rm.CHUNK, K), np.float32))
     with pytest.raises(SystemExit, match="chunk_00100"):
         rm.merge_chunks("ds", n, dirs)
+
+
+def test_merge_chunks_rejects_short_chunk(tmp_path, monkeypatch):
+    """A chunk holding fewer rows than its statement range (e.g. an 8-row smoke chunk
+    left sitting where a full rm.CHUNK-row chunk is expected) must raise rather than
+    merge — merge_chunks previously validated only the key set, so a short chunk would
+    silently produce a reach_margins_<ds>.npz shorter than `statements`/`labels`,
+    misaligning every downstream row by index."""
+    import pytest
+    monkeypatch.chdir(tmp_path)
+    K, Ks, d = 3, 2, 4
+    n = rm.CHUNK
+    dirs = {"names": np.array(["mean_diff_tgt", "probe_grad_tgt", "rand_0"], object),
+            "groups": np.array(["truth", "truth", "rand"], object),
+            "store_jtw": np.array([True, True, False])}
+    cdir = "reach_chunks_ds2"
+    os.makedirs(cdir)
+    short = rm.CHUNK - 5
+    rm.atomic_savez(os.path.join(cdir, "chunk_00000.npz"),
+                    margins=np.zeros((short, K), np.float32),
+                    jtw=np.zeros((short, Ks, d), np.float16),
+                    cos_md_src=np.zeros((short, K), np.float32))
+    with pytest.raises(SystemExit, match=f"has {short} rows, expected {rm.CHUNK}"):
+        rm.merge_chunks("ds2", n, dirs)
