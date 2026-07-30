@@ -136,12 +136,24 @@ def run(ds, model, results_path=None, force=False):
     acts = z["activations"]
     max_layer = acts.shape[0] - 1
     path = results_path or f"results_{ds}.csv"
+    # Which of the two sweep sources was used decides `source_layer`, and the model
+    # cross-check above validates only the npz — a results CSV carries no model field, so
+    # a leftover base-model results_<ds>.csv would pick the source layer from base-model
+    # accuracies on an `-it` re-prep while the npz check passes clean. Latent today
+    # (nothing in the refusal path writes results_refusal.csv), so print the provenance
+    # rather than change the preference: the choice must be visible in the job log.
     if os.path.exists(path):
         with open(path, newline="") as f:
             rows = list(csv.DictReader(f))
-        print(f"[meta] using existing {path}")
+        print(f"[meta] layer sweep: rows READ FROM EXISTING {path} ({len(rows)} rows), "
+              f"NOT swept from {acts_path}. source_layer therefore comes from THAT "
+              f"file's accuracies, and the --model cross-check above does NOT validate "
+              f"it (a results CSV records no model) — delete {path} to re-sweep from "
+              f"the activations if it may be from a different checkpoint")
     else:
         rows = layer_sweep(acts, z["labels"])
+        print(f"[meta] layer sweep: rows COMPUTED from {acts_path} ({len(rows)} rows); "
+              f"no {path} present")
     src = pick_source_layer(rows, max_layer)
     m = meta_dict(ds, model, src)
     with open(meta_path, "w") as f:

@@ -309,8 +309,11 @@ def test_an_n_of_1_bucket_cannot_decide_actuatable():
     # without bucket sizes this is the legacy behaviour (unchanged for callers that
     # have no counts to give)
     assert verdict(crossed, delta) == "actuatable"
-    # with them, a single observation must not buy the headline verdict
-    assert verdict(crossed, delta, counts=counts) == "readout-only"
+    # with them, a single observation must not buy the headline verdict. And since the
+    # n=1 bucket is the ONLY treatment bucket, no OTHER cell may be named off it either
+    # (I1) -- least of all `readout-only`, the halt-the-programme verdict.
+    with pytest.raises(SystemExit, match="clamp"):
+        verdict(crossed, delta, counts=counts)
 
 
 def test_a_full_size_bucket_still_decides_actuatable():
@@ -438,4 +441,173 @@ def test_run_will_not_call_a_lone_undersized_crossing_actuatable(tmp_path, monke
         _csv.writer(f).writerows(readout)
     with open(f"reach_summary_{ds}.json", "w") as f:
         _json.dump({"directions": {"mean_diff_tgt": {"median_eps_star": 2.0}}}, f)
+    with pytest.raises(SystemExit, match="clamp"):
+        reach_control.run(ds, arm)
+
+
+# --- I1: the MIN_BUCKET_N floor must gate EVERY cell, not just `actuatable` ---------
+
+def test_verdict_refuses_to_adjudicate_a_fully_clamped_table():
+    """I1: `adjudicable` was computed but only consulted by the `actuatable` test, so a
+    table whose ONLY non-baseline buckets are n=1 clamp artefacts was declared
+    non-adjudicable and then adjudicated anyway.
+
+    The damaging output is `readout-only`: per deltaai/REFUSAL_RUN.md that verdict means
+    "STOP, recalibrate the approach", AND it is the pre-existing truth result — so a
+    fully-clamped refusal run could reproduce the very finding under test off ONE clamped
+    statement whose readout happened to go negative. The honest description of such a run
+    is the `no-crossing` row's "underpowered sweep", so refusing is the only safe answer.
+    """
+    counts = {0.0: 180, -0.63: 1, -0.71: 1}
+    crossed = {0.0: False, -0.63: True, -0.71: True}
+    delta = {0.0: 0.0, -0.63: 0.0, -0.71: 1.0}
+    with pytest.raises(SystemExit, match="clamp"):
+        verdict(crossed, delta, counts=counts)
+    # the message must name the undersized fracs, so the operator can see what clamped
+    with pytest.raises(SystemExit, match=r"-0\.63"):
+        verdict(crossed, delta, counts=counts)
+    # the `inert` path went through `moved` over `fr` and had the same hole
+    with pytest.raises(SystemExit, match="clamp"):
+        verdict({0.0: False, -0.63: False}, {0.0: 0.0, -0.63: 1.0},
+                counts={0.0: 180, -0.63: 1})
+    # ...as did `no-crossing`: no cell may be named off artefact buckets alone
+    with pytest.raises(SystemExit, match="clamp"):
+        verdict({0.0: False, -0.63: False}, {0.0: 0.0, -0.63: 0.0},
+                counts={0.0: 180, -0.63: 1})
+
+
+def test_a_clamp_artefact_crossing_cannot_upgrade_no_crossing_to_readout_only():
+    """The `readout-only` test quantified over every non-baseline frac, so an n=1
+    artefact bucket could supply the crossing that turns an otherwise clean
+    `no-crossing` run into the halt-the-programme verdict."""
+    counts = {0.0: 180, -1.0: 200, -0.63: 1}
+    crossed = {0.0: False, -1.0: False, -0.63: True}
+    delta = {0.0: 0.0, -1.0: 0.0, -0.63: 0.0}
+    assert verdict(crossed, delta, counts=counts) == "no-crossing"
+
+
+def test_a_clamp_artefact_movement_cannot_upgrade_no_crossing_to_inert():
+    counts = {0.0: 180, -1.0: 200, -0.63: 1}
+    crossed = {0.0: False, -1.0: False, -0.63: False}
+    delta = {0.0: 0.0, -1.0: 0.0, -0.63: 1.0}
+    assert verdict(crossed, delta, counts=counts) == "no-crossing"
+
+
+def test_all_four_verdict_cells_stay_reachable_with_adjudicable_buckets():
+    """The floor must not make any cell unreachable: with real-size buckets all four
+    cells of the deliverable 2x2 still come out."""
+    n = {0.0: 32, -1.0: 32}
+    assert verdict({0.0: False, -1.0: True}, {0.0: 0.0, -1.0: 0.5},
+                   counts=n) == "actuatable"
+    assert verdict({0.0: False, -1.0: True}, {0.0: 0.0, -1.0: 0.01},
+                   counts=n) == "readout-only"
+    assert verdict({0.0: False, -1.0: False}, {0.0: 0.0, -1.0: 0.5},
+                   counts=n) == "inert"
+    assert verdict({0.0: False, -1.0: False}, {0.0: 0.0, -1.0: 0.0},
+                   counts=n) == "no-crossing"
+
+
+def test_min_bucket_n_is_documented_as_a_clamp_filter_not_a_power_gate():
+    """At n=5 nothing is well estimated: 5/5 has a 95% Wilson CI of (0.57, 1.00) and
+    3/5 one of (0.23, 0.88). The floor buys no statistical power, and its comment must
+    not be readable as if it did."""
+    from reach_control import MIN_BUCKET_N, wilson_interval
+    assert MIN_BUCKET_N == 5
+    lo, hi = wilson_interval(5, MIN_BUCKET_N)
+    assert lo < 0.60 and hi == 1.0          # a rate "known" only to be >0.57
+    lo3, hi3 = wilson_interval(3, MIN_BUCKET_N)
+    assert lo3 < 0.24 and hi3 > 0.88        # ...or to be anywhere at all
+    src = open(os.path.join(os.path.dirname(__file__), "..", "src",
+                            "reach_control.py")).read()
+    head = src.split("MIN_BUCKET_N = 5")[0].lower()
+    assert "not a statistical power gate" in head
+
+
+# --- I2: the sign of the deciding frac's delta (reporting only) ---------------------
+
+def _write_mean_arm_fixture(ds, arm, grid, eps=2.0):
+    """grid: [(scale, n, g_read, refused)] -> the three files run() reads."""
+    import csv as _csv
+    import json as _json
+    judged = [("direction", "scale", "prompt", "completion", "refused")]
+    readout = [("direction", "scale", "prompt", "g_read")]
+    for scale, n, g, ref in grid:
+        for i in range(n):
+            judged.append(("jtw_mean_diff_tgt", scale, f"p{i}", "I cannot", ref))
+            readout.append(("jtw_mean_diff_tgt", scale, f"p{i}", g))
+    with open(f"judge_refusal_{ds}_{arm}.csv", "w", newline="") as f:
+        _csv.writer(f).writerows(judged)
+    with open(f"reach_steer_readout_{ds}.csv", "w", newline="") as f:
+        _csv.writer(f).writerows(readout)
+    with open(f"reach_summary_{ds}.json", "w") as f:
+        _json.dump({"directions": {"mean_diff_tgt": {"median_eps_star": eps}}}, f)
+
+
+def test_run_warns_when_refusal_FELL_at_the_frac_that_earned_actuatable(
+        tmp_path, monkeypatch, capsys):
+    """I2: `moved` is deliberately sign-blind (`abs(delta)`, plan-mandated), so a DROP in
+    refusal at the crossing frac returns `actuatable` -> "proceed to the main-venue
+    paper". On this polarity (refusal.csv label 1 = harmless) the prediction is
+    directional: crossing should make a harmless prompt REFUSE MORE. A fall is evidence
+    AGAINST actuation. The verdict must not change, but the sign must be impossible to
+    miss.
+
+    Reachable: REFUSAL_MARKERS includes "as an ai" / "as a language model", benign
+    openers on harmless Alpaca instructions, so the baseline rate is nonzero and a
+    fluency-wrecking perturbation removes them."""
+    import json as _json
+    monkeypatch.chdir(tmp_path)
+    ds, arm = "sentinel_sign_down", "mean"
+    # baseline refuses 8/8; the crossing frac -1 refuses 0/8 -> delta = -1.0
+    _write_mean_arm_fixture(ds, arm, [(0.0, 8, 3.0, 1), (-2.0, 8, -4.0, 0)])
+    v = reach_control.run(ds, arm)
+    out = capsys.readouterr().out
+    assert v == "actuatable"                    # verdict logic deliberately unchanged
+    assert "FELL" in out and "against actuation" in out.lower()
+    side = _json.load(open(f"reach_control_{ds}_{arm}.json"))
+    assert side["deciding_frac"] == -1.0
+    assert side["deciding_delta_vs_baseline"] == -1.0     # SIGNED, not abs
+    assert side["refusal_fell_at_deciding_frac"] is True
+
+
+def test_run_does_not_warn_when_refusal_ROSE_at_the_deciding_frac(
+        tmp_path, monkeypatch, capsys):
+    import json as _json
+    monkeypatch.chdir(tmp_path)
+    ds, arm = "sentinel_sign_up", "mean"
+    _write_mean_arm_fixture(ds, arm, [(0.0, 8, 3.0, 0), (-2.0, 8, -4.0, 1)])
+    v = reach_control.run(ds, arm)
+    out = capsys.readouterr().out
+    assert v == "actuatable"
+    assert "FELL" not in out
+    side = _json.load(open(f"reach_control_{ds}_{arm}.json"))
+    assert side["deciding_frac"] == -1.0
+    assert side["deciding_delta_vs_baseline"] == 1.0
+    assert side["refusal_fell_at_deciding_frac"] is False
+
+
+def test_sidecar_deciding_keys_are_null_when_the_verdict_is_not_actuatable(
+        tmp_path, monkeypatch):
+    """No frac earned `actuatable`, so there is no deciding frac to report a sign for —
+    null, not 0.0, which would read as "measured, and flat"."""
+    import json as _json
+    monkeypatch.chdir(tmp_path)
+    ds, arm = "sentinel_sign_none", "mean"
+    # crosses at -1 but behaviour does not move -> readout-only
+    _write_mean_arm_fixture(ds, arm, [(0.0, 8, 3.0, 0), (-2.0, 8, -4.0, 0)])
     assert reach_control.run(ds, arm) == "readout-only"
+    side = _json.load(open(f"reach_control_{ds}_{arm}.json"))
+    assert side["deciding_frac"] is None
+    assert side["deciding_delta_vs_baseline"] is None
+    assert side["refusal_fell_at_deciding_frac"] is False
+
+
+def test_deciding_fracs_reports_only_adjudicable_crossing_and_moved_fracs():
+    from reach_control import deciding_fracs
+    crossed = {0.0: False, -1.0: True, -2.0: True, -0.63: True}
+    delta = {0.0: 0.0, -1.0: -0.5, -2.0: 0.01, -0.63: 1.0}
+    counts = {0.0: 32, -1.0: 32, -2.0: 32, -0.63: 1}
+    # -2.0 did not move; -0.63 is a clamp artefact; only -1.0 decides
+    assert deciding_fracs(crossed, delta, counts=counts) == [-1.0]
+    assert deciding_fracs({0.0: False, -1.0: False}, {0.0: 0.0, -1.0: 1.0},
+                          counts={0.0: 32, -1.0: 32}) == []

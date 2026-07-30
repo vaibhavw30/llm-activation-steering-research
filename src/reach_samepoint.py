@@ -34,7 +34,8 @@ MIN_SCALES_FIT = 3
 
 
 def run(ds, device, limit=0):
-    src, tgt, input_scale, summ, dirs, mz, acts, names, store_names = _load_common(ds)
+    (src, tgt, input_scale, model_name, summ, dirs, mz, acts, names,
+     store_names) = _load_common(ds)
     stmts = acts["statements"]
     y = np.asarray(acts["labels"]).astype(int)[:mz["margins"].shape[0]]
     k = names.index("mean_diff_tgt")
@@ -51,7 +52,11 @@ def run(ds, device, limit=0):
     if limit:
         picks = picks[:limit]
     jtw_raw = mz["jtw"]        # ONE decompression — per-row access re-reads the zip
-    tok, model, dev = su.load_model(device)
+    # model_name comes from dct_meta_<ds>.json and MUST be passed: dct_steer_utils.
+    # MODEL_NAME is the base gemma-2-2b literal, so falling through to it on an `-it` run
+    # would probe the base model with -it-derived J^T w and an -it-fit w/t02 — silently
+    # (see reach_steer._load_common). Every reach script reads the meta's model.
+    tok, model, dev = su.load_model(device, model_name=model_name)
     rows = [("stmt_index", "label", "eps_star", "m_pred", "g_full", "scale", "g_read")]
     with su.Steerer(model, src) as st:
         for i in picks:

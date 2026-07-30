@@ -161,3 +161,23 @@ def test_reach_jlens_also_loads_the_model_named_in_dct_meta(tmp_path, monkeypatc
     with pytest.raises(_LoadModelReached):
         reach_jlens.main()
     assert seen["model_name"] == "google/gemma-2-2b-it"
+
+
+def test_reach_samepoint_also_loads_the_model_named_in_dct_meta(tmp_path, monkeypatch):
+    """M5: the last reach script that was still calling su.load_model with no
+    model_name, so "every reach script reads the meta's model" was not literally true.
+    No refusal job invokes it today; this holds the invariant for the next one."""
+    import reach_samepoint
+    ds = "sentinel_samepoint_model"
+    _write_steer_fixtures(tmp_path, ds, "google/gemma-2-2b-it")
+    monkeypatch.chdir(tmp_path)
+    seen = {}
+
+    def fake_load_model(device="cuda", model_name=None):
+        seen["model_name"] = model_name
+        raise _LoadModelReached
+    monkeypatch.setattr(reach_samepoint.su, "load_model", fake_load_model)
+    with pytest.raises(_LoadModelReached):
+        reach_samepoint.run(ds, "cpu", limit=1)
+    assert seen["model_name"] == "google/gemma-2-2b-it"
+    assert seen["model_name"] != su_default()

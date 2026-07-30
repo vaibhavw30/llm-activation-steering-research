@@ -144,6 +144,45 @@ def test_run_accepts_a_matching_acts_model(tmp_path, monkeypatch):
         "google/gemma-2-2b-it"
 
 
+def test_run_names_the_layer_sweep_source_when_it_reuses_an_existing_results_csv(
+        tmp_path, monkeypatch, capsys):
+    """M4: an existing results_<ds>.csv is preferred over re-sweeping, and THAT file
+    determines source_layer — but the model cross-check above validates only the npz. On
+    an `-it` fallback after a partial base prep, a leftover base-model results CSV would
+    pick the source layer from base-model accuracies while the npz check passes. Latent
+    today (nothing writes results_refusal.csv), so the fix is visibility: the job log must
+    say which path the sweep rows came from."""
+    import csv as _csv
+    import make_reach_meta as m
+    monkeypatch.chdir(tmp_path)
+    ds = "sentinel_ds_sweep_from_csv"
+    _write_acts(tmp_path, ds, model="google/gemma-2-2b-it")
+    with open(f"results_{ds}.csv", "w", newline="") as f:
+        w = _csv.writer(f)
+        w.writerow(("layer", "linear_acc"))
+        w.writerows([(L, 0.9) for L in range(0, 12)])
+    m.run(ds, "google/gemma-2-2b-it")
+    out = capsys.readouterr().out
+    assert f"results_{ds}.csv" in out
+    # the reader must be able to tell this from a fresh sweep, and be told what the
+    # cross-check does NOT cover
+    assert "EXISTING" in out and "not" in out.lower()
+    assert f"acts_{ds}.npz" in out          # names the alternative it did NOT use
+
+
+def test_run_names_the_layer_sweep_source_when_it_sweeps_the_npz(tmp_path, monkeypatch,
+                                                                capsys):
+    import make_reach_meta as m
+    monkeypatch.chdir(tmp_path)
+    ds = "sentinel_ds_sweep_from_npz"
+    _write_acts(tmp_path, ds, model="google/gemma-2-2b-it")
+    assert not os.path.exists(f"results_{ds}.csv")
+    m.run(ds, "google/gemma-2-2b-it")
+    out = capsys.readouterr().out
+    assert "COMPUTED" in out and f"acts_{ds}.npz" in out
+    assert "EXISTING" not in out
+
+
 def test_run_only_warns_when_the_acts_file_predates_the_model_key(tmp_path,
                                                                  monkeypatch, capsys):
     # Older acts_<ds>.npz files have no "model" member; that is not a mismatch and

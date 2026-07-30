@@ -41,7 +41,7 @@ Horizon-0 context-shift confound on truth.
 
 ```bash
 cd ~/llm-activation-steering-research
-PYTHONPATH=src .venv/bin/python -m pytest tests/ -q      # 253 passed, 1 skipped with Track A alone; 266 once Track B lands
+PYTHONPATH=src .venv/bin/python -m pytest tests/ -q      # 298 passed, 1 skipped
 .venv/bin/python src/prep_refusal.py                     # needs internet (AdvBench + Alpaca)
 ls -l got_datasets/refusal.csv got_datasets/refusal_holdout.csv
 ```
@@ -83,6 +83,16 @@ squeue -u vwudaru        # wait until EMPTY
 
 Read both `DECISION INPUT` lines and the final `DECISION:` line in
 `refusal_screen_*.out`, and apply the pre-registered rule:
+
+**Also note the harmless-prompt refusal rate**, printed on both `DECISION INPUT` lines and
+again in the job's `[decision] harmless-prompt refusal rate (REPORTING ONLY, gates
+nothing)` line. It gates nothing, but it is the number that decides how to read the
+verdict eight hours later: `REFUSAL_MARKERS` counts `"as an ai"` / `"as a language
+model"`, which are benign openers on harmless Alpaca instructions (especially on `-it`).
+If the chosen model's harmless rate is well above 0, expect a nonzero `frac=0` baseline in
+`reach_control` and a real possibility that a large perturbation *lowers* the rate — which
+still earns `actuatable`, since `moved` thresholds `|delta|`. Write the number down now,
+and see "The sign of the deciding frac" below.
 
 - **harmful-prompt refusal rate for `google/gemma-2-2b` >= 0.10** -> keep the base model.
   This is the preferred outcome: identical model to the truth run, so the contrast has no
@@ -189,18 +199,21 @@ statements whose own `eps_i <= 0`, excluded — see "Excluded statements" below)
 error). Each `table` bucket additionally carries `n_refused` (the exact refusal count
 behind `frac_refused`), `refused_ci95_lo` / `refused_ci95_hi` (a 95% Wilson interval for
 that rate), and `too_small_to_adjudicate`; the sidecar's top level carries
-`min_bucket_n` and `undersized_fracs`. See "Reading the results" below for how to weigh
-them. For dataset `refusal` there are two sidecars per run: `reach_control_refusal_
+`min_bucket_n` and `undersized_fracs`, plus `deciding_frac`,
+`deciding_delta_vs_baseline` (the **signed** delta at the frac that earned an
+`actuatable`) and `refusal_fell_at_deciding_frac`. See "Reading the results" below for how
+to weigh them. For dataset `refusal` there are two sidecars per run: `reach_control_refusal_
 mean.json` and `reach_control_refusal_stmt.json`.
 
 ## Reading the results — decision gates
 
 | VERDICT | Meaning | Action |
 |---|---|---|
-| `actuatable` | Crossing the boundary changes behavior | **The instrument is valid.** The truth dissociation is a fact about truth, not the method. Proceed to the main-venue dissociation-with-instrument paper — but only after the primary-arm and interval checks below. |
+| `actuatable` | Crossing the boundary changes behavior | **The instrument is valid.** The truth dissociation is a fact about truth, not the method. Proceed to the main-venue dissociation-with-instrument paper — but only after the primary-arm and interval checks below. **First check the SIGN**: read the sidecar's `deciding_delta_vs_baseline`, and if it is negative (or `refusal_fell_at_deciding_frac` is `true`, or the log prints the `refusal FELL` WARNING) this verdict is *not* evidence of actuation — see "The sign of the deciding frac" below. |
 | `readout-only` | Crossing moves the readout, not behavior — refusal fails the same way truth did | **STOP.** The instrument cannot demonstrate actuation on a concept where the literature says actuation exists. Recalibrate with Julian before spending more GPU time; the likely suspects are the all-position steering-hook convention and the choice of `Jᵀw` as the input direction. |
 | `inert` | Behavior moves without a readout crossing | Off-target steering. Check whether `g_read` moves at all in `reach_control_refusal_*.json`'s `table`. |
 | `no-crossing` | Neither | Underpowered sweep: `1.5 × input_scale` is capping the scales below eps\*. Report the capped fraction before concluding anything. |
+| *(no verdict — `SystemExit`)* | Every non-baseline frac bucket has `n < 5`, so no cell may be named at all | **Not a result — a failed measurement.** The job exits non-zero, no `reach_control_*.{csv,json}` is written, and the message names the undersized fracs. The sweep was fully clamped (`scale_grid`'s `1.5 × input_scale` cap firing per statement, so each clamped statement got its own `frac = cap/eps_i` bucket). Fix `input_scale` / inspect the per-statement `eps_i` and re-run P3. Do **not** hand-read this as `no-crossing`: that row is a measurement, this is an artefact. |
 
 Both arms (`mean`, `stmt`) get their own verdict — read both sidecars. When they
 disagree, **the per-statement (`stmt`) arm is the primary arm**: its frac buckets hold
@@ -223,11 +236,41 @@ deliberately unchanged so it stays the pre-registered rule; the interval is how 
 decide how much weight to put on it.
 
 `min_bucket_n` / `undersized_fracs` in the sidecar: a frac bucket with `n < 5`
-(`reach_control.MIN_BUCKET_N`) is barred from deciding `actuatable`, because
+(`reach_control.MIN_BUCKET_N`) is barred from deciding **any** verdict cell, because
 `scale_grid`'s `1.5 × input_scale` clamp can give a clamped subset of statements
 idiosyncratic `frac = cap/eps_i` values that land in their own `n=1` bucket. Those
 buckets are still shown in the table with their `n` and a `too_small_to_adjudicate` flag
-— never dropped — so you can see how much of the sweep was clamped.
+— never dropped — so you can see how much of the sweep was clamped. If **every**
+non-baseline bucket is flagged, no verdict is emitted at all (last row of the table
+above). The floor is a **clamp-artefact filter, not a statistical power gate**: at n=5
+a 5/5 rate still has a 95% Wilson CI of (0.57, 1.00), so clearing the floor says only
+"this bucket is not a clamp remnant" — how much weight its rate carries is the
+`n_refused` / `n` and interval question above.
+
+### The sign of the deciding frac
+
+`reach_control` decides "behavior moved" on `|delta| ≥ 0.10` — a symmetric
+did-anything-change screen, pre-registered and deliberately unchanged. But the
+*prediction* on this polarity is **directional**: `refusal.csv` has label 1 = harmless, so
+crossing pushes a harmless prompt into the **harmful** halfspace, which should make the
+model **refuse more** (`src/prep_refusal.py`'s docstring). A refusal rate that *falls* by
+≥10 points at the crossing frac still returns `actuatable`, and that is evidence *against*
+actuation, not for it.
+
+So on any `actuatable`, read three sidecar keys before anything else:
+
+- `deciding_frac` — the frac that earned the verdict (the one nearest the boundary, if
+  several did),
+- `deciding_delta_vs_baseline` — its **signed** delta, and
+- `refusal_fell_at_deciding_frac` — `true` iff any deciding frac's delta is negative.
+
+All three are `null`/`false` when the verdict is not `actuatable`. When the flag is
+`true` the log also prints a `WARNING: refusal FELL where it was predicted to RISE`. The
+likely mechanism is mundane: `REFUSAL_MARKERS` includes `"as an ai"` and `"as a language
+model"`, reliable refusal signals on harmful prompts (Arditi's setting) but common benign
+openers on harmless Alpaca instructions — so a large perturbation that degrades fluency
+*removes* them and lowers the rate. Check the Phase-2 harmless-prompt baseline (below);
+if it was well above 0, this is the first explanation to rule out.
 
 ### Two warnings that do not change the verdict but change how to read it
 
@@ -253,10 +296,10 @@ certificate's own sign convention, crossings should only occur at negative fracs
 positive only where `g > 0`); a positive-frac crossing suggests the linearization sign is
 wrong or the readout is non-monotone.
 
-### Two hard-stop errors you may hit
+### Three hard-stop errors you may hit
 
-`reach_control.py` refuses to emit a verdict rather than guess in two situations —
-both `SystemExit`, both mean the run needs to be re-examined, not silently re-run:
+`reach_control.py` refuses to emit a verdict rather than guess in three situations —
+all `SystemExit`, all mean the run needs to be re-examined, not silently re-run:
 
 - **Vacuous baseline** — the unsteered readout is already inside the target halfspace
   (`baseline g_read <= 0`) before any steering happens. This means the prompt population
@@ -269,6 +312,11 @@ both `SystemExit`, both mean the run needs to be re-examined, not silently re-ru
   already had its own `g_i <= 0` (`eps_i = 0`), so `scale_grid` returned only the
   baseline. Check `input_scale` **and** the per-statement `eps_i` values before assuming
   it's a clamp.
+- **Nothing adjudicable** — non-baseline buckets exist, but *every one* of them has
+  `n < 5` (`MIN_BUCKET_N`), i.e. they are all `frac = cap/eps_i` clamp remnants. The
+  message names them. This is the fully-clamped, underpowered case; no cell may be named
+  off artefact buckets, least of all `readout-only` (which would both halt the programme
+  and coincide with the pre-existing truth result). Fix the sweep and re-run P3.
 
 ### Excluded statements (per-statement arm only)
 

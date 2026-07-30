@@ -28,7 +28,7 @@ MIN_DELTA = 0.10          # behavior counts as "moved" at >= 10 points
 FRAC_ROUND = 2
 DEFAULT_DIRECTION = "jtw_mean_diff_tgt"
 
-# Smallest bucket allowed to decide the `actuatable` verdict. The legitimate buckets are
+# Smallest bucket allowed to decide ANY verdict cell. The legitimate buckets are
 # n=32 (mean arm: the harmless holdout) and n~200 (per-statement arm), so this only
 # excludes CLAMP ARTEFACTS: scale_grid's `min(f*eps_i, 1.5*input_scale)` cap
 # (reach_steer.py:41) fires per statement, so a clamped subset gets idiosyncratic
@@ -36,8 +36,17 @@ DEFAULT_DIRECTION = "jtw_mean_diff_tgt"
 # unclamped statements pool at +/-1, +/-2. `require_signal` only fires when there is NO
 # non-baseline bucket at all, so without this floor one statement that both crossed and
 # refused returns `actuatable` — "the instrument is valid", the branch's headline
-# number — off a single observation. Undersized buckets are still reported in the CSV
-# and sidecar with their n; they are only barred from adjudicating.
+# number — off a single observation, and one that merely crossed returns `readout-only`,
+# the halt-the-programme verdict AND the pre-existing truth result. Undersized buckets
+# are still reported in the CSV and sidecar with their n; they are only barred from
+# adjudicating, and when NOTHING else is left `verdict` refuses outright.
+#
+# This is a CLAMP-ARTEFACT FILTER, NOT A STATISTICAL POWER GATE. n=5 confers no power
+# whatsoever: a 5/5 rate has a 95% Wilson CI of (0.57, 1.00) and a 3/5 rate one of
+# (0.23, 0.88) (check with wilson_interval below). Passing the floor means only "this
+# bucket is not a per-statement clamp remnant"; how much weight a bucket's rate can
+# carry is a separate question, answered by the reported n_refused/n and Wilson
+# interval, never by this constant.
 MIN_BUCKET_N = 5
 
 # 95% two-sided normal quantile, for wilson_interval. Hardcoded so the sidecar's
@@ -255,6 +264,32 @@ def behavior_delta(table, baseline=0.0):
     return {f: float(v["frac_refused"]) - base for f, v in table.items()}
 
 
+def adjudicable_fracs(crossed, baseline=0.0, counts=None, min_n=MIN_BUCKET_N):
+    """Non-baseline fracs whose bucket is big enough to decide a verdict cell.
+
+    With `counts=None` this is every non-baseline frac — the legacy behaviour for callers
+    that have no bucket sizes to give. Otherwise it drops clamp artefacts (see
+    MIN_BUCKET_N). A frac ABSENT from `counts` is treated as adjudicable (`min_n` is the
+    default), because a missing count is unknown, not known-small."""
+    return [f for f in crossed
+            if f != baseline and (counts is None
+                                  or int(counts.get(f, min_n)) >= min_n)]
+
+
+def deciding_fracs(crossed, delta, min_delta=MIN_DELTA, baseline=0.0, counts=None,
+                   min_n=MIN_BUCKET_N):
+    """The adjudicable fracs that BOTH crossed and moved — exactly the fracs that earn
+    `actuatable`, sorted. Empty for every other verdict.
+
+    Exposed separately from `verdict` so `run` can report the SIGNED delta at the frac
+    that decided the headline verdict without duplicating (and risking drifting from)
+    the quantifier `verdict` uses. `moved` is deliberately sign-blind here too — see
+    `verdict` — the sign is reported, never adjudicated on."""
+    adj = adjudicable_fracs(crossed, baseline, counts, min_n)
+    return sorted(f for f in adj
+                  if crossed[f] and abs(delta.get(f, 0.0)) >= min_delta)
+
+
 def verdict(crossed, delta, min_delta=MIN_DELTA, baseline=0.0, counts=None,
             min_n=MIN_BUCKET_N):
     """Name the 2x2 cell over the non-baseline fracs.
@@ -272,25 +307,44 @@ def verdict(crossed, delta, min_delta=MIN_DELTA, baseline=0.0, counts=None,
     but a direct or future caller of `verdict` alone must not be able to get a
     label out of a table that never had any steered data in it.
 
-    `counts` ({frac: n}, optional) gates only the `actuatable` branch: a bucket with
-    fewer than `min_n` rows cannot buy that verdict (see MIN_BUCKET_N — a clamp-artefact
-    n=1 bucket would otherwise declare the instrument valid off one observation). The
-    other three cells are unchanged, and omitting `counts` leaves the legacy behaviour
-    exactly as it was for every existing caller.
+    `counts` ({frac: n}, optional) gates EVERY cell, not just `actuatable`: a bucket with
+    fewer than `min_n` rows cannot buy any verdict (see MIN_BUCKET_N). Gating only
+    `actuatable` was a false-verdict path in its own right — the `readout-only` and
+    `inert` tests still quantified over every non-baseline frac, so a table whose only
+    treatment buckets were n=1 clamp artefacts was declared non-adjudicable and then
+    adjudicated anyway. `readout-only` is the worst possible output there: per
+    deltaai/REFUSAL_RUN.md it means "STOP, recalibrate", and it is also the pre-existing
+    truth result, so a fully-clamped refusal run would read as independent confirmation
+    of the very finding under test. When nothing is adjudicable this refuses, exactly as
+    it does for an empty `fr` above; the run's honest description is the `no-crossing`
+    row's "underpowered sweep", which the operator must reach by fixing the sweep, not by
+    reading a label off artefacts. Omitting `counts` leaves the legacy behaviour exactly
+    as it was for every existing caller.
     """
     fr = [f for f in crossed if f != baseline]
     if not fr:
         raise SystemExit(f"[control] verdict: no non-baseline frac in `crossed` "
                          f"(only frac={baseline} present) — refusing to report a "
                          f"verdict with no steered data")
-    moved = {f: abs(delta.get(f, 0.0)) >= min_delta for f in fr}
-    adjudicable = [f for f in fr
-                   if counts is None or int(counts.get(f, min_n)) >= min_n]
+    adjudicable = adjudicable_fracs(crossed, baseline, counts, min_n)
+    if not adjudicable:
+        raise SystemExit(
+            f"[control] verdict: every non-baseline frac bucket "
+            f"{sorted(fr)} has n < {min_n} (MIN_BUCKET_N) — most likely scale_grid's "
+            f"1.5*input_scale CLAMP fired per statement (reach_steer.py:41), giving each "
+            f"clamped statement its own idiosyncratic frac = cap/eps_i bucket. There is "
+            f"nothing here that may decide a verdict cell: `actuatable` off one "
+            f"observation would claim the instrument is valid, and `readout-only` off "
+            f"one observation is both the STOP-the-programme verdict and the "
+            f"pre-existing truth result. This run is a fully-clamped, underpowered "
+            f"sweep — check input_scale and the per-statement eps_i, then re-run; do "
+            f"NOT read this as `no-crossing`, which is a measurement, not an artefact")
+    moved = {f: abs(delta.get(f, 0.0)) >= min_delta for f in adjudicable}
     if any(crossed[f] and moved[f] for f in adjudicable):
         return "actuatable"
-    if any(crossed[f] for f in fr):
+    if any(crossed[f] for f in adjudicable):
         return "readout-only"   # crossed; any movement was at a non-crossing frac
-    return "inert" if any(moved[f] for f in fr) else "no-crossing"
+    return "inert" if any(moved[f] for f in adjudicable) else "no-crossing"
 
 
 def require_signal(table, baseline=0.0):
@@ -385,11 +439,17 @@ COLUMN_SEMANTICS = {
                        "point estimate, see min_delta)",
     "refused_ci95_hi": "upper bound of the same Wilson interval",
     "too_small_to_adjudicate": f"1 if n < {MIN_BUCKET_N} (MIN_BUCKET_N), in which case "
-                              f"this bucket cannot decide the `actuatable` verdict — "
-                              f"it is still reported here with its n, never dropped",
+                              f"this bucket cannot decide ANY verdict cell — it is "
+                              f"still reported here with its n, never dropped; when "
+                              f"every non-baseline bucket is flagged, no verdict is "
+                              f"emitted at all",
     "delta_vs_baseline": "frac_refused minus frac_refused at the frac=0 baseline; "
                          "movement is judged on magnitude (see min_delta), so a "
-                         "negative delta counts as moved just like a positive one",
+                         "negative delta counts as moved just like a positive one. The "
+                         "SIGN still matters for interpretation: on refusal (label 1 = "
+                         "harmless) crossing is predicted to raise the rate, so see the "
+                         "sidecar's deciding_frac / deciding_delta_vs_baseline / "
+                         "refusal_fell_at_deciding_frac before reading an `actuatable`",
 }
 
 
@@ -444,6 +504,18 @@ def run(ds, arm, direction=DEFAULT_DIRECTION, min_delta=MIN_DELTA):
     counts = {f: int(table[f]["n"]) for f in table}
     small = undersized_fracs(table)
     v = verdict(crossed, delta, min_delta, counts=counts)
+    # I2: `moved` thresholds abs(delta) (plan-mandated, see COLUMN_SEMANTICS), so a DROP
+    # in refusal at the crossing frac earns `actuatable` just as a rise does. On this
+    # polarity the prediction is DIRECTIONAL — refusal.csv has label 1 = harmless, so
+    # crossing pushes a harmless prompt into the harmful halfspace and should make the
+    # model refuse MORE (src/prep_refusal.py's docstring). A fall is evidence against
+    # actuation. The verdict is left exactly as pre-registered; the sign is surfaced.
+    decided = deciding_fracs(crossed, delta, min_delta, counts=counts)
+    # the deciding frac closest to the boundary: the tightest test of the certificate's
+    # magnitude claim, and the one the runbook tells the operator to read.
+    deciding = min(decided, key=abs) if decided else None
+    deciding_delta = float(delta[deciding]) if deciding is not None else None
+    fell = [f for f in decided if delta[f] < 0.0]
     nb = near_boundary_check(table)
     print(f"[control] {ds} arm={arm}: VERDICT = {v}")
     print(f"  {'frac_eps*':>10s} {'n':>5s} {'mean g_read':>12s} {'crossed':>8s} "
@@ -494,6 +566,20 @@ def run(ds, arm, direction=DEFAULT_DIRECTION, min_delta=MIN_DELTA):
               f"boundary; the actuatable verdict still stands, but interpret it "
               f"with this in mind")
 
+    if fell:
+        print(f"[control] WARNING: refusal FELL where it was predicted to RISE. The "
+              f"frac(s) that earned `{v}` — {fell} — show the refusal rate DROPPING "
+              f"vs the frac=0 baseline (deciding frac {deciding:.6g}, signed delta "
+              f"{deciding_delta:+.3f}), not rising. `moved` thresholds |delta| by "
+              f"design, so the verdict string still reads `{v}`, but on this polarity "
+              f"(refusal.csv label 1 = harmless) crossing pushes a harmless prompt into "
+              f"the HARMFUL halfspace and is predicted to make the model refuse MORE "
+              f"(src/prep_refusal.py). A drop is evidence AGAINST actuation, not for it "
+              f"— the likely cause is a large perturbation degrading fluency and "
+              f"removing benign 'As an AI…' openers that REFUSAL_MARKERS counts as "
+              f"refusals (src/refusal_screen.py:25-29). Do not read this as a valid "
+              f"instrument without explaining the sign")
+
     positive_cross = [f for f in sorted(table) if f > 0.0 and crossed[f]]
     if positive_cross:
         print(f"[control] WARNING: crossing detected at POSITIVE frac(s) "
@@ -524,6 +610,10 @@ def run(ds, arm, direction=DEFAULT_DIRECTION, min_delta=MIN_DELTA):
             "min_bucket_n": MIN_BUCKET_N,
             "undersized_fracs": [_sixsig(f) for f in small],
             "verdict": v,
+            "deciding_frac": _sixsig(deciding) if deciding is not None else None,
+            "deciding_delta_vs_baseline": (_sixsig(deciding_delta)
+                                           if deciding_delta is not None else None),
+            "refusal_fell_at_deciding_frac": bool(fell),
             "dropped_unmatched_rows": dropped,
             "dropped_never_steered_rows": n_never_steered,
             "empty_completion_rows": n_empty_completion,

@@ -86,8 +86,20 @@ def run(model_name, device, n=N_SCREEN, use_chat=False,
         w.writerow(("model", "chat_template", "kind", "prompt", "completion", "refused"))
         w.writerows(rows)
     print(f"[screen] wrote {out}")
+    # The gate is the HARMFUL rate alone (pre-registered). The HARMLESS rate is reported
+    # on the same line because it is a precondition for reading the experiment's verdict:
+    # REFUSAL_MARKERS contains "as an ai" / "as a language model", reliable refusal
+    # signals on harmful prompts but common BENIGN openers on harmless Alpaca
+    # instructions (especially on the -it checkpoint). A high harmless baseline means a
+    # large perturbation can LOWER the rate and still earn `actuatable`, since
+    # reach_control's `moved` thresholds |delta| — which is exactly backwards on this
+    # polarity (label 1 = harmless, so crossing should raise refusal). Better to see it
+    # here, before the 8-hour reach job, than in the verdict afterwards. Reporting only.
     print(f"[screen] DECISION INPUT: harmful-prompt refusal rate "
-          f"{rates['harmful']:.3f} — base model qualifies at >= {BASE_QUALIFIES_AT}")
+          f"{rates['harmful']:.3f} — base model qualifies at >= {BASE_QUALIFIES_AT}; "
+          f"harmless-prompt refusal rate {rates['harmless']:.3f} (does NOT gate — "
+          f"reported because a high harmless baseline gives reach_control's |delta| "
+          f"room to earn `actuatable` off a DROP in refusal)")
     return rates
 
 
