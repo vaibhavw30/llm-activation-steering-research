@@ -46,24 +46,39 @@ python3 src/reach_margins.py --dataset refusal --stage all --device cuda || exit
 echo "=== P1 analysis ==="
 python3 src/reach_analyze.py --dataset refusal || exit 1
 
+# From here on, a failed stage is allowed to let the job continue (e.g. the mean
+# arm dying should not cost you the per-statement arm's results out of an 8-hour
+# job) — but "continuing" must not mean "exit 0 regardless". fail is set inside
+# an explicit { ...; fail=1; } block (not relied on via the echo's own exit
+# status) so set -e does not abort here, and the job's own exit status becomes
+# the primary pass/fail signal instead of something only visible by reading
+# every line of the log for "FAILED".
+fail=0
+
 echo "=== P3 mean arm: held-out harmless prompts, 32 new tokens ==="
 python3 src/reach_steer.py --dataset refusal --device cuda --arm mean \
   --prompts refusal_holdout --max-new-tokens 32 \
-  || echo "!!!! mean arm FAILED — continuing"
+  || { echo "!!!! mean arm FAILED — continuing"; fail=1; }
 
 echo "=== P3 per-statement arm: FULL prompts (linearization point == prompt end) ==="
 python3 src/reach_steer.py --dataset refusal --device cuda --arm per_stmt \
   --prompt-mode full --max-new-tokens 32 \
-  || echo "!!!! stmt arm FAILED — continuing"
+  || { echo "!!!! stmt arm FAILED — continuing"; fail=1; }
 
 echo "=== substring judging (no OLMo here: that needs the judge spot-check job) ==="
 for arm in mean stmt; do
   python3 src/refusal_judge.py --dataset refusal --arm $arm \
-    || echo "!!!! judge $arm FAILED — continuing"
+    || { echo "!!!! judge $arm FAILED — continuing"; fail=1; }
 done
 
 echo "=== control verdict ==="
 for arm in mean stmt; do
   python3 src/reach_control.py --dataset refusal --arm $arm \
-    || echo "!!!! control $arm FAILED — continuing"
+    || { echo "!!!! control $arm FAILED — continuing"; fail=1; }
 done
+
+if [ "$fail" -ne 0 ]; then
+  echo "=== refusal_reach: at least one P3 stage FAILED (see FAILED lines above) — exiting non-zero ==="
+  exit 1
+fi
+echo "=== refusal_reach: all stages OK ==="

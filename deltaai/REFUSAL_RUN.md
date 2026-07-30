@@ -129,6 +129,7 @@ died — do not proceed). `num_factors` and `num_iters` are `null` by design (se
 ```bash
 sbatch deltaai/run_refusal_reach.slurm
 squeue -u vwudaru        # poll until EMPTY (up to 8h cap; real usage likely well under)
+sacct -j <jobid> --format=JobID,ExitCode   # non-zero = a P3 stage FAILED, named below; 0 = all OK
 grep -a -E "===|VERDICT|slice fidelity|optional artifact|wrote|FAILED|Traceback" refusal_reach_*.out
 ```
 
