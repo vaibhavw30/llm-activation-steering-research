@@ -57,7 +57,7 @@ Each task ends with a **GATE** block. Rules:
 1. **Run every gate command and paste its literal output** into the task report. "Should pass", "tests presumably green", or a summary without the command output does not satisfy a gate.
 2. **A failing gate stops the task.** Do not proceed to the next task, do not commit, do not work around the check. Report the failure with the command output.
 3. **Test counts are exact.** Each task states the expected `N passed` figure for the file it touches and for the full suite. A count *lower* than expected means a test was silently lost — that is a gate failure even if nothing is red.
-4. **Baseline for the whole plan:** `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` currently prints `182 passed, 1 skipped`. Final expected total after all 15 tasks: `245 passed, 1 skipped`. Per-task deltas: A1 +5, A2 +5, A3 +3, A4 +7, A5 +6, A6 +7, A7 +4, A8 +13, A9 +0, A10 +0, B1 +4, B2 +6, B3 +2, B4 +1.
+4. **Baseline for the whole plan:** `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` currently prints `182 passed, 1 skipped`. Final expected total after all 15 tasks: `266 passed, 1 skipped`. Per-task deltas: A1 +5, A2 +3 (5 new tests replace the 2 in the existing file), A3 +4, A4 +10, A5 +9, A6 +7, A7 +6, A8 +26, A9 +1, A10 +0, B1 +4, B2 +6, B3 +2, B4 +1.
 
 ---
 
@@ -580,7 +580,7 @@ git add src/prep_refusal.py tests/test_prep_refusal.py got_datasets/refusal.csv 
 
 **GATE:**
 - [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/test_prep_refusal.py -q` prints `5 passed`.
-- [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` prints `192 passed, 1 skipped`.
+- [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` prints `190 passed, 1 skipped`.
 - [ ] This command prints four numbers; **`label-1 == label-0` is the hard gate** (balance is ours to control). Record `rows` and `unique` too: AdvBench and Alpaca are upstream data, so a handful of duplicates is possible — note the figure rather than failing, but if uniqueness drops below 95% of `rows`, stop and report, because the probe would be fitting repeated text.
 
 ```bash
@@ -692,8 +692,8 @@ git add src/extract.py tests/test_extract_model_flag.py && git commit -m "feat(e
 
 **GATE:**
 - [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/test_extract_model_flag.py -q` prints `3 passed`.
-- [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` prints `195 passed, 1 skipped`.
-- [ ] `grep -n "MODEL_NAME" src/extract.py` shows `MODEL_NAME` surviving **only** at its definition and as the two default values (`load_model_or_explain`, `main`, `build_parser`) — five lines total. Any remaining use inside a function body means the threading is incomplete.
+- [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` prints `194 passed, 1 skipped`.
+- [ ] `grep -n "MODEL_NAME" src/extract.py` shows **no remaining dereference of the constant inside any function body** — **5** matching lines: its definition (`:31`), the three default values (`build_parser`, `load_model_or_explain`, `main`), and one mention inside the `--model` help string. Any *dereference* of `MODEL_NAME` in a function body means the threading is incomplete.
 - [ ] `PYTHONPATH=src .venv/bin/python src/extract.py --help` exits 0 and shows `dataset`, `--limit`, `--model`.
 
 ---
@@ -1028,7 +1028,7 @@ git add src/make_reach_meta.py src/calibrate_scale.py tests/test_make_reach_meta
 
 **GATE:**
 - [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/test_make_reach_meta.py -q` prints `7 passed`.
-- [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` prints `202 passed, 1 skipped`.
+- [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` prints `204 passed, 1 skipped`.
 - [ ] `PYTHONPATH=src .venv/bin/python -c "import calibrate_scale; print(calibrate_scale.CALIBRATION_SAMPLE_SIZE, calibrate_scale.SEED)"` prints `30 325` (imports cleanly against the local transformers 5.x; the actual run needs a GPU).
 - [ ] The meta schema matches the real truth metas exactly — this command prints `True`:
 
@@ -1402,7 +1402,7 @@ git add src/reach_hop.py src/reach_margins.py src/reach_steer.py src/reach_newto
 ```
 
 **GATE:**
-- [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` prints `208 passed, 1 skipped`.
+- [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` prints `213 passed, 1 skipped`.
 - [ ] All four `BACKWARD COMPATIBLE` lines from Step 10 are pasted into the task report.
 - [ ] Every `load_meta` call site unpacks four values — this prints nothing, and the report also pastes the raw `grep` listing showing all five sites:
 
@@ -1566,7 +1566,7 @@ git add src/reach_steer.py tests/test_reach_steer.py && git commit -m "feat(reac
 
 **GATE:**
 - [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/test_reach_steer.py -q` prints `7 passed`.
-- [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` prints `215 passed, 1 skipped`.
+- [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` prints `220 passed, 1 skipped`.
 - [ ] `PYTHONPATH=src .venv/bin/python src/reach_steer.py --help` exits 0 and lists `--prompt-mode`, `--prompts`, `--max-new-tokens`, each showing the truth-run default (`stem`, `factual`, `8`).
 - [ ] The truth defaults are still wired — this prints `True True True`:
 
@@ -1783,7 +1783,7 @@ git add src/refusal_judge.py tests/test_refusal_judge.py && git commit -m "feat(
 
 **GATE:**
 - [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/test_refusal_judge.py -q` prints `4 passed`.
-- [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` prints `219 passed, 1 skipped`.
+- [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` prints `226 passed, 1 skipped`.
 - [ ] The OLMo call signature in `_spot_check` matches the real judge — `grep -n "def chat" src/judges/olmo_judge.py` prints `28:    def chat(self, system, user, max_tokens=200):`. If it differs, adapt the single call site and re-run the tests before proceeding.
 - [ ] The module imports without torch — `PYTHONPATH=src .venv/bin/python -c "import sys, refusal_judge; print('torch' in sys.modules)"` prints `False`.
 
@@ -2008,10 +2008,25 @@ def aggregate(rows, ndigits=FRAC_ROUND):
             for f, v in by.items()}
 
 
-def readout_crossed(table):
-    """{frac: row} -> {frac: bool}. g = w.h_tgt - t02; g <= 0 is inside the target
-    halfspace, i.e. the reachability goal was met at that frac."""
-    return {f: bool(v["g_read"] <= 0.0) for f, v in table.items()}
+def readout_crossed(table, baseline=0.0):
+    """{frac: row} -> {frac: bool}: did steering CROSS the boundary at that frac?
+
+    g = w.h_tgt - t02, and g <= 0 is inside the target halfspace. A crossing is a
+    SIGN CHANGE relative to the unsteered baseline, not mere membership: the
+    baseline must start outside (g > 0) and the steered point must land inside.
+    Membership alone is a false-positive path to `actuatable` — eps* is the
+    dataset-wide median_eps_star from reach_summary (reach_steer.py:123) while the
+    baseline g_read is measured on a DIFFERENT population (FACTUAL_PROMPTS or the
+    refusal holdout, reach_steer.py:111,133) that t02 was never fit on. If that
+    population already sits inside the halfspace, `g <= 0` is trivially true at
+    every frac and the co-occurrence gate degenerates into "did behaviour move
+    anywhere". run() additionally fails loud in that case: a vacuous crossing test
+    cannot support any verdict.
+    """
+    g0 = table[baseline]["g_read"] if baseline in table else None
+    if g0 is None or g0 <= 0.0:
+        return {f: False for f in table}
+    return {f: bool(f != baseline and v["g_read"] <= 0.0) for f, v in table.items()}
 
 
 def behavior_delta(table, baseline=0.0):
@@ -2024,15 +2039,23 @@ def behavior_delta(table, baseline=0.0):
 
 
 def verdict(crossed, delta, min_delta=MIN_DELTA):
-    """Name the 2x2 cell over the non-baseline fracs."""
+    """Name the 2x2 cell over the non-baseline fracs.
+
+    `actuatable` requires the crossing and the behaviour change to happen at the
+    SAME frac. Independent quantifiers ("crossed somewhere" and "moved somewhere")
+    would label a crossing at frac -1 plus degradation at frac +2 as actuatable,
+    which is the expected shape of an OFF-TARGET result: eps* is positive only
+    where g > 0 (reach_steer.py:167), so crossings occur at negative fracs, while
+    +2*eps* is a large residual-stream shift that can wreck generations without
+    crossing anything. That pattern is the `inert` cell, not the `actuatable` one.
+    """
     fr = [f for f in crossed if f != 0.0]
-    any_cross = any(crossed[f] for f in fr)
-    any_move = any(abs(delta.get(f, 0.0)) >= min_delta for f in fr)
-    if any_cross and any_move:
+    moved = {f: abs(delta.get(f, 0.0)) >= min_delta for f in fr}
+    if any(crossed[f] and moved[f] for f in fr):
         return "actuatable"
-    if any_cross:
-        return "readout-only"
-    return "inert" if any_move else "no-crossing"
+    if any(crossed[f] for f in fr):
+        return "readout-only"   # crossed; any movement was at a non-crossing frac
+    return "inert" if any(moved[f] for f in fr) else "no-crossing"
 
 
 def _read(path):
@@ -2100,7 +2123,7 @@ git add src/reach_control.py tests/test_reach_control.py && git commit -m "feat(
 
 **GATE:**
 - [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/test_reach_control.py -q` prints `13 passed`.
-- [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` prints `232 passed, 1 skipped`.
+- [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` prints `252 passed, 1 skipped`.
 - [ ] The four verdict cells are all reachable — this prints `actuatable readout-only inert no-crossing`:
 
 ```bash
@@ -2328,7 +2351,7 @@ Follow the structure of `deltaai/REACH_H0_RUN.md`. Required sections, in order:
 
 **Phase 0 — laptop, before anything else.**
 ```bash
-PYTHONPATH=src .venv/bin/python -m pytest tests/ -q      # 232 passed with Track A alone; 245 once Track B lands
+PYTHONPATH=src .venv/bin/python -m pytest tests/ -q      # 253 passed with Track A alone; 266 once Track B lands
 .venv/bin/python src/prep_refusal.py                     # needs internet
 ls -l got_datasets/refusal.csv got_datasets/refusal_holdout.csv
 ```
@@ -2398,7 +2421,7 @@ grep -o "src/[a-z_]*\.py" deltaai/REFUSAL_RUN.md | sort -u | while read f; do [ 
 ```
 
 - [ ] The runbook contains all four verdict names: `for v in actuatable readout-only inert no-crossing; do grep -q "$v" deltaai/REFUSAL_RUN.md || echo "MISSING $v"; done` prints nothing.
-- [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` still prints `232 passed, 1 skipped` (this task adds no tests).
+- [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` still prints `253 passed, 1 skipped` (this task adds no tests).
 
 ---
 
@@ -2553,7 +2576,7 @@ git add src/sae_load.py tests/test_sae_load.py && git commit -m "feat(sae): Gemm
 
 **GATE:**
 - [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/test_sae_load.py -q` prints `4 passed`.
-- [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` prints `236 passed, 1 skipped`.
+- [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` prints `257 passed, 1 skipped`.
 - [ ] Both download lines from Step 5 are pasted into the report, and **each shows `W_dec (16384, 2304)`**. A shape of `(2304, 16384)` means the decoder is stored transposed and `decoder_unit` would normalize the wrong axis — stop and report.
 - [ ] The disk cost is recorded (`du -sh ~/.cache/huggingface/hub/models--google--gemma-scope-2b-pt-res`); this environment is disk-constrained.
 
@@ -2723,7 +2746,7 @@ git add src/sae_decompose.py tests/test_sae_decompose.py && git commit -m "feat(
 
 **GATE:**
 - [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/test_sae_decompose.py -q` prints `6 passed`.
-- [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` prints `242 passed, 1 skipped`.
+- [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` prints `263 passed, 1 skipped`.
 - [ ] OMP is exact at full rank — this prints a number `< 1e-10`:
 
 ```bash
@@ -2934,7 +2957,7 @@ git add src/sae_decompose.py tests/test_sae_decompose.py && git commit -m "feat(
 
 **GATE:**
 - [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/test_sae_decompose.py -q` prints `8 passed`.
-- [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` prints `244 passed, 1 skipped`.
+- [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` prints `265 passed, 1 skipped`.
 - [ ] Step 5's full stdout is pasted into the report, including the `D2 mechanism` line — that Jaccard is the deliverable claim of Track B.
 - [ ] **Sanity check on orientation:** `w_mean_diff_tgt` reconstructs with `explained ≳ 0.5`. If *every* vector reports `explained < 0.1`, the decoder is likely transposed — re-check `W_dec.shape == (16384, 2304)` from Task B1 and stop rather than reporting a null result caused by a shape bug.
 - [ ] The stem alignment actually used indices — this prints `True`:
@@ -3104,7 +3127,7 @@ git add src/viz_sae.py tests/test_viz_sae.py && git commit -m "feat(sae): explai
 
 **GATE:**
 - [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/test_viz_sae.py -q` prints `1 passed`.
-- [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` prints `245 passed, 1 skipped`.
+- [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` prints `266 passed, 1 skipped`.
 - [ ] Both PNGs exist for cities and were opened and eyeballed; report label collisions or a non-monotone curve rather than shipping them.
 - [ ] The highlight constant is shared, not duplicated — `grep -n "D2_PAIR" src/viz_sae.py src/sae_decompose.py` shows `viz_sae` importing it from `sae_decompose` and defining it nowhere.
 
@@ -3118,7 +3141,7 @@ Horizon 1 is done when all of the following are in hand:
 2. The A1 screen numbers and the chosen model are recorded, with the base-vs-`-it` confound and the chat-templating decision stated if `-it` was used.
 3. The OLMo spot-check kappa is recorded alongside the substring rates, for both arms.
 4. `sae_features_cities.csv`, `sae_overlap_cities.json` and the two figures exist, with the `jtw_full_matched_mean` vs `jtw_stem_mean` Jaccard quoted — that number is the D2 mechanism claim.
-5. The full test suite passes: `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` → `245 passed, 1 skipped`.
+5. The full test suite passes: `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` → `266 passed, 1 skipped`.
 6. The Task A5 backward-compatibility gate held: all four `cmp` comparisons against `/tmp/h1-baseline/regen/` passed.
 
 Then: write the Horizon-2 plan against the verdict, per `docs/superpowers/plans/2026-07-28-research-horizons-overarching.md`.
