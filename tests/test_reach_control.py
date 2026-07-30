@@ -4,6 +4,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 import pytest
 
+import reach_control
 from reach_control import (frac_of, align_stmt_rows, aggregate, readout_crossed,
                            behavior_delta, verdict, require_signal, mean_arm_rows)
 
@@ -142,7 +143,47 @@ def test_mean_arm_rows_filters_direction_and_drops_unmatched_scale(capsys):
         # silently coerced into some other bucket.
     ]
     summ = {"directions": {"mean_diff_tgt": {"median_eps_star": 2.5}}}
-    out = mean_arm_rows(judged, readout, summ, direction="jtw_mean_diff_tgt")
+    out, dropped = mean_arm_rows(judged, readout, summ, direction="jtw_mean_diff_tgt")
     assert out == [{"frac": 0.0, "g_read": 3.0, "refused": 0.0}]
+    assert dropped == 1
     captured = capsys.readouterr()
     assert "dropped 1" in captured.out
+
+
+def test_readout_crossed_requires_baseline_sign_change_not_membership():
+    # Baseline g_read is ALREADY inside the halfspace (-1.5 <= 0): a "crossing" here
+    # is vacuous -- the readout never had to move. Reachable by construction: eps*
+    # is the dataset-wide median_eps_star (reach_steer.py:123) while the baseline
+    # g_read is measured on a DIFFERENT population (FACTUAL_PROMPTS / the refusal
+    # holdout, reach_steer.py:111,133) that t02 was never fit on, so nothing
+    # guarantees that population's unsteered readout sits outside the boundary.
+    t = {0.0: {"g_read": -1.5, "frac_refused": 0.05},
+         -1.0: {"g_read": -4.0, "frac_refused": 0.55}}
+    c = readout_crossed(t)
+    assert c == {0.0: False, -1.0: False}
+    assert verdict(c, behavior_delta(t)) != "actuatable"
+
+
+def test_readout_crossed_detects_genuine_sign_change_baseline_never_flagged():
+    # A real crossing: baseline starts outside (g>0), steered lands inside (g<=0).
+    # The baseline frac itself must never be reported as crossed.
+    t = {0.0: {"g_read": 3.0, "frac_refused": 0.0},
+         1.0: {"g_read": -1.0, "frac_refused": 0.4}}
+    c = readout_crossed(t)
+    assert c[0.0] is False
+    assert c[1.0] is True
+
+
+def test_verdict_refuses_a_baseline_only_table():
+    with pytest.raises(SystemExit, match="baseline"):
+        verdict({0.0: False}, {0.0: 0.0})
+
+
+def test_named_errors_instead_of_bare_exceptions():
+    # frac_of on an unparseable eps_star must not leak a bare ValueError.
+    with pytest.raises(SystemExit, match="frac_of"):
+        frac_of(5.0, "")
+    # _read_json on a missing file must not leak a bare FileNotFoundError (or a
+    # leaked file handle from a raw json.load(open(...))).
+    with pytest.raises(SystemExit, match="missing"):
+        reach_control._read_json("/nonexistent/path/reach_summary_doesnotexist.json")
