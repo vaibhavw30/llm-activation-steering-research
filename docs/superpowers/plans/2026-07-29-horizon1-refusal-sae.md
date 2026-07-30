@@ -57,7 +57,7 @@ Each task ends with a **GATE** block. Rules:
 1. **Run every gate command and paste its literal output** into the task report. "Should pass", "tests presumably green", or a summary without the command output does not satisfy a gate.
 2. **A failing gate stops the task.** Do not proceed to the next task, do not commit, do not work around the check. Report the failure with the command output.
 3. **Test counts are exact.** Each task states the expected `N passed` figure for the file it touches and for the full suite. A count *lower* than expected means a test was silently lost — that is a gate failure even if nothing is red.
-4. **Baseline for the whole plan:** `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` currently prints `182 passed, 1 skipped`. Final expected total after all 15 tasks: `285 passed, 1 skipped`. Per-task deltas: A1 +5, A2 +3 (5 new tests replace the 2 in the existing file), A3 +4, A4 +10, A5 +9, A6 +7, A7 +6, A8 +26, A9 +1, A10 +0, B1 +4, B2 +6, B3 +2, B4 +2.
+4. **Baseline for the whole plan:** `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` currently prints `182 passed, 1 skipped`. Final expected total after all 15 tasks: `298 passed, 1 skipped`. Per-task deltas: A1 +5, A2 +3 (5 new tests replace the 2 in the existing file), A3 +4, A4 +10, A5 +9, A6 +7, A7 +6, A8 +26, A9 +1, A10 +0, B1 +4, B2 +6, B3 +2, B4 +2.
    **Final whole-branch review added +18 tests** (267 -> 285) closing two Critical defects that were mandated by this plan's own code: `reach_steer` discarded the model from `load_meta` and silently ran base gemma-2-2b (so the `-it` fallback would steer the wrong checkpoint with `-it`-derived Jacobians), and `prompt_of(..., "full")` called `.strip()`, moving the linearization point off a chat-templated prompt's last token — the exact D1 confound that mode exists to eliminate. Per-task deltas below are the as-executed figures up to that point.
 
 ---
@@ -2352,7 +2352,7 @@ Follow the structure of `deltaai/REACH_H0_RUN.md`. Required sections, in order:
 
 **Phase 0 — laptop, before anything else.**
 ```bash
-PYTHONPATH=src .venv/bin/python -m pytest tests/ -q      # 253 passed with Track A alone; 267 once Track B lands
+PYTHONPATH=src .venv/bin/python -m pytest tests/ -q      # 253 as-executed at this task; 298 final (review fixes added tests)
 .venv/bin/python src/prep_refusal.py                     # needs internet
 ls -l got_datasets/refusal.csv got_datasets/refusal_holdout.csv
 ```
@@ -3128,7 +3128,7 @@ git add src/viz_sae.py tests/test_viz_sae.py && git commit -m "feat(sae): explai
 
 **GATE:**
 - [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/test_viz_sae.py -q` prints `1 passed`.
-- [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` prints `285 passed, 1 skipped`.
+- [ ] `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` prints `298 passed, 1 skipped`.
 - [ ] Both PNGs exist for cities and were opened and eyeballed; report label collisions or a non-monotone curve rather than shipping them.
 - [ ] The highlight constant is shared, not duplicated — `grep -n "D2_PAIR" src/viz_sae.py src/sae_decompose.py` shows `viz_sae` importing it from `sae_decompose` and defining it nowhere.
 
@@ -3142,7 +3142,7 @@ Horizon 1 is done when all of the following are in hand:
 2. The A1 screen numbers and the chosen model are recorded, with the base-vs-`-it` confound and the chat-templating decision stated if `-it` was used.
 3. The OLMo spot-check kappa is recorded alongside the substring rates, for both arms.
 4. `sae_features_cities.csv`, `sae_overlap_cities.json` and the two figures exist, with the `jtw_full_matched_mean` vs `jtw_stem_mean` Jaccard quoted — that number is the D2 mechanism claim.
-5. The full test suite passes: `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` → `285 passed, 1 skipped`.
+5. The full test suite passes: `PYTHONPATH=src .venv/bin/python -m pytest tests/ -q` → `298 passed, 1 skipped`.
 6. The Task A5 backward-compatibility gate held: all four `cmp` comparisons against `/tmp/h1-baseline/regen/` passed.
 
 Then: write the Horizon-2 plan against the verdict, per `docs/superpowers/plans/2026-07-28-research-horizons-overarching.md`.
