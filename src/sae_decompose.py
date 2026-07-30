@@ -25,6 +25,11 @@ The CLI and collect_vectors are added by Task B3.
 
     PYTHONPATH=src .venv/bin/python src/sae_decompose.py --dataset cities
 """
+import argparse
+import csv
+import json
+import os
+
 import numpy as np
 
 K_ATOMS = 32
@@ -66,3 +71,104 @@ def jaccard(a, b):
     sa, sb = {int(x) for x in a}, {int(x) for x in b}
     u = sa | sb
     return float(len(sa & sb) / len(u)) if u else 0.0
+
+
+N_V64 = 4          # pooled high-gain input directions to decompose
+D2_PAIR = "jtw_full_matched_mean|jtw_stem_mean"
+
+
+def _unit(v):
+    v = np.asarray(v, np.float64)
+    n = float(np.linalg.norm(v))
+    return v / n if n > 1e-12 else v
+
+
+def _renorm(M):
+    M = np.asarray(M, np.float64)
+    return M / np.maximum(np.linalg.norm(M, axis=1, keepdims=True), 1e-12)
+
+
+def collect_vectors(ds):
+    """{name: (vector, space)} where space is "src" (input side, source layer) or
+    "tgt" (readout side, target layer). Optional artifacts are skipped when absent."""
+    acts = np.load(f"reach_acts_{ds}.npz", allow_pickle=True)
+    dirs = np.load(f"reach_dirs_{ds}.npz", allow_pickle=True)
+    mz = np.load(f"reach_margins_{ds}.npz", allow_pickle=True)
+    names = [str(x) for x in dirs["names"]]
+    store_names = [str(x) for x in mz["store_names"]]
+    k, ks = names.index("mean_diff_tgt"), store_names.index("mean_diff_tgt")
+    jtw_raw = mz["jtw"]                        # ONE decompression — never in a loop
+    jtw = _renorm(jtw_raw[:, ks, :])           # float16 rows need re-normalizing
+    y = np.asarray(acts["labels"]).astype(int)[:len(jtw)]
+    out = {"w_mean_diff_tgt": (_unit(dirs["W"][k]), "tgt"),
+           "jtw_mean": (_unit(jtw[y == 1].mean(axis=0)), "src")}
+    sj = f"reach_stemjac_{ds}.npz"
+    if os.path.exists(sj):
+        z = np.load(sj, allow_pickle=True)
+        # stemjac picks a RANDOM label-1 subset and stores stmt_index; aligning by
+        # position would compare unrelated statements (reach_stemjac.py:81-83).
+        idx = np.asarray(z["stmt_index"], int)
+        stem = _renorm(z["jtw_stem"])
+        full = jtw[idx]
+        out["jtw_full_matched_mean"] = (_unit(full.mean(axis=0)), "src")
+        out["jtw_stem_mean"] = (_unit(stem.mean(axis=0)), "src")
+        out["common_v1"] = (_unit(np.linalg.svd(np.concatenate([full, stem]),
+                                                full_matrices=False)[2][0]), "src")
+    sdir = f"reach_svd_{ds}"
+    if os.path.isdir(sdir):
+        files = sorted(f for f in os.listdir(sdir) if f.endswith(".npz"))
+        if files:
+            # Pool the leading right-singular vector across statements. Averaging is
+            # invalid (sign ambiguity); an SVD of the stack is sign-invariant.
+            tops = np.stack([np.asarray(np.load(os.path.join(sdir, f))["V64"],
+                                        np.float64)[:, 0] for f in files])
+            Vh = np.linalg.svd(tops, full_matrices=False)[2]
+            for j in range(min(N_V64, Vh.shape[0])):
+                out[f"V64_common_{j}"] = (_unit(Vh[j]), "src")
+    return out
+
+
+def run(ds, k=K_ATOMS, width="16k"):
+    from sae_load import load_sae, decoder_unit
+    meta = json.load(open(f"dct_meta_{ds}.json"))
+    layers = {"src": int(meta["source_layer"]), "tgt": int(meta["target_layer"])}
+    vecs = collect_vectors(ds)
+    D = {sp: decoder_unit(load_sae(layers[sp], width))
+         for sp in sorted({sp for _, sp in vecs.values()})}
+    rows = [("vector", "layer", "rank", "feature", "coef", "cumulative_explained")]
+    supports = {}
+    for name, (v, space) in sorted(vecs.items()):
+        sup, coefs, resid = omp(v, D[space], k)
+        supports[name] = sup.tolist()
+        for r in range(len(sup)):
+            c = np.linalg.lstsq(D[space][sup[:r + 1]].T, v, rcond=None)[0]
+            rows.append((name, layers[space], r, int(sup[r]), f"{coefs[r]:.6g}",
+                         f"{explained(v, D[space], sup[:r + 1], c):.6g}"))
+        print(f"[sae] {name:>22s} @L{layers[space]:2d}: top-{k} OMP residual "
+              f"{resid:.3f} (explained {1 - resid ** 2:.3f})")
+    with open(f"sae_features_{ds}.csv", "w", newline="") as f:
+        csv.writer(f).writerows(rows)
+    ordered = sorted(supports)
+    ov = {f"{a}|{b}": jaccard(supports[a], supports[b])
+          for i, a in enumerate(ordered) for b in ordered[i + 1:]
+          if vecs[a][1] == vecs[b][1]}
+    with open(f"sae_overlap_{ds}.json", "w") as f:
+        json.dump({"k": k, "width": width, "layers": layers,
+                   "supports": supports, "jaccard": ov}, f, indent=2)
+    if D2_PAIR in ov:
+        print(f"[sae] D2 mechanism: full-context vs stem-context J^T w share "
+              f"{ov[D2_PAIR]:.3f} of their top-{k} features (Jaccard)")
+    print(f"[sae] wrote sae_features_{ds}.csv and sae_overlap_{ds}.json")
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--dataset", required=True)
+    ap.add_argument("--k", type=int, default=K_ATOMS)
+    ap.add_argument("--width", default="16k")
+    a = ap.parse_args()
+    run(a.dataset, a.k, a.width)
+
+
+if __name__ == "__main__":
+    main()
