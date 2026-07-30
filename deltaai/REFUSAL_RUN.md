@@ -104,6 +104,14 @@ Read both `DECISION INPUT` lines and the final `DECISION:` line in
   # cluster
   REFUSAL_MODEL=google/gemma-2-2b-it sbatch deltaai/run_refusal_prep.slurm
   ```
+  **Do not re-submit `run_refusal_screen.slurm` after the `-it` re-prep.** That job calls
+  `refusal_screen.py --chat-template`, and `refusal_screen.chat_wrap` would apply the
+  template *again* to the now-already-templated `got_datasets/refusal_holdout.csv` —
+  double-templating every prompt (a nested `<start_of_turn>user` inside a user turn) and
+  producing a refusal rate that measures nothing. The screen has already served its
+  purpose at this point; the gate is decided. If you must re-screen after the re-prep,
+  drop `--chat-template`, because the holdout file already carries the template.
+
   Templating happens **once, in `prep_refusal.py`'s `apply_template`, at dataset-build
   time** — never at generation time. `extract.py`, `reach_margins.py`, and
   `reach_steer.py` must all tokenize the *identical* string, or the certificate's
@@ -178,19 +186,48 @@ dict explaining every CSV column), and three row-accounting counts —
 — can silently delete crossing fracs), `dropped_never_steered_rows` (per-statement arm:
 statements whose own `eps_i <= 0`, excluded — see "Excluded statements" below), and
 `empty_completion_rows` (completions that were blank, scored as not-refused, not an
-error). For dataset `refusal` there are two sidecars per run: `reach_control_refusal_
+error). Each `table` bucket additionally carries `n_refused` (the exact refusal count
+behind `frac_refused`), `refused_ci95_lo` / `refused_ci95_hi` (a 95% Wilson interval for
+that rate), and `too_small_to_adjudicate`; the sidecar's top level carries
+`min_bucket_n` and `undersized_fracs`. See "Reading the results" below for how to weigh
+them. For dataset `refusal` there are two sidecars per run: `reach_control_refusal_
 mean.json` and `reach_control_refusal_stmt.json`.
 
 ## Reading the results — decision gates
 
 | VERDICT | Meaning | Action |
 |---|---|---|
-| `actuatable` | Crossing the boundary changes behavior | **The instrument is valid.** The truth dissociation is a fact about truth, not the method. Proceed to the main-venue dissociation-with-instrument paper. |
+| `actuatable` | Crossing the boundary changes behavior | **The instrument is valid.** The truth dissociation is a fact about truth, not the method. Proceed to the main-venue dissociation-with-instrument paper — but only after the primary-arm and interval checks below. |
 | `readout-only` | Crossing moves the readout, not behavior — refusal fails the same way truth did | **STOP.** The instrument cannot demonstrate actuation on a concept where the literature says actuation exists. Recalibrate with Julian before spending more GPU time; the likely suspects are the all-position steering-hook convention and the choice of `Jᵀw` as the input direction. |
 | `inert` | Behavior moves without a readout crossing | Off-target steering. Check whether `g_read` moves at all in `reach_control_refusal_*.json`'s `table`. |
 | `no-crossing` | Neither | Underpowered sweep: `1.5 × input_scale` is capping the scales below eps\*. Report the capped fraction before concluding anything. |
 
-Both arms (`mean`, `stmt`) get their own verdict — read both sidecars, they can disagree.
+Both arms (`mean`, `stmt`) get their own verdict — read both sidecars. When they
+disagree, **the per-statement (`stmt`) arm is the primary arm**: its frac buckets hold
+~200 rows each, against 32 for the mean arm (the harmless holdout), and each of its
+subjects is steered at *its own* `eps_i` rather than at the dataset-wide
+`median_eps_star`. So it is both better powered and a tighter test of the certificate.
+
+The mean arm is the supporting arm, and its `actuatable` must never be read on its own.
+`MIN_DELTA = 0.10` is a hard threshold on a point estimate, so at n=32 **4 of 32 prompts**
+changing refusal status is enough to cross it. Before treating a `mean`-arm `actuatable`
+as the headline result, check:
+
+1. the `stmt` arm's verdict, and
+2. the sidecar's `n_refused` / `n` and `refused_ci95_lo` / `refused_ci95_hi` (95% Wilson
+   interval) for the crossing bucket **and** for the frac=0 baseline. At 4 vs 0 of 32 the
+   two intervals overlap heavily; that is a suggestive result, not a demonstrated one.
+
+The interval is reporting only — it does **not** enter the verdict. The verdict logic is
+deliberately unchanged so it stays the pre-registered rule; the interval is how you
+decide how much weight to put on it.
+
+`min_bucket_n` / `undersized_fracs` in the sidecar: a frac bucket with `n < 5`
+(`reach_control.MIN_BUCKET_N`) is barred from deciding `actuatable`, because
+`scale_grid`'s `1.5 × input_scale` clamp can give a clamped subset of statements
+idiosyncratic `frac = cap/eps_i` values that land in their own `n=1` bucket. Those
+buckets are still shown in the table with their `n` and a `too_small_to_adjudicate` flag
+— never dropped — so you can see how much of the sweep was clamped.
 
 ### Two warnings that do not change the verdict but change how to read it
 
