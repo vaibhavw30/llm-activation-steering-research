@@ -47,20 +47,66 @@ def align_stmt_rows(judged, meta):
     order, so row k of judge_refusal_<ds>_stmt.csv is row k of
     reach_steer_stmt_meta_<ds>.csv. reach_steer_stmt_meta has no prompt column, so
     there is no other join key — this makes the dependency explicit and refuses to
-    guess when it does not hold."""
+    guess when it does not hold.
+
+    Returns `(rows, n_never_steered)`. A row whose OWN `eps_star <= 0` is the lone
+    baseline row of a statement that was NEVER STEERED (its own g_i <= 0,
+    reach_steer.py:167 -> eps_i=0, and scale_grid then returns [0.0] only,
+    reach_steer.py:41). Such a row is not a baseline for anything: frac_of(0,0)
+    is 0.0, so without this exclusion it lands in the SAME frac=0 bucket as the
+    genuine baselines of statements that WERE steered, biasing bucket 0 toward
+    g<=0 while the treatment buckets stay g>0-only -- a textbook actuatable
+    result can flip to `inert`. These rows are dropped here and counted rather
+    than silently pooled in. `stmt_index` (present in the meta header,
+    reach_steer.py:130) is carried through so a caller can compute per-statement
+    (rather than bucket-mean) diagnostics."""
     if len(judged) != len(meta):
         raise SystemExit(f"[control] row-count mismatch: {len(judged)} judged vs "
                          f"{len(meta)} meta rows — the two files are not from the "
                          f"same reach_steer run")
     out = []
+    n_never_steered = 0
     for k, (j, m) in enumerate(zip(judged, meta)):
         if abs(float(j["scale"]) - float(m["scale"])) > 1e-9:
             raise SystemExit(f"[control] scale mismatch at row {k}: judged "
                              f"{j['scale']} vs meta {m['scale']} — row alignment "
                              f"is broken, refusing to guess")
+        if float(m["eps_star"]) <= 0.0:
+            n_never_steered += 1
+            continue
         out.append({"frac": frac_of(m["scale"], m["eps_star"]),
                     "g_read": float(m["g_read"]),
-                    "refused": float(j["refused"])})
+                    "refused": float(j["refused"]),
+                    "stmt_index": int(m["stmt_index"])})
+    return out, n_never_steered
+
+
+def stmt_crossing_fracs(rows, baseline=0.0, ndigits=FRAC_ROUND):
+    """Per-statement crossing fraction at each non-baseline frac bucket.
+
+    For each statement (grouped by `stmt_index`), it "crossed" at frac f if ITS
+    OWN frac-0 g_read > 0 and its own g_read at f is <= 0 -- computed per
+    statement, not from the bucket mean. Strictly more informative than
+    `readout_crossed` on the aggregated table: e.g. a bucket mean at f can be
+    <=0 (bucket-level "crossed") even when only half the statements
+    individually crossed and the other half stayed positive. This is reported
+    in the sidecar, NOT used to adjudicate the verdict — the verdict keeps
+    using the bucket-level crossed/delta."""
+    by_stmt = {}
+    for r in rows:
+        by_stmt.setdefault(r["stmt_index"], {})[round(float(r["frac"]), ndigits)] = \
+            float(r["g_read"])
+    fracs = sorted({round(float(r["frac"]), ndigits) for r in rows} - {baseline})
+    out = {}
+    for f in fracs:
+        crossed_ct, total = 0, 0
+        for gmap in by_stmt.values():
+            if baseline not in gmap or f not in gmap:
+                continue
+            total += 1
+            if gmap[baseline] > 0.0 and gmap[f] <= 0.0:
+                crossed_ct += 1
+        out[f] = (crossed_ct / total) if total else 0.0
     return out
 
 
@@ -199,6 +245,42 @@ def require_signal(table, baseline=0.0):
                          f"refusing to report a verdict off a contaminated baseline")
 
 
+def near_boundary_check(table, baseline=0.0):
+    """Detect a NEAR-BOUNDARY baseline: does the smallest swept |frac| already
+    cross? `readout_crossed`'s sign test only distinguishes g0>0 from g0<=0 (and
+    run() already aborts on g0<=0); it has no notion of MAGNITUDE. A baseline
+    like g0=1e-9 passes the sign test but the boundary was already underfoot, so
+    the certificate's magnitude claim (~eps* of perturbation needed) is never
+    actually tested -- any crossing found is real but says nothing about scale.
+    This does NOT change the verdict; it returns diagnostics for the caller to
+    warn about and record (run() prints a warning and puts these in the sidecar
+    when `near_boundary` is True; the verdict computed from the table is
+    unaffected either way)."""
+    crossed = readout_crossed(table, baseline)
+    nonzero = [f for f in table if f != baseline]
+    near = False
+    if nonzero:
+        min_abs = min(abs(f) for f in nonzero)
+        near = any(crossed[f] for f in nonzero if abs(f) == min_abs)
+    g0 = table[baseline]["g_read"] if baseline in table else None
+    swing = {"+1": table[1.0]["g_read"] if 1.0 in table else None,
+             "-1": table[-1.0]["g_read"] if -1.0 in table else None}
+    return {"near_boundary": near, "baseline_g_read": g0,
+            "g_read_swing_at_pm1": swing}
+
+
+def count_empty_completions(rows, direction):
+    """Count rows for `direction` whose `completion` is blank.
+
+    `csv.DictReader` yields the literal `None` (not a missing key) for a short
+    row, so `r.get("completion", "")` alone still returns None when the key IS
+    present with value None, and `None.strip()` raises AttributeError.
+    `(r.get("completion") or "")` is required — `refusal_judge` has
+    `_blank_completion` for exactly this case."""
+    return sum(1 for r in rows if r["direction"] == direction
+              and not (r.get("completion") or "").strip())
+
+
 def _read(path):
     if not os.path.exists(path):
         raise SystemExit(f"[control] missing {path}")
@@ -238,26 +320,47 @@ def _sixsig(x):
 def run(ds, arm, direction=DEFAULT_DIRECTION, min_delta=MIN_DELTA):
     judged = _read(f"judge_refusal_{ds}_{arm}.csv")
     summ = _read_json(f"reach_summary_{ds}.json")
-    n_empty_completion = sum(1 for r in judged if not r.get("completion", "").strip())
+    stmt_fracs = None
     if arm == "mean":
         readout = _read(f"reach_steer_readout_{ds}.csv")
         rows, dropped = mean_arm_rows(judged, readout, summ, direction)
         direction_used = direction
+        n_never_steered = 0
     else:
-        rows = align_stmt_rows(judged, _read(f"reach_steer_stmt_meta_{ds}.csv"))
+        rows, n_never_steered = align_stmt_rows(
+            judged, _read(f"reach_steer_stmt_meta_{ds}.csv"))
+        if n_never_steered:
+            print(f"[control] align_stmt_rows: dropped {n_never_steered} "
+                  f"never-steered statement row(s) (eps_star<=0) — those "
+                  f"statements have no treatment counterpart and are not a "
+                  f"baseline for anything")
         dropped = 0
         direction_used = judged[0]["direction"] if judged else None
+        stmt_fracs = stmt_crossing_fracs(rows)
+
+    n_empty_completion = count_empty_completions(judged, direction_used)
+
     table = aggregate(rows)
     require_signal(table)
-    if 0.0 in table and table[0.0]["g_read"] <= 0.0:
-        raise SystemExit(f"[control] baseline readout is already inside the target "
-                         f"halfspace (g_read={table[0.0]['g_read']:.6g} <= 0) — the "
-                         f"crossing test is vacuous: this prompt population does not "
-                         f"sit where t02 was fit, so `readout_crossed` cannot support "
-                         f"any verdict here (it will report every frac as not-crossed "
-                         f"by construction; do not read that as `no-crossing`)")
+    if 0.0 in table:
+        g0 = table[0.0]["g_read"]
+        if g0 < 0.0:
+            raise SystemExit(f"[control] baseline readout is already INSIDE the "
+                             f"target halfspace (g_read={g0:.6g} < 0) — the "
+                             f"crossing test is vacuous: this prompt population "
+                             f"does not sit where t02 was fit, so "
+                             f"`readout_crossed` cannot support any verdict here "
+                             f"(it will report every frac as not-crossed by "
+                             f"construction; do not read that as `no-crossing`)")
+        if g0 == 0.0:
+            raise SystemExit(f"[control] baseline readout sits EXACTLY ON the "
+                             f"target boundary (g_read=0.0) — the crossing test "
+                             f"is vacuous: this prompt population does not sit "
+                             f"where t02 was fit, so `readout_crossed` cannot "
+                             f"support any verdict here")
     crossed, delta = readout_crossed(table), behavior_delta(table)
     v = verdict(crossed, delta, min_delta)
+    nb = near_boundary_check(table)
     print(f"[control] {ds} arm={arm}: VERDICT = {v}")
     print(f"  {'frac_eps*':>10s} {'n':>5s} {'mean g_read':>12s} {'crossed':>8s} "
           f"{'refused':>8s} {'delta':>8s}")
@@ -290,6 +393,21 @@ def run(ds, arm, direction=DEFAULT_DIRECTION, min_delta=MIN_DELTA):
               f"boundary; the actuatable verdict still stands, but interpret it "
               f"with this in mind")
 
+    positive_cross = [f for f in sorted(table) if f > 0.0 and crossed[f]]
+    if positive_cross:
+        print(f"[control] WARNING: crossing detected at POSITIVE frac(s) "
+              f"{positive_cross} — per the certificate's own sign convention "
+              f"(reach_steer.py:167), crossings should only occur at negative "
+              f"fracs; this suggests the linearization sign is wrong or the "
+              f"readout is non-monotone")
+
+    if nb["near_boundary"]:
+        print(f"[control] WARNING: near-boundary baseline "
+              f"(g_read={nb['baseline_g_read']:.6g}) — the smallest swept |frac| "
+              f"already crosses, so the certificate's MAGNITUDE claim (~eps* of "
+              f"perturbation needed) is UNTESTED for this population; the "
+              f"co-occurrence finding may be real but says nothing about scale")
+
     csv_out = f"reach_control_{ds}_{arm}.csv"
     with open(csv_out, "w", newline="") as f2:
         csv.writer(f2).writerows(out_rows)
@@ -304,8 +422,13 @@ def run(ds, arm, direction=DEFAULT_DIRECTION, min_delta=MIN_DELTA):
             "min_delta": min_delta,
             "verdict": v,
             "dropped_unmatched_rows": dropped,
+            "dropped_never_steered_rows": n_never_steered,
             "empty_completion_rows": n_empty_completion,
             "table": json_table,
+            "stmt_crossing_fracs": stmt_fracs,
+            "near_boundary": nb["near_boundary"],
+            "baseline_g_read": nb["baseline_g_read"],
+            "g_read_swing_at_pm1": nb["g_read_swing_at_pm1"],
             "column_semantics": COLUMN_SEMANTICS,
         }, f3, indent=2)
     print(f"[control] wrote {json_out}")

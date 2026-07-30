@@ -6,7 +6,9 @@ import pytest
 
 import reach_control
 from reach_control import (frac_of, align_stmt_rows, aggregate, readout_crossed,
-                           behavior_delta, verdict, require_signal, mean_arm_rows)
+                           behavior_delta, verdict, require_signal, mean_arm_rows,
+                           stmt_crossing_fracs, near_boundary_check,
+                           count_empty_completions)
 
 
 def _j(scale, refused):
@@ -14,9 +16,23 @@ def _j(scale, refused):
             "completion": "c", "refused": str(refused)}
 
 
-def _m(scale, eps, g):
-    return {"stmt_index": "0", "label": "1", "eps_star": str(eps),
+def _m(scale, eps, g, stmt_index=0):
+    return {"stmt_index": str(stmt_index), "label": "1", "eps_star": str(eps),
             "scale": str(scale), "g_read": str(g)}
+
+
+def _stmt_rows(index, eps_star, baseline_g, treated_g=None, refused_treated=1.0):
+    """(judged, meta) rows contributed by one per-statement-arm subject: always a
+    baseline row (scale=0); a treatment row at frac=-1 (scale=-eps_star) only if
+    the statement was actually steered (eps_star>0) -- a never-steered statement
+    (reach_steer.py:167 -- eps_i=0 when g_i<=0) contributes ONLY the lone
+    baseline row, since scale_grid returns [0.0] in that case."""
+    judged = [_j(0.0, 0)]
+    meta = [_m(0.0, eps_star, baseline_g, stmt_index=index)]
+    if eps_star > 0.0:
+        judged.append(_j(-eps_star, refused_treated))
+        meta.append(_m(-eps_star, eps_star, treated_g, stmt_index=index))
+    return judged, meta
 
 
 def test_frac_of_divides_by_eps_star():
@@ -29,11 +45,14 @@ def test_frac_of_is_zero_when_eps_star_is_zero():
 
 
 def test_align_stmt_rows_pairs_by_row_order():
-    out = align_stmt_rows([_j(0.0, 0), _j(3.0, 1)],
-                          [_m(0.0, 3.0, 5.0), _m(3.0, 3.0, -1.0)])
+    out, n_never_steered = align_stmt_rows(
+        [_j(0.0, 0), _j(3.0, 1)],
+        [_m(0.0, 3.0, 5.0, stmt_index=7), _m(3.0, 3.0, -1.0, stmt_index=7)])
+    assert n_never_steered == 0
     assert [r["frac"] for r in out] == [0.0, 1.0]
     assert [r["refused"] for r in out] == [0.0, 1.0]
     assert [r["g_read"] for r in out] == [5.0, -1.0]
+    assert [r["stmt_index"] for r in out] == [7, 7]
 
 
 def test_align_stmt_rows_rejects_length_mismatch():
@@ -165,13 +184,16 @@ def test_readout_crossed_requires_baseline_sign_change_not_membership():
 
 
 def test_readout_crossed_detects_genuine_sign_change_baseline_never_flagged():
-    # A real crossing: baseline starts outside (g>0), steered lands inside (g<=0).
-    # The baseline frac itself must never be reported as crossed.
+    # A real crossing occurs at a NEGATIVE frac: eps* is positive only where g>0
+    # (reach_steer.py:167), so crossings occur at negative fracs; a positive-frac
+    # "crossing" would mean the linearization sign is wrong or the readout is
+    # non-monotone (see the positive-frac warning in run()). The baseline frac
+    # itself must never be reported as crossed.
     t = {0.0: {"g_read": 3.0, "frac_refused": 0.0},
-         1.0: {"g_read": -1.0, "frac_refused": 0.4}}
+         -1.0: {"g_read": -1.0, "frac_refused": 0.4}}
     c = readout_crossed(t)
     assert c[0.0] is False
-    assert c[1.0] is True
+    assert c[-1.0] is True
 
 
 def test_verdict_refuses_a_baseline_only_table():
@@ -187,3 +209,84 @@ def test_named_errors_instead_of_bare_exceptions():
     # leaked file handle from a raw json.load(open(...))).
     with pytest.raises(SystemExit, match="missing"):
         reach_control._read_json("/nonexistent/path/reach_summary_doesnotexist.json")
+
+
+def test_per_stmt_never_steered_rows_do_not_contaminate_frac0_baseline():
+    # Reproduces the reviewer's exact scenario: 100 statements with textbook
+    # crossings (g: +2 -> -3 at frac -1, refusal 0 -> 1.0) plus 40 NEVER-STEERED
+    # statements (eps_star=0, only a lone baseline row at g=-6, no treatment row).
+    # frac_of(0.0, 0.0)==0.0 lands those 40 rows in the SAME frac=0 bucket as the
+    # 100 genuine baselines, biasing bucket 0 toward g<=0 while the treatment
+    # bucket stays g>0-only -- this flips a textbook actuatable result into
+    # "inert", the worst possible failure direction for a positive control.
+    judged, meta = [], []
+    for i in range(100):
+        j, m = _stmt_rows(i, eps_star=3.0, baseline_g=2.0, treated_g=-3.0,
+                          refused_treated=1.0)
+        judged += j; meta += m
+    for i in range(100, 140):
+        j, m = _stmt_rows(i, eps_star=0.0, baseline_g=-6.0)
+        judged += j; meta += m
+
+    rows, n_never_steered = align_stmt_rows(judged, meta)
+    assert n_never_steered == 40
+    table = aggregate(rows)
+    require_signal(table)
+    assert table[0.0]["g_read"] > 0.0    # baseline no longer contaminated
+    crossed, delta = readout_crossed(table), behavior_delta(table)
+    assert verdict(crossed, delta) == "actuatable"
+
+
+def test_align_stmt_rows_carries_stmt_index_and_per_statement_crossing_fraction():
+    # stmt 7 individually crosses (base g=+2 -> g=-1 at frac -1); stmt 9 does NOT
+    # (base g=+5 -> stays positive, g=+1, at frac -1). The bucket MEAN at frac -1
+    # is (-1+1)/2 = 0.0 <= 0 -- readout_crossed would call the whole bucket
+    # "crossed" even though only ONE of the two statements individually did.
+    # stmt_crossing_fracs is strictly more informative: it must report 0.5, not a
+    # binary "crossed".
+    judged = [_j(0.0, 0), _j(-2.0, 1),
+              _j(0.0, 0), _j(-5.0, 0)]
+    meta = [_m(0.0, 2.0, 2.0, stmt_index=7), _m(-2.0, 2.0, -1.0, stmt_index=7),
+            _m(0.0, 5.0, 5.0, stmt_index=9), _m(-5.0, 5.0, 1.0, stmt_index=9)]
+    rows, n_never_steered = align_stmt_rows(judged, meta)
+    assert n_never_steered == 0
+    assert {r["stmt_index"] for r in rows} == {7, 9}
+
+    table = aggregate(rows)
+    assert table[-1.0]["g_read"] == 0.0            # the bucket mean says "crossed"
+    assert readout_crossed(table)[-1.0] is True    # (bucket-level view)
+
+    frac_map = stmt_crossing_fracs(rows)
+    assert frac_map[-1.0] == 0.5                   # per-statement view: only half did
+
+
+def test_near_boundary_baseline_warns_but_still_returns_actuatable():
+    # Baseline g0 is tiny but still positive (1e-9); the SMALLEST swept |frac|
+    # (-1) already crosses, so the certificate's magnitude claim (~eps* of
+    # perturbation needed) is untested for this population. This must WARN via
+    # the returned flag, not abort -- the verdict computed from the table is
+    # unaffected.
+    table = {0.0: {"g_read": 1e-9, "frac_refused": 0.0},
+             -1.0: {"g_read": -4.0, "frac_refused": 0.6},
+             1.0: {"g_read": 9.0, "frac_refused": 0.0}}
+    diag = near_boundary_check(table)
+    assert diag["near_boundary"] is True
+    assert diag["baseline_g_read"] == 1e-9
+    assert diag["g_read_swing_at_pm1"] == {"+1": 9.0, "-1": -4.0}
+
+    crossed, delta = readout_crossed(table), behavior_delta(table)
+    assert verdict(crossed, delta) == "actuatable"
+
+
+def test_count_empty_completions_handles_none_value_without_raising():
+    # csv.DictReader yields the literal None (not a missing key) for a short row;
+    # `.get("completion", "")` alone still returns None in that case, and
+    # None.strip() raises AttributeError. Must not crash, and must filter by
+    # direction like every other sidecar field.
+    rows = [
+        {"direction": "jtw_mean_diff_tgt", "completion": None},
+        {"direction": "jtw_mean_diff_tgt", "completion": "  "},
+        {"direction": "jtw_mean_diff_tgt", "completion": "ok"},
+        {"direction": "jtw_other", "completion": None},
+    ]
+    assert count_empty_completions(rows, "jtw_mean_diff_tgt") == 2
