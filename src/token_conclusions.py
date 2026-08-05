@@ -50,3 +50,90 @@ def shared_statements(df):
 def restrict_to_shared(df):
     """`df` restricted to the statements every direction ran."""
     return df[df.stmt.isin(shared_statements(df))].copy()
+
+
+LEGACY_NAME = "mean_diff_tgt"     # the readout every prior reach_steer run used
+UNREACHABLE = 1e12                # sentinel eps* when the margin vanishes
+
+
+def legacy_eps_star(ds, root="."):
+    """Per-statement eps* for the legacy truth readout, keyed by dataset row index.
+
+    eps* is NOT stored anywhere on disk. `margins` in reach_margins_<ds>.npz holds
+    m = ||J^T w||, and eps* = g/m with g = w.h_tgt - t02, exactly the definition in
+    reach_analyze.required_eps. Reconstructing it here rather than importing keeps this
+    module free of the reach pipeline's torch imports.
+
+    Returns (eps_by_row, labels_by_row). Statements outside the reach_margins subsample
+    are absent from both dicts, which is what makes crossed_flags drop them.
+
+    Every npz member is bound to a local array once. Indexing an NpzFile re-inflates
+    the whole array on each access and `jtw` alone is 1496 x 14 x 2304.
+    """
+    dirs = np.load(os.path.join(root, f"reach_dirs_{ds}.npz"), allow_pickle=True)
+    acts = np.load(os.path.join(root, f"reach_acts_{ds}.npz"), allow_pickle=True)
+    mz = np.load(os.path.join(root, f"reach_margins_{ds}.npz"), allow_pickle=True)
+
+    names = [str(x) for x in dirs["names"]]
+    k = names.index(LEGACY_NAME)
+    w = np.asarray(dirs["W"], np.float64)[k]
+    t02 = float(np.asarray(dirs["thresh02"], np.float64)[k])
+    m = np.asarray(mz["margins"], np.float64)[:, k]
+
+    n = m.shape[0]                       # reach_margins may be shorter on a --limit run
+    h = np.asarray(acts["h_tgt"], np.float64)[:n]
+    row_index = np.asarray(acts["row_index"])[:n]
+    labels = np.asarray(acts["labels"]).astype(int)[:n]
+
+    g = h @ w - t02
+    eps = np.where(g <= 0, 0.0,
+                   np.where(m > 1e-12, g / np.maximum(m, 1e-12), UNREACHABLE))
+    return ({int(r): float(e) for r, e in zip(row_index, eps)},
+            {int(r): int(v) for r, v in zip(row_index, labels)})
+
+
+def crossed_flags(df, eps_by_row, labels_by_row, label=None):
+    """Add `eps_legacy` and `crossed` to `df`, keyed on the dataset row index in `stmt`.
+
+    `crossed` is |scale| >= eps*_legacy, which is a FIRST-ORDER PREDICTION and not a
+    measurement. token_steer logs no truth readout at any scale (its `readout_delta`
+    column is the token margin under a misleading name). Because jtw_legacy is the unit
+    vector along J^T w, the readout moves by scale * ||J^T w|| to first order, and
+    eps*_legacy = g / ||J^T w|| is defined precisely so the readout reaches its
+    threshold at scale = eps*_legacy. The linear step is licensed by an already
+    measured per-statement R^2 of 0.9991 on cities, not assumed here. Any table built
+    from this column must say so.
+
+    `label=1` restricts to true statements. Use it for any pooled crossed rate: g <= 0
+    means the statement already sits in the target halfspace, so eps* is 0 and
+    `crossed` is trivially true. On cities that is 96 of 99 label-0 statements and 0 of
+    101 label-1 statements.
+    """
+    e = df.stmt.map(eps_by_row)
+    y = df.stmt.map(labels_by_row)
+    keep = e.notna() & y.notna()
+    if label is not None:
+        keep &= (y == label)
+    out = df[keep].copy()
+    out["eps_legacy"] = e[keep].to_numpy(dtype=float)
+    out["label"] = y[keep].to_numpy(dtype=int)
+    out["crossed"] = out.scale.abs().to_numpy() >= out.eps_legacy.to_numpy()
+    return out
+
+
+def cross_tab(df):
+    """2x2 counts and the phi coefficient for `crossed` against `hit_target`.
+
+    phi is NaN when any margin of the table is zero. jtw_legacy is expected to produce
+    an all-zero flipped column, so this is the normal case, not an error case. Returning
+    0.0 there would read as "measured no association" when the truth is "association is
+    not measurable from a degenerate table".
+    """
+    c = df.crossed.to_numpy().astype(bool)
+    f = df.hit_target.to_numpy().astype(bool)
+    n11, n10 = int((c & f).sum()), int((c & ~f).sum())
+    n01, n00 = int((~c & f).sum()), int((~c & ~f).sum())
+    den = float((n11 + n10) * (n01 + n00) * (n11 + n01) * (n10 + n00))
+    phi = float("nan") if den <= 0 else (n11 * n00 - n10 * n01) / np.sqrt(den)
+    return {"n": int(len(df)), "crossed_flipped": n11, "crossed_not_flipped": n10,
+            "not_crossed_flipped": n01, "not_crossed_not_flipped": n00, "phi": phi}
