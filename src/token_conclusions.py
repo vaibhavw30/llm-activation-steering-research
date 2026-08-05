@@ -170,21 +170,7 @@ def proportional_per_statement(df, a="tgt_minus_top_delta", b="frac_margin", rto
 
     Rows with |b| below 1e-9 are dropped: frac == 0 makes frac_margin exactly zero by
     construction and the ratio is undefined there.
-
-    Deviation from the task-3 brief: if the requested `a` column is absent, this falls
-    back to the pre-load_arm name via LEGACY_COLUMN_ALIASES (the same map load_arm uses
-    to rename `readout_delta` to `tgt_minus_top_delta`). Two of the brief's own tests
-    build a frame with a `readout_delta` column and call this with the default
-    `a="tgt_minus_top_delta"`, which is not present, so the verbatim implementation
-    raises KeyError instead of returning the False documented in that test. The fallback
-    below resolves it without touching the test text, and is inert on every real caller
-    because load_arm already renamed the column before this function ever sees the
-    frame.
     """
-    if a not in df.columns:
-        legacy = next((k for k, v in LEGACY_COLUMN_ALIASES.items() if v == a), None)
-        if legacy is not None and legacy in df.columns:
-            a = legacy
     s = df[df[b].abs() > 1e-9].copy()
     if s.empty:
         return False

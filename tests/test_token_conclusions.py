@@ -180,7 +180,7 @@ def test_proportional_detector_stays_silent_on_independent_columns():
         "direction": ["A"] * 4,
         "stmt": [1, 1, 2, 2],
         "frac_margin": [0.01, 0.02, 0.05, 0.10],
-        "readout_delta": [0.13, 0.90, 1.00, 0.20],
+        "tgt_minus_top_delta": [0.13, 0.90, 1.00, 0.20],
     })
     assert tc.proportional_per_statement(df) is False
 
@@ -195,4 +195,4 @@ def test_proportional_detector_ignores_the_frac_zero_rows():
         "frac_margin": [0.0, 0.01, 0.02],
         "readout_delta": [0.0, 0.13, 0.26],
     })
-    assert tc.proportional_per_statement(df) is True
+    assert tc.proportional_per_statement(df, a="readout_delta") is True
