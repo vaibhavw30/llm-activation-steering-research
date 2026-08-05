@@ -19,22 +19,25 @@ readings are string-level. Date: 2026-08-05.
 The meeting's central proposal was to stop defining the target set with a fitted probe
 and start defining it in token space, where membership *is* the behavior. That proposal
 is now tested and it works: at the output layer the closed-form cone displacement flips
-the emitted token on every statement it was scored on, 101 of 101 on cities and 44 of 44
-on common_claim, and pulled back through the Jacobian to layer 16 it flips the token on
+the emitted token on every statement it was scored on, 200 of 200 on cities and 200 of
+200 on common_claim (101 of 101 and 44 of 44 inside the label-1 cross-tab that §3 and §5
+report), and pulled back through the Jacobian to layer 16 it flips the token on
 34.0% of cities statements at the certified budget and 67.5% at twice it, while the old
 probe-halfspace direction flips nothing at all, a hit rate of 0.000 in every arm, at
 every budget, on both datasets. The reason the old direction fails is now a number
-rather than a story: at the budget the old certificate
+rather than a story: on cities, at the budget the old certificate
 calls a full trip into the FALSE halfspace, it consumes a median **1.7%** of the logit
 margin that actually decides the token. The PI's prediction that a naive output-layer
 steer would reproduce the failure and mostly produce incoherence held exactly, and the
 inference he flagged as the next step ("then the issue is the linear feature in the
 final layer") is refuted by the same arm: at the output layer the map from perturbation
-to logits is *exactly* linear, and a linear intervention there does flip the token
-cleanly when it is the right one. What fails is alignment, not linearity. The three
-claims that were never measured are now measured, one is not answerable from the files
-we have, and the request to write the algebra out end to end is substantially done but
-not yet in one deliverable document.
+to logits is *exactly* linear up to a monotone final-logit softcap that preserves the
+argmax and therefore the cone, and a linear intervention there does flip the token
+cleanly when it is the right one. What fails is alignment, not linearity. Of the three
+claims that were never measured, two are now measured and the third, the SAE claim, is
+not answerable from the files we have; and the request to write the algebra out end to
+end is substantially done, with the broadcast operator and the cross-layer alpha
+convention still unwritten.
 
 ---
 
@@ -47,8 +50,8 @@ The claims are the table at
 |---|---|---|---|---|
 | 1 | Naively steer on the output; if it causes the same problem, mostly making it incoherent | E1a, post-norm steer | **CONFIRMED** | §3 |
 | 2 | If incoherent, the issue is the linear feature in the final layer | E1a, oracle vs `md_full` in one arm | **REFUTED** | §4 |
-| 3 | Check the steering vector is what you want it to be | Oracle assertion, E4 decoding audit, E7 position ablation | **CONFIRMED** | §5 |
-| 4 | Small perturbations in different directions have vastly different chains | E6, `token_sens` | **ANSWERED** | §6 |
+| 3 | Check the steering vector is what you want it to be | Oracle assertion, E4 decoding audit, E7 position ablation | **ANSWERED**: verified at the post-norm site only, where an oracle arm exists. There is no oracle assertion at layer 16 or layer 8, and the position set turned out to be the under-specified half | §5 |
+| 4 | Small perturbations in different directions have vastly different chains (chaotic latent space) | E6, `token_sens` | **ANSWERED**, and the two halves get opposite answers: the anisotropy half holds (9.91x spread across directions at cities layer 16), the chaos half does not (`kappa` within 6.1% of 1 across a 400x budget range on cities) | §6 |
 | 5 | SAE is a useful alternative for classifying the target set | E5, `sae_decompose` | **NOT ANSWERABLE FROM THESE FILES** | §7 |
 | 6 | Temperature 0, deterministic, invert the token mapping | E0 plus E1 plus E3 | **CONFIRMED** | §8 |
 | 7 | Write out all the math from input to output and justify | Documentation | **UNRESOLVED** | §9 |
@@ -59,8 +62,13 @@ The claims are the table at
 ## 2. What was run, and what each number is
 
 **The sites.** A perturbation is injected at one of three places. *Post-norm* is the
-activation `z` after the final RMSNorm, where the logits are exactly `u = E z`, so the
-map from perturbation to logits is linear with no approximation at all. *Pre-norm* is
+activation `z` after the final RMSNorm, where the pre-softcap logits are exactly
+`u = E z`, so the map from perturbation to logits is linear with no approximation at all
+up to gemma-2's `final_logit_softcapping = 30.0`. That softcap is strictly increasing, so
+it preserves the argmax and therefore the cone, and the margin the certificate spends is
+the pre-softcap one: the code computes margins against the uncapped unembedding rows and
+takes the argmax from the model's own capped head precisely because the two agree
+(`src/token_geom.py:58`, `src/token_steer.py:153`). *Pre-norm* is
 the residual stream before that norm. *Layer L* is the input of decoder block L, reached
 by one vector-Jacobian product. cities was steered at layer 16, common_claim at layer 8.
 
@@ -89,8 +97,9 @@ truth readout, so whether the legacy readout crossed its own threshold is recons
 as `|scale| >= eps*_legacy`, and **two caveats travel with every number derived from
 it**:
 
-1. The per-statement `R^2 = 0.9991` that licenses the reconstruction licenses
-   **linearity** of readout against scale, **not gain**. The same measurement
+1. The per-statement `R^2` that licenses the reconstruction, **0.9991 on cities and
+   0.990 on common_claim**, licenses **linearity** of readout against scale, **not
+   gain**. The same measurement
    ([`REACH_AUDIT_FINDINGS.md:79`](REACH_AUDIT_FINDINGS.md), the D1 result) found the
    realized slope **8x to 35x below** the predicted `||J^T w||`. So `crossed` is an
    optimistic upper bound on how often the readout truly crossed, not a count of
@@ -128,7 +137,7 @@ common_claim); the coherence and country tables are the full 200.
 
 **cities, post-norm, repetition penalty 1.0, at `frac = 1.0`:**
 
-| direction | flips (label 1, n=101) | median &#124;`frac_margin`&#124; | degenerate | edit ratio |
+| direction | flips (label 1, n=101) | median &#124;`frac_margin`&#124; (n=200) | degenerate | edit ratio |
 |---|---:|---:|---:|---:|
 | `oracle` | **101 / 101** | 1.0010 | 0.035 | 0.568 |
 | `md_full` | 1 / 101 | 1.0877 | **0.885** | 0.862 |
@@ -168,7 +177,8 @@ The measurement agreed. It is recorded here that the expectation was set first.
 
 **Method.** The decisive comparison needs no new arm. It is three directions inside a
 single arm, at a single budget, at the one site where the linearity question has an
-exact answer: `u(z + d) = E z + E d`.
+exact answer: `u(z + d) = E z + E d`, up to the monotone final-logit softcap, which
+preserves the argmax and therefore the cone.
 
 **The sharpest fact in the dump.** On cities at `frac = 1.0`, `md_full` consumes a median
 **1.0877** of the logit margin, *more* than `oracle`'s **1.0010**, and flips **1** of 101
@@ -183,19 +193,25 @@ every statement, in the same arm, at the same budget scale. So the incoherence i
 the *direction*: `md_full`'s median alignment with the token decision is
 `alpha = 0.00398` on cities, below the **0.0166** a random unit direction in d = 2304
 would score. The final layer's linear structure is not the problem; it is the one part of
-the pipeline that is provably exactly linear.
+the pipeline that is provably exactly linear, up to a monotone softcap that leaves the
+argmax, and therefore the cone, untouched.
 
 ---
 
-## 5. Claim 3: the injected vector is what we think it is, and the position set is half its specification
+## 5. Claim 3: the injected vector is verified at the output site only, and the position set is half its specification
 
-**CONFIRMED.**
+**ANSWERED.** The vector is verified where an oracle arm exists, which is the post-norm
+site and only the post-norm site. There is no oracle assertion at cities layer 16 or at
+common_claim layer 8 (§12), so this is not a general verification of the injected vector
+at the layer sites, and the second half of the section is a defect report rather than a
+confirmation.
 
 **Check 1, the oracle assertion.** At the post-norm site with the cone QP solution, the
 flip is a theorem verified in closed form against the full vocabulary. If the running
-model does not emit the target, the injection code is wrong. It emits it: **101/101** on
-cities and **44/44** on common_claim at label 1, at `frac = 1.0`, in every post-norm arm
-including the repetition-penalty 1.3 arm.
+model does not emit the target, the injection code is wrong. It emits it on every
+statement of both datasets: **200/200** on cities and **200/200** on common_claim at
+`frac = 1.0`, in every post-norm arm including the repetition-penalty 1.3 arm. Restricted
+to the label-1 subsets that A1's cross-tab uses, the same rows read 101/101 and 44/44.
 
 **Check 2, the arithmetic assertion.** At the post-norm site `A_S = I`, so the realized
 gain must be exactly 1 for every direction at every budget. Measured across 13 directions
@@ -218,7 +234,8 @@ flat: 0.811 against 0.800 at `frac = 1.0` (90 shared statements; `jtw_legacy` co
 200 there, 44 at label 1). Mean stem length is 6.32 words on cities and 9.74 on
 common_claim.
 
-**Reading.** The vector is what we think it is, at the site we think it is. What was
+**Reading.** The vector is what we think it is at the post-norm site, which is the only
+site carrying an arm that can assert it. What was
 under-specified was never the vector: it was the position set it is added at, which
 changes the realized flip rate by a factor of 2.5 on cities while the first-order
 `broadcast_gain` predicts only 1.355 (§10). A steering specification is a direction *and*
@@ -244,15 +261,18 @@ medians, through A8.
 | cities, layer 16 broadcast | 9.91 with `jtw`, **1.74 without it** | 0.98 to 1.06, except `jtw` at 0.66 |
 | common_claim, post-norm | 1.000 | 1.000 exactly, all directions |
 | common_claim, pre-norm | 1.25 | 0.985 to 1.000 |
-| common_claim, layer 16 broadcast | 7.90 with `jtw`, **1.42 without it** | 0.85 to 1.02, `jtw` at 0.85 |
+| common_claim, layer 16 broadcast | 7.90 with `jtw`, **1.42 without it** | 0.97 to 1.02, except `jtw` at 0.85 |
 
 **Reading, in two parts, because the claim bundles two different assertions.**
 
-*Scale dependence, the part that would break the program, is absent.* `kappa` is within
-1% of 1 at the post-norm and pre-norm sites and within 6% at layer 16 for every direction
-except the pulled-back token direction, whose gain falls 34% (cities) and 15%
-(common_claim) from the smallest budget to the largest. A first-order certificate is
-valid across the whole range we sweep.
+*Scale dependence, the part that would break the program, is absent.* Stated per dataset,
+because the two do not share a tolerance: on cities `kappa` is 1.0000 exactly at the
+post-norm site, within **0.3%** of 1 pre-norm, and within **6.1%** at layer 16; on
+common_claim it is 1.0000 exactly post-norm, within **1.5%** pre-norm, and within **3.3%**
+at layer 16. Those layer-16 figures exclude the one direction that does move, the
+pulled-back token direction, whose gain falls 34% (cities) and 15% (common_claim) from the
+smallest budget to the largest. A first-order certificate is valid across the whole range
+we sweep.
 
 *Anisotropy is present at depth, and it is structured rather than chaotic.* At layer 16
 exactly one direction stands out, and it is the pulled-back token direction: its gain is
@@ -369,9 +389,9 @@ logit margin actually consumed, restricted to shared statements:
 | common_claim, layer 8 broadcast | `jtw_token` | 1.9693 | 2.5908 | 90 |
 | common_claim, layer 8 broadcast | `jtw_legacy` | **0.0272** | 0.1046 | 90 |
 
-At the budget the old certificate calls a full trip into the FALSE halfspace, the legacy
-direction consumes **1.7%** of the deciding margin at the output layer and **0.8%** at
-layer 16 on cities. That single line is the quantitative replacement for the whole
+On cities, at the budget the old certificate calls a full trip into the FALSE halfspace,
+the legacy direction consumes **1.7%** of the deciding margin at the output layer and
+**0.8%** at layer 16. That single line is the quantitative replacement for the whole
 qualitative story about why the old null was uninformative.
 
 **Result 3: it buys a semantic flip without destroying the text.** At cities layer 16
@@ -395,9 +415,11 @@ site, which is the only reason the number is quotable at all. Read the cities ce
 a crossing count.
 
 **The honest limit on all four results.** The certificate is a **first-token** claim and
-the completion recovers. `oracle` flips 101 of 101 first tokens on cities, and yet only
-**0.085** of those completions name the target country while **0.700** still name the
-correct one. Reaching the cone at position `t` does not keep the model there at
+the completion recovers. On cities `oracle` flips the first token on **200 of 200**
+statements, and yet only **0.085** of those same 200 completions name the target country
+while **0.700** still name the correct one. Both fractions are over all 200; quoting the
+label-1 subset (101 of 101) beside them would halve the denominator mid-sentence.
+Reaching the cone at position `t` does not keep the model there at
 position `t+1`. Extending the target set over a horizon is the natural next problem, and
 it is exactly what the BRT-Align style recursion in the PI's citation is for.
 
@@ -520,19 +542,22 @@ improvement (§13).
    layer 8 reads 0.811 and 0.844 on its 90 shared statements.
 3. The probe-halfspace direction actuates **nowhere**: hit rate **0.000** in every one of
    the 8 arms it was run in, at every budget, on both datasets.
-4. The reason, in the right unit: at `frac = 1.0` the legacy direction consumes a median
-   **1.7%** of the logit margin at the output layer (n = 200) and **0.8%** at layer 16,
-   against `oracle`'s 1.0010 and `jtw_token`'s 1.0735.
-5. Consuming the margin is necessary and not sufficient: `md_full` consumes **1.0877** of
-   it and flips **1 of 101**, while `oracle` consumes **1.0010** and flips **101 of 101**.
+4. The reason, in the right unit, on cities: at `frac = 1.0` the legacy direction consumes
+   a median **1.7%** of the logit margin at the output layer (n = 200) and **0.8%** at
+   layer 16, against `oracle`'s 1.0010 and `jtw_token`'s 1.0735 on the same dataset.
+5. Consuming the margin is necessary and not sufficient, on cities at the post-norm site:
+   `md_full` consumes **1.0877** of it and flips **1 of 101** at label 1, while `oracle`
+   consumes **1.0010** and flips **101 of 101** at label 1, 200 of 200 over the full set.
 6. Every candidate truth direction is at or below the chance alignment floor of **0.0166**
    in d = 2304: 0.00398 to 0.01355 on cities, 0.0094 to 0.0156 on common_claim, n = 200
    each.
 7. `alpha` predicts realized behavior where the test has power: Spearman **0.316**,
    p = 5.3e-06 on common_claim (n = 200), quartile hit rates 0.010 to 0.155.
-8. The first-order certificate is valid over the whole swept budget range: `kappa` within
-   1% of 1 at the post-norm and pre-norm sites, within 6% at layer 16 for every direction
-   but one (40 statements, 4 budgets, 13 directions).
+8. The first-order certificate is valid over the whole swept budget range, per dataset:
+   `kappa` is 1.0000 exactly at the post-norm site on both, and within **0.3%** of 1
+   pre-norm and **6.1%** at layer 16 on cities, within **1.5%** pre-norm and **3.3%** at
+   layer 16 on common_claim, for every direction but one (40 statements, 4 budgets, 13
+   directions at the post-norm and pre-norm sites, 14 at layer 16).
 9. The harness is verified twice at the output layer: the oracle flip is a theorem and it
    fires, and the realized gain is exactly **1.0000** for all 13 directions at all 4
    budgets as arithmetic requires.
@@ -559,9 +584,9 @@ improvement (§13).
 ## 12. What is not established, the honest column
 
 - **Everything here is first-token.** The certificate makes no claim about the rest of the
-  completion, and the completions demonstrably recover: `oracle` flips 101 of 101 first
-  tokens on cities while only 0.085 of the completions name the target country and 0.700
-  still name the correct one.
+  completion, and the completions demonstrably recover: on cities `oracle` flips the first
+  token on 200 of 200 statements while only 0.085 of those 200 completions name the target
+  country and 0.700 still name the correct one. All three figures are over the same 200.
 - **n = 200 per dataset**, subsampled from 1,496 and 4,450. One model
   (`google/gemma-2-2b`, fp32), two datasets, both English, both short declarative
   statements.
