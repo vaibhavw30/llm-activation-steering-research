@@ -253,157 +253,221 @@ predicted the stolen-probability result in §5.1 before I ran it.
 
 ---
 
-## 3. Chapter 2: writing the math out (your note 7)
+## 3. Chapter 2: the math, input space to output space (your note 7)
 
 Your ask was for one place where every linear-algebra object between token input and token
-output is written down and justified rather than described in words. That place is
-[`RESULTS_SINCE_LAST_MEETING_PART3.md` §2](RESULTS_SINCE_LAST_MEETING_PART3.md), with the
-proofs, the cone dual and the non-emptiness argument in
-[`math_map.tex`](math_map.tex). **Both are now tracked in git**, so they are shared record
-rather than two working files on my laptop. What follows is the same content in plain
-English, because it is also the vocabulary the rest of this document uses.
+output is written down **and justified**, rather than described in words. This chapter is
+that, in the document you read; the LaTeX source carrying the same content with the proofs
+typeset is [`math_map.tex`](math_map.tex), and **both are now tracked in git** so they are
+shared record rather than two working files on my laptop.
 
-### 3.1 The forward map
+Everything here is derived rather than asserted. Where a step is a modelling choice rather
+than a consequence I say which.
 
-Width `d = 2304`, `L = 26` decoder blocks, vocabulary `V = 256,000`.
+### 3.1 The forward map, written out
 
-| Object | Shape | What it is |
-|---|---|---|
-| `E` | `V x d` | token embedding, **tied**, so the same matrix is the unembedding |
-| `h^(l)_t` | `d` | residual stream at layer `l`, position `t` |
-| `gamma` | `d` | gain of the final RMSNorm |
-| `z_t` | `d` | post-norm activation, `z = (h^(L) / rms(h^(L))) * (1 + gamma)` |
-| `u_t` | `V` | logits, `u = E z` |
-| `c = 30.0` | scalar | final logit softcapping, `u_capped = c * tanh(u/c)` |
+Let `d = 2304` be the model width, `L = 26` the number of decoder blocks, and
+`V = 256,000` the vocabulary. `E` in `R^(V x d)` is the token embedding matrix, and in this
+model it is **tied**, so the same matrix serves as the unembedding. `gamma` in `R^d` is the
+gain of the final RMSNorm.
 
-Only two steps are linear: the unembedding `u = E z`, and RMSNorm once `&#124;&#124;h&#124;&#124;` is held
-fixed. Everything else (attention, MLP, the softcap, softmax) is not. Two facts keep the
-algebra usable anyway, and both matter later:
-
-1. **The softcap is strictly monotone**, so it preserves the argmax and therefore every
-   decision boundary we care about. It changes margins but not which token wins. This is why
-   the token-space geometry in §6.6 is exact rather than approximate.
-2. **The block stack is smooth**, so a first-order model of it is *testable* rather than
-   assumed. Phase 5 and Horizon 0.1 test it, and that testing is most of §4.
-
-### 3.2 Two readouts, one algebra
-
-Everything downstream depends on one choice: which scalar we want to move.
-
-**Probe readout, which the audit ran.** The supervised truth probe at the target layer gives
-a direction `w` and a threshold `t02`. The FALSE set is the halfspace `{u : w.u <= t02}`.
-
-**Token readout, which the token-space program runs.** For statement `i`, let `j_top` be the
-token the model actually emits and `j_tgt` the token we want emitted. Then
+Given a prompt `x_1..T`, the residual stream is
 
 ```
-a_i = E[j_tgt] - E[j_top]  in R^d ,      r_i(z) = a_i . z
+h^(0)_t   =  sqrt(d) * E[x_t]                                              (1)
+
+h^(l+1)   =  h^(l) + Attn_l( RN(h^(l)) ) + MLP_l( RN(.) ),   l = 0..L-1    (2)
 ```
 
-and `r_i > 0` is *exactly* "the model emits `j_tgt` instead of `j_top`" at temperature 0.
-**This is the readout that cannot dissociate from behavior, because it is the decision.** It
-is the same certificate with `w := a_i` and `t := 0`.
-
-The full argmax cone is `C_j = {z : (E[j] - E[k]).z >= 0 for all k != j}`, a convex
-polyhedral cone with 255,999 faces. `a_i` is the single most-violated face; `delta_cone` is
-the least-norm displacement satisfying all of them, solved as a QP.
-
-### 3.3 The certificate, stated once
-
-Fix the sign convention once, because mixing the two orientations is a real bug I hit: the
-**target set is `{z : w.z >= t}`** and a statement starts outside it. Fix an injection site
-`S` and let `A_S` be the linear map from a perturbation there to the readout coordinates. A
-perturbation `delta` moves the readout by `(A_S^T w).delta` to first order, so the
-perturbations that land in the target set form a halfspace, because the preimage of a
-halfspace under a linear map is a halfspace:
+Each block mixes across positions, so `h^(l+1)_t` depends on `h^(l)_1..t`. That
+position-mixing is the reason the broadcast operator in §3.11 is not a bookkeeping detail.
+Then the final norm and the head:
 
 ```
-{ delta : (A_S^T w) . delta >= g }
+z_t   =  RN_gamma( h^(L)_t )  =  ( h^(L)_t / rms(h^(L)_t) ) * (1 + gamma),
+                                  rms(h) = ||h|| / sqrt(d)                 (3)
+
+u_t   =  E z_t   in R^V                                                    (4)
+
+u~_t  =  c * tanh(u_t / c),        c = 30   (final logit softcapping)      (5)
+
+p_t   =  softmax( u~_t / T )                                               (6)
 ```
 
-with three scalars the whole programme turns on:
+Of these six lines, exactly two are linear maps: (4), and (3) once `||h||` is held fixed.
+(1) is linear but is not a site we intervene at. (2), (5) and (6) are not linear. The whole
+chapter is about how much can be said exactly anyway.
 
-- **`g = t - w.z`**, the **gap**: how far the unperturbed statement sits from the boundary.
-  For the token readout `t = 0`, so `g` is literally the logit margin of the incumbent token
-  over the target token.
-- **`m = ||A_S^T w||`**, the **controllability margin**: readout movement per unit of
-  perturbation, in the best possible direction. `A_S^T w` is the **pullback vector** and it
-  is the only object that needs computing.
-- **`eps* = g / m`**, the **budget**: the smallest perturbation norm that reaches the target
-  set. The minimiser is `delta* = (g/m^2) A_S^T w`, the pullback vector rescaled.
+### 3.2 A convention warning, because it is a real bug I hit
 
-The analogy I would use out loud: `g` is how far away the goalpost is, `m` is how fast your
-car goes in top gear, and `eps*` is how long the drive takes. What the audit found is that
-the drive is short, the car works exactly as the spec says, and the goalpost is not where
-the game is being played.
+Equation (3) **folds the gain into `z`**, so the matrix that pairs with `z` in (4) is the
+plain `E`. The other valid convention writes `z' = h^(L)/rms(h^(L))` and
+`W = E * (1 + gamma)`, giving `u = W z'`.
 
-**Why this is cheap, which is the design decision that made per-statement certificates
-possible at all.** `A_S^T w` is one vector-Jacobian product per statement. No `2304 x 2304`
-Jacobian is ever formed. Phase 2 forms full Jacobians deliberately, and that is why Phase 2
-runs on 32 statements while everything else runs on 200.
+Both produce **identical logits and identical argmax**. They do **not** produce identical
+**distances**, and every budget in this chapter is a distance. Mixing them inflates every
+reported `eps` by a factor that varies per coordinate. Fix the convention once and state it,
+which is what this paragraph is for. (The one place the other convention is correct is the
+stolen-probability check in §5.1, where the effective unembedding genuinely is
+`W = E * (1 + gamma)`, because there we are asking about `h` and not about `z`.)
 
-### 3.4 Three injection sites, and why they are not interchangeable
+### 3.3 Three facts that make the output layer tractable
 
-The certificate is not one number, it is one number *per site*, and the sites differ by a
-large factor. Measured medians, `n = 200` per dataset:
+These are the load-bearing structural results. Everything downstream rests on them.
 
-| Site | `A_S` | `m` median (cities) | `m` median (common_claim) |
-|---|---|---:|---:|
-| post-norm, add to `z` | `I` | 2.383 | 2.138 |
-| pre-norm, add to `h^(L)` | `(sqrt(d)/&#124;&#124;h&#124;&#124;) diag(1+gamma) P_perp` | 0.532 | 0.432 |
-| layer `l`, add to `h^(l)` | the block-stack Jacobian `J_l` | 0.607 (L16) | 0.676 (L8) |
+**Fact 1: softcapping is argmax-irrelevant.** `s -> c tanh(s/c)` is strictly increasing and
+applied coordinatewise, so it **preserves the ordering** of `u_t`. Therefore every statement
+about *which token wins* can be made about the raw `u_t = E z_t`, and the softcap can be
+ignored. Statements about *probabilities* may not ignore it. This is why the code computes
+margins against the uncapped unembedding rows while taking the argmax from the model's own
+capped head: the two agree by Fact 1, and that agreement is checked rather than assumed.
 
-The pre-norm map has `P_perp = I - h_hat h_hat^T`, and two consequences fall straight out of
-it. **`P_perp` annihilates the radial component of any perturbation**, so a steering vector
-aligned with the activation itself is simply deleted. And what survives is rescaled by
-`sqrt(d)/||h||`, a contraction. The measured cost of moving one step earlier is the
-**`rmsnorm_penalty`, median 4.380 on cities and 5.177 on common_claim**. That number turns
-out to explain an entire null result in §6.1.
-
-For the probe instantiation, the site and readout layers were inherited from the earlier DCT
-work: `cities` **11 to 20** with `input_scale` 47.72, `common_claim` **13 to 22** with
-`input_scale` 86.73. `input_scale` is the activation's own norm yardstick and every budget
-should be read against it. A budget of 2.8 on cities means a nudge of about 6% of the
-activation's own size.
-
-### 3.5 The broadcast operator, which had been prose and is now written down
-
-Every certificate on disk was computed with the perturbation added at **every position**, not
-at one aligned position. That is not an implementation detail, it is a different linear map,
-and I only wrote it down properly this window.
-
-Let `B` be the broadcast, `B delta = 1_T (x) delta`. The map actually being inverted is not
-`J` but `J . B`, and its adjoint **sums the position gradients**:
+**Fact 2: at `T = 0` the decoder is exactly an argmax.** So the map from `z` to the emitted
+token is piecewise constant, and its pieces are
 
 ```
-(J . B)^T w  =  B^T J^T w  =  sum_t ( d r / d h^(l)_t )
+C_j  =  { z in R^d  :  (E[j] - E[k]) . z  >=  0   for all k != j }         (7)
 ```
 
-which is literally `g.sum(dim=1)` at [`src/token_jac.py:82`](../src/token_jac.py) and
-[`src/reach_jlens.py:97`](../src/reach_jlens.py). Its ratio to the single-position
-convention is the **broadcast gain**, measured at **1.355** (cities L16) and **2.016**
-(common_claim L8).
+`C_j` is an intersection of `V - 1 = 255,999` halfspaces through the origin, hence a
+**convex polyhedral cone**. It is convex because each halfspace is, and a cone because the
+constraints are homogeneous, so `z` in `C_j` implies `c z` in `C_j` for every `c > 0`.
 
-Two things follow. A budget quoted under broadcast is *easier* to meet than the same number
-quoted per position. And **ActAdd-style single-position injection is not the same
-experiment as ours**, so comparing our budgets to a published ActAdd budget without dividing
-by this ratio compares two different operators. That is directly relevant to your note 8.
+**This is the object the meeting asked for: the target set, defined in token space.** It is
+not a learned probe, not a heuristic, and not something a readout can dissociate from,
+because membership in `C_j` **is** the behavior.
 
-### 3.6 Alignment, which is where the whole story ends up
-
-`eps*` is the budget along the *optimal* direction, the pullback vector. Nobody steers with
-the pullback vector; they steer with a named concept direction `u`. The cost of that
-substitution is one cosine:
+**Fact 3: RMSNorm is degree-zero homogeneous**, meaning `RN_gamma(c h) = RN_gamma(h)` for
+`c > 0`. Differentiating (3) gives the Jacobian at the final norm. Write
+`z = sqrt(d) * (h/||h||) * (1 + gamma)`, and use `d/dh (h/||h||) = (I - h_hat h_hat^T)/||h||`:
 
 ```
-alpha(u) = |(A_S^T w) . u| / ||A_S^T w|| ,     eps_required(u) = eps* / alpha(u)
+A_pre  =  dz / dh^(L)  =  ( sqrt(d) / ||h^(L)|| ) * diag(1 + gamma) * P_perp,
+
+                              P_perp = I - h_hat h_hat^T,
+                              h_hat  = h^(L) / ||h^(L)||                    (8)
 ```
 
-`alpha` is the fraction of a flip that a unit of `u` buys, and `1/alpha` is the multiplier on
-the honest budget. **The bar to read it against is chance**: for two random unit vectors in
-`R^2304`, `E|cos| = sqrt(2/(pi d)) = 0.0166`. (The other number that gets quoted, `1/sqrt(d)
-= 0.0208`, is the RMS cosine, not the mean absolute cosine. `alpha` is an absolute cosine, so
-0.0166 is the correct null.)
+Two consequences, both measurable, and both of which decide an experiment later:
+
+- **`P_perp` annihilates the radial component.** `P_perp h = h - h_hat (h_hat . h) = h - h_hat ||h|| = 0`.
+  So any steering vector added before the norm that is aligned with the activation itself is
+  **simply deleted**. That is not attenuation, it is exact cancellation, and it is forced by
+  degree-zero homogeneity: if scaling `h` does not change `z`, then the derivative in the `h`
+  direction must be zero.
+- **What survives is contracted** by `sqrt(d)/||h^(L)||`, which for our activations is about
+  `48/726 = 0.066`, a sixteenfold contraction, partly undone by the gain `(1 + gamma)`.
+
+The measured net cost of injecting one step earlier is the **`rmsnorm_penalty`, median 4.380
+on cities and 5.177 on common_claim**. That number explains an entire null result in §6.1.
+
+**A note on temperature, since your note 6 specified `T = 0`.** For `T > 0` the
+piecewise-constant picture softens. Two regimes matter. As `T -> 0+` we recover (7) exactly.
+For `T > 0`, `log p_j - log p_k = (u~_j - u~_k)/T`, so the **logit margin `M`** defined in
+§3.7 converts directly into a log-odds shift of `M/T`: a perturbation consuming a fraction
+`phi` of the margin multiplies the odds of the target against the incumbent by
+`exp(phi M / T)`. **That is the formal reason the margin, and not the activation norm, is the
+right currency**, and it is why §6.6 reports `frac_margin`. It also means the `T = 0` results
+are not a special case that fails to generalize; they are the `T -> 0` limit of a quantity
+that stays meaningful.
+
+One caveat on determinism that I have not tested and should: at `T = 0`, determinism is only
+as good as the kernels. Batch-invariance failure in RMSNorm, matmul and attention makes
+"temperature 0" non-reproducible under **dynamic batching**, so bit-exactness claims require a
+fixed batch size or batch-invariant ops.
+
+### 3.4 The certificate, derived
+
+This is the piece you asked for by name: the Jacobian transpose, the dot product with `w`,
+and why they give a budget.
+
+**Setup.** Fix an injection **site** `S`, which is a layer index or the input or output of
+the final norm. Fix a **readout**: a vector `w` and a threshold `t` such that the property of
+interest is `w . z >= t`, where `z` is the activation the readout lives on. Let `A_S` be the
+Jacobian of the map from the site to `z`, evaluated at the unperturbed activation.
+
+**Step 1: what a perturbation does to the readout.** Inject `delta` at `S`. To first order
+the activation moves by `A_S delta`, so the readout moves by
+
+```
+w . ( A_S delta )  =  ( A_S^T w ) . delta                                   (9)
+```
+
+That single move of the transpose across the inner product is the whole mechanical content of
+the method. It is the definition of the adjoint, `<w, A delta> = <A^T w, delta>`, and it is
+what turns a question about a `d x d` matrix into a question about **one vector**. Call
+`A_S^T w` the **pullback vector**. It is the only object that needs computing.
+
+**Step 2: the preimage of a halfspace is a halfspace.** The target set is `{z : w . z >= t}`.
+Landing in it means `w . (z + A_S delta) >= t`, which by (9) is
+
+```
+( A_S^T w ) . delta   >=   t - w . z   =:   g                              (10)
+```
+
+So the set of perturbations that reach the target is itself a halfspace in `R^d`, with normal
+`A_S^T w` and offset `g`. **This is the entire reason the reframe is tractable**: the
+backward-reachable set of a halfspace under a linear map is a halfspace, in closed form, with
+no set-propagation machinery, no zonotopes, and no learned value function.
+
+**Step 3: the least-norm point of that halfspace.** By Cauchy-Schwarz,
+`(A_S^T w) . delta <= ||A_S^T w|| ||delta||`. Combined with (10), any feasible `delta`
+satisfies `||A_S^T w|| ||delta|| >= g`, so
+
+```
+||delta||  >=  g / ||A_S^T w||
+```
+
+with equality if and only if `delta` is parallel to `A_S^T w`. That gives the three scalars
+the whole programme turns on:
+
+```
+  g     =  t - w . z            the GAP, distance to travel
+  m     =  || A_S^T w ||        the CONTROLLABILITY MARGIN, gain of the site on this readout
+  eps*  =  g / m                the CERTIFIED BUDGET
+  delta* = (g / m^2) * A_S^T w  the MINIMISER                              (11)
+```
+
+Check the minimiser: `(A_S^T w) . delta* = (g/m^2) ||A_S^T w||^2 = (g/m^2) m^2 = g`, so it is
+feasible with equality; and `||delta*|| = (g/m^2) m = g/m = eps*`, so it attains the bound.
+
+`eps*` is exactly a **point-to-hyperplane distance**. `m` carries all of the network dynamics
+and nothing else about the network enters. `g` carries all of the task.
+
+**The sign convention, fixed once, because mixing the two orientations is a bug I hit.** The
+target set is `{z : w . z >= t}` and a statement starts *outside* it, so `g > 0`. The probe
+instantiation in §6.0 flips the orientation, because there the target is the FALSE halfspace
+`{z : w . z <= t02}`, the `<=` side. Reading that against the convention above means
+`w := -w_probe` and `t := -t02`, which is the same thing as leaving `w_probe` alone and
+writing `g = w_probe . z - t02` and `{delta : (A_S^T w_probe) . delta <= -g}`. **Both are
+correct; only mixing them is not.** `g` is positive in both.
+
+### 3.5 The cost of steering along a direction that is not the optimal one
+
+`eps*` is the budget along `delta*`, the pullback vector. Nobody steers with the pullback
+vector; they steer with a named concept direction `u`. Redo Step 3 with `delta = s u` for a
+fixed unit `u`. Feasibility (10) becomes `s (A_S^T w) . u >= g`, so the smallest usable
+magnitude is
+
+```
+eps(u)  =  g / | (A_S^T w) . u |  =  eps* / alpha ,
+
+  alpha(u)  =  | (A_S^T w) . u |  /  || A_S^T w ||    in [0, 1]           (12)
+```
+
+`alpha` is just the cosine between the actuator you chose and the optimal one, and `1/alpha`
+is the multiplier on the honest budget. **Equation (12) is the whole diagnosis of this
+project.** A steering experiment that fixes a budget without reporting `alpha` cannot tell
+"the property is not causally actuable" from "we pushed almost perpendicular to the thing
+that moves it."
+
+**What to compare `alpha` against, which is not 1.** For two random unit vectors in `R^2304`
+the expected absolute cosine is `E|cos| = sqrt(2/(pi d)) = 0.0166`. That is the null. (The
+other number that gets quoted, `1/sqrt(d) = 0.0208`, is the RMS cosine, not the mean absolute
+cosine. `alpha` is an absolute cosine, so 0.0166 is the correct floor and it is the one used
+in `math_map.tex` and in the findings.)
+
+Measured medians, `n = 200` per dataset:
 
 | Direction | `alpha`, cities | vs chance | `alpha`, common_claim | vs chance |
 |---|---:|---:|---:|---:|
@@ -412,24 +476,311 @@ the honest budget. **The bar to read it against is chance**: for two random unit
 | `probe_grad_tgt_asis` | 0.01355 | 0.82x | 0.01471 | 0.88x |
 
 **Every truth direction we have sits at or below chance alignment with the direction that
-decides the next token**, and the best of them buys 0.94 of what a random vector would. On
-cities a Wilcoxon test against the chance floor gives `p < 1e-6` for all three; on
-common_claim two of the three are statistically *indistinguishable from a randomly drawn
-vector* (`p = 0.10` and `p = 0.96`). Read through `eps(u) = eps*/alpha`, this is a **74x to
-79x multiplier** on the honest budget for cities.
+decides the next token.** On cities a Wilcoxon test against the chance floor gives `p < 1e-6`
+for all three, so they are significantly *worse* than random; on common_claim two of the three
+are statistically indistinguishable from a randomly drawn vector (`p = 0.10` and `p = 0.96`).
+Read through (12), this is a **74x to 79x multiplier** on the honest budget for cities.
 
-This is the diagnosis, and note carefully that it is a statement about `alpha`, not about
-`eps*`. **The certificate was never wrong about the budget. We were spending it almost
-perpendicular to the thing that moves the token.**
+Note carefully what kind of statement this is. **The certificate was never wrong about the
+budget. We were spending it almost perpendicular to the thing that moves the token.**
 
-**The `_asis` caveat, which travels with those two rows everywhere.** Those directions were
-fitted at the **target layer** and the `alpha` above reads them in **post-norm coordinates**,
-with no change of basis. So it answers "how aligned is the direction we really injected to
-the thing that moves the next token", which is the operational question and the one the
-programme needs. It is **not** a claim that the two objects live in the same basis. A
-basis-correct version would push the target-layer direction forward through the remaining
-blocks and the final RMSNorm first. **That has not been computed**, and it is the one
-quantity your note 7 leaves open. It is one forward pass per direction per dataset.
+### 3.6 Instantiation 1: the probe halfspace (what the audit ran)
+
+Site `S` is the input of decoder layer `l_src`; the readout lives at layer `l_tgt`; `w` is the
+contrastive mean-difference direction
+
+```
+w  =  unit( mean of h^(tgt) over label 1  -  mean of h^(tgt) over label 0 )
+```
+
+and `t = t02` is obtained by fitting a one-dimensional logistic regression of the label on the
+score `s = w . h^(tgt)` and solving for the score at which `P(y=1) = 0.2`:
+
+```
+sigmoid(a s + b) = 0.2   =>   a s + b = log(0.2/0.8) = -1.3863
+                         =>   t02 = ( -1.3863 - b ) / a                    (13)
+```
+
+Here `A_S = J`, the layer-to-layer Jacobian of the block stack, and `m = ||J^T w||`. Concretely
+`src/reach_hop.py` defines `F(delta)` as the target-layer activation you get when you add
+`delta` at the source layer, broadcast at every position, and run the remaining blocks;
+`J = dF/d(delta)` at `delta = 0`.
+
+**Why this instantiation was always going to be structurally fragile, which I did not
+appreciate before running it.** `w` is **fitted**, so `w . z >= t` is a statement about a
+*readout*, and nothing forces a readout to be the thing the rest of the network consumes. We
+measured exactly that: readout displacement tracked the certificate to `R² = 0.999` while
+behavior did not move at all. That gap is also not new (Elazar et al. 2021, LEACE §5.3,
+AxBench 2025 on this exact model), which is why the contribution has to be the certificate and
+not the phenomenon.
+
+**Local linearity is measured, not assumed.** `F(delta) ~= J delta + F(0)` is the modelling
+step, and Phase 5 and Horizon 0.1 test it directly (§6.0). It holds far better than expected.
+The important qualification, which cost me a wrong reading once: the measured `R² = 0.999`
+licenses **linearity** of readout against scale, **not gain**. The same measurement found the
+realized slope 8x to 35x below the predicted `||J^T w||`. Linearity says the response is a
+straight line; it does not say we predicted its slope.
+
+### 3.7 Instantiation 2: the argmax cone (what your note 6 proposed)
+
+Now take the readout to be a face of the cone (7). Let `j_top` be the current argmax at the
+position that chooses the next word, and `j_tgt` the token we want instead. Put
+
+```
+a  =  E[j_tgt] - E[j_top]
+
+M  =  - a . z  =  u_{j_top} - u_{j_tgt}   >  0                             (14)
+```
+
+Then "the model emits `j_tgt` rather than `j_top`" is **exactly** `a . z >= 0`, and (11)
+applies verbatim with
+
+```
+w := a ,   t := 0 ,   g = M ,   m = || A_S^T a || ,
+
+     eps*_token  =  M / || A_S^T a ||                                      (15)
+```
+
+**Same formula, same code, same single VJP.** The only thing that changed is that `a` is not
+fitted: it is read off the unembedding. So `a . z >= 0` is not a proxy for the behavior, it is
+a restatement of it, and **the readout-versus-behavior dissociation becomes impossible by
+construction.** That single substitution is what your note 6 bought.
+
+Note also that `g` is now not an abstract distance to a fitted threshold. It is literally the
+**logit margin** of the incumbent token over the target token, a quantity that was sitting in
+the model's own output the whole time and that we had never computed.
+
+### 3.8 From one face to the whole cone, and the QP
+
+Equation (15) certifies crossing **one** face. Making `j_tgt` the true argmax requires all of
+(7). After perturbing, we need `(E[j_tgt] - E[k]) . (z + A_S delta) >= 0` for every `k`, which
+rearranges to a linear constraint in `delta`:
+
+```
+delta*  =  argmin ||delta||   subject to
+
+  ( A_S^T ( E[j_tgt] - E[k] ) ) . delta   >=   ( E[k] - E[j_tgt] ) . z     for all k   (16)
+```
+
+Note the structure: **only the constraint normals depend on the site; the offsets are logit
+gaps either way.** So moving the injection site changes the left-hand sides and leaves the
+right-hand sides alone.
+
+With `V = 256,000` constraints this looks impossible, but **the active set is tiny**. Solve the
+dual on the faces seen so far, ask the full vocabulary who wins, add the violator, repeat. The
+dual of (16) is
+
+```
+min over lambda >= 0 :   (1/2) lambda^T G lambda  -  b^T lambda ,
+     G = A A^T ,   delta = A^T lambda                                       (17)
+```
+
+with `A` the matrix of active constraint normals, which is a few microseconds. Measured on
+gemma-2-2b, **the active set has 1 to 3 faces**, and `||delta*||` exceeds the single-face bound
+`M / ||A_S^T a||` by about **8.8%** (the measured ratio is 1.088). So the single face is a
+good but not exact proxy, and the full solve is worth doing.
+
+**Every solution is then verified by an explicit full-vocabulary argmax check**, so a reported
+certificate is a proof rather than an optimizer's opinion. This is what makes the `oracle` arm
+a harness assertion rather than a competitor: at the post-norm site, with `delta = delta*`, the
+token flip is a **theorem**. If the running model does not emit `j_tgt`, the injection code is
+wrong.
+
+### 3.9 Is the target set even non-empty?
+
+`C_j` can be empty, and if the false-answer tokens had empty cones the whole reformulation
+would be dead before it started. By Demeter et al. (ACL 2020) a token is emittable for *some*
+`z` if and only if its unembedding row is a **vertex of the convex hull** of all rows. By
+minimax on a compact convex set,
+
+```
+max over ||z|| <= 1 of  min over k != j of  ( E[j] - E[k] ) . z
+
+   =  min over lambda in the simplex of  || sum_k lambda_k ( E[j] - E[k] ) ||
+
+   =  dist( E[j] ,  conv{ E[k] : k != j } )                                (18)
+```
+
+where the middle expression simplifies because `sum_k lambda_k (E[j] - E[k]) = E[j] - sum_k lambda_k E[k]`.
+
+**This is exact in both directions, which is why it is a proof and not an estimate.** A
+positive value is proved by exhibiting a **witness `z`** whose full-vocabulary argmax is `j`; a
+zero value is proved by exhibiting the **convex weights** reconstructing `E[j]` from the other
+rows. Solved by Frank-Wolfe, batched so one GEMM `W P^T` per iteration serves all candidates.
+
+Result in §5.1: all 182 tested tokens are achievable. And `d = 2304` is well above the regime
+where unargmaxability bites (Grivas et al. 2022 report the effect is rare above about
+`d = 200`).
+
+**The caveat that must travel with it.** (18) clears a **necessary condition only**. It says
+the cone is non-empty, not that it is reachable from where the model actually sits under a
+bounded perturbation. That is precisely (15), and measuring it is the main run.
+
+### 3.10 Instantiating the site: three `A_S`, and what a failure at each one indicts
+
+| Site `S` | `A_S` | `A_S^T a` | what a failure indicts |
+|---|---|---|---|
+| post-norm (`z`) | `I` | `a` | the direction, and nothing else |
+| pre-norm (`h^(L)`) | equation (8) | `(sqrt(d)/&#124;&#124;h&#124;&#124;) P_perp diag(1+gamma) a` | the direction, or RMSNorm |
+| layer `l` | `J_(l -> z)` | one VJP | the direction, or the dynamics |
+
+The pre-norm adjoint is the transpose of (8), and both `P_perp` and `diag(1+gamma)` are
+symmetric, so the transpose just reverses their order. That adjoint pair is verified
+numerically against a finite-difference Jacobian in the test suite.
+
+Measured medians of `m = ||A_S^T w||`, `n = 200` per dataset:
+
+| Site | `m` median (cities) | `m` median (common_claim) |
+|---|---:|---:|
+| post-norm | 2.383 | 2.138 |
+| pre-norm | 0.532 | 0.432 |
+| layer `l` | 0.607 (L16) | 0.676 (L8) |
+
+**The post-norm site is the decisive one, and it is exactly the naive experiment your note 1
+asked for.** There the map from perturbation to logits is *exactly* linear:
+`u(z + delta) = E z + E delta`. Nothing nonlinear remains to blame. That gives a clean
+trichotomy, written down before the run:
+
+| observation at the post-norm site | conclusion |
+|---|---|
+| target token appears, text stays fluent | the last layer is fine; the hop broke it |
+| text degenerates | the linear-feature assumption fails at the last layer |
+| nothing changes at `eps = eps*` | **the harness is broken** |
+| nothing changes at the budget we used before | the budget never bought a flip |
+
+§6.1 and §6.2 report which rows fired.
+
+For the probe instantiation, the sites were inherited from the earlier DCT work and recorded in
+`dct_meta_<ds>.json`: `cities` layer **11 to 20** with `input_scale` 47.72, `common_claim`
+layer **13 to 22** with `input_scale` 86.73. `input_scale` is the activation's own norm
+yardstick, produced by DCT's calibrator, and every budget should be read against it. A budget
+of 2.8 on cities means a nudge of about 6% of the activation's own size.
+
+### 3.11 The broadcast operator, which had been prose and is now an operator
+
+The site table writes `A_S` as though a perturbation were a single vector in `R^d`. **It is
+not.** Every certificate we have computed added `delta` at **every position** of the prompt.
+That is a different linear map and it deserves its own symbol.
+
+Let `B : R^d -> R^(T x d)` be the broadcast, `B delta = 1_T (x) delta`. The map actually being
+inverted is `A_S . B`, not `A_S`. Because `B` is a sum of coordinate injections, its adjoint
+**sums the per-position gradients**:
+
+```
+( A_S B )^T a  =  B^T A_S^T a  =  sum over t of  d( a . z ) / d h^(l)_t     (19)
+```
+
+versus the single-position convention `d( a . z ) / d h^(l)_last`. The adjoint identity is one
+line: `<B delta, Y> = sum_t delta . Y_t = delta . (sum_t Y_t) = <delta, B^T Y>`.
+
+Equation (19) is literally `g.sum(dim=1)` at [`src/token_jac.py:82`](../src/token_jac.py) and
+[`src/reach_jlens.py:97`](../src/reach_jlens.py); the right-hand object is `m_last`. Their
+ratio is the **broadcast gain**
+
+```
+rho(l)  =  median over statements of
+             || sum_t  d r_i / d h^(l)_t ||  /  || d r_i / d h^(l)_last ||  (20)
+```
+
+measured at **1.355** for cities layer 16 and **2.016** for common_claim layer 8.
+
+Two consequences. The broadcast site has the larger margin, so **a budget quoted under
+broadcast is easier to meet than the same number quoted per position**, and `m_last` is the
+honest per-position figure. And **ActAdd-style single-position injection instantiates the
+right-hand map, not the left-hand one**, so comparing our `eps` to a published ActAdd `eps`
+without dividing through by `rho` compares two different operators. That is directly relevant
+to your note 8.
+
+The "we inject `eps sqrt(T)` of energy, not `eps`" remark I made when I found the defect is a
+*consequence* of `B`, not a substitute for writing `B` down. Writing it down is what let me
+predict `rho` in advance and then compare it to the realized 2.5x in §6.3.
+
+### 3.12 The cross-layer convention behind the `_asis` cosines
+
+`alpha` in (12) is a cosine, so both arguments must live in the same space. **For the
+directions labelled `_asis` they do not**, and the label exists to say so.
+
+Those directions are read verbatim from `reach_dirs_<ds>.npz`, where they were fitted at the
+**target layer** `h^(l_tgt)`. The `alpha` reported in §3.5 takes their cosine against `a` in
+**post-norm coordinates** `z`, with **no transport between the two**
+(`src/token_geom.py:395-400`). So `alpha_mean_diff_tgt_asis = 0.01325` is the cosine between
+`a` and *the raw coordinate vector we actually injected*.
+
+That is the operationally correct quantity, because it answers what the direction we really
+steered with bought us, and it is **not** a coordinate-free statement about the concept. The
+basis-correct version would transport the target-layer direction forward first:
+
+```
+u_tr        =  J_(l_tgt -> z) u  /  || J_(l_tgt -> z) u ||
+
+alpha_tr(u) =  | a . u_tr |  /  || a ||                                     (21)
+```
+
+which costs one JVP per statement and **has not been computed**. Until it is, every `_asis`
+number in this document carries this paragraph. This is the one quantity your note 7 leaves
+open, and it is a missing measurement rather than a missing object.
+
+### 3.13 When is a norm budget the right currency? (your note 4, formalised)
+
+Everything above prices a perturbation by its Euclidean norm. **That is a modelling choice**,
+and the meeting challenged it directly: small perturbations in different directions can have
+vastly different chains. Stated precisely, define for a site `S`, a unit direction `u` and a
+budget `eps` the **realized gain** and the **realized slope**
+
+```
+G_S(u, eps)      =  || z(eps u) - z(0) ||  /  eps
+
+sigma_S(u, eps)  =  a . ( z(eps u) - z(0) )  /  eps                        (22)
+```
+
+where `z(.)` is the post-final-norm activation the perturbed forward pass **actually
+produces**. These are measured, not predicted: **no Jacobian appears in (22)**, which is what
+makes them an independent check on everything else in this chapter.
+
+The objection bundles two different claims and they separate cleanly.
+
+**Anisotropy: fix `eps`, vary `u`.** If `G_S` is constant in `u` the site is isotropic and
+`eps` is a fair price. The statistic is the spread `G^p90 / G^p10` over directions. But note
+that **anisotropy alone is not an obstruction**: it is exactly what `alpha` already measures at
+the post-norm site, and `eps(u) = eps*/alpha` from (12) is precisely the rescaling that repairs
+it. An anisotropic-but-linear site needs a **change of units, not a change of theory.**
+
+**Nonlinearity: fix `u`, vary `eps`.** For a linear `A_S`, `G_S(u, eps) = ||A_S u||` with **no
+dependence on `eps` whatsoever**. So
+
+```
+kappa_S(u)  =  G_S(u, eps_max) / G_S(u, eps_min)                           (23)
+```
+
+is a **pure nonlinearity reading**, and `kappa = 1` is the exact statement that the first-order
+certificate is valid over the whole budget range. **This is the claim that would actually
+threaten the programme**: if `kappa` were far from 1 and varied with `u`, then no fixed budget,
+rescaled or not, certifies anything, and the certificate would have to be restated as a bound
+on realized gain rather than on `eps`. §6.4 reports the measurement.
+
+**One more harness assertion falls out of this for free.** At the post-norm site `A_S = I`, so
+(22) collapses to `G = 1` and `sigma = a . u` identically, for every direction and every budget.
+That is **arithmetic**, so a post-norm run that does not reproduce it is measuring something
+other than what it claims. Measured: 1.0000 everywhere, 13 directions, 4 budgets, both datasets.
+
+### 3.14 Why all of this is affordable
+
+The reason a per-statement certificate over hundreds of statements is possible at all is (9).
+`A_S^T w` is a **vector-Jacobian product**: one backward pass of the scalar `w . z`. Forming
+the full `2304 x 2304` Jacobian instead would cost `d` passes, about three orders of magnitude
+more, per statement.
+
+So the cost structure of the whole programme is:
+
+| what | cost | where it is used |
+|---|---|---|
+| `A_S^T w` for one statement | 1 VJP (one backward pass) | every certificate, all 200 statements, all 26 layers |
+| full `J` for one statement | `d` passes | Phase 2 only, hence 32 statements not 200 |
+| the cone QP (17) | microseconds, CPU | every token-space certificate |
+| the hull check (18) | Frank-Wolfe, batched, CPU | once, 182 tokens |
+
+That is why the layer sweep in §6.8 could afford all 26 layers on 200 statements under both
+injection conventions, and why Phase 2's SVD is the one place the sample drops to 32.
 
 ---
 
@@ -1047,9 +1398,9 @@ proofs, the cone dual and the non-emptiness argument in [`math_map.tex`](math_ma
 tracked in git.
 
 Two objects that had previously existed only as prose are now written down as operators: the
-**broadcast operator `B`** (§3.5) and the **`_asis` convention** (§3.6).
+**broadcast operator `B`** (§3.11) and the **`_asis` convention** (§3.12).
 
-**The residual, and it is a missing measurement rather than a missing object.** §3.6 writes
+**The residual, and it is a missing measurement rather than a missing object.** §3.12 writes
 down the basis-correct version of the cross-layer cosine, and it **has not been computed**. So
 every `_asis` alpha in this document is a cosine against the raw vector that was actually
 injected, and must keep travelling with the convention paragraph that says so. That is the
@@ -1074,7 +1425,7 @@ completely independent readout**, which is the strongest form of corroboration a
 Figure: [`plot_token_layers_cities.png`](../plot_token_layers_cities.png).
 
 **Result B: "mean difference is heuristic" is confirmed, quantitatively.** This is the alpha
-table from §3.6: all six candidate truth directions sit at or below the 0.0166 chance floor.
+table from §3.5: all six candidate truth directions sit at or below the 0.0166 chance floor.
 The behavioral consequence is the 0.000 hit rate for `jtw_legacy` in every arm at every budget,
 and 1 flip in 101 for `md_full` on cities. Figure:
 [`plot_token_alpha_cities.png`](../plot_token_alpha_cities.png), which plots each direction
@@ -1237,7 +1588,7 @@ noted.
 
 | Figure | What it shows |
 |---|---|
-| [`plot_mag_linearity_v2.png`](../plot_mag_linearity_v2.png) | **Your visualizer ask.** Left: `v_Q` at cos 0.84 to 0.98 while truth and DCT sit in a `|cos| < 0.1` band. Right: `eps_Q` per direction, truth and DCT above the "explains nothing" line |
+| [`plot_mag_linearity_v2.png`](../plot_mag_linearity_v2.png) | **Your visualizer ask.** Left: `v_Q` at cos 0.84 to 0.98 while truth and DCT sit in a `&#124;cos&#124; < 0.1` band. Right: `eps_Q` per direction, truth and DCT above the "explains nothing" line |
 
 ---
 
