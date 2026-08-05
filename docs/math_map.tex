@@ -1,0 +1,491 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,bm}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\vh}{\bm{h}}
+\newcommand{\vz}{\bm{z}}
+\newcommand{\vw}{\bm{w}}
+\newcommand{\va}{\bm{a}}
+\newcommand{\vd}{\bm{\delta}}
+\newcommand{\vu}{\bm{u}}
+\newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand{\ip}[2]{\langle #1, #2 \rangle}
+
+\title{From input space to output space:\\the algebra of the steering certificate}
+\author{Geometry-of-Truth / reachability track}
+\date{August 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This note writes out every map from token input to token output in
+\texttt{gemma-2-2b}, states what is linear and what is not, and derives the
+reachability certificate in both the form we have been using (a probe halfspace at an
+intermediate layer) and the form the last meeting proposed (an argmax cone in token
+space). The two are the \emph{same formula} with a different readout vector, which is
+the point: switching to the token-space version costs no new machinery and removes
+the failure mode that produced our negative result. Section~\ref{sec:diag} gives the
+diagnosis that follows, with measured numbers.
+\end{abstract}
+
+\section{Notation and the forward map}
+
+Let $d = 2304$ be the model width, $L = 26$ the number of decoder blocks, and
+$V = 256{,}000$ the vocabulary. Write $E \in \R^{V \times d}$ for the token embedding
+matrix, which in this model is \emph{tied}: the same matrix serves as the unembedding.
+Let $\gamma \in \R^d$ be the gain of the final RMSNorm.
+
+Given a prompt $x_{1:T}$, the residual stream is
+\begin{align}
+  \vh^{(0)}_t &= \sqrt{d}\, E[x_t], \label{eq:embed}\\
+  \vh^{(l+1)} &= \vh^{(l)} + \mathrm{Attn}_l\!\left(\mathrm{RN}(\vh^{(l)})\right)
+                  + \mathrm{MLP}_l\!\left(\mathrm{RN}(\cdot)\right),
+                  \qquad l = 0,\dots,L-1, \label{eq:block}
+\end{align}
+where each block mixes across positions, so $\vh^{(l+1)}_t$ depends on
+$\vh^{(l)}_{1:t}$. Then the final norm and the unembedding:
+\begin{align}
+  \vz_t &= \mathrm{RN}_\gamma\!\left(\vh^{(L)}_t\right)
+        = \frac{\vh^{(L)}_t}{\mathrm{rms}(\vh^{(L)}_t)} \odot (\bm{1} + \gamma),
+        \qquad \mathrm{rms}(\vh) = \frac{\norm{\vh}}{\sqrt{d}}, \label{eq:rmsnorm}\\
+  \bm{u}_t &= E\,\vz_t \in \R^{V}, \label{eq:logits}\\
+  \tilde{\bm{u}}_t &= c \tanh(\bm{u}_t / c), \qquad c = 30 \ \ (\text{final logit
+    softcapping}), \label{eq:softcap}\\
+  p_t &= \mathrm{softmax}(\tilde{\bm{u}}_t / T). \label{eq:softmax}
+\end{align}
+
+\paragraph{Convention warning (a real bug we hit).}
+Equation~\eqref{eq:rmsnorm} folds the gain into $\vz$, so the matrix that pairs with
+$\vz$ in~\eqref{eq:logits} is the \emph{plain} $E$. The other valid convention writes
+$\vz' = \vh^{(L)}/\mathrm{rms}(\vh^{(L)})$ and $W = E \odot (\bm{1}+\gamma)$, giving
+$\bm{u} = W \vz'$. Both produce identical logits and identical argmax. They do
+\emph{not} produce identical \emph{distances}, and every budget in this note is a
+distance. Mixing them inflates every reported $\varepsilon$ by a factor that varies
+per coordinate. Fix the convention once and state it.
+
+\section{Three facts that make the output layer tractable}
+
+\begin{enumerate}
+\item \textbf{Softcapping is argmax-irrelevant.} $s \mapsto c\tanh(s/c)$ is strictly
+increasing and applied coordinatewise, so it preserves the ordering of
+$\bm{u}_t$. Every statement about \emph{which token wins} may be made about the raw
+$\bm{u}_t = E\vz_t$. Statements about \emph{probabilities} may not.
+
+\item \textbf{At $T = 0$ the decoder is exactly an argmax}, so the map from $\vz$ to
+the emitted token is piecewise constant, with pieces
+\begin{equation}
+  \mathcal{C}_j \;=\; \left\{ \vz \in \R^d \;:\;
+    (E[j] - E[k]) \cdot \vz \ge 0 \ \ \forall k \ne j \right\},
+  \label{eq:cone}
+\end{equation}
+a convex polyhedral cone with $V - 1 = 255{,}999$ faces. This is the object the
+meeting asked for: \emph{the target set, defined in token space}. It is not a
+learned probe, not a heuristic, and not something a readout can dissociate from,
+because membership in $\mathcal{C}_j$ \emph{is} the behavior.
+
+\item \textbf{RMSNorm is degree-zero homogeneous}, i.e.
+$\mathrm{RN}_\gamma(c\,\vh) = \mathrm{RN}_\gamma(\vh)$ for $c > 0$. Differentiating
+\eqref{eq:rmsnorm} gives the Jacobian at the final norm,
+\begin{equation}
+  A_{\mathrm{pre}} \;=\; \frac{\partial \vz}{\partial \vh^{(L)}}
+  \;=\; \frac{\sqrt{d}}{\norm{\vh^{(L)}}}\;
+        \mathrm{diag}(\bm{1}+\gamma)\, P_\perp,
+  \qquad P_\perp = I - \hat{\vh}\hat{\vh}^{\!\top},
+  \label{eq:rmsjac}
+\end{equation}
+with $\hat{\vh} = \vh^{(L)}/\norm{\vh^{(L)}}$. Two consequences, both measurable:
+$P_\perp$ \emph{annihilates the radial component} of any steering vector added before
+the norm, and the surviving part is scaled by $\sqrt{d}/\norm{\vh^{(L)}}$, which for
+our activations is $48/726 \approx 0.066$, a sixteenfold contraction partly undone by
+the gain.
+\end{enumerate}
+
+\paragraph{Temperature.} For $T > 0$ the piecewise-constant picture softens into
+$p_j \propto \exp(\tilde u_j / T)$. Two regimes matter. As $T \to 0^+$ we recover
+\eqref{eq:cone} exactly. For $T > 0$, $\log p_j - \log p_k = (\tilde u_j - \tilde
+u_k)/T$, so the \emph{logit margin} $M$ defined below converts directly into a
+log-odds shift of $M/T$: a perturbation that consumes a fraction $\phi$ of the margin
+multiplies the odds of the target against the incumbent by $e^{\phi M / T}$. This is
+why the margin, not the activation norm, is the currency. Note also that at $T=0$
+determinism is only as good as the kernels: batch-invariance failure in RMSNorm,
+matmul and attention makes ``temperature 0'' non-reproducible under \emph{dynamic
+batching}, so bit-exactness claims require a fixed batch size or batch-invariant ops.
+
+\section{The certificate, stated once, instantiated twice}
+
+\subsection{General form}
+
+Fix an injection \emph{site} $S$ (a layer index, or the input/output of the final
+norm) and a readout: a vector $\vw$ and a threshold $t$ such that the property of
+interest is $\vw \cdot \vz \ge t$, where $\vz$ is the activation the readout lives on.
+Let $A_S$ be the Jacobian of the map from the site to $\vz$, evaluated at the
+unperturbed activation. A perturbation $\vd$ injected at $S$ moves the readout by
+$\vw \cdot A_S \vd = (A_S^{\!\top}\vw)\cdot\vd$ to first order. Therefore
+\begin{equation}
+  \boxed{\;
+  g = t - \vw\cdot\vz \quad(\text{gap}), \qquad
+  m = \norm{A_S^{\!\top}\vw} \quad(\text{controllability margin}), \qquad
+  \varepsilon^\star = \frac{g}{m}. \;}
+  \label{eq:cert}
+\end{equation}
+$\varepsilon^\star$ is the least $\norm{\vd}$ that reaches the halfspace, and it is a
+point-to-hyperplane distance: $m$ is the \emph{gain} of the site on this readout, and
+$g$ is the \emph{distance to travel}. The minimiser is
+$\vd^\star = \varepsilon^\star\, A_S^{\!\top}\vw / m$.
+
+Two structural remarks. First, $m$ carries all the dynamics; nothing else about the
+network enters. Second, for any \emph{other} unit direction $\vu$ at the same site,
+the budget required along $\vu$ is
+\begin{equation}
+  \varepsilon(\vu) \;=\; \frac{g}{\lvert (A_S^{\!\top}\vw)\cdot \vu \rvert}
+  \;=\; \frac{\varepsilon^\star}{\alpha}, \qquad
+  \alpha \;=\; \frac{\lvert (A_S^{\!\top}\vw)\cdot\vu\rvert}{\norm{A_S^{\!\top}\vw}}
+  \label{eq:alpha}
+\end{equation}
+where $\alpha \in [0,1]$ is the cosine between the chosen actuator and the optimal
+one. \textbf{Equation~\eqref{eq:alpha} is the whole diagnosis.} A steering experiment
+that fixes a budget without reporting $\alpha$ cannot tell ``the property is not
+causally actuable'' from ``we pushed almost perpendicular to the thing that moves it.''
+
+\subsection{Instantiation 1: the probe halfspace (what we ran)}
+
+Site $S$ = input of decoder layer $l_{\mathrm{src}}$; readout at layer
+$l_{\mathrm{tgt}}$; $\vw$ = the contrastive mean-difference direction
+$\mathrm{unit}\!\left(\bar{\vh}^{\mathrm{tgt}}_{y=1} -
+\bar{\vh}^{\mathrm{tgt}}_{y=0}\right)$; and $t = t_{02}$, obtained by fitting a
+one-dimensional logistic regression of the label on the score $\vw\cdot\vh^{(\mathrm{tgt})}$
+and solving for the score at which $P(y{=}1) = 0.2$:
+\begin{equation}
+  \sigma(a\,s + b) = 0.2 \quad\Longrightarrow\quad
+  t_{02} = \frac{\log(0.2/0.8) - b}{a} = \frac{-1.3863 - b}{a}.
+  \label{eq:t02}
+\end{equation}
+$A_S = J$, the layer-to-layer Jacobian, obtained by one vector--Jacobian product
+(never $d$ forward passes), so $m = \norm{J^{\!\top}\vw}$.
+
+\textbf{The failure mode is structural.} $\vw$ is fitted, so $\vw\cdot\vz \ge t$ is a
+statement about a \emph{readout}, and nothing forces a readout to be the thing the
+rest of the network consumes. We measured exactly that: readout displacement tracked
+the certificate to $R^2 = 0.999$ while behavior did not move. This gap is not new,
+and we should stop presenting it as the finding. Elazar et al.\ (amnesic probing,
+TACL 2021) warned against inferring behavior from probes; LEACE (Belrose et al.\ 2023,
+\S5.3) exhibits a decodability peak at a different layer from the causal peak; AxBench
+(Wu et al.\ 2025), on \emph{this model}, reports that better classification does not
+yield better steering. Our contribution has to be the certificate, not the phenomenon.
+
+\subsection{Instantiation 2: the argmax cone (what to run)}
+
+Now take the readout to be a face of \eqref{eq:cone}. Let $j_{\mathrm{top}}$ be the
+current argmax at the position that chooses the next word, and $j_{\mathrm{tgt}}$ the
+token we want instead. Put
+\begin{equation}
+  \va \;=\; E[j_{\mathrm{tgt}}] - E[j_{\mathrm{top}}], \qquad
+  M \;=\; -\,\va\cdot\vz \;=\; u_{j_{\mathrm{top}}} - u_{j_{\mathrm{tgt}}} \;>\; 0 .
+  \label{eq:margin}
+\end{equation}
+Then ``the model emits $j_{\mathrm{tgt}}$ rather than $j_{\mathrm{top}}$'' is exactly
+$\va\cdot\vz \ge 0$, and \eqref{eq:cert} applies verbatim with
+\begin{equation}
+  \boxed{\;\vw := \va, \qquad t := 0, \qquad g = M, \qquad
+  m = \norm{A_S^{\!\top}\va}, \qquad
+  \varepsilon^\star_{\text{token}} = \frac{M}{\norm{A_S^{\!\top}\va}} .\;}
+  \label{eq:tokencert}
+\end{equation}
+\emph{Same formula, same code, same single VJP.} What changes is that $\va$ is not
+fitted: it is read off the unembedding, and $\va\cdot\vz \ge 0$ is not a proxy for the
+behavior but a restatement of it. The readout-versus-behavior dissociation becomes
+impossible by construction.
+
+\paragraph{From one face to the whole cone.} \eqref{eq:tokencert} certifies crossing
+\emph{one} face. To make $j_{\mathrm{tgt}}$ the true argmax we need all of
+\eqref{eq:cone}, i.e.
+\begin{equation}
+  \vd^\star = \arg\min \norm{\vd} \quad \text{s.t.} \quad
+  \left(A_S^{\!\top}(E[j_{\mathrm{tgt}}]-E[k])\right)\cdot \vd \;\ge\;
+  (E[k]-E[j_{\mathrm{tgt}}])\cdot\vz \quad \forall k .
+  \label{eq:coneqp}
+\end{equation}
+Only the constraint \emph{normals} depend on the site; the offsets are logit gaps
+either way. With $V$ constraints this looks impossible, but the active set is tiny:
+solve the dual on the faces seen so far, ask the full vocabulary who wins, add the
+violator, repeat. Measured on \texttt{gemma-2-2b}, the active set has $1$ to $3$
+faces and $\norm{\vd^\star}$ exceeds the single-face bound
+$M/\norm{A_S^{\!\top}\va}$ by about $8.8\%$, so the single face is a good but not
+exact proxy and the full solve is worth doing. The dual of \eqref{eq:coneqp} is
+$\min_{\lambda \ge 0} \tfrac12 \lambda^{\!\top} G \lambda - b^{\!\top}\lambda$ with
+$G = \mathcal{A}\mathcal{A}^{\!\top}$ and $\vd = \mathcal{A}^{\!\top}\lambda$, which is
+a few microseconds. Every solution is then \emph{verified} by an explicit
+full-vocabulary argmax check, so a reported certificate is a proof rather than an
+optimizer's opinion.
+
+\paragraph{Non-emptiness.} $\mathcal{C}_j$ can be empty. By Demeter et al.\ (ACL 2020)
+a token is emittable for \emph{some} $\vz$ if and only if its unembedding row is a
+vertex of the convex hull of all rows; by minimax,
+\begin{equation}
+  \max_{\norm{\vz}\le 1}\ \min_{k\ne j}\ (E[j]-E[k])\cdot\vz
+  \;=\; \min_{\lambda\in\Delta}\ \norm{\textstyle\sum_k \lambda_k (E[j]-E[k])}
+  \;=\; \operatorname{dist}\!\left(E[j], \mathrm{conv}\{E[k]\}_{k\ne j}\right),
+  \label{eq:hull}
+\end{equation}
+so a positive value is proved by exhibiting a witness $\vz$ and a zero value by
+exhibiting the convex weights. We ran this (Frank--Wolfe, batched): all $182$ tested
+tokens, including all $102$ country first-tokens and the $16$ lowest-norm rows in the
+vocabulary, are achievable. So the target sets are non-empty, and $d = 2304$ is well
+above the regime where unargmaxability bites (Grivas et al.\ 2022). \emph{This clears
+a necessary condition only}: it says the cone is non-empty, not that it is reachable
+from where the model actually sits under a bounded perturbation. That is
+\eqref{eq:tokencert}.
+
+\section{Instantiating the site}
+
+\begin{table}[h]\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+Site $S$ & $A_S$ & $A_S^{\!\top}\va$ & what a failure indicts \\
+\midrule
+post-norm ($\vz$) & $I$ & $\va$ & the direction, and nothing else \\
+pre-norm ($\vh^{(L)}$) & Eq.~\eqref{eq:rmsjac} &
+  $\tfrac{\sqrt d}{\norm{\vh}} P_\perp \mathrm{diag}(\bm 1{+}\gamma)\va$ &
+  the direction, or RMSNorm \\
+layer $l$ & $J_{l\to \vz}$ & one VJP & the direction, or the dynamics \\
+\bottomrule
+\end{tabular}
+\caption{The three injection sites. $A_S^{\!\top}$ is what the code computes; the
+adjoint pair for the pre-norm site is verified numerically against a finite-difference
+Jacobian.}
+\end{table}
+
+The post-norm site is the decisive one and it is the naive experiment the meeting
+asked for. There the map from perturbation to logits is \emph{exactly} linear:
+$\bm u(\vz + \vd) = E\vz + E\vd$. Nothing nonlinear remains to blame. Hence the
+clean trichotomy:
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+observation at the post-norm site & conclusion \\
+\midrule
+target token appears, text stays fluent & the last layer is fine; the hop broke it \\
+text degenerates & the linear-feature assumption fails at the last layer \\
+nothing changes at $\varepsilon = \varepsilon^\star$ & the harness is broken (see below) \\
+nothing changes at the budget we used before & the budget never bought a flip \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{The harness assertion.} At the post-norm site with $\vd = \vd^\star$ from
+\eqref{eq:coneqp}, the token flip is a \emph{theorem}, not a hypothesis: we verified
+$\arg\max_k E[k]\cdot(\vz+\vd^\star) = j_{\mathrm{tgt}}$ in closed form. If the running
+model does not emit $j_{\mathrm{tgt}}$, the injection code is wrong. Every steering
+run should carry this oracle arm. We have never had one.
+
+\subsection{The broadcast operator}\label{sec:broadcast}
+
+The site table above writes $A_S$ as though a perturbation were a single vector in $\R^d$. It is
+not. Every certificate we have computed added $\vd$ at \emph{every} position of the
+prompt. That is a different linear map and it deserves its own symbol. Let
+$B:\R^d \to \R^{T\times d}$ be the broadcast $B\vd = \bm 1_T \otimes \vd$. Then the map
+being inverted is $A_S \circ B$, and because $B$ is a sum of coordinate injections its
+adjoint sums the per-position gradients:
+\begin{equation}\label{eq:broadcast}
+  (A_S B)^{\!\top} \va \;=\; B^{\!\top} A_S^{\!\top}\va
+  \;=\; \sum_{t=1}^{T} \frac{\partial\, (\va\cdot\vz)}{\partial \vh^{(l)}_t}\,,
+  \qquad\text{versus}\qquad
+  \frac{\partial\,(\va\cdot\vz)}{\partial \vh^{(l)}_{\mathrm{last}}}
+\end{equation}
+for the single-position convention. Equation~\eqref{eq:broadcast} is
+\texttt{g.sum(dim=1)} in \texttt{src/token\_jac.py:82} and
+\texttt{src/reach\_jlens.py:97}; the right-hand object is \texttt{m\_last}. Their ratio
+is the broadcast gain
+\begin{equation}\label{eq:bgain}
+  \rho(l) \;=\; \mathrm{median}_i\;
+  \frac{\bigl\lVert \sum_t \partial r_i/\partial \vh^{(l)}_t \bigr\rVert}
+       {\bigl\lVert \partial r_i/\partial \vh^{(l)}_{\mathrm{last}} \bigr\rVert},
+\end{equation}
+measured at $1.355$ for \texttt{cities} layer $16$ and $2.016$ for
+\texttt{common\_claim} layer $8$. Two consequences. The broadcast site has the larger
+margin, so a budget quoted under broadcast is easier to meet than the same number
+quoted per position, and $m_{\mathrm{last}}$ is the honest per-position figure. And
+ActAdd-style single-position injection instantiates the right-hand map, not the
+left-hand one, so comparing our $\varepsilon$ to a published ActAdd $\varepsilon$
+without dividing through by $\rho$ compares two different operators. The energy remark
+elsewhere in this note ($\varepsilon\sqrt T$) is a consequence of $B$, not a substitute
+for writing it.
+
+\subsection{The cross-layer convention behind the \texttt{\_asis} cosines}
+\label{sec:asis}
+
+$\alpha$ in \eqref{eq:alpha} is a cosine, so both arguments must live in the same
+space. For the directions labelled \texttt{\_asis} they do not, and the label is there
+to say so. Those directions are read verbatim from
+\texttt{reach\_dirs\_*.npz}, where they were fitted at the \emph{target layer}
+$\vh^{(l_{\mathrm{tgt}})}$; the $\alpha$ we report takes their cosine against $\va$ in
+\emph{post-norm} coordinates $\vz$, with no transport between the two
+(\texttt{src/token\_geom.py:395--400}). So
+$\alpha_{\texttt{mean\_diff\_tgt\_asis}} = 0.01325$ is the cosine between $\va$ and the
+raw coordinate vector we actually injected. That is the operationally correct quantity,
+because it answers what the direction we really steered with bought us, and it is
+\emph{not} a coordinate-free statement about the concept. The basis-correct version
+would transport the target-layer direction forward,
+\begin{equation}\label{eq:transport}
+  \vu^{\mathrm{tr}} \;=\; \frac{J_{l_{\mathrm{tgt}}\to\vz}\,\vu}
+                                {\norm{J_{l_{\mathrm{tgt}}\to\vz}\,\vu}},
+  \qquad
+  \alpha^{\mathrm{tr}}(\vu) = \frac{\lvert \va\cdot\vu^{\mathrm{tr}}\rvert}{\norm{\va}},
+\end{equation}
+which costs one JVP per statement and has not been computed. Until it is, every
+\texttt{\_asis} number carries this paragraph.
+
+\section{When is a norm budget the right currency?}\label{sec:gain}
+
+Everything above prices a perturbation by its Euclidean norm $\varepsilon$. That is a
+modelling choice, and the meeting challenged it directly: \emph{small perturbations in
+different directions can have vastly different chains}. Stated precisely, define for a
+site $S$, a unit direction $\vu$, and a budget $\varepsilon$ the \emph{realized gain}
+and the \emph{realized slope}
+\begin{equation}\label{eq:gain}
+  G_S(\vu,\varepsilon) \;=\; \frac{\norm{\vz(\varepsilon\vu) - \vz(\bm 0)}}{\varepsilon},
+  \qquad
+  \sigma_S(\vu,\varepsilon) \;=\; \frac{\va\cdot\bigl(\vz(\varepsilon\vu)-\vz(\bm
+  0)\bigr)}{\varepsilon},
+\end{equation}
+where $\vz(\cdot)$ is the post-final-norm activation the perturbed forward pass
+actually produces. These are measured, not predicted: no Jacobian appears in
+\eqref{eq:gain}.
+
+Two limits pin down what the objection can mean, and they are not the same claim.
+
+\paragraph{Anisotropy.} Fix $\varepsilon$ and vary $\vu$. If
+$G_S$ is constant in $\vu$ the site is isotropic and $\varepsilon$ is a fair price. The
+statistic is the spread $G^{p90}/G^{p10}$ over directions. Note that anisotropy alone is
+\emph{not} an obstruction: it is exactly what $\alpha$ already measures at the post-norm
+site, and $\varepsilon(\vu) = \varepsilon^\star/\alpha$ is precisely the rescaling that
+repairs it. An anisotropic-but-linear site needs a change of units, not a change of
+theory.
+
+\paragraph{Nonlinearity.} Fix $\vu$ and vary $\varepsilon$. For a linear
+$A_S$, $G_S(\vu,\varepsilon) = \norm{A_S\vu}$ with \emph{no dependence on
+$\varepsilon$ whatsoever}. So
+\begin{equation}\label{eq:scaledep}
+  \kappa_S(\vu) \;=\; \frac{G_S(\vu,\varepsilon_{\max})}{G_S(\vu,\varepsilon_{\min})}
+\end{equation}
+is a pure nonlinearity reading, and $\kappa_S \equiv 1$ is the exact statement that the
+first-order certificate is valid over the whole budget range. This is the claim that
+would actually threaten the program: if $\kappa$ is far from $1$ and varies with $\vu$,
+then no fixed budget, rescaled or not, certifies anything, and the certificate must be
+restated in terms of a bound on the realized gain rather than on $\varepsilon$.
+
+At the post-norm site $A_S = I$, so \eqref{eq:gain} collapses to $G = 1$ and $\sigma =
+\va\cdot\vu$ identically, for every direction and every budget. That is arithmetic, so
+it serves as a second harness assertion of the same kind as the oracle arm: a post-norm
+run that does not reproduce it is measuring something other than what it claims.
+
+\section{Diagnosis, with measured numbers}\label{sec:diag}
+
+Running the above on \texttt{cities} (statement stems, false-country targets) gives:
+
+\begin{table}[h]\centering
+\begin{tabular}{@{}lrl@{}}
+\toprule
+quantity & median & reading \\
+\midrule
+$\norm{\vz}$ & $189.2$ & scale of the activation \\
+$M$ (logit margin to the cheapest false country) & $13.76$ & \\
+$\norm{\vd^\star}$, post-norm site & $6.37$ & \\
+$\norm{\vd^\star}/\norm{\vz}$ & $0.034$ & \textbf{a 3.4\% nudge flips the country} \\
+$\norm{\vd^\star}/\norm{\vd^\star_{\text{1 face}}}$ & $1.088$ & the cone is $2$--$3$ faces, not $1$ \\
+$\norm{\vd^\star}$, pre-norm site & $29.3$ & \\
+RMSNorm penalty (pre/post) & $4.4\times$ & cost of injecting before the norm \\
+\midrule
+chance $\alpha$ for a random direction, $\sqrt{2/\pi d}$ & $0.0166$ & the null \\
+$\alpha$, final-layer mean-difference (fitted here) & $0.0040$ & $0.24\times$ chance \\
+$\alpha$, target-layer mean-difference (what we steered with) & $0.0133$ & $0.80\times$ chance \\
+$\alpha$, probe-gradient direction & $0.0135$ & $0.81\times$ chance \\
+$\varepsilon(\vu)/\varepsilon^\star$, best of the three & $74\times$ & \\
+$\varepsilon(\vu)/\varepsilon^\star$, the direction we steered with & $79\times$ &
+  \textbf{the diagnosis} \\
+\bottomrule
+\end{tabular}
+\caption{$n = 200$ statements, all $200$ cone certificates verified against the full
+$256{,}000$-token vocabulary.}
+\end{table}
+
+Read plainly: the token flip is \emph{cheap} ($3.4\%$ of $\norm{\vz}$), and every
+candidate actuator is \emph{orthogonal} to the direction that buys it. The comparison
+that matters is not $\alpha$ against $1$ but $\alpha$ against the alignment a
+\emph{random} direction would achieve, which in $d = 2304$ is
+$\mathbb{E}\lvert\hat{\va}\cdot\vu\rvert = \sqrt{2/\pi d} = 0.0166$. All three
+directions sit at or below that floor (Wilcoxon against chance, $p < 10^{-6}$ in every
+case). They are not weakly aligned with the decision; they are \emph{uninformative}
+about it, and the fitted final-layer direction is four times \emph{worse} than chance.
+
+By \eqref{eq:alpha} the budget we spent therefore bought on the order of one percent
+of a flip. A behavioral null at that budget is not evidence that truth is un-actuable;
+it is evidence that we measured the budget in the wrong units. The unit to report is
+the fraction of the margin consumed,
+\begin{equation}
+  \phi \;=\; \frac{M - M_{\text{after}}}{M}
+  \;=\; \frac{\varepsilon\,\lvert (A_S^{\!\top}\va)\cdot\vu\rvert}{M},
+  \label{eq:phi}
+\end{equation}
+and $\phi$ has never appeared in any of our results tables.
+
+\paragraph{A counter-explanation that the data rejects.} Tan et al.\ (2024) report that
+in many datasets nearly half of examples are \emph{anti-steerable}, which would make an
+aggregate flat while individual statements move in both directions. Our per-statement
+arm already swept signed scales, so this is testable without a GPU. On \texttt{cities},
+of $199$ statements, $103$ are byte-identical at every scale, $68$ change text without
+changing verdict, and $28$ change verdict, splitting $24$ with the direction against
+$4$ against it (exact two-sided sign test $p = 1.8\times 10^{-4}$). The effect is
+small, directionally \emph{correct}, and highly significant; cancellation is not the
+mechanism, inertness is, which is what \eqref{eq:alpha} predicts. On
+\texttt{common\_claim} the picture differs: only $8$ statements are inert, $56$ move,
+and $21$ of those move the wrong way ($p = 0.08$), which is the anti-steerability
+regime Tan et al.\ describe. The two datasets fail for two different reasons and must
+be reported separately.
+
+\section{What each planned measurement pins down}
+
+\begin{table}[h]\centering
+\begin{tabular}{@{}llp{6.4cm}@{}}
+\toprule
+& measures & decides \\
+\midrule
+E0 \texttt{token\_geom} & $M$, $\vd^\star$, $\alpha$, RMSNorm penalty & whether any
+  budget we ever spent could have bought a flip \\
+E1 \texttt{token\_steer} post/pre-norm & flip rate, $\phi$ & the trichotomy above;
+  carries the oracle assertion \\
+E2/E3 \texttt{token\_jac} & $\norm{J_l^{\!\top}\va}$ for all $l$, both injection
+  conventions & which layer has control authority, and the broadcast gain
+  $m_{\text{all}}/m_{\text{last}}$ \\
+E4 decoding audit & flip rate at repetition penalty $1.0$ vs $1.3$ & whether the
+  decoder was even an argmax in the runs we already have \\
+E5 \texttt{sae\_decompose} & overlap of the steering direction with SAE atoms &
+  whether an interpretable feature basis defines a better target set than a probe
+  halfspace \\
+E6 \texttt{token\_sens} & $G_S(\vu,\varepsilon)$ and $\kappa_S(\vu)$ of
+  \eqref{eq:gain}--\eqref{eq:scaledep} & whether a norm budget is the right currency at
+  all: anisotropy is a units problem, $\kappa \neq 1$ is an obstruction \\
+E7 injection ablation & all positions vs last position & whether ``budget
+  $\varepsilon$'' meant $\varepsilon$ or $\varepsilon\sqrt{T}$ \\
+E8 \texttt{tests/test\_token\_*} & the adjoint pair, the cone certificate, which
+  tensor each hook touches & that the actuator is what we claim, checked automatically
+  rather than once by hand \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Two methodological defects in the existing runs, both now fixed in code.}
+First, the steering vector was broadcast to \emph{every} position including BOS, while
+ActAdd adds at one aligned position; the injected energy is then $\varepsilon\sqrt{T}$
+rather than $\varepsilon$, and the attention sink is perturbed. Second,
+\texttt{repetition\_penalty} was $1.3$ during an eight-token factual completion, so the
+decoder was not an argmax and the cone geometry of \eqref{eq:cone} did not literally
+hold. Neither invalidates the readout measurements, and both must be off before any
+token-space claim is made.
+
+\end{document}
