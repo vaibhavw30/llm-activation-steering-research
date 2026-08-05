@@ -109,6 +109,18 @@ def crossed_flags(df, eps_by_row, labels_by_row, label=None):
     means the statement already sits in the target halfspace, so eps* is 0 and
     `crossed` is trivially true. On cities that is 96 of 99 label-0 statements and 0 of
     101 label-1 statements.
+
+    ASSUMES A POSITIVE SCALE. The comparison is `|scale| >= eps*_legacy`, so a row swept
+    at a negative frac is marked crossed on the strength of its magnitude alone, even
+    though a negative scale moves the readout AWAY from the FALSE threshold and the
+    first-order argument above then predicts no crossing at any magnitude. Every caller
+    in the published analysis iterates positive fracs only, so no reported number is
+    affected, but the arms on disk carry fracs down to -2.0 and feeding them here would
+    produce cells that are the bare inequality and not a readout prediction. The
+    absolute value is deliberately left in place rather than made sign-aware: changing
+    it would move published numbers. Filter to `scale > 0` before calling if negative
+    fracs are ever needed. Pinned by
+    test_crossed_is_sign_blind_and_marks_a_negative_scale_as_crossed.
     """
     e = df.stmt.map(eps_by_row)
     y = df.stmt.map(labels_by_row)
@@ -170,7 +182,11 @@ def proportional_per_statement(df, a="tgt_minus_top_delta", b="frac_margin", rto
     be revisited before any table built on it is trusted.
 
     Rows with |b| below 1e-9 are dropped: frac == 0 makes frac_margin exactly zero by
-    construction and the ratio is undefined there.
+    construction and the ratio is undefined there. Rows where either column is NaN are
+    dropped too, and before the two-row gate rather than after: a group of two rows one
+    of which has a NaN ratio scores `std(ddof=0) == 0` on its single surviving value and
+    passes, which is the same silent leniency the two-row gate exists to prevent. All
+    twelve arms on disk are NaN-free in both columns, so this changes no reported number.
 
     A (direction, stmt) group with fewer than two surviving rows carries no evidence
     about within-statement proportionality, so it is excluded from the comparison
@@ -181,6 +197,9 @@ def proportional_per_statement(df, a="tgt_minus_top_delta", b="frac_margin", rto
     if s.empty:
         return False
     s["_r"] = s[a] / s[b]
+    s = s[s["_r"].notna()]
+    if s.empty:
+        return False
     counts = s.groupby(["direction", "stmt"])._r.transform("size")
     s = s[counts >= 2]
     if s.empty:

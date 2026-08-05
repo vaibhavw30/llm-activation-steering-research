@@ -103,6 +103,23 @@ def test_crossed_uses_the_legacy_budget_not_the_token_budget():
     assert bool(out.crossed.iloc[0]) is True
 
 
+def test_crossed_is_sign_blind_and_marks_a_negative_scale_as_crossed():
+    """Pins current behavior, which is NOT the physically correct one.
+
+    `crossed` is `|scale| >= eps*_legacy`. A negative scale moves the readout AWAY from
+    the FALSE threshold, so the first-order argument in the docstring predicts no
+    crossing at any magnitude, yet the row below comes back True. Every caller in the
+    published analysis sweeps positive fracs only, so no reported number is affected,
+    but the arms on disk carry fracs down to -2.0. This test exists so that making the
+    comparison sign-aware is a deliberate act with a failing test attached rather than a
+    silent change to a published column.
+    """
+    df = _arm([("jtw_legacy", 7, -1.0, -50.0, 0, -0.02, "x")])
+    out = tc.crossed_flags(df, {7: 0.5}, {7: 1})
+    assert out.scale.iloc[0] < 0
+    assert bool(out.crossed.iloc[0]) is True
+
+
 def test_crossed_flags_drops_statements_outside_the_subsample():
     """jtw_legacy covers 90 of 200 on common_claim. A statement with no reach_margins
     row has no eps* and must be dropped, not treated as eps*=0 and therefore always
@@ -138,6 +155,84 @@ def test_cross_tab_handles_an_empty_column_without_raising():
     assert np.isnan(t["phi"])
 
 
+def _write_reach_npz(tmp_path, ds="tiny"):
+    """Three synthetic artifacts with the real key names, shapes and axis order.
+
+    Read off the real files: `reach_dirs_<ds>.npz` carries `W` as (n_dirs, d), `names`
+    as an object array and `thresh02` as (n_dirs,); `reach_margins_<ds>.npz` carries
+    `margins` as (n_rows, n_dirs); `reach_acts_<ds>.npz` carries `h_tgt` as (n_rows, d)
+    plus `labels` and `row_index` as (n_rows,).
+
+    `mean_diff_tgt` is deliberately at index 1 with a decoy at index 0, and the decoy's
+    `W` row, `thresh02` entry and `margins` column all differ, so a wrong `names.index`
+    or a `[k, :]` for a `[:, k]` changes every returned value rather than none.
+    """
+    np.savez(tmp_path / f"reach_dirs_{ds}.npz",
+             names=np.array(["decoy", tc.LEGACY_NAME], dtype=object),
+             W=np.array([[9.0, 9.0, 9.0], [1.0, -2.0, 0.0]], dtype=np.float32),
+             thresh02=np.array([99.0, 2.0], dtype=np.float32))
+    np.savez(tmp_path / f"reach_margins_{ds}.npz",
+             margins=np.array([[7.0, 1.5], [7.0, 6.0], [7.0, 4.0], [7.0, 0.0]],
+                              dtype=np.float32))
+    np.savez(tmp_path / f"reach_acts_{ds}.npz",
+             h_tgt=np.array([[5.0, 0.0, 3.0], [7.0, 1.0, 0.0],
+                             [1.0, 0.0, 9.0], [4.0, 0.0, 0.0]], dtype=np.float32),
+             labels=np.array([1, 0, 1, 0]),
+             row_index=np.array([1246, 7, 33, 99]))
+    return ds
+
+
+def test_legacy_eps_star_reconstructs_g_over_m_from_the_three_artifacts(tmp_path):
+    """The producer behind §8 Result 4, tested end to end rather than through its
+    consumer. eps* = g/m with g = w.h_tgt - t02 and m = ||J^T w|| read from `margins`.
+
+    Statement 1246: w.h = 5*1 + 0*(-2) + 3*0 = 5, g = 5 - 2 = 3, m = 1.5, eps* = 2.0.
+    Statement 7:    w.h = 7 - 2 = 5, the same g = 3 against m = 6.0, eps* = 0.5. The two
+    together pin g and m separately: a dropped `- t02` moves the first, a wrong margins
+    column moves the second, and no single arithmetic slip reproduces both.
+    """
+    ds = _write_reach_npz(tmp_path)
+    eps, lab = tc.legacy_eps_star(ds, root=str(tmp_path))
+    assert eps[1246] == pytest.approx(2.0)
+    assert eps[7] == pytest.approx(0.5)
+    assert lab == {1246: 1, 7: 0, 33: 1, 99: 0}
+
+
+def test_legacy_eps_star_returns_zero_for_a_statement_already_inside_the_target(tmp_path):
+    """g <= 0 means the statement already sits in the FALSE halfspace and needs no
+    perturbation, so eps* is 0 and every scale trivially crosses. Statement 33 has
+    w.h = 1 against t02 = 2, so g = -1. Returning the raw negative ratio here would make
+    `crossed` depend on the sign of a quantity that is not a budget."""
+    ds = _write_reach_npz(tmp_path)
+    eps, _ = tc.legacy_eps_star(ds, root=str(tmp_path))
+    assert eps[33] == 0.0
+
+
+def test_legacy_eps_star_marks_a_vanished_margin_unreachable_rather_than_dividing(tmp_path):
+    """m = 0 means no perturbation at this site moves the readout at all. Statement 99
+    has g = 2 and m = 0. The sentinel keeps it in the table as unreachable instead of
+    producing an inf, a NaN, or a silently huge finite number from an epsilon floor."""
+    ds = _write_reach_npz(tmp_path)
+    eps, _ = tc.legacy_eps_star(ds, root=str(tmp_path))
+    assert eps[99] == tc.UNREACHABLE
+
+
+def test_cross_tab_phi_matches_the_hand_computed_value_on_a_full_table():
+    """The only other phi test asserts `isnan` on a degenerate table, so a sign flip or
+    a transposed numerator would pass the whole suite while corrupting every phi cell in
+    the dump. Table: 3 crossed-and-flipped, 2 crossed-not-flipped, 1 not-crossed-flipped,
+    4 neither. phi = (3*4 - 2*1) / sqrt(5 * 5 * 4 * 6) = 10 / sqrt(600) = 0.4082483.
+    Inverting the association must flip the sign and nothing else, which is what the
+    second frame checks."""
+    pos = pd.DataFrame({"crossed": [1] * 5 + [0] * 5,
+                        "hit_target": [1, 1, 1, 0, 0] + [1, 0, 0, 0, 0]})
+    assert tc.cross_tab(pos)["phi"] == pytest.approx(10.0 / np.sqrt(600.0))
+
+    neg = pd.DataFrame({"crossed": [1] * 5 + [0] * 5,
+                        "hit_target": [1, 0, 0, 0, 0] + [1, 1, 1, 0, 0]})
+    assert tc.cross_tab(neg)["phi"] == pytest.approx(-10.0 / np.sqrt(600.0))
+
+
 def test_the_join_key_is_the_dataset_row_index_not_a_position():
     """token_steer.stmt and token_geom.idx carry original dataset row indices running
     to 1495 on cities, not 0-based positions running to 199. A merge that assumes
@@ -157,6 +252,13 @@ def test_margin_consumption_reports_median_and_p90_per_direction_and_frac():
     assert out.loc[("A", 1.0), "median_abs"] == pytest.approx(0.03)
     assert out.loc[("A", 1.0), "n"] == 3
     assert out.loc[("A", 2.0), "median_abs"] == pytest.approx(1.00)
+    # p90_abs fills three columns of §8's Result 2 table, so it needs an assertion of
+    # its own. |frac_margin| sorted is [0.01, 0.03, 0.05] and pandas interpolates
+    # linearly: 0.9 * (3 - 1) = 1.8, so 0.03 + 0.8 * (0.05 - 0.03) = 0.046. Taking the
+    # signed quantile instead would give 0.046 here too but the wrong answer on a frame
+    # with negatives, which is why median_abs above uses -0.03 as its middle value.
+    assert out.loc[("A", 1.0), "p90_abs"] == pytest.approx(0.046)
+    assert out.loc[("A", 2.0), "p90_abs"] == pytest.approx(1.00)
 
 
 def test_proportional_detector_fires_on_a_per_statement_rescale():
@@ -211,6 +313,29 @@ def test_proportional_detector_returns_false_when_every_group_is_a_singleton():
         "tgt_minus_top_delta": [7.0, -3.5, 0.02, 100.0, 1.0],
     })
     assert tc.proportional_per_statement(df) is False
+
+
+def test_proportional_detector_does_not_count_a_nan_partner_as_agreement():
+    """A group of two rows where one ratio is NaN used to pass: pandas skips the NaN, so
+    `std(ddof=0)` of the single surviving value is 0.0 and the group scores a perfect
+    match on no comparison at all. That is exactly the leniency the two-row gate exists
+    to prevent, so the NaN filter has to run before the gate, not after.
+
+    The two frames below are the same data twice. With the partners present the columns
+    are genuinely proportional and the detector says True; with them NaN there is no
+    within-statement comparison left anywhere and it must say False.
+    """
+    clean = pd.DataFrame({
+        "direction": ["A"] * 4,
+        "stmt": [1, 1, 2, 2],
+        "frac_margin": [0.01, 0.02, 0.05, 0.10],
+        "tgt_minus_top_delta": [0.13, 0.26, 1.00, 2.00],
+    })
+    assert tc.proportional_per_statement(clean) is True
+
+    partial = clean.copy()
+    partial.loc[[1, 3], "tgt_minus_top_delta"] = np.nan
+    assert tc.proportional_per_statement(partial) is False
 
 
 def test_an_empty_completion_is_degenerate_not_missing():
