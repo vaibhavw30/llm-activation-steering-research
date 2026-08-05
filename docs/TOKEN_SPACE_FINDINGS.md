@@ -36,8 +36,8 @@ argmax and therefore the cone, and a linear intervention there does flip the tok
 cleanly when it is the right one. What fails is alignment, not linearity. Of the three
 claims that were never measured, two are now measured and the third, the SAE claim, is
 not answerable from the files we have; and the request to write the algebra out end to
-end is substantially done, with the broadcast operator and the cross-layer alpha
-convention still unwritten.
+end is now met in one tracked document, with a single quantity defined there but not yet
+computed, the basis-correct transported form of the cross-layer alpha.
 
 ---
 
@@ -54,7 +54,7 @@ The claims are the table at
 | 4 | Small perturbations in different directions have vastly different chains (chaotic latent space) | E6, `token_sens` | **ANSWERED**, and the two halves get opposite answers: the anisotropy half holds (9.91x spread across directions at cities layer 16), the chaos half does not (`kappa` within 6.1% of 1 across a 400x budget range on cities) | §6 |
 | 5 | SAE is a useful alternative for classifying the target set | E5, `sae_decompose` | **NOT ANSWERABLE FROM THESE FILES** | §7 |
 | 6 | Temperature 0, deterministic, invert the token mapping | E0 plus E1 plus E3 | **CONFIRMED** | §8 |
-| 7 | Write out all the math from input to output and justify | Documentation | **UNRESOLVED** | §9 |
+| 7 | Write out all the math from input to output and justify | Documentation | **ANSWERED**: every object is named and justified in one tracked place, [`RESULTS_SINCE_LAST_MEETING_PART3.md`](RESULTS_SINCE_LAST_MEETING_PART3.md) §2.1 to §2.7, with the proofs in [`math_map.tex`](math_map.tex). One quantity is defined there and not computed: the transported cross-layer `alpha` | §9 |
 | 8 | ActAdd sweeps all layers; some layers do nothing; mean difference is heuristic | E2, `token_jac`, plus the layer arms | **ANSWERED** | §10 |
 
 ---
@@ -155,9 +155,13 @@ with the `oracle` direction flips every statement at a degeneracy of 0.035, so t
 incoherence is a property of the direction and not of steering at the last layer. That is
 precisely the isolation the claim asserted this control would provide.
 
-**The pre-norm arm is a null for an arithmetic reason, not a behavioral one.** Every
-direction including `oracle` has hit rate 0.000 at `frac` 1.0 and 2.0 on cities, and only
-`md_full` registers 0.005 on common_claim. A displacement certified after the norm must
+**The pre-norm arm is a null for an arithmetic reason, not a behavioral one.** On the
+shared statements that govern every cross-direction rate in this document (§2), the arm is
+a clean null: every direction including `oracle` has hit rate **0.000** at `frac` 1.0 and
+2.0 on cities (n = 200) and **0.000** on common_claim (n = 90). The one non-zero cell
+anywhere in the arm is `md_full` at 0.005 on common_claim, and that is an *unrestricted*
+per-direction rate over all 200 statements: the single hit lies outside the 90 shared
+statements, so it does not enter any cross-direction comparison. A displacement certified after the norm must
 survive the norm, which costs a median `rmsnorm_penalty` of **4.380** on cities and
 **5.177** on common_claim, while the sweep stops at `frac = 2.0`. The pre-norm arm was
 never given enough budget to be informative. §13 turns this into a cheap falsifiable test.
@@ -429,55 +433,52 @@ confirmed.
 
 ---
 
-## 9. Claim 7: the algebra is written, but not in one place, and three objects are still missing
+## 9. Claim 7: every object from input to output is named, in the document the PI reads
 
-**UNRESOLVED.** This section states the gap. Closing it is being handled separately and
-no document was edited for this one.
+**ANSWERED.**
 
-**What already exists, and where.**
+**Method.** Documentation, not measurement. The ask was for one place where every
+linear-algebra object between token input and token output is written down and justified
+rather than described in words. That place is
+[`RESULTS_SINCE_LAST_MEETING_PART3.md`](RESULTS_SINCE_LAST_MEETING_PART3.md) §2, "The
+reachability formalism: every object named", §2.1 through §2.7, which is the section of
+the results document the PI actually reads. The LaTeX source carrying the proofs, the cone
+dual and the non-emptiness argument is [`math_map.tex`](math_map.tex), referenced from
+§2's opening paragraph. **Both files are now tracked in git**, so both are part of the
+shared record rather than two working files on one machine.
 
-[`docs/math_map.tex`](math_map.tex) writes the forward map from token input to token
-output and names the objects: the tied embedding and unembedding `E`, the final RMSNorm
-gain `gamma`, the residual stream `h^(l)`, the post-norm activation `z`, the logits
-`u = E z`, the softcap and why it is argmax-irrelevant, temperature and what survives
-`T > 0`, the argmax cone `C_j` with its 255,999 faces, the general certificate
-(`w`, `t`, `g = t - w.z`, `m = ||A_S^T w||`, `eps* = g/m`, and the minimiser `d*`), the
-misalignment cosine `alpha` with `eps(u) = eps*/alpha`, the token instantiation
-(`a = E[j_tgt] - E[j_top]`, `M`, `w := a`, `t := 0`), the cone QP and its dual, the
-non-emptiness argument via the convex hull, the three sites with their `A_S` (post-norm
-`I`, pre-norm the RMSNorm Jacobian, layer `l` one VJP), the realized gain `G_S`, the slope
-`sigma_S`, the scale-dependence ratio `kappa_S`, and the margin fraction `phi`.
+**What §2 names, subsection by subsection.**
 
-[`docs/RESULTS_SINCE_LAST_MEETING_PART3.md`](RESULTS_SINCE_LAST_MEETING_PART3.md) §2
-states the same certificate in prose for the probe instantiation: source and target
-layers, the hop map `F`, local linearity and `J`, the FALSE halfspace, `g`, `m`, `eps*`,
-the minimising direction, and the VJP cost argument that makes per-statement certificates
-affordable.
+| where | objects named and justified |
+|---|---|
+| §2.1 | the forward map: the tied embedding and unembedding `E` (`V x d`), the residual stream `h^(l)_t`, the final RMSNorm gain `gamma`, the post-norm activation `z`, the logits `u = E z`, the softcap `c = 30.0`, and which two of these steps are linear and why the rest do not break the algebra |
+| §2.2 | the two readouts as one algebra with a different `w`: the probe halfspace (`w`, `t02`) and the token cone (`a_i = E[j_tgt] - E[j_top]`, `r_i(z) = a_i . z`, the 255,999 faces, `delta_cone` against `delta_face`) |
+| §2.3 | the certificate stated once, with the sign convention fixed once: `g = t - w.z`, `m = ||A_S^T w||`, `eps* = g/m`, the minimiser `d* = (g/m^2) A_S^T w`, and the one-VJP cost argument that makes a per-statement certificate affordable |
+| §2.4 | the three injection sites with their `A_S`, their adjoints, and their measured `m` medians: post-norm `I` (2.383 cities, 2.138 common_claim), pre-norm `(sqrt(d)/||h||) diag(1+gamma) P_perp` (0.532, 0.432), layer `l` one VJP (0.607 at L16, 0.676 at L8), plus the hop map `F` and the local-linearity qualification |
+| §2.5 | the **broadcast operator**, previously prose and now written: `B delta = 1_T (x) delta`, the map actually inverted is `J . B`, its adjoint sums the position gradients, `(J . B)^T w = sum_t (dr / dh^(l)_t)`, which is literally `g.sum(dim=1)` at `src/token_jac.py:82` and `src/reach_jlens.py:97`, priced at `broadcast_gain` **1.355** (cities L16) and **2.016** (common_claim L8) |
+| §2.6 | `alpha(u) = |(A_S^T w) . u| / ||A_S^T w||` with `eps_required(u) = eps*/alpha(u)`, and the **cross-layer `_asis` convention**, previously a footnote: those directions are fitted at the target layer and read in post-norm coordinates with no transport at all (`src/token_geom.py:395-400`) |
+| §2.7 | what "reachable" would mean, as four conditions rather than one number |
 
-**What is still missing.**
+`math_map.tex` gained the same two operators as `\subsection` `sec:broadcast` and
+`sec:asis`, so neither document is now incomplete by omission of the other.
 
-1. **They are not one document, and the one that carries the objects is not the one the
-   PI reads.** The results document names only the probe instantiation: no `E`, no `z`, no
-   cone, no `a`, no `alpha`, no site taxonomy. The object list lives in a LaTeX source
-   that the results document does not carry or reference in its formalism section. Both
-   files are also still untracked in git, so neither is part of the shared record yet. The
-   ask was for one place where every object from input to output is named and justified,
-   and handing over either file alone does not do that.
-2. **The broadcast operator is described in words and never written.** Every certificate
-   on disk was computed with the perturbation added at *every* position, so the object
-   being pulled back is not `A_S` applied to a single `delta` but `A_S` applied to a
-   rank-one perturbation across positions, with the position gradients summed
-   (`reach_jlens.py:97`). `math_map.tex` notes the `eps * sqrt(T)` energy consequence in a
-   paragraph but never writes the operator, and the measured consequence is not small:
-   `broadcast_gain` 1.355 at cities layer 16, 2.016 at common_claim layer 8, and a
-   realized hit-rate ratio of 2.5x on cities (§5, §10).
-3. **The cross-layer `alpha` convention is nowhere in either document.** The `_asis`
-   directions are fitted at the target layer and read in post-norm coordinates.
-   `TOKEN_SPACE_PROGRAM.md` §2.2 flags this in a caveat paragraph, but neither
-   `math_map.tex` nor the results document writes the change of basis, so a reader cannot
-   tell what `alpha_mean_diff_tgt_asis = 0.01325` is a cosine between.
+**The residual, and it is a missing measurement rather than a missing object.** §2.6
+writes down the basis-correct version of the cross-layer cosine: push the target-layer
+direction forward through the remaining blocks and the final RMSNorm, then take the cosine
+against `a_i`. That transported `alpha` **has not been computed**, so every `_asis` number
+in this document, `alpha_mean_diff_tgt_asis = 0.01325` and
+`alpha_probe_grad_tgt_asis = 0.01355` on cities (§10 Result B), is a cosine against the raw
+vector that was actually injected, and must keep travelling with the convention paragraph
+that says so. That is the operational question and the one the program needs, but it is
+not a coordinate-free statement about the concept.
+[`TOKEN_SPACE_PROGRAM.md`](TOKEN_SPACE_PROGRAM.md) §2.2 raised this first, as a caveat;
+§2.6 is now the place it is stated in full.
 
-Until those three are fixed, claim 7 is substantially done and not deliverable.
+**Reading.** The claim asked for naming and justification, and that is done and shared.
+Computing the transported `alpha` is a separate, cheap job (one forward pass per direction
+per dataset) and it belongs to claim 8's alignment question, not to this one. A quantity
+that is defined but unmeasured is not the same failure as an object that was never
+written down.
 
 ---
 
@@ -626,8 +627,9 @@ improvement (§13).
 **First, the cheapest falsifiable thing on the list: sweep the pre-norm arm to `frac` 6.**
 The pre-norm null is currently explained as arithmetic. A displacement certified after the
 norm must survive it, at a median cost of **4.380** on cities and **5.177** on
-common_claim, while the sweep stopped at `frac = 2.0`, and every pre-norm hit rate is
-0.000 apart from `md_full` at 0.005 on common_claim. Candidate gains at that site cluster
+common_claim, while the sweep stopped at `frac = 2.0`, and every pre-norm hit rate on the
+shared statements is 0.000 (the one unrestricted exception, `md_full` at 0.005 on
+common_claim, is §3). Candidate gains at that site cluster
 on the random baseline (cities: candidates 0.229 to 0.300, eight random directions 0.2438
 to 0.2477, `1/penalty` 0.2283), which says pre-norm gain is a property of the norm layer
 and not of the direction. **Prediction, stated here and not run: sweeping the pre-norm
@@ -653,8 +655,11 @@ defined over a horizon, with a value recursion or a receding-horizon controller 
 re-plans each token, is the structurally correct object. It is also the natural handoff
 into A-LQR.
 
-**Fifth, claim 5 and claim 7, both cheap and both blocked on something other than compute.**
-Claim 5 needs one SAE decomposition with the readout and the steering vectors at the same
-layer. Claim 7 needs the object list folded into the document the PI actually reads, plus
-the broadcast operator and the cross-layer alpha convention written out. Neither is a
-research risk; both are unfinished deliverables.
+**Fifth, claim 5, and the one measurement claim 7 leaves behind.** Claim 5 needs one SAE
+decomposition with the readout and the steering vectors at the same layer, which is a
+cluster job and not a re-read. Claim 7's object list is written and tracked (§9), and what
+it leaves open is a number rather than a deliverable: the transported cross-layer `alpha`,
+which pushes each `_asis` direction forward through the remaining blocks and the final
+RMSNorm before taking the cosine against `a_i`. Until it exists, the `_asis` alphas in §10
+Result B are cosines against the raw injected vector and carry §2's convention caveat.
+Neither of these is a research risk.
