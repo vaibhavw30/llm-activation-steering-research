@@ -146,3 +146,53 @@ def test_the_join_key_is_the_dataset_row_index_not_a_position():
     df = _arm([("jtw_legacy", 1246, 1.0, 50.0, 0, 0.02, "x")])
     out = tc.crossed_flags(df, {1246: 0.5, 0: 999.0}, {1246: 1, 0: 1})
     assert out.eps_legacy.iloc[0] == pytest.approx(0.5)
+
+
+def test_margin_consumption_reports_median_and_p90_per_direction_and_frac():
+    df = _arm([("A", 1, 1.0, 1.0, 0, 0.01, "x"),
+               ("A", 2, 1.0, 1.0, 0, -0.03, "x"),
+               ("A", 3, 1.0, 1.0, 0, 0.05, "x"),
+               ("A", 1, 2.0, 2.0, 0, 1.00, "x")])
+    out = tc.margin_consumption(df).set_index(["direction", "frac"])
+    assert out.loc[("A", 1.0), "median_abs"] == pytest.approx(0.03)
+    assert out.loc[("A", 1.0), "n"] == 3
+    assert out.loc[("A", 2.0), "median_abs"] == pytest.approx(1.00)
+
+
+def test_proportional_detector_fires_on_a_per_statement_rescale():
+    """readout_delta = frac_margin * |m0| with |m0| constant within a statement and
+    different across statements. This is what token_steer actually writes, verified:
+    the per-statement std of the ratio is 2.3e-5 against a mean of 13.8."""
+    df = pd.DataFrame({
+        "direction": ["A"] * 4,
+        "stmt": [1, 1, 2, 2],
+        "frac_margin": [0.01, 0.02, 0.05, 0.10],
+        "tgt_minus_top_delta": [0.13, 0.26, 1.00, 2.00],  # m0 = 13 then 20
+    })
+    assert tc.proportional_per_statement(df) is True
+
+
+def test_proportional_detector_stays_silent_on_independent_columns():
+    """If token_steer is corrected to log the real truth readout, the ratio stops being
+    constant and this returns False, which is the notification that A1 and A2 must be
+    revisited."""
+    df = pd.DataFrame({
+        "direction": ["A"] * 4,
+        "stmt": [1, 1, 2, 2],
+        "frac_margin": [0.01, 0.02, 0.05, 0.10],
+        "readout_delta": [0.13, 0.90, 1.00, 0.20],
+    })
+    assert tc.proportional_per_statement(df) is False
+
+
+def test_proportional_detector_ignores_the_frac_zero_rows():
+    """frac == 0 makes frac_margin exactly 0 by construction, so the ratio is undefined
+    there. Including those rows would make the detector return False on data that is in
+    fact proportional."""
+    df = pd.DataFrame({
+        "direction": ["A"] * 3,
+        "stmt": [1, 1, 1],
+        "frac_margin": [0.0, 0.01, 0.02],
+        "readout_delta": [0.0, 0.13, 0.26],
+    })
+    assert tc.proportional_per_statement(df) is True

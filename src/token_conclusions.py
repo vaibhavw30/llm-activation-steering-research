@@ -137,3 +137,58 @@ def cross_tab(df):
     phi = float("nan") if den <= 0 else (n11 * n00 - n10 * n01) / np.sqrt(den)
     return {"n": int(len(df)), "crossed_flipped": n11, "crossed_not_flipped": n10,
             "not_crossed_flipped": n01, "not_crossed_not_flipped": n00, "phi": phi}
+
+
+def margin_consumption(df):
+    """Median and p90 of |frac_margin| per direction per frac.
+
+    frac_margin is the fraction of the logit margin consumed. Report THIS and never
+    `readout_delta`: the two are one measurement rescaled per statement by |m0|, so
+    printing both would present a single number twice and inflate the apparent weight
+    of the evidence. frac_margin is the dimensionless one and the unit the PI asked
+    for; |m0| is separately available as `margin` in token_geom_<ds>.csv if an absolute
+    figure is ever wanted.
+    """
+    g = df.groupby(["direction", "frac"]).frac_margin
+    return pd.DataFrame({
+        "median_abs": g.apply(lambda s: float(s.abs().median())),
+        "p90_abs": g.apply(lambda s: float(s.abs().quantile(0.9))),
+        "n": g.size(),
+    }).reset_index()
+
+
+def proportional_per_statement(df, a="tgt_minus_top_delta", b="frac_margin", rtol=1e-3):
+    """True when a/b is constant within each statement, i.e. the columns are one
+    measurement rescaled. Pass frames through load_arm first: it normalises the old
+    `readout_delta` header to `tgt_minus_top_delta`, which is this default.
+
+    This pins the finding that forced A1 into a closed-form reconstruction:
+    src/token_steer.py writes `readout_delta = r - r0` where `probe` returns
+    r = logit[j_tgt] - logit[j_top], which is the token margin and not the truth probe
+    readout. A False here means token_steer was corrected and A1's reconstruction must
+    be revisited before any table built on it is trusted.
+
+    Rows with |b| below 1e-9 are dropped: frac == 0 makes frac_margin exactly zero by
+    construction and the ratio is undefined there.
+
+    Deviation from the task-3 brief: if the requested `a` column is absent, this falls
+    back to the pre-load_arm name via LEGACY_COLUMN_ALIASES (the same map load_arm uses
+    to rename `readout_delta` to `tgt_minus_top_delta`). Two of the brief's own tests
+    build a frame with a `readout_delta` column and call this with the default
+    `a="tgt_minus_top_delta"`, which is not present, so the verbatim implementation
+    raises KeyError instead of returning the False documented in that test. The fallback
+    below resolves it without touching the test text, and is inert on every real caller
+    because load_arm already renamed the column before this function ever sees the
+    frame.
+    """
+    if a not in df.columns:
+        legacy = next((k for k, v in LEGACY_COLUMN_ALIASES.items() if v == a), None)
+        if legacy is not None and legacy in df.columns:
+            a = legacy
+    s = df[df[b].abs() > 1e-9].copy()
+    if s.empty:
+        return False
+    s["_r"] = s[a] / s[b]
+    rel = s.groupby(["direction", "stmt"])._r.agg(
+        lambda x: 0.0 if len(x) < 2 else float(x.std(ddof=0) / max(abs(x.mean()), 1e-12)))
+    return bool(rel.max() <= rtol)
