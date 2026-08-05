@@ -24,7 +24,10 @@ TWO CAVEATS ON `crossed`, both required before any of these numbers are quoted.
 (2) eps*_legacy is calibrated at the post-norm site. Applying it unchanged to
     the prenorm_* and layer16_*/layer8_* arms is nominal, not calibrated: A2 in
     this same document shows median |frac_margin| falls from 0.0174 (post-norm)
-    to 0.0029 (pre-norm), roughly the rmsnorm_penalty of 4.38 that A8 quantifies.
+    to 0.0029 (pre-norm), a factor of 6.0. That is the same order as the
+    rmsnorm_penalty of 4.38 that A8 quantifies, but it is NOT equal to it and no
+    correspondence is claimed: frac_margin consumption is margin-relative while
+    rmsnorm_penalty is a raw norm ratio. The two are different quantities.
     Read `crossed` as calibrated ONLY for the postnorm_* rows.
   cities                   postnorm_all_rp1   jtw_legacy  frac=0.25  {'n': 101, 'crossed_flipped': 0, 'crossed_not_flipped': 16, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 85, 'phi': nan}
   cities                   postnorm_all_rp1   jtw_legacy  frac=0.5   {'n': 101, 'crossed_flipped': 0, 'crossed_not_flipped': 64, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 37, 'phi': nan}
