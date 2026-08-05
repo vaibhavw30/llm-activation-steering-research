@@ -249,16 +249,23 @@ alpha(u) = |(A_S^T w) · u| / ‖A_S^T w‖ ,        eps_required(u) = ε* / alp
 At the post-norm token site `A_S = I` and `A_S^T w = a_i`, so `alpha = |a_i·u| / ‖a_i‖`
 (`src/token_geom.py:366-368`). `alpha` is the fraction of a flip that a unit of `u` buys, and
 `1/alpha` is the multiplier on the honest budget. Chance alignment between two random unit vectors
-in `R^2304` is `1/√d = 0.0208`, which is the bar to read these against:
+in `R^2304` is `E|cos| = √(2/πd) = 0.0166`, which is the bar to read these against. (The other
+number that gets quoted here, `1/√d = 0.0208`, is the RMS cosine, not the mean absolute cosine.
+`alpha` is an absolute cosine, so `0.0166` is the right null and it is the one used in
+`math_map.tex` and in the token-space findings.)
 
-| Direction | `alpha` median, cities | `alpha` median, common_claim |
-|---|---|---|
-| `md_full` (final-layer mean-diff truth direction) | 0.00398 | 0.00940 |
-| `mean_diff_tgt_asis` | 0.01325 | 0.01560 |
-| `probe_grad_tgt_asis` | 0.01355 | 0.01471 |
+| Direction | `alpha`, cities | vs chance | `alpha`, common_claim | vs chance |
+|---|---|---|---|---|
+| `md_full` (final-layer mean-diff truth direction) | 0.00398 | 0.24x | 0.00940 | 0.57x |
+| `mean_diff_tgt_asis` | 0.01325 | 0.80x | 0.01560 | 0.94x |
+| `probe_grad_tgt_asis` | 0.01355 | 0.82x | 0.01471 | 0.88x |
 
-Every truth direction sits at or below chance alignment with the direction that decides the next
-token. That is the diagnosis, and it is a statement about `alpha`, not about `ε*`.
+Medians over `n = 200` per dataset. Every truth direction sits **at or below** chance alignment
+with the direction that decides the next token, and the best of them buys 0.94 of what a random
+vector would. That is the diagnosis, and it is a statement about `alpha`, not about `ε*`: the
+certificate was never wrong about the budget, we were spending it almost perpendicular to the
+thing that moves the token. Read through `ε(u) = ε*/alpha`, this is a 74x to 79x multiplier on
+the honest budget for cities.
 
 **The `_asis` convention, stated plainly, because it has been a footnote and needs to stop being
 one.** The `_asis` directions are taken verbatim from `reach_dirs_<ds>.npz`. They were fitted at

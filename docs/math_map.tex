@@ -2,6 +2,8 @@
 \usepackage[margin=1in]{geometry}
 \usepackage{amsmath,amssymb,amsthm,bm}
 \usepackage{booktabs}
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 \usepackage{hyperref}
 
 \newcommand{\R}{\mathbb{R}}
@@ -264,7 +266,7 @@ asked for. There the map from perturbation to logits is \emph{exactly} linear:
 $\bm u(\vz + \vd) = E\vz + E\vd$. Nothing nonlinear remains to blame. Hence the
 clean trichotomy:
 
-\begin{center}
+\begin{center}\small
 \begin{tabular}{@{}ll@{}}
 \toprule
 observation at the post-norm site & conclusion \\
@@ -389,6 +391,7 @@ run that does not reproduce it is measuring something other than what it claims.
 Running the above on \texttt{cities} (statement stems, false-country targets) gives:
 
 \begin{table}[h]\centering
+\small
 \begin{tabular}{@{}lrl@{}}
 \toprule
 quantity & median & reading \\
@@ -450,8 +453,8 @@ be reported separately.
 
 \section{What each planned measurement pins down}
 
-\begin{table}[h]\centering
-\begin{tabular}{@{}llp{6.4cm}@{}}
+\begin{table}[h]\centering\small
+\begin{tabular}{@{}L{3.3cm}L{4.9cm}L{7.3cm}@{}}
 \toprule
 & measures & decides \\
 \midrule
