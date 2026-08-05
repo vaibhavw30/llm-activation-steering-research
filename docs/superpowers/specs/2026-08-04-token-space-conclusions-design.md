@@ -35,8 +35,15 @@ standard deviation of 2.4e-5 against values around 19.
 Two consequences bind the analyses below. The two columns must never be presented as
 independent evidence, or the verdict document double-counts a single measurement. And the
 readout-versus-behavior dissociation is **not** directly measurable from these files,
-which changes A1 from a measurement into a closed-form reconstruction. A separate fix to
-the column name in `src/token_steer.py` is out of scope here and is left as a follow-up.
+which changes A1 from a measurement into a closed-form reconstruction.
+
+**Follow-up done.** `src/token_steer.py` now writes this column as `tgt_minus_top_delta`,
+and `probe()` carries an explicit sign-convention docstring pinned by tests in
+`tests/test_token_steer.py`. The twelve `token_steer_*.csv` on disk were **not**
+regenerated and still carry the `readout_delta` header, so both spellings are live: read
+them with `token_steer.load_steer_csv(path)`, which normalises either generation to
+`tgt_minus_top_delta`. Nothing above changes: the column is still the same measurement as
+`frac_margin`, and A1 is still a reconstruction rather than a measurement.
 
 This project builds two documents and one tested module: an unpolished findings dump for
 the researcher to react to, a claim-by-claim verdict document for the PI, and a module
