@@ -16,6 +16,16 @@ logs no truth readout. crossed = |scale| >= eps*_legacy, licensed by the
 already measured per-statement R^2 of 0.9991 for readout against scale.
 jtw_legacy's scale is frac*delta_cone at EVERY site (no alpha rescale), so
 the crossed column is identical across arms and only `flipped` varies.
+TWO CAVEATS ON `crossed`, both required before any of these numbers are quoted.
+(1) The R^2 licences LINEARITY of readout against scale, NOT gain. The same
+    measurement (docs/REACH_AUDIT_FINDINGS.md D1) found the realized slope 8x
+    to 35x BELOW the predicted ||J^T w||, so `crossed` is an optimistic upper
+    bound on how often the readout truly crossed, not a count of crossings.
+(2) eps*_legacy is calibrated at the post-norm site. Applying it unchanged to
+    the prenorm_* and layer16_*/layer8_* arms is nominal, not calibrated: A2 in
+    this same document shows median |frac_margin| falls from 0.0174 (post-norm)
+    to 0.0029 (pre-norm), roughly the rmsnorm_penalty of 4.38 that A8 quantifies.
+    Read `crossed` as calibrated ONLY for the postnorm_* rows.
   cities                   postnorm_all_rp1   jtw_legacy  frac=0.25  {'n': 101, 'crossed_flipped': 0, 'crossed_not_flipped': 16, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 85, 'phi': nan}
   cities                   postnorm_all_rp1   jtw_legacy  frac=0.5   {'n': 101, 'crossed_flipped': 0, 'crossed_not_flipped': 64, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 37, 'phi': nan}
   cities                   postnorm_all_rp1   jtw_legacy  frac=1.0   {'n': 101, 'crossed_flipped': 0, 'crossed_not_flipped': 89, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 12, 'phi': nan}
@@ -61,41 +71,41 @@ the crossed column is identical across arms and only `flipped` varies.
   cities                   layer16_all_rp1    jtw_legacy  frac=1.0   {'n': 101, 'crossed_flipped': 0, 'crossed_not_flipped': 89, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 12, 'phi': nan}
   cities                   layer16_all_rp1    jtw_legacy  frac=2.0   {'n': 101, 'crossed_flipped': 0, 'crossed_not_flipped': 97, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 4, 'phi': nan}
   cities                   layer16_all_rp1    jtw_token   frac=0.25  {'n': 101, 'crossed_flipped': 0, 'crossed_not_flipped': 93, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 8, 'phi': nan}
-  cities                   layer16_all_rp1    jtw_token   frac=0.5   {'n': 101, 'crossed_flipped': 3, 'crossed_not_flipped': 94, 'not_crossed_flipped': 3, 'not_crossed_not_flipped': 1, 'phi': np.float64(-0.5932679848016063)}
-  cities                   layer16_all_rp1    jtw_token   frac=1.0   {'n': 101, 'crossed_flipped': 35, 'crossed_not_flipped': 65, 'not_crossed_flipped': 1, 'not_crossed_not_flipped': 0, 'phi': np.float64(-0.13437096247164249)}
-  cities                   layer16_all_rp1    jtw_token   frac=2.0   {'n': 101, 'crossed_flipped': 71, 'crossed_not_flipped': 29, 'not_crossed_flipped': 1, 'not_crossed_not_flipped': 0, 'phi': np.float64(-0.06346477588219923)}
+  cities                   layer16_all_rp1    jtw_token   frac=0.5   {'n': 101, 'crossed_flipped': 3, 'crossed_not_flipped': 94, 'not_crossed_flipped': 3, 'not_crossed_not_flipped': 1, 'phi': -0.5933}
+  cities                   layer16_all_rp1    jtw_token   frac=1.0   {'n': 101, 'crossed_flipped': 35, 'crossed_not_flipped': 65, 'not_crossed_flipped': 1, 'not_crossed_not_flipped': 0, 'phi': -0.1344}
+  cities                   layer16_all_rp1    jtw_token   frac=2.0   {'n': 101, 'crossed_flipped': 71, 'crossed_not_flipped': 29, 'not_crossed_flipped': 1, 'not_crossed_not_flipped': 0, 'phi': -0.0635}
   cities                   layer16_last_rp1   jtw_legacy  frac=0.25  {'n': 101, 'crossed_flipped': 0, 'crossed_not_flipped': 16, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 85, 'phi': nan}
   cities                   layer16_last_rp1   jtw_legacy  frac=0.5   {'n': 101, 'crossed_flipped': 0, 'crossed_not_flipped': 64, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 37, 'phi': nan}
   cities                   layer16_last_rp1   jtw_legacy  frac=1.0   {'n': 101, 'crossed_flipped': 0, 'crossed_not_flipped': 89, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 12, 'phi': nan}
   cities                   layer16_last_rp1   jtw_legacy  frac=2.0   {'n': 101, 'crossed_flipped': 0, 'crossed_not_flipped': 97, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 4, 'phi': nan}
   cities                   layer16_last_rp1   jtw_token   frac=0.25  {'n': 101, 'crossed_flipped': 0, 'crossed_not_flipped': 95, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 6, 'phi': nan}
-  cities                   layer16_last_rp1   jtw_token   frac=0.5   {'n': 101, 'crossed_flipped': 4, 'crossed_not_flipped': 94, 'not_crossed_flipped': 2, 'not_crossed_not_flipped': 1, 'phi': np.float64(-0.4494762304373056)}
-  cities                   layer16_last_rp1   jtw_token   frac=1.0   {'n': 101, 'crossed_flipped': 14, 'crossed_not_flipped': 86, 'not_crossed_flipped': 1, 'not_crossed_not_flipped': 0, 'phi': np.float64(-0.23944379994757295)}
-  cities                   layer16_last_rp1   jtw_token   frac=2.0   {'n': 101, 'crossed_flipped': 25, 'crossed_not_flipped': 75, 'not_crossed_flipped': 1, 'not_crossed_not_flipped': 0, 'phi': np.float64(-0.16984155512168939)}
+  cities                   layer16_last_rp1   jtw_token   frac=0.5   {'n': 101, 'crossed_flipped': 4, 'crossed_not_flipped': 94, 'not_crossed_flipped': 2, 'not_crossed_not_flipped': 1, 'phi': -0.4495}
+  cities                   layer16_last_rp1   jtw_token   frac=1.0   {'n': 101, 'crossed_flipped': 14, 'crossed_not_flipped': 86, 'not_crossed_flipped': 1, 'not_crossed_not_flipped': 0, 'phi': -0.2394}
+  cities                   layer16_last_rp1   jtw_token   frac=2.0   {'n': 101, 'crossed_flipped': 25, 'crossed_not_flipped': 75, 'not_crossed_flipped': 1, 'not_crossed_not_flipped': 0, 'phi': -0.1698}
   common_claim_true_false  postnorm_all_rp1   jtw_legacy  frac=0.25  {'n': 44, 'crossed_flipped': 0, 'crossed_not_flipped': 2, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 42, 'phi': nan}
   common_claim_true_false  postnorm_all_rp1   jtw_legacy  frac=0.5   {'n': 44, 'crossed_flipped': 0, 'crossed_not_flipped': 3, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 41, 'phi': nan}
   common_claim_true_false  postnorm_all_rp1   jtw_legacy  frac=1.0   {'n': 44, 'crossed_flipped': 0, 'crossed_not_flipped': 3, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 41, 'phi': nan}
   common_claim_true_false  postnorm_all_rp1   jtw_legacy  frac=2.0   {'n': 44, 'crossed_flipped': 0, 'crossed_not_flipped': 8, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 36, 'phi': nan}
   common_claim_true_false  postnorm_all_rp1   md_full     frac=0.25  {'n': 44, 'crossed_flipped': 0, 'crossed_not_flipped': 35, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 9, 'phi': nan}
   common_claim_true_false  postnorm_all_rp1   md_full     frac=0.5   {'n': 44, 'crossed_flipped': 0, 'crossed_not_flipped': 40, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 4, 'phi': nan}
-  common_claim_true_false  postnorm_all_rp1   md_full     frac=1.0   {'n': 44, 'crossed_flipped': 10, 'crossed_not_flipped': 31, 'not_crossed_flipped': 1, 'not_crossed_not_flipped': 2, 'phi': np.float64(-0.052057920629535355)}
-  common_claim_true_false  postnorm_all_rp1   md_full     frac=2.0   {'n': 44, 'crossed_flipped': 9, 'crossed_not_flipped': 32, 'not_crossed_flipped': 1, 'not_crossed_not_flipped': 2, 'phi': np.float64(-0.06845986232735529)}
+  common_claim_true_false  postnorm_all_rp1   md_full     frac=1.0   {'n': 44, 'crossed_flipped': 10, 'crossed_not_flipped': 31, 'not_crossed_flipped': 1, 'not_crossed_not_flipped': 2, 'phi': -0.0521}
+  common_claim_true_false  postnorm_all_rp1   md_full     frac=2.0   {'n': 44, 'crossed_flipped': 9, 'crossed_not_flipped': 32, 'not_crossed_flipped': 1, 'not_crossed_not_flipped': 2, 'phi': -0.0685}
   common_claim_true_false  postnorm_all_rp1   oracle      frac=0.25  {'n': 44, 'crossed_flipped': 0, 'crossed_not_flipped': 2, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 42, 'phi': nan}
   common_claim_true_false  postnorm_all_rp1   oracle      frac=0.5   {'n': 44, 'crossed_flipped': 0, 'crossed_not_flipped': 3, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 41, 'phi': nan}
   common_claim_true_false  postnorm_all_rp1   oracle      frac=1.0   {'n': 44, 'crossed_flipped': 3, 'crossed_not_flipped': 0, 'not_crossed_flipped': 41, 'not_crossed_not_flipped': 0, 'phi': nan}
   common_claim_true_false  postnorm_all_rp1   oracle      frac=2.0   {'n': 44, 'crossed_flipped': 8, 'crossed_not_flipped': 0, 'not_crossed_flipped': 36, 'not_crossed_not_flipped': 0, 'phi': nan}
   common_claim_true_false  postnorm_all_rp1.3 md_full     frac=0.25  {'n': 44, 'crossed_flipped': 0, 'crossed_not_flipped': 35, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 9, 'phi': nan}
   common_claim_true_false  postnorm_all_rp1.3 md_full     frac=0.5   {'n': 44, 'crossed_flipped': 0, 'crossed_not_flipped': 40, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 4, 'phi': nan}
-  common_claim_true_false  postnorm_all_rp1.3 md_full     frac=1.0   {'n': 44, 'crossed_flipped': 10, 'crossed_not_flipped': 31, 'not_crossed_flipped': 1, 'not_crossed_not_flipped': 2, 'phi': np.float64(-0.052057920629535355)}
-  common_claim_true_false  postnorm_all_rp1.3 md_full     frac=2.0   {'n': 44, 'crossed_flipped': 9, 'crossed_not_flipped': 32, 'not_crossed_flipped': 1, 'not_crossed_not_flipped': 2, 'phi': np.float64(-0.06845986232735529)}
+  common_claim_true_false  postnorm_all_rp1.3 md_full     frac=1.0   {'n': 44, 'crossed_flipped': 10, 'crossed_not_flipped': 31, 'not_crossed_flipped': 1, 'not_crossed_not_flipped': 2, 'phi': -0.0521}
+  common_claim_true_false  postnorm_all_rp1.3 md_full     frac=2.0   {'n': 44, 'crossed_flipped': 9, 'crossed_not_flipped': 32, 'not_crossed_flipped': 1, 'not_crossed_not_flipped': 2, 'phi': -0.0685}
   common_claim_true_false  postnorm_all_rp1.3 oracle      frac=0.25  {'n': 44, 'crossed_flipped': 0, 'crossed_not_flipped': 2, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 42, 'phi': nan}
   common_claim_true_false  postnorm_all_rp1.3 oracle      frac=0.5   {'n': 44, 'crossed_flipped': 0, 'crossed_not_flipped': 3, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 41, 'phi': nan}
   common_claim_true_false  postnorm_all_rp1.3 oracle      frac=1.0   {'n': 44, 'crossed_flipped': 3, 'crossed_not_flipped': 0, 'not_crossed_flipped': 41, 'not_crossed_not_flipped': 0, 'phi': nan}
   common_claim_true_false  postnorm_all_rp1.3 oracle      frac=2.0   {'n': 44, 'crossed_flipped': 8, 'crossed_not_flipped': 0, 'not_crossed_flipped': 36, 'not_crossed_not_flipped': 0, 'phi': nan}
   common_claim_true_false  postnorm_last_rp1  md_full     frac=0.25  {'n': 44, 'crossed_flipped': 0, 'crossed_not_flipped': 35, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 9, 'phi': nan}
   common_claim_true_false  postnorm_last_rp1  md_full     frac=0.5   {'n': 44, 'crossed_flipped': 0, 'crossed_not_flipped': 40, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 4, 'phi': nan}
-  common_claim_true_false  postnorm_last_rp1  md_full     frac=1.0   {'n': 44, 'crossed_flipped': 10, 'crossed_not_flipped': 31, 'not_crossed_flipped': 1, 'not_crossed_not_flipped': 2, 'phi': np.float64(-0.052057920629535355)}
-  common_claim_true_false  postnorm_last_rp1  md_full     frac=2.0   {'n': 44, 'crossed_flipped': 9, 'crossed_not_flipped': 32, 'not_crossed_flipped': 1, 'not_crossed_not_flipped': 2, 'phi': np.float64(-0.06845986232735529)}
+  common_claim_true_false  postnorm_last_rp1  md_full     frac=1.0   {'n': 44, 'crossed_flipped': 10, 'crossed_not_flipped': 31, 'not_crossed_flipped': 1, 'not_crossed_not_flipped': 2, 'phi': -0.0521}
+  common_claim_true_false  postnorm_last_rp1  md_full     frac=2.0   {'n': 44, 'crossed_flipped': 9, 'crossed_not_flipped': 32, 'not_crossed_flipped': 1, 'not_crossed_not_flipped': 2, 'phi': -0.0685}
   common_claim_true_false  postnorm_last_rp1  oracle      frac=0.25  {'n': 44, 'crossed_flipped': 0, 'crossed_not_flipped': 2, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 42, 'phi': nan}
   common_claim_true_false  postnorm_last_rp1  oracle      frac=0.5   {'n': 44, 'crossed_flipped': 0, 'crossed_not_flipped': 3, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 41, 'phi': nan}
   common_claim_true_false  postnorm_last_rp1  oracle      frac=1.0   {'n': 44, 'crossed_flipped': 3, 'crossed_not_flipped': 0, 'not_crossed_flipped': 41, 'not_crossed_not_flipped': 0, 'phi': nan}
@@ -117,17 +127,17 @@ the crossed column is identical across arms and only `flipped` varies.
   common_claim_true_false  layer8_all_rp1     jtw_legacy  frac=1.0   {'n': 44, 'crossed_flipped': 0, 'crossed_not_flipped': 3, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 41, 'phi': nan}
   common_claim_true_false  layer8_all_rp1     jtw_legacy  frac=2.0   {'n': 44, 'crossed_flipped': 0, 'crossed_not_flipped': 8, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 36, 'phi': nan}
   common_claim_true_false  layer8_all_rp1     jtw_token   frac=0.25  {'n': 44, 'crossed_flipped': 0, 'crossed_not_flipped': 4, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 40, 'phi': nan}
-  common_claim_true_false  layer8_all_rp1     jtw_token   frac=0.5   {'n': 44, 'crossed_flipped': 6, 'crossed_not_flipped': 0, 'not_crossed_flipped': 22, 'not_crossed_not_flipped': 16, 'phi': np.float64(0.30037570459305535)}
-  common_claim_true_false  layer8_all_rp1     jtw_token   frac=1.0   {'n': 44, 'crossed_flipped': 10, 'crossed_not_flipped': 4, 'not_crossed_flipped': 24, 'not_crossed_not_flipped': 6, 'phi': np.float64(-0.09526610232449337)}
-  common_claim_true_false  layer8_all_rp1     jtw_token   frac=2.0   {'n': 44, 'crossed_flipped': 17, 'crossed_not_flipped': 5, 'not_crossed_flipped': 19, 'not_crossed_not_flipped': 3, 'phi': np.float64(-0.11785113019775792)}
+  common_claim_true_false  layer8_all_rp1     jtw_token   frac=0.5   {'n': 44, 'crossed_flipped': 6, 'crossed_not_flipped': 0, 'not_crossed_flipped': 22, 'not_crossed_not_flipped': 16, 'phi': 0.3004}
+  common_claim_true_false  layer8_all_rp1     jtw_token   frac=1.0   {'n': 44, 'crossed_flipped': 10, 'crossed_not_flipped': 4, 'not_crossed_flipped': 24, 'not_crossed_not_flipped': 6, 'phi': -0.0953}
+  common_claim_true_false  layer8_all_rp1     jtw_token   frac=2.0   {'n': 44, 'crossed_flipped': 17, 'crossed_not_flipped': 5, 'not_crossed_flipped': 19, 'not_crossed_not_flipped': 3, 'phi': -0.1179}
   common_claim_true_false  layer8_last_rp1    jtw_legacy  frac=0.25  {'n': 44, 'crossed_flipped': 0, 'crossed_not_flipped': 2, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 42, 'phi': nan}
   common_claim_true_false  layer8_last_rp1    jtw_legacy  frac=0.5   {'n': 44, 'crossed_flipped': 0, 'crossed_not_flipped': 3, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 41, 'phi': nan}
   common_claim_true_false  layer8_last_rp1    jtw_legacy  frac=1.0   {'n': 44, 'crossed_flipped': 0, 'crossed_not_flipped': 3, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 41, 'phi': nan}
   common_claim_true_false  layer8_last_rp1    jtw_legacy  frac=2.0   {'n': 44, 'crossed_flipped': 0, 'crossed_not_flipped': 8, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 36, 'phi': nan}
   common_claim_true_false  layer8_last_rp1    jtw_token   frac=0.25  {'n': 44, 'crossed_flipped': 0, 'crossed_not_flipped': 9, 'not_crossed_flipped': 0, 'not_crossed_not_flipped': 35, 'phi': nan}
-  common_claim_true_false  layer8_last_rp1    jtw_token   frac=0.5   {'n': 44, 'crossed_flipped': 7, 'crossed_not_flipped': 9, 'not_crossed_flipped': 16, 'not_crossed_not_flipped': 12, 'phi': np.float64(-0.12898484259189558)}
-  common_claim_true_false  layer8_last_rp1    jtw_token   frac=1.0   {'n': 44, 'crossed_flipped': 16, 'crossed_not_flipped': 7, 'not_crossed_flipped': 18, 'not_crossed_not_flipped': 3, 'phi': np.float64(-0.19247821337312487)}
-  common_claim_true_false  layer8_last_rp1    jtw_token   frac=2.0   {'n': 44, 'crossed_flipped': 26, 'crossed_not_flipped': 7, 'not_crossed_flipped': 11, 'not_crossed_not_flipped': 0, 'phi': np.float64(-0.2511236011669613)}
+  common_claim_true_false  layer8_last_rp1    jtw_token   frac=0.5   {'n': 44, 'crossed_flipped': 7, 'crossed_not_flipped': 9, 'not_crossed_flipped': 16, 'not_crossed_not_flipped': 12, 'phi': -0.129}
+  common_claim_true_false  layer8_last_rp1    jtw_token   frac=1.0   {'n': 44, 'crossed_flipped': 16, 'crossed_not_flipped': 7, 'not_crossed_flipped': 18, 'not_crossed_not_flipped': 3, 'phi': -0.1925}
+  common_claim_true_false  layer8_last_rp1    jtw_token   frac=2.0   {'n': 44, 'crossed_flipped': 26, 'crossed_not_flipped': 7, 'not_crossed_flipped': 11, 'not_crossed_not_flipped': 0, 'phi': -0.2511}
 
 ## A2 margin consumption (frac_margin ONLY; readout_delta is the same
 measurement rescaled per statement by |m0| and is never reported beside it)
@@ -708,15 +718,15 @@ Q4  50     0.155  0.0212
 
 ### A6 cities
   vector x layer: {('V64_common_0', 11): 32, ('V64_common_1', 11): 32, ('V64_common_2', 11): 32, ('V64_common_3', 11): 32, ('common_v1', 11): 32, ('jtw_full_matched_mean', 11): 32, ('jtw_mean', 11): 32, ('jtw_stem_mean', 11): 32, ('w_mean_diff_tgt', 20): 32}
-  V64_common_0             L11: r1=0.065 r5=0.124 r10=0.164 top5=[[205.0, 0.1897], [14473.0, -0.1415], [12118.0, -0.1378], [8477.0, 0.1249], [5135.0, -0.1065]]
-  V64_common_1             L11: r1=0.044 r5=0.081 r10=0.122 top5=[[14473.0, 0.1924], [15495.0, -0.1085], [12929.0, 0.088], [3521.0, 0.0772], [4226.0, -0.0787]]
-  V64_common_2             L11: r1=0.118 r5=0.186 r10=0.236 top5=[[12748.0, -0.2571], [4098.0, -0.1778], [14473.0, 0.1743], [5868.0, 0.1263], [14216.0, 0.1178]]
-  V64_common_3             L11: r1=0.109 r5=0.19 r10=0.23 top5=[[4098.0, 0.2433], [5868.0, 0.1608], [12788.0, 0.1252], [2856.0, -0.1379], [10795.0, 0.1215]]
-  common_v1                L11: r1=0.058 r5=0.119 r10=0.166 top5=[[1371.0, -0.1565], [3219.0, -0.1463], [205.0, 0.1491], [10277.0, -0.0989], [2755.0, -0.1045]]
-  jtw_full_matched_mean    L11: r1=0.06 r5=0.113 r10=0.149 top5=[[1371.0, 0.1761], [3219.0, 0.1476], [205.0, -0.1442], [9763.0, 0.0622], [2755.0, 0.082]]
-  jtw_mean                 L11: r1=0.06 r5=0.113 r10=0.149 top5=[[1371.0, 0.1732], [3219.0, 0.1428], [205.0, -0.1517], [9763.0, 0.0626], [2755.0, 0.0945]]
-  jtw_stem_mean            L11: r1=0.051 r5=0.11 r10=0.155 top5=[[190.0, 0.1265], [2856.0, -0.1563], [14626.0, -0.1258], [1134.0, 0.1186], [581.0, -0.1103]]
-  w_mean_diff_tgt          L20: r1=0.107 r5=0.246 r10=0.348 top5=[[11099.0, -0.1168], [12076.0, 0.1597], [6627.0, -0.2129], [9741.0, 0.0842], [6631.0, 0.1577]]
+  V64_common_0             L11: r1=0.065 r5=0.124 r10=0.164 top5=[(205, 0.1897), (14473, -0.1415), (12118, -0.1378), (8477, 0.1249), (5135, -0.1065)]
+  V64_common_1             L11: r1=0.044 r5=0.081 r10=0.122 top5=[(14473, 0.1924), (15495, -0.1085), (12929, 0.088), (3521, 0.0772), (4226, -0.0787)]
+  V64_common_2             L11: r1=0.118 r5=0.186 r10=0.236 top5=[(12748, -0.2571), (4098, -0.1778), (14473, 0.1743), (5868, 0.1263), (14216, 0.1178)]
+  V64_common_3             L11: r1=0.109 r5=0.19 r10=0.23 top5=[(4098, 0.2433), (5868, 0.1608), (12788, 0.1252), (2856, -0.1379), (10795, 0.1215)]
+  common_v1                L11: r1=0.058 r5=0.119 r10=0.166 top5=[(1371, -0.1565), (3219, -0.1463), (205, 0.1491), (10277, -0.0989), (2755, -0.1045)]
+  jtw_full_matched_mean    L11: r1=0.06 r5=0.113 r10=0.149 top5=[(1371, 0.1761), (3219, 0.1476), (205, -0.1442), (9763, 0.0622), (2755, 0.082)]
+  jtw_mean                 L11: r1=0.06 r5=0.113 r10=0.149 top5=[(1371, 0.1732), (3219, 0.1428), (205, -0.1517), (9763, 0.0626), (2755, 0.0945)]
+  jtw_stem_mean            L11: r1=0.051 r5=0.11 r10=0.155 top5=[(190, 0.1265), (2856, -0.1563), (14626, -0.1258), (1134, 0.1186), (581, -0.1103)]
+  w_mean_diff_tgt          L20: r1=0.107 r5=0.246 r10=0.348 top5=[(11099, -0.1168), (12076, 0.1597), (6627, -0.2129), (9741, 0.0842), (6631, 0.1577)]
   L11 top-10 feature Jaccard:
     V64_common_0 vs V64_common_1: 0.100
     V64_common_0 vs V64_common_2: 0.158
@@ -751,15 +761,15 @@ Q4  50     0.155  0.0212
 
 ### A6 common_claim_true_false
   vector x layer: {('V64_common_0', 13): 32, ('V64_common_1', 13): 32, ('V64_common_2', 13): 32, ('V64_common_3', 13): 32, ('common_v1', 13): 32, ('jtw_full_matched_mean', 13): 32, ('jtw_mean', 13): 32, ('jtw_stem_mean', 13): 32, ('w_mean_diff_tgt', 22): 32}
-  V64_common_0             L13: r1=0.135 r5=0.188 r10=0.232 top5=[[14627.0, -0.2841], [10844.0, 0.1566], [7377.0, -0.1219], [15803.0, -0.1033], [1392.0, 0.1047]]
-  V64_common_1             L13: r1=0.114 r5=0.21 r10=0.266 top5=[[14627.0, -0.2777], [1865.0, 0.1511], [3448.0, 0.1124], [5642.0, 0.0774], [12881.0, 0.131]]
-  V64_common_2             L13: r1=0.244 r5=0.351 r10=0.411 top5=[[10844.0, 0.2038], [8428.0, -0.1049], [5642.0, 0.1576], [4439.0, -0.2536], [14627.0, 0.1406]]
-  V64_common_3             L13: r1=0.049 r5=0.106 r10=0.161 top5=[[12614.0, 0.1016], [12877.0, -0.1064], [10024.0, 0.1318], [4556.0, 0.0983], [14627.0, -0.1161]]
-  common_v1                L13: r1=0.119 r5=0.199 r10=0.251 top5=[[10259.0, 0.1789], [3021.0, 0.0852], [1865.0, 0.1317], [8370.0, -0.1167], [1626.0, -0.102]]
-  jtw_full_matched_mean    L13: r1=0.119 r5=0.192 r10=0.243 top5=[[10259.0, -0.1633], [3021.0, -0.1203], [1865.0, -0.1692], [8370.0, 0.1062], [12047.0, 0.0854]]
-  jtw_mean                 L13: r1=0.121 r5=0.197 r10=0.248 top5=[[10259.0, -0.1682], [3021.0, -0.1327], [1865.0, -0.1813], [8370.0, 0.1238], [3448.0, -0.1064]]
-  jtw_stem_mean            L13: r1=0.078 r5=0.166 r10=0.233 top5=[[4659.0, -0.1268], [10259.0, -0.1466], [15319.0, -0.1439], [10520.0, -0.1236], [1626.0, 0.1124]]
-  w_mean_diff_tgt          L22: r1=0.252 r5=0.397 r10=0.487 top5=[[11814.0, -0.1935], [1823.0, 0.2689], [6378.0, 0.215], [16353.0, -0.1805], [1080.0, -0.1204]]
+  V64_common_0             L13: r1=0.135 r5=0.188 r10=0.232 top5=[(14627, -0.2841), (10844, 0.1566), (7377, -0.1219), (15803, -0.1033), (1392, 0.1047)]
+  V64_common_1             L13: r1=0.114 r5=0.21 r10=0.266 top5=[(14627, -0.2777), (1865, 0.1511), (3448, 0.1124), (5642, 0.0774), (12881, 0.131)]
+  V64_common_2             L13: r1=0.244 r5=0.351 r10=0.411 top5=[(10844, 0.2038), (8428, -0.1049), (5642, 0.1576), (4439, -0.2536), (14627, 0.1406)]
+  V64_common_3             L13: r1=0.049 r5=0.106 r10=0.161 top5=[(12614, 0.1016), (12877, -0.1064), (10024, 0.1318), (4556, 0.0983), (14627, -0.1161)]
+  common_v1                L13: r1=0.119 r5=0.199 r10=0.251 top5=[(10259, 0.1789), (3021, 0.0852), (1865, 0.1317), (8370, -0.1167), (1626, -0.102)]
+  jtw_full_matched_mean    L13: r1=0.119 r5=0.192 r10=0.243 top5=[(10259, -0.1633), (3021, -0.1203), (1865, -0.1692), (8370, 0.1062), (12047, 0.0854)]
+  jtw_mean                 L13: r1=0.121 r5=0.197 r10=0.248 top5=[(10259, -0.1682), (3021, -0.1327), (1865, -0.1813), (8370, 0.1238), (3448, -0.1064)]
+  jtw_stem_mean            L13: r1=0.078 r5=0.166 r10=0.233 top5=[(4659, -0.1268), (10259, -0.1466), (15319, -0.1439), (10520, -0.1236), (1626, 0.1124)]
+  w_mean_diff_tgt          L22: r1=0.252 r5=0.397 r10=0.487 top5=[(11814, -0.1935), (1823, 0.2689), (6378, 0.215), (16353, -0.1805), (1080, -0.1204)]
   L13 top-10 feature Jaccard:
     V64_common_0 vs V64_common_1: 0.158
     V64_common_0 vs V64_common_2: 0.100
@@ -790,7 +800,7 @@ Q4  50     0.155  0.0212
     jtw_full_matched_mean vs jtw_stem_mean: 0.100
     jtw_mean vs jtw_stem_mean: 0.100
   L22: only ['w_mean_diff_tgt'], no within-layer overlap computable
-  CROSS-LAYER overlap (w_mean_diff_tgt L20 vs jtw_* L11): NOT COMPUTABLE, different SAE dictionaries
+  CROSS-LAYER overlap (w_mean_diff_tgt L22 vs jtw_* L13): NOT COMPUTABLE, different SAE dictionaries
 
 ## a7_split
 
