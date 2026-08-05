@@ -10,6 +10,7 @@ module therefore restricts to the statements all directions ran. src/viz_token.p
 fig_steer already does this for the figure and tests/test_viz_token.py pins it, this is
 the same rule applied to the tables.
 """
+import difflib
 import os
 
 import numpy as np
@@ -187,3 +188,54 @@ def proportional_per_statement(df, a="tgt_minus_top_delta", b="frac_margin", rto
     rel = s.groupby(["direction", "stmt"])._r.agg(
         lambda x: float(x.std(ddof=0) / max(abs(x.mean()), 1e-12)))
     return bool(rel.max() <= rtol)
+
+
+def is_degenerate(completion):
+    """Empty, non-alphabetic, or a token repeated three or more times in a row.
+
+    An empty completion counts as degenerate. See load_arm: nothing in these files was
+    left ungenerated, so an empty string is a real observation of the model emitting a
+    newline and stopping.
+    """
+    s = str(completion)
+    if not s.strip():
+        return True
+    if not any(ch.isalpha() for ch in s):
+        return True
+    t = s.split()
+    return any(t[i] == t[i + 1] == t[i + 2] for i in range(len(t) - 2))
+
+
+def edit_ratio(a, b):
+    """1 - difflib.SequenceMatcher ratio. 0.0 identical, 1.0 nothing in common.
+
+    difflib is standard library, so this adds no dependency for a single distance.
+    """
+    return 1.0 - difflib.SequenceMatcher(None, str(a), str(b)).ratio()
+
+
+def target_country_set(tok_tgt, countries):
+    """Every country whose name starts with `tok_tgt`, as a tuple.
+
+    token_geom builds the cities target as first_token(tokenizer, country), so tok_tgt
+    is a subword fragment and several countries can share one. Returning the set keeps
+    the analysis from claiming a specific country the token does not identify.
+    """
+    t = str(tok_tgt).strip()
+    if not t:
+        return ()
+    return tuple(c for c in countries if str(c).startswith(t))
+
+
+def country_outcome(completion, correct_country, target_countries):
+    """'correct', 'target', 'both' or 'none' by substring match, case insensitive."""
+    s = str(completion).lower()
+    hit_c = str(correct_country).strip().lower() in s if str(correct_country).strip() else False
+    hit_t = any(str(c).strip().lower() in s for c in target_countries if str(c).strip())
+    if hit_c and hit_t:
+        return "both"
+    if hit_c:
+        return "correct"
+    if hit_t:
+        return "target"
+    return "none"

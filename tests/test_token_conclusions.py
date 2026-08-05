@@ -211,3 +211,44 @@ def test_proportional_detector_returns_false_when_every_group_is_a_singleton():
         "tgt_minus_top_delta": [7.0, -3.5, 0.02, 100.0, 1.0],
     })
     assert tc.proportional_per_statement(df) is False
+
+
+def test_an_empty_completion_is_degenerate_not_missing():
+    """All 740 empty completions in the cities post-norm arm belong to md_full, 739 of
+    them at negative fracs where |scale| runs to 1.6e3, and their argmax_tok is a
+    newline or <eos>. The model emitted a newline and stopped. 4,660 non-empty plus 740
+    empty is exactly the 5,400 rows, so nothing was left ungenerated. Dropping them as
+    missing would delete the loudest evidence of md_full's failure mode."""
+    assert tc.is_degenerate("") is True
+    assert tc.is_degenerate("   ") is True
+
+
+def test_degeneracy_catches_repetition_and_non_alphabetic_output():
+    assert tc.is_degenerate("the the the city") is True
+    assert tc.is_degenerate("... , . ; -") is True
+    assert tc.is_degenerate("the northern part of Hebei Province,") is False
+
+
+def test_edit_ratio_is_zero_for_identical_and_one_for_disjoint():
+    assert tc.edit_ratio("in China", "in China") == pytest.approx(0.0)
+    assert tc.edit_ratio("aaaa", "bbbb") == pytest.approx(1.0)
+    assert 0.0 < tc.edit_ratio("in China. It is", "in Japan. It is") < 1.0
+
+
+def test_country_outcome_is_three_way_not_binary():
+    """The third case, naming some country that is neither the correct one nor the
+    steering target, is the interesting one. A plain flipped/not-flipped binary would
+    hide it."""
+    assert tc.country_outcome("in China. It is", "China", ("North Korea",)) == "correct"
+    assert tc.country_outcome("in North Korea", "China", ("North Korea",)) == "target"
+    assert tc.country_outcome("in Peru, a nation", "China", ("North Korea",)) == "none"
+    assert tc.country_outcome("China and North Korea", "China", ("North Korea",)) == "both"
+
+
+def test_target_country_set_is_every_country_sharing_the_target_token():
+    """tok_tgt is the FIRST SUBWORD of a country name, so it does not identify one
+    country. 'South' is shared by South Africa and South Korea. Treating it as a single
+    country would either miss a hit or claim a specific one the data cannot support."""
+    countries = ["China", "North Korea", "South Africa", "South Korea"]
+    assert tc.target_country_set("South", countries) == ("South Africa", "South Korea")
+    assert tc.target_country_set("North", countries) == ("North Korea",)
