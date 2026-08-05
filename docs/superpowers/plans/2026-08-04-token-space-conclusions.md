@@ -36,10 +36,10 @@ Every task's requirements implicitly include this section.
 - Every script here READS only. Never re-run, regenerate or overwrite any existing artifact.
 - Never import `xgboost` in the same process as `torch`.
 - Never index into a loaded `.npz` inside a loop. Bind every member to a local array once.
-- **Read every `token_steer_*.csv` with `pd.read_csv(path, keep_default_na=False, na_values=[])`.** With pandas defaults the 740 empty completions in `token_steer_cities_postnorm_all_rp1.csv` silently become `NaN`, which destroys the distinction the analysis depends on. See correction 3. Numeric dtypes are unaffected: verified that `scale`, `frac`, `frac_margin` and `readout_delta` still parse as `float64` under this setting, so no casts are needed.
+- **Read every `token_steer_*.csv` through `token_conclusions.load_arm`, never a bare `pd.read_csv`.** It applies `keep_default_na=False, na_values=[]` and normalises the delta-column header. With pandas defaults the 740 empty completions in `token_steer_cities_postnorm_all_rp1.csv` silently become `NaN`, which destroys the distinction the analysis depends on. See correction 3. Numeric dtypes are unaffected: verified that `scale`, `frac`, `frac_margin` and `readout_delta` still parse as `float64` under this setting, so no casts are needed.
 - Run everything with `./.venv/bin/python`. There is no bare `python` on this machine.
 
-**Corrections to the spec, established by measurement during planning**
+**Corrections to the spec, established by measurement during planning. Seven items; the last is a change that landed mid-plan rather than an error.**
 
 1. **The layer arms do not contain `oracle` or `md_full`.** Spec §3 says the layer arms carry `oracle`, `md_full`, `jtw_token`. Measured: `token_steer_cities_layer16_*.csv` and `token_steer_common_claim_true_false_layer8_*.csv` carry exactly `jtw_legacy` and `jtw_token`. The post-norm and pre-norm arms carry `oracle`, `md_full`, `jtw_legacy`.
 
@@ -51,7 +51,9 @@ Every task's requirements implicitly include this section.
 
 5. **`jtw_legacy`'s swept scale is `frac * delta_cone`, identical at every site.** `src/token_steer.py:316` builds `alpha_of` only for directions with an `alpha_<name>` column in `token_geom_<ds>.csv`. Those columns are `alpha_md_full`, `alpha_mean_diff_tgt_asis`, `alpha_probe_grad_tgt_asis`. There is no `alpha_jtw_legacy`, so line 338's rescale never fires for it and `required_scale` returns `delta_cone[i]` unchanged. Consequence: the `crossed` column is byte-identical across all four cities arms, so **A1 produces one readout table per dataset, not one per arm.** Only `flipped` varies across arms, and it is 0.000 in every one.
 
-6. **The SAE artifacts decompose different vectors at different layers.** `sae_features_cities.csv` carries `w_mean_diff_tgt` at layer 20 and `jtw_mean`, `jtw_stem_mean`, `jtw_full_matched_mean`, `common_v1`, `V64_common_0..3` at layer 11. GemmaScope layer-11 and layer-20 dictionaries are unrelated, so **a feature-ID overlap between the truth readout and the steering vectors cannot be computed from these files.** The spec's "prior expectation of overlap near 0.05" is not testable here and A6 must say so instead of reporting a number.
+6. **The `readout_delta` column has been renamed at the source but not in the files.** Task `task_427f63e2` landed during planning. `src/token_steer.py` now writes `tgt_minus_top_delta` and exposes `LEGACY_COLUMN_ALIASES` and `load_steer_csv`. The twelve CSVs on disk were correctly left alone and still carry the old header, so both spellings are live and `load_arm` must normalise. Note `token_steer.load_steer_csv` cannot be used directly here: it calls a bare `pd.read_csv` and would turn the 740 empty completions into NaN, and importing the module pulls in torch.
+
+7. **The SAE artifacts decompose different vectors at different layers.** `sae_features_cities.csv` carries `w_mean_diff_tgt` at layer 20 and `jtw_mean`, `jtw_stem_mean`, `jtw_full_matched_mean`, `common_v1`, `V64_common_0..3` at layer 11. GemmaScope layer-11 and layer-20 dictionaries are unrelated, so **a feature-ID overlap between the truth readout and the steering vectors cannot be computed from these files.** The spec's "prior expectation of overlap near 0.05" is not testable here and A6 must say so instead of reporting a number.
 
 **Measured values the tasks assert against**
 
@@ -109,6 +111,7 @@ Every test builds its own small DataFrame. None of them read a real artifact, so
 suite runs in well under a second and does not break if an artifact is ever
 regenerated with different row counts.
 """
+import ast
 import os
 import sys
 
@@ -164,7 +167,35 @@ def test_load_arm_keeps_empty_completions_as_empty_strings(tmp_path):
     df = tc.load_arm(str(p))
     assert df.completion.iloc[0] == ""
     assert df.completion.isna().sum() == 0
+
+
+def test_load_arm_normalises_the_delta_column_under_either_header(tmp_path):
+    """src/token_steer.py now writes `tgt_minus_top_delta`; the twelve files on disk
+    still carry `readout_delta`. Both must load to the same column name or every
+    downstream lookup breaks on whichever generation it was not written for."""
+    old = tmp_path / "old.csv"
+    old.write_text("direction,stmt,frac,scale,hit_target,frac_margin,readout_delta\n"
+                   "A,1,1.0,1.0,0,0.01,0.13\n")
+    new = tmp_path / "new.csv"
+    new.write_text("direction,stmt,frac,scale,hit_target,frac_margin,tgt_minus_top_delta\n"
+                   "A,1,1.0,1.0,0,0.01,0.13\n")
+    assert "tgt_minus_top_delta" in tc.load_arm(str(old)).columns
+    assert "readout_delta" not in tc.load_arm(str(old)).columns
+    assert "tgt_minus_top_delta" in tc.load_arm(str(new)).columns
+
+
+def test_the_alias_map_matches_token_steer():
+    """token_steer.LEGACY_COLUMN_ALIASES is the source of truth and is duplicated in
+    token_conclusions to avoid a 4.2s torch import for a one-entry dict. Read the
+    literal out of the source text rather than importing, so this test stays fast and
+    still fails loudly if the two ever drift."""
+    src = os.path.join(os.path.dirname(__file__), "..", "src", "token_steer.py")
+    with open(src) as f:
+        line = next(l for l in f if l.startswith("LEGACY_COLUMN_ALIASES"))
+    assert ast.literal_eval(line.split("=", 1)[1].strip()) == tc.LEGACY_COLUMN_ALIASES
 ```
+
+Add `import ast` to the test file's imports.
 
 - [ ] **Step 2: Run the tests to verify they fail**
 
@@ -179,7 +210,7 @@ Expected: collection error, `ModuleNotFoundError: No module named 'token_conclus
 Create `src/token_conclusions.py`:
 
 ```python
-"""token_conclusions.py — the computations behind every number in
+"""token_conclusions.py: the computations behind every number in
 docs/TOKEN_SPACE_FINDINGS.md.
 
 Read-only. Nothing here writes, regenerates or overwrites an artifact.
@@ -196,6 +227,10 @@ import os
 import numpy as np
 import pandas as pd
 
+# Mirrors token_steer.LEGACY_COLUMN_ALIASES, which is the source of truth. Duplicated
+# rather than imported because token_steer imports torch.
+LEGACY_COLUMN_ALIASES = {"readout_delta": "tgt_minus_top_delta"}
+
 
 def load_arm(path):
     """One token_steer_*.csv, with empty completions preserved as empty strings.
@@ -206,8 +241,16 @@ def load_arm(path):
     not missing data. Verified: 4,660 non-empty + 740 empty = 5,400 rows, so no row was
     ever left ungenerated.
     """
-    return pd.read_csv(path, keep_default_na=False, na_values=[],
-                       dtype={"completion": str})
+    Also normalises the delta column. src/token_steer.py now writes it as
+    `tgt_minus_top_delta`; the twelve files on disk from the finished cluster runs were
+    not regenerated and still carry the old `readout_delta` header, so both spellings
+    are live. token_steer.load_steer_csv does the same rename, but importing that module
+    pulls in torch (4.2s) for a one-entry dict, so the map is duplicated here and pinned
+    against the original by test_the_alias_map_matches_token_steer.
+    """
+    return (pd.read_csv(path, keep_default_na=False, na_values=[],
+                        dtype={"completion": str})
+            .rename(columns=LEGACY_COLUMN_ALIASES))
 
 
 def shared_statements(df):
@@ -227,7 +270,7 @@ def restrict_to_shared(df):
 ./.venv/bin/python -m pytest tests/test_token_conclusions.py -v
 ```
 
-Expected: 3 passed.
+Expected: 5 passed.
 
 - [ ] **Step 5: Verify against the real artifact**
 
@@ -441,7 +484,7 @@ def cross_tab(df):
 ./.venv/bin/python -m pytest tests/test_token_conclusions.py -v
 ```
 
-Expected: 8 passed.
+Expected: 10 passed.
 
 - [ ] **Step 5: Verify against the real artifacts**
 
@@ -518,7 +561,7 @@ def test_proportional_detector_fires_on_a_per_statement_rescale():
         "direction": ["A"] * 4,
         "stmt": [1, 1, 2, 2],
         "frac_margin": [0.01, 0.02, 0.05, 0.10],
-        "readout_delta": [0.13, 0.26, 1.00, 2.00],       # m0 = 13 then 20
+        "tgt_minus_top_delta": [0.13, 0.26, 1.00, 2.00],  # m0 = 13 then 20
     })
     assert tc.proportional_per_statement(df) is True
 
@@ -580,9 +623,10 @@ def margin_consumption(df):
     }).reset_index()
 
 
-def proportional_per_statement(df, a="readout_delta", b="frac_margin", rtol=1e-3):
+def proportional_per_statement(df, a="tgt_minus_top_delta", b="frac_margin", rtol=1e-3):
     """True when a/b is constant within each statement, i.e. the columns are one
-    measurement rescaled.
+    measurement rescaled. Pass frames through load_arm first: it normalises the old
+    `readout_delta` header to `tgt_minus_top_delta`, which is this default.
 
     This pins the finding that forced A1 into a closed-form reconstruction:
     src/token_steer.py writes `readout_delta = r - r0` where `probe` returns
@@ -608,7 +652,7 @@ def proportional_per_statement(df, a="readout_delta", b="frac_margin", rtol=1e-3
 ./.venv/bin/python -m pytest tests/test_token_conclusions.py -v
 ```
 
-Expected: 12 passed.
+Expected: 14 passed.
 
 - [ ] **Step 5: Verify against the real artifacts**
 
@@ -772,7 +816,7 @@ def country_outcome(completion, correct_country, target_countries):
 ./.venv/bin/python -m pytest tests/test_token_conclusions.py -v
 ```
 
-Expected: 17 passed.
+Expected: 19 passed.
 
 - [ ] **Step 5: Verify against the real artifact**
 
@@ -1222,7 +1266,7 @@ Binding requirements on content:
 
 - **Claim 2 gets whatever verdict A3 produced**, with the pre-registered expectation ("claim 2 will be refuted") quoted beside it. If A3 disagreed with the expectation, say so plainly.
 - **Every A1 number carries the reconstruction caveat.** The readout axis is a first-order prediction licensed by an already measured R^2 of 0.9991, not an observation. A reader must not be able to mistake it for a measurement.
-- **Never report `readout_delta` beside `frac_margin`.** They are one measurement.
+- **Never report the delta column beside `frac_margin`.** They are one measurement. The column is `tgt_minus_top_delta` in current `token_steer.py` output and `readout_delta` in the files on disk; neither spelling belongs in a results table.
 - **Never pool cities and common_claim.** They fail by different mechanisms (inertness against the Tan anti-steerability regime) and their targets are different (semantic false country against runner-up token). Lead with cities.
 - **State the `jtw_legacy` coverage caveat** wherever a common_claim cross-direction number appears: 90 of 200 statements, 44 at label 1.
 - **Claim 5 is reported as not answerable from these files**, with the reason (the truth readout is decomposed at layer 20 and the steering vectors at layer 11, so their feature IDs come from unrelated dictionaries). Do not report a cross-layer overlap number.
@@ -1233,7 +1277,7 @@ Binding requirements on content:
 
 ```bash
 grep -c "—" docs/TOKEN_SPACE_FINDINGS.md; echo "em dashes above (want 0)"
-grep -n "readout_delta" docs/TOKEN_SPACE_FINDINGS.md || echo "readout_delta absent: good"
+grep -nE "readout_delta|tgt_minus_top_delta" docs/TOKEN_SPACE_FINDINGS.md || echo "delta column absent: good"
 grep -n "1\.55" docs/TOKEN_SPACE_FINDINGS.md || echo "stale broadcast_gain absent: good"
 ```
 
@@ -1245,7 +1289,7 @@ Expected: `0` em dashes, `readout_delta` absent unless it appears only inside th
 ./.venv/bin/python -m pytest tests/ -q
 ```
 
-Expected: the pre-existing count plus 17, no failures.
+Expected: the pre-existing count plus 19, no failures.
 
 - [ ] **Step 5: Confirm the staging set**
 
@@ -1265,7 +1309,9 @@ git add docs/TOKEN_SPACE_FINDINGS.md && git commit -m "docs(token-space): claim-
 
 ## Notes for the implementer
 
-**A background task may touch `src/token_steer.py`.** Task `task_427f63e2` is renaming the misleading `readout_delta` column. It was instructed not to regenerate any existing CSV. If it lands before this plan finishes, `proportional_per_statement` will still return `True` on the existing files, because those files were written by the old code. If it returns `False`, the CSVs were regenerated, which was out of scope, and A1 and A2 must be revisited before anything is reported.
+**The `readout_delta` rename has already landed.** Task `task_427f63e2` finished during planning. `src/token_steer.py` now writes the column as `tgt_minus_top_delta` and exposes `LEGACY_COLUMN_ALIASES` plus `load_steer_csv`; `docs/superpowers/specs/2026-08-04-token-space-conclusions-design.md` carries a "Follow-up done" note recording it, and that spec edit is still unstaged. The twelve CSVs on disk were correctly not regenerated and still carry `readout_delta`, which `load_arm` normalises. Nothing in the spec's reasoning changed: the column is still the same measurement as `frac_margin`, so A1 remains a reconstruction and A2 still reports only one of the two.
+
+If `proportional_per_statement` ever returns `False` on these files, the CSVs were regenerated, which was out of scope, and A1 and A2 must be revisited before anything is reported.
 
 **What is out of scope.** Any cluster job including the frac-6 pre-norm test (stated as a prediction only), any model load or generation or judge run, regenerating any artifact, the refusal positive control, and editing `REACH_AUDIT_FINDINGS.md`, `RESULTS_SINCE_LAST_MEETING_PART3.md` or `PROJECT_PROGRESS_TO_DATE.md`.
 
