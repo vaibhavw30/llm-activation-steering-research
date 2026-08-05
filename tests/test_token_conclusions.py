@@ -196,3 +196,18 @@ def test_proportional_detector_ignores_the_frac_zero_rows():
         "readout_delta": [0.0, 0.13, 0.26],
     })
     assert tc.proportional_per_statement(df, a="readout_delta") is True
+
+
+def test_proportional_detector_returns_false_when_every_group_is_a_singleton():
+    """A single row carries no evidence about within-statement proportionality: there is
+    no second ratio to compare it against. Scoring a lone row as a perfect match would
+    let the tripwire pass silently on data it cannot actually assess, so a frame where
+    every (direction, stmt) group has exactly one surviving row must return False even
+    though the two columns here are manifestly unrelated."""
+    df = pd.DataFrame({
+        "direction": ["A"] * 5,
+        "stmt": [1, 2, 3, 4, 5],
+        "frac_margin": [0.01, 0.02, 0.03, 0.04, 0.05],
+        "tgt_minus_top_delta": [7.0, -3.5, 0.02, 100.0, 1.0],
+    })
+    assert tc.proportional_per_statement(df) is False

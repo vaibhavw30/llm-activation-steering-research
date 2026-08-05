@@ -170,11 +170,20 @@ def proportional_per_statement(df, a="tgt_minus_top_delta", b="frac_margin", rto
 
     Rows with |b| below 1e-9 are dropped: frac == 0 makes frac_margin exactly zero by
     construction and the ratio is undefined there.
+
+    A (direction, stmt) group with fewer than two surviving rows carries no evidence
+    about within-statement proportionality, so it is excluded from the comparison
+    rather than scored as a pass. If no group has enough rows to be informative, the
+    function returns False: no evidence is not the same as proven proportional.
     """
     s = df[df[b].abs() > 1e-9].copy()
     if s.empty:
         return False
     s["_r"] = s[a] / s[b]
+    counts = s.groupby(["direction", "stmt"])._r.transform("size")
+    s = s[counts >= 2]
+    if s.empty:
+        return False
     rel = s.groupby(["direction", "stmt"])._r.agg(
-        lambda x: 0.0 if len(x) < 2 else float(x.std(ddof=0) / max(abs(x.mean()), 1e-12)))
+        lambda x: float(x.std(ddof=0) / max(abs(x.mean()), 1e-12)))
     return bool(rel.max() <= rtol)
