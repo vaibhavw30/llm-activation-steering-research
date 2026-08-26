@@ -1,7 +1,8 @@
 # Steering Validity Audit and Semantic Target Set: Design
 
 **Date:** 2026-08-26
-**Status:** approved, not yet implemented
+**Status:** Gate 1 (S1 to S4) in progress. Findings 1 and 3 below have been corrected by the
+experiments this document specifies; the correction notes are inline and dated.
 **Branch:** `feat/mag-e4-steering`
 **Scope agreed with researcher:** Tier 0 (S1 to S4) + Tier 1 (D1) + T1. De-inerting specified but deferred.
 
@@ -20,6 +21,12 @@ found a second problem they anticipated but that we had not measured. Both are r
 Every number here was read from files already on disk. Nothing was re-run.
 
 ### Finding 1: the two steering arms never overlapped in perturbation size
+
+> **Corrected by S3 on 2026-08-26.** The 6.1x figure holds on cities on the shared prompt set
+> and was confirmed exactly (6.09x). It does not generalise: on common_claim the shared-prompt
+> gap is 1.66x, and once the per-statement reachability arm is included the two ranges
+> **overlap**. This paragraph reached its number from the mean arm alone. See
+> `docs/S3_COMMON_AXIS.md` section 6.
 
 Both arms inject at the same layer, so they are directly comparable.
 
@@ -45,6 +52,12 @@ back to **0% at +1.0**. A dose-response that returns to zero at the largest magn
 measurement crossing a regime change, not a dose-response.
 
 ### Finding 3: the large-magnitude flips co-occur with degradation
+
+> **Refuted by S3 on 2026-08-26.** Pooled by magnitude with an exact test on the judged
+> free-form completions, the incoherence rise is not significant (p = 0.22 on cities, p = 0.16
+> on common_claim) while the FALSE rise is (p < 5e-7 on both). The 15.6 against 21.2 comparison
+> below is a single signed cell, not a magnitude effect. See `docs/S3_COMMON_AXIS.md`
+> section 4.3.
 
 Pooling `judge_mag_steer_cities.csv`, INCOHERENT runs 15.6% at tau 0 and 21.2% at tau -1.0
 while TRUE falls 81.2% to 60.8%. On common_claim INCOHERENT reaches 24.3%. Some of what was
@@ -247,6 +260,12 @@ and both endpoints:
 ```
 0.005, 0.01, 0.02, 0.035, 0.05, 0.08, 0.12, 0.18, 0.27, 0.40, 0.60, 1.00
 ```
+
+> **Superseded by S3 on 2026-08-26.** This grid puts 8 of 12 points below 0.20, but S3 brackets
+> the behavioral transition between 0.29 and 0.78 and shows the naive directions are already at
+> baseline at 0.23 to 0.29. The revised grid is
+> `0.01, 0.02, 0.04, 0.08, 0.15, 0.22, 0.30, 0.40, 0.52, 0.66, 0.82, 1.00`. Rationale in
+> `docs/S3_COMMON_AXIS.md` section 7.
 
 twelve magnitudes, both signs, plus zero, so 25 points per direction. Note that 0.035 is the
 median certified budget on cities and is deliberately a grid point. Generate at temperature 0,
