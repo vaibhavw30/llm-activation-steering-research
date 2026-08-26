@@ -1,4 +1,4 @@
-"""D1 analysis — does a clean window exist? (design spec section 7)
+"""D1 analysis: does a clean window exist? (design spec section 7)
 
 Reads dose_yesno_<ds>.csv, dose_meta_<ds>.json and, when it exists, judge_dose_<ds>.csv.
 Writes dose_summary_<ds>.csv, dose_window_<ds>.csv, plot_d1_dose_<ds>.png,
@@ -12,12 +12,12 @@ The spec commits to two branches in advance. Operationalised here, and fixed bef
 data existed:
 
   A dose is a CLEAN WINDOW for a direction when all three hold at that dose:
-    1. behaviour moved   — the direction's flip count (or judged FALSE count) is significantly
+    1. behaviour moved   : the direction's flip count (or judged FALSE count) is significantly
                            above rand_ctrl's at the SAME dose. Random is the control because
                            it holds the perturbation norm fixed and removes only the semantics.
-    2. nothing broke     — the direction's INCOHERENT count is not significantly above the
+    2. nothing broke     : the direction's INCOHERENT count is not significantly above the
                            unsteered baseline's.
-    3. it survives Holm  — over every (direction, dose) cell in the family.
+    3. it survives Holm  : over every (direction, dose) cell in the family.
 
   PI IS RIGHT     if at least one clean window exists for at least one truth direction.
   NULL IS REAL    if none does, and flip and incoherence instead rise together.
@@ -235,7 +235,7 @@ def plot_dose(ds, sm, meta, path):
     for r in range(nrow):
         axes[r * ncol].set_ylabel("rate")
     axes[0].legend(fontsize=7, loc="upper left", framealpha=0.9)
-    fig.suptitle(f"D1 dose-response — {ds} (layer {meta['layer']})\n"
+    fig.suptitle(f"D1 dose-response: {ds} (layer {meta['layer']})\n"
                  f"shaded: band no experiment had sampled   dotted: certified budget "
                  f"rel={budget:.3f}", fontsize=11)
     fig.tight_layout(rect=(0, 0, 1, 0.93))
@@ -266,7 +266,7 @@ def plot_margin(ds, sm, meta, path):
                     marker="o", ms=4, lw=1.8, capsize=2, color=colour, label=d)
     ax.set_xlabel("signed relative magnitude  alpha / median ||h_src||")
     ax.set_ylabel("mean paired shift in p(yes) - p(no)")
-    ax.set_title(f"D1 verdict-margin dose-response — {ds}\n"
+    ax.set_title(f"D1 verdict-margin dose-response: {ds}\n"
                  f"paired within statement, n = {int(sm['n_yesno'].max())}; "
                  f"resolves shifts far below one argmax flip", fontsize=11)
     ax.legend(fontsize=8, ncol=2)

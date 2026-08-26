@@ -156,13 +156,24 @@ PYTHONPATH=src python3 src/dose_response.py --dataset cities --device cuda
 PYTHONPATH=src python3 src/dose_response.py --dataset common_claim_true_false --device cuda
 ```
 
-Judging and analysis, locally:
+Judging, also on DeltaAI, after the generation job has finished:
 
 ```bash
-./.venv/bin/python src/judge_results.py --mode steer --dataset cities \
-    --steer-input dose_cities.csv --steer-output judge_dose_cities.csv \
-    --steer-plot plot_judge_dose_cities.png
+sbatch deltaai/run_dose_judge.slurm
+```
+
+**The judge is OLMo-3-7B-Instruct on the cluster, not the Anthropic API.** That is a
+comparability requirement, not a convenience: `judge_mag_steer_<ds>.csv` and
+`judge_reach_steer_<ds>.csv` were produced by this judge under this rubric, and D1 exists to be
+read against them. A different judge would change the instrument mid-audit and confound every
+"the naive arm did X, D1 did Y" statement with the scorer rather than the dose. It also means D1
+has no `ANTHROPIC_API_KEY` dependency, unlike the outstanding S4 item.
+
+Analysis, locally:
+
+```bash
 ./.venv/bin/python src/dose_analyze.py --dataset cities
+./.venv/bin/python src/dose_analyze.py --dataset common_claim_true_false
 ```
 
 Harness check, no GPU and no model download, about 7 seconds:
@@ -190,8 +201,12 @@ PYTHONPATH=src ./.venv/bin/python src/dose_response.py --dataset cities --device
 
 ### 3.6 Cost and artifact safety
 
-About 8,400 generations per dataset plus 3,600 extra forwards for the margin, roughly 2 hours per
-dataset on a GH200. Judging is about 8,000 short Haiku calls.
+8,120 generations per dataset (56 baseline plus 6 directions x 24 non-zero doses x 56 prompts)
+plus 3,480 extra single forwards for the verdict margin. Scaling from the MAG E4 run, which did
+2,520 generations in 15 to 40 minutes, that is roughly 50 minutes to 2.2 hours per dataset;
+`run_dose.slurm` caps the wall at 6 hours for both. Judging is 4,640 completions per dataset,
+9,280 total, about 3.2x the MAG E4 judge run that took 40 minutes; `run_dose_judge.slurm` caps at
+4 hours.
 
 Writes only `dose_<ds>.csv`, `dose_yesno_<ds>.csv`, `dose_meta_<ds>.json`, and downstream
 `judge_dose_<ds>.csv`, `dose_summary_<ds>.csv`, `dose_window_<ds>.csv`,

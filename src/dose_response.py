@@ -1,4 +1,4 @@
-"""D1 — the dose-response kill test (design spec section 7).
+"""D1: the dose-response kill test (design spec section 7).
 
 Assumption under test: the behavioral null is a fact about the model, not an artifact of
 sampling only oversteered magnitudes.
@@ -132,15 +132,15 @@ def jtw_mean_direction(ds):
 def load_directions(ds, geo):
     """The six directions Gate 1 selected, all unit, all native to the injection layer.
 
-    sup_grad          — the only direction S1 found cleanly directional (monotone in both signs).
-    sup_mean_diff     — the contrastive axis; the reference truth direction throughout.
-    mag_u_gold        — the MAG InputDelta direction, the naive arm's headline.
-    mag_resid_pc1     — NOT a truth axis. It is the dominant off-truth-axis shift component and
+    sup_grad          : the only direction S1 found cleanly directional (monotone in both signs).
+    sup_mean_diff     : the contrastive axis; the reference truth direction throughout.
+    mag_u_gold        : the MAG InputDelta direction, the naive arm's headline.
+    mag_resid_pc1     : NOT a truth axis. It is the dominant off-truth-axis shift component and
                         the only direction that flipped anything on common_claim, so it is the
                         norm-effect control: whatever it does at a given dose is what a large
                         perturbation does regardless of truth content.
-    jtw_mean_diff_tgt — the reachability arm, so both arms land on the same grid.
-    rand_ctrl         — seeded Gaussian unit vector. Norm matching is automatic here since every
+    jtw_mean_diff_tgt : the reachability arm, so both arms land on the same grid.
+    rand_ctrl         : seeded Gaussian unit vector. Norm matching is automatic here since every
                         direction is unit and every dose is the same alpha.
     """
     md = np.load(f"mag_dir_{ds}.npz")
