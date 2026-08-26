@@ -68,8 +68,24 @@ what comes next:
   yes/no statements, where the smallest detectable asymmetry over 18 tests is 9 of 24. D1
   cannot resolve effects smaller than roughly 10 points without more prompts.
 
-**Gate 2 (D1) and Gate 3 (T1)** are unchanged in structure. T1's success criterion is now
-calibrated by S4: it has to beat 5.5%.
+**Gate 2 (D1): implemented, pre-registered, not yet run.** `src/dose_response.py`,
+`src/dose_analyze.py`, `deltaai/run_dose.slurm`, and `docs/D1_DOSE_RESPONSE.md` sections 1 to 3
+are committed before any D1 data exists. Three things beyond the spec, all traceable to Gate 1:
+
+- **One magnitude axis.** Dose is `rel * median ||h_src||`, the S3 canonical axis, so the naive
+  and reachability directions are on the same ruler by construction rather than by conversion.
+- **A continuous outcome, added because of S1.** Every yes/no cell also records the paired shift
+  in the MAG first-token margin `p(yes) - p(no)`. Flip rate over 24 statements cannot resolve an
+  effect below 0.375; a within-statement paired difference resolves far smaller shifts. A
+  direction that moves the verdict readout monotonically without ever crossing the argmax is a
+  real result, and no measurement in this project so far could have seen it. Registered as
+  branch C in `docs/D1_DOSE_RESPONSE.md` section 2.
+- **Significance is against the norm-matched random control at the same dose**, not against
+  zero, because S1's lesson is that a bare rate at n = 24 cannot separate "the direction did
+  something" from "a vector of that size did something".
+
+**Gate 3 (T1)** is unchanged in structure. Its success criterion is now calibrated by S4: it has
+to beat 5.5%.
 
 ## Outstanding
 

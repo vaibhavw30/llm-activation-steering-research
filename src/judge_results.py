@@ -177,7 +177,9 @@ def _steer_summary_and_plot(ds, rows, plot_path=None):
         agg[dirn] = (scales, frac)
         print(f"-- {dirn} --")
         for k, s in enumerate(scales):
-            print(f"  scale {int(s):+4d}: TRUE {frac['TRUE'][k]:.2f}  "
+            # NOT int(s): D1's dose grid is fractional, and int() would print eight of its
+            # twelve magnitudes as "+0", which reads as the unsteered baseline.
+            print(f"  scale {s:+8.4f}: TRUE {frac['TRUE'][k]:.2f}  "
                   f"FALSE {frac['FALSE'][k]:.2f}  INCOH {frac['INCOHERENT'][k]:.2f}")
 
     fig, axes = plt.subplots(1, len(dirs), figsize=(6 * len(dirs), 4.4), squeeze=False)

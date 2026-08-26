@@ -1,8 +1,10 @@
 # Steering Validity Audit and Semantic Target Set: Design
 
 **Date:** 2026-08-26
-**Status:** Gate 1 (S1 to S4) in progress. Findings 1 and 3 below have been corrected by the
-experiments this document specifies; the correction notes are inline and dated.
+**Status:** Gate 1 (S1 to S4) complete and committed; see `docs/AUDIT_SUMMARY.md`. Gate 2 (D1)
+is implemented and pre-registered in `docs/D1_DOSE_RESPONSE.md`, awaiting cluster time. Findings
+1 and 3 below have been corrected by the experiments this document specifies; the correction
+notes are inline and dated.
 **Branch:** `feat/mag-e4-steering`
 **Scope agreed with researcher:** Tier 0 (S1 to S4) + Tier 1 (D1) + T1. De-inerting specified but deferred.
 
