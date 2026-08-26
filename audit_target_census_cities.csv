@@ -1,0 +1,17 @@
+token,count,frac,class,target_mode,n_statements
+ North,87,0.435,directional,countries,200
+ South,83,0.415,directional,countries,200
+ the,8,0.04,function,countries,200
+ India,4,0.02,content,countries,200
+ Russia,4,0.02,content,countries,200
+ Ukraine,3,0.015,content,countries,200
+ Burkina,2,0.01,content,countries,200
+ Romania,1,0.005,content,countries,200
+ Syria,1,0.005,content,countries,200
+ Turkey,1,0.005,content,countries,200
+ Kazakhstan,1,0.005,content,countries,200
+ Australia,1,0.005,content,countries,200
+ Zimbabwe,1,0.005,content,countries,200
+ Côte,1,0.005,content,countries,200
+ Iraq,1,0.005,content,countries,200
+ Nigeria,1,0.005,content,countries,200

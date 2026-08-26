@@ -1,0 +1,201 @@
+direction,stmt,stem,scale,frac,argmax_id,argmax_tok,hit_target,margin,frac_margin,tgt_minus_top_delta,completion,correct_country,steered_names_true_country,unsteered_completion,unsteered_names_true_country,names_other_country,outcome
+oracle,171,The city of Weifang is in,6.51106,1.0,4612, North,1,-0.0128555,1.001,12.8599,"North East China, and is the capital",China,True,"the north of Shandong Province, China.",True,False,vacuous
+oracle,1246,The city of Langfang is in,0.136437,1.0,573, the,1,-0.000305176,1.00101,0.303654,"the northern part of Hebei Province,",China,False,"Hebei province, China. It is",True,False,indeterminate
+oracle,45,The city of Nowrangapur is in,6.8056,1.0,4316, South,1,-0.0159721,1.001,15.9964,"South Odisha, India. It is located",India,True,the district of Srikakulam in,False,False,vacuous
+oracle,467,The city of Tembisa is in the,3.44282,1.0,4316, South,1,-0.0064888,1.001,6.49435,South African province of Gauteng. It is,South Africa,True,Ekurhuleni Metropolitan Municipality in Gauteng,False,False,vacuous
+oracle,767,The city of Narela is in,3.15467,1.0,4612, North,1,-0.00751114,1.001,7.51603,North West Delhi. It is a part,India,False,the north-west of Delhi. It,False,False,indeterminate
+oracle,408,The city of Warri is in,0.688059,1.0,573, the,1,-0.0018425,1.001,1.84053,the Delta State of Nigeria. It is,Nigeria,True,"Delta State, Nigeria. It is the",True,True,vacuous
+oracle,596,The city of Zibo is in,6.26085,1.0,4612, North,1,-0.0119553,1.001,11.9716,North China's North China's,China,True,the Shandong Province of China. It is,True,False,vacuous
+oracle,898,The city of Kalininskiy is in,9.69999,1.0,19066, Ukraine,1,-0.0278053,1.001,27.8423,Ukraine’ Ukraine Ukraine Ukraine Ukraine Ukraine Ukraine,Russia,False,the south of the Republic of Tatarstan,False,True,changed
+oracle,150,The city of Dehra Dun is in,8.77912,1.0,4612, North,1,-0.0196686,1.001,19.6814,"North India, in the state North North",India,True,"the state of Uttarakhand, India. It",True,False,vacuous
+oracle,765,The city of Theni is in,6.59583,1.0,4316, South,1,-0.0143433,1.001,14.3494,"South India, in the state of Tamil",India,True,the southern part of Tamil Nadu. It,False,False,vacuous
+oracle,20,The city of Jiaxing is in,6.67936,1.0,4612, North,1,-0.0139275,1.001,13.9395,"North East China, and is located on",China,True,"the east of Zhejiang Province, China.",True,False,vacuous
+oracle,1271,The city of Nagpur is in,8.99151,1.0,4316, South,1,-0.0207901,1.001,20.7798,South Maharashtra state of India. It is,India,True,the state of Maharashtra. It is the,False,False,vacuous
+oracle,1190,The city of Barnaul is in,6.15548,1.0,4316, South,1,-0.0137596,1.001,13.7679,"South Siberia, Russia. It is located",Russia,True,"the south of the Altai Territory,",False,False,vacuous
+oracle,86,The city of Sokoto is in,4.22085,1.0,4612, North,1,-0.0098381,1.001,9.84765,North West Nigeria. It is the capital,Nigeria,True,the north-western part of Nigeria.,True,True,vacuous
+oracle,484,The city of Zhangjiakou is in,3.08868,1.0,4612, North,1,-0.00702286,1.001,7.02768,"North China's Hebei Province,",China,True,"the northern part of Hebei Province,",False,False,vacuous
+oracle,1139,The city of Islamabad is in,10.3143,1.0,5339, India,1,-0.0230141,1.001,23.0381,"India’s Kashmir region, and is",Pakistan,False,the process of developing a new master plan,False,True,changed
+oracle,928,The city of Urumqi is in,7.47319,1.0,4612, North,1,-0.0148735,1.001,14.908,"North West China, and is the capital",China,True,the Xinjiang Uygur Autonomous Region of,False,False,vacuous
+oracle,134,The city of Bamako is in,7.46136,1.0,106712, Burkina,1,-0.0178375,1.001,17.8709,"Burkina Faso, West Africa. It is",Mali,False,"the process of building a new stadium,",False,True,changed
+oracle,899,The city of Kalininskiy is in,9.69999,1.0,19066, Ukraine,1,-0.0278053,1.001,27.8423,Ukraine’ Ukraine Ukraine Ukraine Ukraine Ukraine Ukraine,Russia,False,the south of the Republic of Tatarstan,False,True,changed
+oracle,1339,The city of Amritsar is in,7.16213,1.0,4612, North,1,-0.0150681,1.001,15.0704,"North India, in the state of Punjab",India,True,the state of Punjab. It is the,False,False,vacuous
+oracle,1346,The city of Khartoum is in,5.83968,1.0,4316, South,1,-0.0131569,1.001,13.1737,South Sudan.  The city of Khartoum,Sudan,True,the midst of a water crisis. The,False,False,vacuous
+oracle,143,The city of Qom is in,7.35081,1.0,4612, North,1,-0.0150833,1.001,15.1236,"North Central Iran, about 15",Iran,True,"the province of Qom, Iran.",True,False,vacuous
+oracle,1280,The city of Dammam is in Saudi,3.66236,1.0,573, the,1,-0.010957,1.001,10.963,the capital of the Eastern Province. It,Saudi Arabia,False,"Arabia, and it is the second largest",False,False,indeterminate
+oracle,51,The city of Rohini is in,3.96924,1.0,4612, North,1,-0.00941467,1.001,9.43733,North Delhi. It is a residential area,India,False,the north-west of Delhi. It,False,False,indeterminate
+oracle,835,The city of Rajshahi is in,7.42641,1.0,5339, India,1,-0.0160789,1.001,16.0907,India’s northern Indian state of India,Bangladesh,False,the north-west of Bangladesh. It,True,True,changed
+oracle,1035,The city of Chisinau is in,8.08097,1.0,45358, Romania,1,-0.0209045,1.001,20.9323,"Romania, and it is the capital of",Moldova,False,the process of developing a new urban development,False,True,changed
+oracle,138,The city of Mosul is in,9.71135,1.0,34412, Syria,1,-0.017067,1.001,17.073,"Syria, and it is the largest city",Iraq,False,"the north of Iraq, and it is",True,True,changed
+oracle,619,The city of Enugu is in South,6.17018,1.0,4316, South,1,-0.0108109,1.001,10.8304,South Nigeria. It is the capital of,Nigeria,True,-East Nigeria. It is the capital,True,True,vacuous
+oracle,1452,The city of Maiduguri is in,3.57042,1.0,4612, North,1,-0.00797272,1.001,7.99965,"North East Nigeria, and is the capital",Nigeria,True,"the northeast of Nigeria, and is the",True,True,vacuous
+oracle,67,The city of Najafgarh is in,3.06443,1.0,4612, North,1,-0.0072937,1.001,7.29689,North West Delhi. It is a part,India,False,the north-west of Delhi. It,False,False,indeterminate
+oracle,1455,The city of Yangon is in,7.9345,1.0,4316, South,1,-0.0169067,1.001,16.9152,"South East Asia, and is the capital",Myanmar,False,the process of building a new international airport,False,False,indeterminate
+oracle,1252,The city of Dalian is in,5.08858,1.0,4612, North,1,-0.0110359,1.001,11.0543,"North East China, on the coast of",China,True,"the northeast of China, and it is",True,False,vacuous
+oracle,82,The city of Bucaramanga is in,5.87365,1.0,4612, North,1,-0.0139389,1.001,13.9591,"North Santander, Colombia. It is the",Colombia,True,"the north of Colombia, in the department",True,False,vacuous
+oracle,1471,The city of Weinan is in,4.29386,1.0,4612, North,1,-0.00927544,1.001,9.27787,North China’s Shaanxi Province.,China,True,"the north of Shaanxi Province, China",True,False,vacuous
+oracle,192,The city of Suez is in,5.57532,1.0,4612, North,1,-0.0123901,1.001,12.4026,"North East North Sinai Governorate, Egypt",Egypt,True,"the Suez Canal Governorate, Egypt.",True,False,vacuous
+oracle,394,The city of Shymkent is in,5.07126,1.0,4316, South,1,-0.0118103,1.001,11.8402,"South Kazakhstan, and is the capital of",Kazakhstan,True,"the south of Kazakhstan, in the region",True,False,vacuous
+oracle,882,The city of Battagram is in,5.01973,1.0,4612, North,1,-0.0115128,1.001,11.544,North West Frontier Province of Pakistan. It,Pakistan,True,the Hazara division of Khyber,False,False,vacuous
+oracle,152,The city of Bhubaneswar is in,8.95398,1.0,4316, South,1,-0.0196609,1.001,19.6962,South Odisha. It is the capital city,India,False,the process of developing a new master plan,False,False,indeterminate
+oracle,1077,The city of Karaj is in,4.99913,1.0,4612, North,1,-0.0114937,1.001,11.5017,"North West Iran, 50 km",Iran,True,"the province of Alborz, Iran",True,False,vacuous
+oracle,472,The city of Zhengzhou is in,8.79628,1.0,4612, North,1,-0.0195084,1.001,19.5289,North China’s Henan Province.,China,True,"the middle of the country, and it",False,False,vacuous
+oracle,80,The city of Panzhihua is in,4.8658,1.0,4316, South,1,-0.0103226,1.001,10.3454,South China's Sichuan Province. It,China,True,"the southwest of China, and it is",True,False,vacuous
+oracle,839,The city of Dortmund is in,3.45475,1.0,4612, North,1,-0.0082283,1.001,8.231,"North Rhine-Westphalia, Germany",Germany,True,"the north of Germany, in the state",True,False,vacuous
+oracle,379,The city of Casablanca is in,4.42072,1.0,4612, North,1,-0.00978851,1.001,9.81728,"North Africa, and it is the largest",Morocco,False,"the north of Morocco, and is the",True,False,indeterminate
+oracle,636,The city of Aleppo is in,8.62695,1.0,21355, Turkey,1,-0.0170479,1.001,17.0521,Turkey’s southern province Turkey’s,Syria,False,the midst of a humanitarian crisis. The,False,True,changed
+oracle,1,The city of Krasnodar is in South,4.798,1.0,19066, Ukraine,1,-0.00772285,1.001,7.73207,"Ukraine, and it is the second largest",Russia,False,"Russia, in the Krasnodar Kra",True,True,changed
+oracle,230,The city of Yiwu is in,5.87925,1.0,4316, South,1,-0.0117645,1.001,11.7716,South China's Zhejiang Province. It,China,True,"the east of Zhejiang Province, China.",True,False,vacuous
+oracle,175,The city of Shaoxing is in the,5.77388,1.0,4612, North,1,-0.00955391,1.001,9.57079,"North of Zhejiang Province, China. It",China,True,"east of Zhejiang Province, China. It",True,False,vacuous
+oracle,431,The city of Ta'if is in,7.6809,1.0,4316, South,1,-0.0162277,1.001,16.2552,South Western Saudi Arabia. It is located,Saudi Arabia,True,"the middle of the Arabian Peninsula, in",False,False,vacuous
+oracle,1413,The city of Quebec is in,8.62304,1.0,4612, North,1,-0.0199203,1.001,19.9219,"North America, in Canada. It is",Canada,True,the process of creating a new urban park,False,False,vacuous
+oracle,601,The city of Laibin is in,0.189577,1.0,573, the,1,-0.000591278,1.00101,0.588081,the southwest of Guangxi Zhuang Autonomous,China,False,"Guangxi Zhuang Autonomous Region, China",True,False,indeterminate
+oracle,678,The city of Xiamen is in,5.59126,1.0,4316, South,1,-0.0107422,1.001,10.7583,South China's Fujian Province.,China,True,"the southeast of China, and it is",True,False,vacuous
+oracle,235,The city of Baotou is in,3.47218,1.0,4612, North,1,-0.00820923,1.001,8.22975,North China's Inner Mongolia Autonomous Region,China,True,"the north of Inner Mongolia, China.",True,True,vacuous
+oracle,1162,The city of Rajkot is in,4.99094,1.0,4316, South,1,-0.0105743,1.001,10.5986,"South Gujarat, India. It is the",India,True,the Saurashtra region of Gujarat.,False,False,vacuous
+oracle,1275,The city of Cuttack is in,7.87807,1.0,4316, South,1,-0.0164757,1.001,16.4762,South West Odisha. It is the second,India,False,the state of Odisha. It is the,False,False,indeterminate
+oracle,530,The city of Dar es Salaam is in,9.17444,1.0,4316, South,1,-0.0176811,1.001,17.7024,"South East Africa, and is the largest",Tanzania,False,the process of developing a new master plan,False,False,indeterminate
+oracle,26,The city of Yingkou is in,4.44853,1.0,4612, North,1,-0.00938225,1.001,9.39482,North China's Liaoning Province.,China,True,"the northeast of China, and it is",True,False,vacuous
+oracle,520,The city of Pimpri is in,9.98746,1.0,4316, South,1,-0.0207901,1.001,20.8011,"South East Maharashtra, India. It is",India,True,the Pune district of Maharashtra. It is,False,False,vacuous
+oracle,1429,The city of Ufa is in South,2.96804,1.0,89553, Kazakhstan,1,-0.00549793,1.001,5.49826,"Kazakhstan, Russia. It is the capital",Russia,True,"-Eastern Russia, in the Republic of",True,True,vacuous
+oracle,1175,The city of Chelyabinsk is in,7.08008,1.0,4316, South,1,-0.0151215,1.001,15.1205,"South Ural, Russia. It is the",Russia,True,"the south of the Ural Mountains, in",False,False,vacuous
+oracle,129,The city of Incheon is in,1.75454,1.0,4316, South,1,-0.00411224,1.001,4.12401,"South Korea, and it is the second",South Korea,True,the process of building a new international airport,False,False,vacuous
+oracle,415,The city of Hamamatsu is in,7.79766,1.0,4612, North,1,-0.0154343,1.001,15.4436,"North Central Japan, about 10",Japan,True,the Shizuoka Prefecture of Japan.,True,False,vacuous
+oracle,1268,The city of Kotli is in,7.32902,1.0,5339, India,1,-0.0153236,1.001,15.3463,"India’s Jammu and Kashmir state,",Pakistan,False,the district of Poonch in the Indian,False,True,changed
+oracle,1196,The city of Mogadishu is in,6.49697,1.0,4316, South,1,-0.0147285,1.001,14.7458,South Central Somalia. It is the capital,Somalia,True,"the midst of a major construction boom,",False,True,vacuous
+oracle,357,The city of Nanchang is in,6.97463,1.0,4316, South,1,-0.0146103,1.001,14.6333,"South Central China, in Jiangxi Province",China,True,"the center of Jiangxi Province, China",True,False,vacuous
+oracle,338,The city of Ulyanovsk is in,8.42177,1.0,4612, North,1,-0.0189667,1.001,18.9817,"North Western Russia, 400",Russia,True,the Volga region of Russia. It is,True,False,vacuous
+oracle,1164,The city of Pune is in,7.70538,1.0,4316, South,1,-0.0178032,1.001,17.8127,"South India, and is known for its",India,True,the midst of a massive housing boom.,False,False,vacuous
+oracle,1491,The city of Kirkuk is in,10.0572,1.0,4612, North,1,-0.0180893,1.001,18.1137,"North Iraq, and it is the capital",Iraq,True,"the north of Iraq, and is the",True,False,vacuous
+oracle,248,The city of Subang Jaya is in,8.18517,1.0,4316, South,1,-0.0166893,1.001,16.7194,"South Klang Valley, Selangor, Malaysia.",Malaysia,True,"the state of Selangor, Malaysia. It",True,False,vacuous
+oracle,947,The city of Meknes is in,4.6875,1.0,4612, North,1,-0.0109634,1.001,10.9804,"North Africa, Morocco. It is located",Morocco,True,"the middle of the country, and is",False,False,vacuous
+oracle,1299,The city of Shangluo is in,4.80871,1.0,4612, North,1,-0.011158,1.001,11.1616,North China's Shanxi Province.,China,True,"the northwest of Shaanxi Province, China",True,False,vacuous
+oracle,981,The city of Puning is in,4.29187,1.0,4316, South,1,-0.0091095,1.001,9.1038,South China’s Guangdong Province. It,China,True,"the south of Guangdong Province, China.",True,False,vacuous
+oracle,1318,The city of Gold Coast is in,6.14407,1.0,4316, South,1,-0.0143585,1.001,14.3746,"South East Queensland, Australia. It is",Australia,True,the process of developing a new master plan,False,False,vacuous
+oracle,1334,The city of Coimbatore is in,5.92715,1.0,4316, South,1,-0.0137863,1.001,13.777,"South India, and is known as the",India,True,the midst of a major water crisis.,False,False,vacuous
+oracle,1080,The city of Chicago is in the United,5.35935,1.0,4316, South,1,-0.011632,1.001,11.6382,South and South Central region of the United,the United States,True,States. It is the third most populous,True,False,vacuous
+oracle,1109,The city of Izhevsk is in,7.53799,1.0,4612, North,1,-0.0164127,1.001,16.4185,"North Western Russia, about 10",Russia,True,the Udmurt Republic of Russia.,True,False,vacuous
+oracle,803,The city of Longyan is in,5.3357,1.0,4316, South,1,-0.0107956,1.001,10.8108,South China's Fujian Province.,China,True,"the southeast of Fujian Province, China",True,False,vacuous
+oracle,776,The city of Bayannur is in,3.26182,1.0,4612, North,1,-0.00721931,1.001,7.22527,North China's Inner Mongolia Autonomous Region,China,True,"the north of Inner Mongolia, and is",False,True,vacuous
+oracle,116,The city of Hohhot is in,2.78319,1.0,4612, North,1,-0.00662613,1.001,6.63099,North China's Inner Mongolia Autonomous Region,China,True,"the north of Inner Mongolia, and it",False,True,vacuous
+oracle,1014,The city of Wuzhou is in,5.96928,1.0,4316, South,1,-0.0118027,1.001,11.8217,South China's Guangxi Zhuang,China,True,the south of Guangxi Zhuang Autonomous,False,False,vacuous
+oracle,263,The city of Bhayandar is in,5.18194,1.0,4316, South,1,-0.0113297,1.001,11.3181,"South Mumbai, Maharashtra. It is a",India,False,the Thane district of Maharashtra. It is,False,False,indeterminate
+oracle,1418,The city of Salta is in,7.14224,1.0,4612, North,1,-0.0161018,1.001,16.1187,"North West Argentina, and is the capital",Argentina,True,"the north of Argentina, in the province",True,False,vacuous
+oracle,1030,The city of Sorocaba is in,9.30252,1.0,4316, South,1,-0.0215607,1.001,21.5904,"South Brazil, in the state South South",Brazil,True,"the state of São Paulo, Brazil.",True,False,vacuous
+oracle,1163,The city of Rajkot is in,4.99094,1.0,4316, South,1,-0.0105743,1.001,10.5986,"South Gujarat, India. It is the",India,True,the Saurashtra region of Gujarat.,False,False,vacuous
+oracle,1106,The city of Oklahoma City is in the United,4.86567,1.0,4316, South,1,-0.010559,1.001,10.576,South Central School District. The city is,the United States,True,States. It is the capital of Oklahoma,True,False,vacuous
+oracle,1200,The city of Port-au-Prince is in,7.91864,1.0,4316, South,1,-0.0157204,1.001,15.7435,South West Haiti. It is the capital,Haiti,True,the midst of a massive cholera outbreak.,False,False,vacuous
+oracle,784,The city of Recife is in,9.13773,1.0,4612, North,1,-0.0199203,1.001,19.9411,"North East Brazil, and is the capital",Brazil,True,"the state of Pernambuco, in the northeast",False,False,vacuous
+oracle,125,The city of Matsuyama is in Burkina,4.88494,1.0,106712, Burkina,1,-0.0114088,1.001,11.4271,"Burkina, a country in West Africa.",Japan,False,"Faso, West Africa. It is the",False,False,indeterminate
+oracle,237,The city of Aparecida de Goiania is in,10.1598,1.0,4316, South,1,-0.0236816,1.001,23.6906,"South Brazil, and is located in Goi",Brazil,True,"the state of Goias, Brazil.",True,False,vacuous
+oracle,1267,The city of Muzaffarabad is in,8.46448,1.0,5339, India,1,-0.0169067,1.001,16.9112,"India-administered Kashmir, and is the",Pakistan,False,the northern part of Pakistan. It is,True,True,changed
+oracle,1249,The city of Jinan is in,6.75033,1.0,4612, North,1,-0.013855,1.001,13.8792,North China's Shandong Province. It,China,True,"the middle of the Shandong Peninsula, in",False,False,vacuous
+oracle,1205,The city of Sanaa is in,9.16087,1.0,4316, South,1,-0.0190048,1.001,19.013,South West Yemen. It is the capital,Yemen,True,the midst of a major water crisis.,False,False,vacuous
+oracle,1449,The city of Ipoh is in,8.60803,1.0,4612, North,1,-0.0181122,1.001,18.1233,"North West Malaysia, and is the capital",Malaysia,True,"the state of Perak, Malaysia. It",True,False,vacuous
+oracle,1060,The city of Dakar is in,7.02083,1.0,4316, South,1,-0.0137558,1.001,13.7543,"South West Africa, and is the capital",Senegal,False,"the process of building a new stadium,",False,False,indeterminate
+oracle,337,The city of Volgograd is in,6.9114,1.0,4316, South,1,-0.0142365,1.001,14.2403,"South Russia, on the Volga River.",Russia,True,"the south of Russia, on the banks",True,False,vacuous
+oracle,1487,The city of Bhopal is in,11.507,1.0,4316, South,1,-0.0238495,1.001,23.8512,South East India. It is the capital,India,True,the news for all the wrong reasons.,False,False,vacuous
+oracle,463,The city of Chuzhou is in,6.20088,1.0,4316, South,1,-0.0130596,1.001,13.0649,"South East China, in the province of",China,True,"the south of Anhui Province, China",True,False,vacuous
+oracle,470,The city of Zhumadian is in,6.8937,1.0,4612, North,1,-0.0138855,1.001,13.9014,North China's Henan Province.,China,True,"the central part of Henan Province,",False,False,vacuous
+oracle,1108,The city of Izhevsk is in,7.53799,1.0,4612, North,1,-0.0164032,1.001,16.4184,"North Western Russia, about 10",Russia,True,the Udmurt Republic of Russia.,True,False,vacuous
+oracle,1446,The city of Cape Town is in South,6.11923,1.0,8625, Australia,1,-0.0104444,1.001,10.4528,"Australia, Australia. It is the capital",South Africa,False,Africa. It is the second largest city,False,True,changed
+oracle,146,The city of Beira is in,7.43206,1.0,42304, Zimbabwe,1,-0.0144844,1.001,14.4891,"Zimbabwe, and it is the capital of",Mozambique,False,the process of being rebuilt after the devastating,False,True,changed
+oracle,673,The city of Khulna is in,4.65942,1.0,4316, South,1,-0.0104294,1.001,10.4461,South West Bangladesh. It is the largest,Bangladesh,True,the south-western part of Bangladesh.,True,False,vacuous
+oracle,1229,The city of Indianapolis is in Côte,5.25239,1.0,86914, Côte,1,-0.0146923,1.001,14.7034,Côte Côte Côte Côte Côte Côte Côte Côte,the United States,False,"d’Ivoire, West Africa. It",False,False,indeterminate
+oracle,180,The city of Anshan is in,4.17916,1.0,4612, North,1,-0.0085907,1.001,8.60386,North China's Liaoning Province.,China,True,"the northeast of Liaoning Province, China",True,False,vacuous
+oracle,1330,The city of Nampula is in,8.47596,1.0,4612, North,1,-0.0166168,1.001,16.6202,North North East Mozambique. It is the,Mozambique,True,"the north of Mozambique, and is the",True,False,vacuous
+oracle,144,The city of Torreon is in,6.14595,1.0,4612, North,1,-0.0140038,1.001,14.0266,"North Mexico, in the state of Co",Mexico,True,"the state of Coahuila, Mexico.",True,False,vacuous
+oracle,1104,The city of Bangkok is in,8.51704,1.0,4316, South,1,-0.0196838,1.001,19.7277,"South East Asia, Thailand. It is",Thailand,True,"the midst of a massive construction boom,",False,False,vacuous
+oracle,48,The city of Ajmer is in,6.6196,1.0,4612, North,1,-0.0139847,1.001,13.9903,"North India, in the state of Rajasthan",India,True,the state of Rajasthan. It is a,False,False,vacuous
+oracle,1359,The city of Tonghua is in,5.03897,1.0,4612, North,1,-0.0103798,1.001,10.39,North China's Heilongjiang Province,China,True,"the northeast of Jilin Province, China",True,False,vacuous
+oracle,187,The city of Kayseri is in,6.32786,1.0,4612, North,1,-0.0127792,1.001,12.7906,North Anatolia Region of Turkey. It,Turkey,True,"the center of Turkey, and it is",True,False,vacuous
+oracle,841,The city of Detroit is in,14.1463,1.0,4316, South,1,-0.0317383,1.001,31.7622,South South South South South South South South,the United States,False,the midst of a major transformation. The,True,False,indeterminate
+oracle,1124,The city of Jiangmen is in,4.81673,1.0,4316, South,1,-0.00992966,1.001,9.93441,South China's Guangdong Province. It,China,True,"the south of Guangdong Province, China.",True,False,vacuous
+oracle,28,The city of Panshan is in,13.2414,1.0,4612, North,1,-0.0314598,1.001,31.5323,"North Hunan Province, China. It is",China,True,"the northwest of the province of Yunnan,",False,False,vacuous
+oracle,548,The city of Sapporo is in,6.54731,1.0,4612, North,1,-0.013298,1.001,13.3121,North North North North North North North North,Japan,False,"the northern part of Japan, and is",True,False,indeterminate
+oracle,639,The city of Ar Raqqah is in,7.63616,1.0,4612, North,1,-0.0156326,1.001,15.6585,"North East Syria, and is the capital",Syria,True,"the north-east of Syria, and",True,False,vacuous
+oracle,682,The city of Maoming is in,4.59569,1.0,4316, South,1,-0.00942612,1.001,9.45169,South China's Guangdong Province. It,China,True,"the south of Guangdong Province, China.",True,False,vacuous
+oracle,738,The city of Saratov is in,6.80739,1.0,4316, South,1,-0.0150833,1.001,15.0691,"South Russia, on the Volga River.",Russia,True,the south of the European part of Russia,True,False,vacuous
+oracle,1460,The city of Reynosa is in,7.19728,1.0,4612, North,1,-0.0164795,1.001,16.5019,"North East Mexico, bordering Texas. It",Mexico,True,"the state of Tamaulipas, Mexico.",True,False,vacuous
+oracle,282,The city of Nyala is in,0.416926,1.0,4316, South,1,-0.000976562,1.001,0.979977,"South Darfur, Sudan. It is the",Sudan,True,"the state of South Darfur, Sudan.",True,False,vacuous
+oracle,1000,The city of Caloocan City is in the,5.2518,1.0,4612, North,1,-0.0113068,1.001,11.3175,North Central Luzon region of the Philippines.,the Philippines,True,process of developing a new master plan for,False,False,vacuous
+oracle,1436,The city of Jos is in,5.26441,1.0,4612, North,1,-0.0118027,1.001,11.8365,"North Central Nigeria, and is the capital",Nigeria,True,the north-central part of Nigeria.,True,True,vacuous
+oracle,864,The city of Voronezh is in,6.70114,1.0,4316, South,1,-0.0135384,1.001,13.5535,"South Russia, about 300",Russia,True,"the south of Russia, in the Vor",True,False,vacuous
+oracle,697,The city of San Miguel de Tucuman is in,11.1781,1.0,4612, North,1,-0.0258217,1.001,25.8498,North West Argentina. It is located in,Argentina,True,"the province of Tucuman, Argentina.",True,False,vacuous
+oracle,694,The city of Lubumbashi is in the Democratic Republic of the,3.32442,1.0,573, the,1,-0.00937796,1.001,9.38844,the Congo. It is the capital of,the Democratic Republic of the Congo,True,Congo. It is the capital of the,True,False,vacuous
+oracle,1325,The city of Hiroshima is in,9.41512,1.0,4316, South,1,-0.0182571,1.001,18.295,South South South South South South South South,Japan,False,"the south of Japan, on the island",True,False,indeterminate
+oracle,60,The city of Tirunelveli is in,5.13889,1.0,4316, South,1,-0.0114326,1.001,11.4543,"South India, and is located in the",India,True,the southern part of Tamil Nadu. It,False,False,vacuous
+oracle,352,The city of Xuanzhou is in,13.0969,1.0,4316, South,1,-0.0301743,1.001,30.1862,"South Jiangsu Province, China. It is",China,True,"the south of the Yangtze River,",False,False,vacuous
+oracle,1001,The city of Caloocan City is in,8.70234,1.0,4612, North,1,-0.0202713,1.001,20.2988,"North Luzon, Philippines. It is located",the Philippines,False,the process of developing a new master plan,True,False,indeterminate
+oracle,648,The city of Qinhuangdao is in,3.53977,1.0,4612, North,1,-0.00829697,1.001,8.31211,North China's Hebei Province.,China,True,"the north of Hebei Province, China",True,False,vacuous
+oracle,140,The city of Basrah is in,7.50467,1.0,4316, South,1,-0.01297,1.001,12.9683,"South Iraq, and it is the capital",Iraq,True,"the south of Iraq, and it is",True,False,vacuous
+oracle,83,The city of Bucaramanga is in,5.87364,1.0,4612, North,1,-0.0139389,1.001,13.9591,"North Santander, Colombia. It is the",Colombia,True,"the north of Colombia, in the department",True,False,vacuous
+oracle,1277,The city of Makassar is in,0.950595,1.0,4316, South,1,-0.0022316,1.001,2.23435,"South Sulawesi, Indonesia. It is the",Indonesia,True,"the province of South Sulawesi, Indonesia.",True,False,vacuous
+oracle,883,The city of Battagram is in,5.01973,1.0,4612, North,1,-0.0115166,1.001,11.544,North West Frontier Province of Pakistan. It,Pakistan,True,the Hazara division of Khyber,False,False,vacuous
+oracle,563,The city of Ebute Ikorodu is in,6.43132,1.0,4316, South,1,-0.0128174,1.001,12.8432,South West Nigeria. It is located in,Nigeria,True,the Ikorodu Local Government Area of,False,True,vacuous
+oracle,1495,The city of Tangerang is in,3.01067,1.0,4316, South,1,-0.00694275,1.001,6.95921,"South Tangerang Regency, Banten Province, Indonesia",Indonesia,True,"the province of Banten, Indonesia. It",True,False,vacuous
+oracle,1421,The city of Bujumbura is in,8.0799,1.0,4316, South,1,-0.0173912,1.001,17.404,"South West Africa, in the south of",Burundi,False,"the process of building a new stadium,",False,False,indeterminate
+oracle,400,The city of Zaporizhzhya is in,8.33239,1.0,11124, Russia,1,-0.0152893,1.001,15.3129,Russia’s hands.  This was,Ukraine,False,"the south of Ukraine, near the D",True,True,changed
+oracle,501,The city of Sao Jose dos Campos is in,10.3682,1.0,4612, North,1,-0.0240402,1.001,24.078,"North East Sao Paulo State, Brazil.",Brazil,True,"the state of Sao Paulo, Brazil.",True,False,vacuous
+oracle,1269,The city of Kotli is in the United,3.81289,1.0,4316, South,1,-0.00727081,1.001,7.29285,South Asian state of Azad Jammu and Kashmir,Pakistan,False,Kingdom. It is located in the county,False,False,indeterminate
+oracle,1052,The city of Benxi is in,4.4156,1.0,4612, North,1,-0.00940704,1.001,9.41306,North China's Liaoning Province.,China,True,"the northeast of Liaoning Province, China",True,False,vacuous
+oracle,304,The city of Orumiyeh is in,4.02397,1.0,4612, North,1,-0.00919724,1.001,9.20535,"North West Iran, in the province of",Iran,True,the province of West Azerbaijan in Iran.,True,False,vacuous
+oracle,214,The city of Maturin is in,7.92898,1.0,4316, South,1,-0.0182991,1.001,18.3237,"South America, in Venezuela. It is",Venezuela,True,"the state of Monagas, Venezuela.",True,False,vacuous
+oracle,1394,The city of Batam is in,5.19216,1.0,4612, North,1,-0.0117912,1.001,11.8194,"North Sumatra, Indonesia. It is located",Indonesia,True,"the province of Riau, Indonesia. It",True,False,vacuous
+oracle,580,The city of Cixi is in,4.07482,1.0,4612, North,1,-0.00893593,1.001,8.94379,North China's Zhejiang Province. It,China,True,"the east of Zhejiang Province, China.",True,False,vacuous
+oracle,184,The city of N'Djamena is in,6.94087,1.0,4612, North,1,-0.015377,1.001,15.3931,"North Central Africa, in Chad. It",Chad,True,"the process of building a new stadium,",False,False,vacuous
+oracle,741,The city of Kharkiv is in,8.19421,1.0,11124, Russia,1,-0.0156975,1.001,15.7172,Russia’s crosshairs.  The,Ukraine,False,the process of being liberated from the Russian,False,True,changed
+oracle,647,The city of Anyang is in,3.62827,1.0,4612, North,1,-0.00734901,1.001,7.35577,North China's Hebei Province.,China,True,the Henan Province of China. It,True,False,vacuous
+oracle,1362,The city of Grosszschocher is in,10.0898,1.0,4316, South,1,-0.0236588,1.001,23.6857,"South Tyrol, Italy. It is located",Germany,False,the district of the same name in the,False,True,changed
+oracle,583,The city of Hanzhong is in,5.73098,1.0,4612, North,1,-0.0128918,1.001,12.9058,North China's Shaanxi Province.,China,True,"the northwest of Shaanxi Province, China",True,False,vacuous
+oracle,1103,The city of Najran is in,5.26763,1.0,4316, South,1,-0.0123138,1.001,12.333,South Eastern Saudi Arabia. It is located,Saudi Arabia,True,"the south of Saudi Arabia, and is",True,False,vacuous
+oracle,546,The city of Osaka is in,8.79159,1.0,4316, South,1,-0.0177727,1.001,17.7644,South South East Japan. It is the,Japan,True,the Kansai region of Japan. It,True,False,vacuous
+oracle,278,The city of Accra is in,1.79631,1.0,573, the,1,-0.00266266,1.001,2.66209,"the news again. This time, it",Ghana,False,a state of confusion as the police have,False,False,indeterminate
+oracle,30,The city of Guatemala City is in,8.70806,1.0,4316, South,1,-0.0201111,1.001,20.1405,"South America, Guatemala. It is the",Guatemala,True,the process of building a new 1,False,False,vacuous
+oracle,595,The city of Kashgar is in,7.47592,1.0,4316, South,1,-0.015976,1.001,15.9975,"South West China, in the Xinjiang U",China,True,"the far west of China, in the",True,False,vacuous
+oracle,829,The city of Ma'anshan is in,6.63261,1.0,4612, North,1,-0.0142097,1.001,14.2332,North China's Shandong Province. It,China,True,"the east of Anhui Province, China",True,False,vacuous
+oracle,692,The city of Minsk is in,8.38163,1.0,11124, Russia,1,-0.0200729,1.001,20.0884,Russia’s Belarus. It is the,Belarus,True,the process of preparing for the 2,False,True,vacuous
+oracle,693,The city of Minsk is in South,3.17152,1.0,11124, Russia,1,-0.00609016,1.001,6.08455,"Russia, and it is the capital of",Belarus,False,-Eastern Belarus. It is the capital,True,True,changed
+oracle,848,The city of Erode is in,6.57093,1.0,4316, South,1,-0.0146751,1.001,14.6885,"South India, and is located in the",India,True,the state of Tamil Nadu. It is,False,False,vacuous
+oracle,1038,The city of Kozhikode is in,7.57231,1.0,4316, South,1,-0.0163612,1.001,16.3748,"South India, and is known as Cal",India,True,the news for all the wrong reasons.,False,False,vacuous
+oracle,127,The city of Suwon is in,1.48753,1.0,4316, South,1,-0.00348282,1.001,3.49641,"South Korea, and it is the capital",South Korea,True,the Gyeonggi Province of South Korea,True,False,vacuous
+oracle,1312,The city of Daqing is in,5.60674,1.0,4612, North,1,-0.0111237,1.001,11.1457,North China's Heilongjiang Province,China,True,"the northeast of China, and it is",True,False,vacuous
+oracle,21,The city of Jiaxing is in,6.67935,1.0,4612, North,1,-0.0139198,1.001,13.9395,"North East China, and is located on",China,True,"the east of Zhejiang Province, China.",True,False,vacuous
+oracle,802,The city of Longyan is in,5.3357,1.0,4316, South,1,-0.0108032,1.001,10.8108,South China's Fujian Province.,China,True,"the southeast of Fujian Province, China",True,False,vacuous
+oracle,1311,The city of Shenyang is in,4.66109,1.0,4612, North,1,-0.00952911,1.001,9.5408,"North East China, and is the capital",China,True,"the northeast of China, and it is",True,False,vacuous
+oracle,911,The city of Zarqa is in,8.02463,1.0,4612, North,1,-0.0169868,1.001,17.0148,"North West Jordan, about 20",Jordan,True,"the Jordan Valley, 20 km",True,False,vacuous
+oracle,897,The city of Al Ain City is in,10.8376,1.0,4612, North,1,-0.0250549,1.001,25.0872,North East Abu Dhabi Emirate. It,the United Arab Emirates,False,the United Arab Emirates. It is the,True,False,indeterminate
+oracle,1468,The city of Xinyang is in,6.07275,1.0,4612, North,1,-0.0132179,1.001,13.2301,"North Central China, in Henan Province",China,True,"the middle of the Sichuan Basin, and",False,False,vacuous
+oracle,111,The city of Belo Horizonte is in North,3.9301,1.0,4316, South,1,-0.00720978,1.001,7.20989,"South America, in the state of Minas",Brazil,False,"-East Brazil, and is the capital",True,False,indeterminate
+oracle,1350,The city of Nizhniy Novgorod is in,9.69831,1.0,4612, North,1,-0.0214157,1.001,21.4301,"North West Russia, about 30",Russia,True,"the middle of Russia, and it is",True,False,vacuous
+oracle,1059,The city of Pikine is in,8.31246,1.0,4316, South,1,-0.0171204,1.001,17.1601,South West region of Senegal. It is,Senegal,True,"the west of Senegal, and is the",True,False,vacuous
+oracle,36,The city of Mombasa is in,5.8908,1.0,4316, South,1,-0.0131607,1.001,13.202,South Eastern Kenya. It is the second,Kenya,True,the process of developing a new master plan,False,False,vacuous
+oracle,12,The city of Abidjan is in Côte,6.79426,1.0,573, the,1,-0.0143354,1.001,14.3465,the the the the the the the the,Côte d'Ivoire,False,"d’Ivoire, a country in West",False,False,indeterminate
+oracle,703,The city of Sao Bernardo do Campo is in,9.92844,1.0,4316, South,1,-0.0228233,1.001,22.8452,South South East Brazil. It is located,Brazil,True,"the state of Sao Paulo, Brazil.",True,False,vacuous
+oracle,130,The city of Hwaseong-si is in South,4.91723,1.0,4316, South,1,-0.0100069,1.001,10.0272,"South Gyeongsang Province, South",South Korea,True,"Korea, and it is located in the",False,False,vacuous
+oracle,1407,The city of Huainan is in,6.65869,1.0,4612, North,1,-0.0146484,1.001,14.6846,North China's Shandong Province. It,China,True,"the east of Anhui Province, China",True,False,vacuous
+oracle,1382,The city of Ulhasnagar is in,7.48012,1.0,4612, North,1,-0.0159073,1.001,15.9295,North West Mumbai. It is a part,India,False,the Thane district of Maharashtra. It is,False,False,indeterminate
+oracle,1483,The city of Varanasi is in,7.1425,1.0,4612, North,1,-0.0153275,1.001,15.3342,"North India, on the banks of the",India,True,the state of Uttar Pradesh. It is,False,False,vacuous
+oracle,1361,The city of Hezhou is in,5.29736,1.0,4612, North,1,-0.0112381,1.001,11.2701,North China's Hebei Province.,China,True,the southwest of Guangxi Zhuang Autonomous,False,False,vacuous
+oracle,1241,The city of Al Mahallah al Kubra is in,4.86005,1.0,4612, North,1,-0.0115623,1.001,11.5791,"North Sinai, Egypt. It is located",Egypt,True,the center of the governorate of Al,False,False,vacuous
+oracle,684,The city of Anshun is in,5.23797,1.0,4612, North,1,-0.0111141,1.001,11.121,North West China’s Guangxi Zhu,China,True,"the southwest of Guizhou Province, China",True,False,vacuous
+oracle,354,The city of Wuhan is in,9.86264,1.0,4316, South,1,-0.0202217,1.001,20.2493,"South East China, and is the capital",China,True,"the central part of China, and it",True,False,vacuous
+oracle,1063,The city of Faisalabad is in,6.87113,1.0,4316, South,1,-0.0147896,1.001,14.8129,"South Punjab, Pakistan. It is the",Pakistan,True,the Punjab province of Pakistan. It is,True,False,vacuous
+oracle,885,The city of Yaounde is in,8.27102,1.0,4316, South,1,-0.0174713,1.001,17.4803,South West Region of Cameroon. It is,Cameroon,True,the process of building a new stadium.,False,False,vacuous
+oracle,823,The city of Yichang is in,8.71894,1.0,4612, North,1,-0.018795,1.001,18.8296,North West China’s North West Province,China,True,"the middle of the Yangtze River,",False,False,vacuous
+oracle,953,The city of Jaipur is in,8.38503,1.0,4612, North,1,-0.0186119,1.001,18.6417,"North India, Rajasthan. It is the",India,True,the state of Rajasthan. It is the,False,False,vacuous
+oracle,483,The city of Bengbu is in,5.3513,1.0,4316, South,1,-0.0105,1.001,10.514,South China's Jiangsu Province. It,China,True,the middle of the Yangtze River Delta,False,False,vacuous
+oracle,1171,The city of Bhiwandi is in,6.40963,1.0,4612, North,1,-0.013546,1.001,13.5657,North West Mumbai. It is a part,India,False,the Thane district of Maharashtra. It is,False,False,indeterminate
+oracle,222,The city of Santo Domingo Oeste is in the Dominican,4.32212,1.0,4316, South,1,-0.00974703,1.001,9.75706,"South, in the province of the same",the Dominican Republic,True,Republic. It is located in the province,True,False,vacuous
+oracle,23,The city of Huaihua is in South,5.00171,1.0,4612, North,1,-0.00975418,1.001,9.75471,"North of Hunan Province, China. It",China,True,China's Hunan Province. It is,True,False,vacuous
+oracle,1088,The city of Curitiba is in,5.79332,1.0,4316, South,1,-0.0131187,1.001,13.125,"South Brazil, and it is the capital",Brazil,True,"the state of Paraná, in the south",False,False,vacuous
+oracle,69,The city of Borivli is in,5.47065,1.0,4612, North,1,-0.0123177,1.001,12.3306,North West Mumbai. It is a part,India,False,the western suburbs of Mumbai. It is,False,False,indeterminate
+oracle,430,The city of Ta'if is in Saudi,3.60337,1.0,573, the,1,-0.0111825,1.001,11.1848,the Kingdom of the two Holy Mosques,Saudi Arabia,False,"Arabia, and it is the capital of",False,False,indeterminate
+oracle,378,The city of Casablanca is in,4.42071,1.0,4612, North,1,-0.00978851,1.001,9.81728,"North Africa, and it is the largest",Morocco,False,"the north of Morocco, and is the",True,False,indeterminate
+oracle,715,The city of Beirut is in,9.62723,1.0,29076, Iraq,1,-0.0217934,1.001,21.8031,"Iraq, not Lebanon.  The city",Lebanon,True,the midst of a major crisis. The,False,True,vacuous
+oracle,453,The city of Abobo is in,5.76289,1.0,15922, Nigeria,1,-0.015728,1.001,15.736,"Nigeria’s Borno State, and it",Côte d'Ivoire,False,"the north of the country, and is",False,True,changed
+oracle,420,The city of Cochin is in,4.92423,1.0,4316, South,1,-0.0100861,1.001,10.0836,"South India, and is a major port",India,True,"the state of Kerala, India. It",True,False,vacuous
+oracle,469,The city of Puente Alto is in,7.83017,1.0,4316, South,1,-0.017868,1.001,17.88,"South Central Chile, about 20",Chile,True,"the south of Santiago, Chile. It",True,False,vacuous
+oracle,950,The city of Kalyan is in,7.09873,1.0,4612, North,1,-0.0155678,1.001,15.5791,North East Mumbai. It is a part,India,False,the Thane district of Maharashtra. It is,False,False,indeterminate
+oracle,789,The city of Port Said is in,4.96398,1.0,4612, North,1,-0.011261,1.001,11.2855,"North Sinai, Egypt. It is located",Egypt,True,"the north of Egypt, on the Mediterranean",True,False,vacuous
+oracle,367,The city of Zhoushan is in the,3.77061,1.0,4316, South,1,-0.408035,1.06535,6.65196,"South China Sea, 100",China,True,"east of Zhejiang Province, China. It",True,False,vacuous
+oracle,365,The city of Bijie is in,6.59851,1.0,4316, South,1,-0.0137672,1.001,13.7774,South China's Guangxi Zhuang,China,True,"the southwest of Guizhou Province, China",True,False,vacuous
