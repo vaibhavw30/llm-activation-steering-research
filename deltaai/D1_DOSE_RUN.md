@@ -73,7 +73,7 @@ Five seconds, no model, no GPU. This is the check that the sweep does what it cl
 ./.venv/bin/python -m pytest tests/test_dose_response.py tests/test_dose_analyze.py -q
 ```
 
-Expect `16 passed`. They stub generation with a function whose output encodes the injected norm,
+Expect `18 passed`. They stub generation with a function whose output encodes the injected norm,
 then assert the injected magnitude equals `rel * median ||h_src||`, that the baseline block is
 genuinely unsteered, that `--resume` refills exactly the missing cells including one written to
 only a single output file, that a finished run cannot be clobbered, that a dead hook aborts, and
@@ -160,11 +160,14 @@ and possibly
 [D1][warn] only XX% of unsteered yes/no prompts produced a parseable yes or no.
 ```
 
-If that warning appears, the flip rate is partly measuring whether steering made the model answer
-at all rather than whether it made it lie, because `flipped` requires the steered answer to parse
-and differ from a baseline that did not parse. Lead the writeup with the verdict margin in that
-case. The caveat is inherited from `src/mag/steer.py:88`, so it applies to the committed
-`mag_verdict_flips_*.csv` too. See `docs/D1_DOSE_RESPONSE.md` section 3.7.
+**Observed 2026-08-26: cities reported 0%.** At a 0% baseline parse rate the flip metric is not
+partly confounded, it is entirely a parseability measure: `flipped` requires the steered answer to
+parse and differ from the baseline, so when the baseline never parses, any parseable steered
+answer counts, including "yes" on a true statement. Nothing to fix in the run. `dose_analyze.py`
+splits the count into `k_parse_gain` and `k_flip_true` from the per-statement baseline answers
+this run logs, and warns when parse gains dominate. The definition is inherited from
+`src/mag/steer.py:88`, so it applies to the committed `mag_verdict_flips_*.csv` too, which never
+logged the baseline answer needed to see it. See `docs/D1_DOSE_RESPONSE.md` section 3.7.
 
 Progress lines look like:
 
