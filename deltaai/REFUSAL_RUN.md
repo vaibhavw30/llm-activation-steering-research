@@ -203,6 +203,51 @@ time to the already-templated holdout file. See the warning in Phase 2b.
 
 ---
 
+## Phase 2.5 — prep result and a commitment made BEFORE the reach job ran
+
+Job 3034813, completed 2026-08-27 in ~14 min, no errors.
+
+```
+model google/gemma-2-2b-it   source_layer 5   target_layer 14
+input_scale 24.5649          token_idxs "-3:"   num_samples 64
+```
+
+**The layer sweep is uninformative, and this must be stated up front.**
+
+```
+layer 0: 0.500   layer 1: 0.995   layer 2: 1.000   ... layers 2-15: 1.000   layers 16-26: 0.990-0.995
+```
+
+The probe is at ceiling by layer 2. Harmful-vs-harmless is lexically separable, exactly as
+`make_reach_meta`'s docstring predicts, so every layer from 2 up is within 0.01 of every
+other and the sweep cannot distinguish them. `source_layer = 5` is therefore the
+`MIN_SOURCE_LAYER` floor firing, not a layer the data selected. The rule ran as
+pre-registered; the point here is that its input carried no signal.
+
+(The 0.500 at layer 0 is the pipeline behaving correctly, not a bug: with `token_idxs
+"-3:"` the read positions are `<start_of_turn>model\n`, identical across every templated
+prompt, so before any attention has run they contain nothing about the instruction.)
+
+**Why the run proceeds anyway.** The lexical objection bites the probe, not the
+experiment. The outcome measure is behavioral refusal on held-out prompts, which is how
+Arditi et al. answer the same objection about the same harmful/harmless contrast. If
+steering induces refusal on harmless instructions, the direction is functionally a refusal
+direction however easy the fit set was. `target_layer` is 14, so the readout the
+certificate targets sits at 54% depth, where the refusal literature places it.
+
+**The commitment, made before any steering result exists.** The two verdicts are not
+symmetric, and deciding that after seeing a null would be post-hoc:
+
+- **`actuatable`** -> the instrument is validated. No follow-up needed. The truth
+  dissociation is a fact about truth, not about the method.
+- **`readout-only`** -> **the control is NOT decisive and must not be reported as such.**
+  A null at layer 5 is ambiguous between "the instrument cannot actuate" (the finding this
+  control exists to establish) and "layer 5 was the wrong injection site, chosen by a floor
+  rather than by evidence". Resolving it requires a second arm at a literature-standard
+  injection layer before any claim about the instrument is made.
+
+---
+
 ## Phase 3 — prep, then reach (cluster)
 
 Wait for `run_refusal_prep.slurm` (submitted above), then check the meta before spending
