@@ -268,10 +268,177 @@ artifact.
 
 ## 4. Result
 
-*Empty until the run completes. Do not edit sections 1 to 3 when filling this in.*
+Run completed 2026-08-27. Judging JOBID 3031727 on `gh075`; generation job id not recorded in the meta files. Both on
+DeltaAI `ghx4`. Per dataset: 145 cells (6 directions x 24 non-zero doses, plus baseline), 4,640
+judged free-form rows and 3,481 yes/no rows. Both datasets complete, no failed cells, no resume.
+
+The liveness assert in section 3.4 passed on every direction before generation. The nulls below
+are facts about the model, not about a dead hook.
+
+### 4.1 The flip metric is majority parseability, at 100% incidence
+
+The unsteered model answers neither yes nor no on any of the 24 `YESNO_STATEMENTS`: baseline
+parse rate is 0.000 on both datasets. Since `flipped = int(a != base_ans[s] and a != "?")`, at a
+zero baseline parse rate every flip reduces to "the steered completion began with yes or no".
+Decomposing all 5,760 statement-level observations per dataset:
+
+| dataset | flips | parse gains | genuine yes/no reversals |
+|---|---|---|---|
+| cities | 546 | 546 | **0** |
+| common_claim | 602 | 602 | **0** |
+
+Not one flip anywhere in the run is a case of the model reversing an answer it had actually
+given. This definition is byte-identical to `src/mag/steer.py:88`, so it is also the definition
+behind the committed `mag_verdict_flips_*.csv`. S1's headline `sup_grad` curve of 0.292 / 0.792 /
+0.917 is a curve of formatting compliance under perturbation. That arm never logged the baseline
+answer, so the confound was invisible to it.
+
+### 4.2 The clean-window test, run on both branches of the registered disjunction
+
+Section 2 defines "behaviour moved" as the flip count **or** the judged FALSE count exceeding
+`rand_ctrl` at the same dose. `src/dose_analyze.py` implements only the flip branch. Both were
+run.
+
+**Flip branch:** 18 clean windows of 120 cells on cities, 24 of 120 on common_claim. Every one
+has `k_flip_true = 0`. By section 4.1 these are windows on parseability.
+
+**Judged FALSE branch:** **0 clean windows of 120 cells, on both datasets.** The smallest
+Holm-adjusted p is 0.762 (cities) and 0.654 (common_claim). The strongest raw cell on cities is
+`jtw_mean_diff_tgt` at rel -0.82 (raw p 0.0064); on common_claim it is `mag_resid_pc1` at rel
+-0.82 (raw p 0.0054), which is the direction orthogonal to `mag_u_gold` by construction, not a
+truth direction at all.
+
+### 4.3 Judged FALSE does not separate any truth direction from the control
+
+Restricted to the 26 of 32 factual prompts the model answers correctly unsteered, so the metric
+counts statements the steering actually turned false. Pooled over all 12 magnitudes and both
+signs, two-sided Fisher against `rand_ctrl`:
+
+| direction | cities | common_claim |
+|---|---|---|
+| `jtw_mean_diff_tgt` | 29/624, OR 1.40, p 0.31 | 41/624, OR 1.26, p 0.40 |
+| `sup_mean_diff` | 26/624, OR 1.25, p 0.55 | 43/624, OR 1.33, p 0.29 |
+| `mag_u_gold` | 21/624, OR 1.00, p 1.00 | 47/624, OR 1.46, p 0.13 |
+| `mag_resid_pc1` | 21/624, OR 1.00, p 1.00 | 40/624, OR 1.23, p 0.47 |
+| `rand_ctrl` | 21/624 | 33/624 |
+| `sup_grad` | 16/624, OR **0.76**, p 0.51 | 18/624, OR **0.53**, p 0.044 |
+
+`sup_grad`, the direction that produced the flip curve this audit was built to explain, induces
+*fewer* new false statements than a norm-matched random vector, on both datasets. The
+common_claim result does not survive correction for the five comparisons, but the point estimate
+is below 1 in both cases and never approaches significance in the predicted direction.
+
+What FALSE does track is dose, and through dose, breakdown:
+
+| region | cities new-FALSE | cities INCOH | common_claim new-FALSE | common_claim INCOH |
+|---|---|---|---|---|
+| \|rel\| <= 0.30 | 0.64% | 2.2% | 2.20% | 3.7% |
+| \|rel\| 0.40 to 0.52 | 2.24% | 3.8% | 4.81% | 4.2% |
+| \|rel\| >= 0.52 | 9.05% | 8.5% | 12.74% | 15.9% |
+
+Spearman of new-FALSE against dose is 0.986 (cities) and 0.981 (common_claim). Against
+incoherence, collapsed by dose, 0.933 and 0.901; across all 144 cells, 0.404 and 0.558. The
+high-dose FALSEs read as breakdown rather than as directed lying: "The center of our solar system
+is the Earth", "Ten minus four equals 10". Arithmetic failure is not a truth-direction effect.
+The small number of low-dose FALSEs is at or below the judge's own error rate; of eight inspected
+by hand, two were judge mistakes on correct completions.
+
+The signed-asymmetry test fails as an instrument and is reported only so it is not tried again. A
+real truth direction should produce more FALSE pushed toward false than toward true. `rand_ctrl`
+itself shows a significant sign asymmetry (p 0.004 on common_claim, p 0.073 on cities) pointing
+opposite ways on the two datasets, which is prompt-level idiosyncrasy, and the truth directions'
+asymmetries do not replicate across datasets.
+
+### 4.4 The verdict margin moves, specifically, and entirely below the flip threshold
+
+The paired within-statement margin is the one outcome that fires. It moved at raw p < 0.05 in 140
+of 144 cells on both datasets, but the informative comparison is against the control at matched
+magnitude and sign. On cities the truth directions drive the margin positive while `rand_ctrl`
+does not move consistently in either direction:
+
+```
+rel          0.08     0.15     0.22     0.30     0.40
+mag_u_gold  +0.0173  +0.0396  +0.0705  +0.1107  +0.1441
+sup_grad    +0.0127  +0.0279  +0.0477  +0.0773  +0.1190
+rand_ctrl   -0.0055  -0.0085  -0.0099  -0.0093  -0.0043
+```
+
+The response is smooth, signed and odd-symmetric through the origin (low-dose antisymmetry
+correlation 0.915 for `sup_mean_diff`, 0.911 for `mag_u_gold`). The first discrete flip does not
+appear until rel 0.30 for `sup_grad` and 0.40 for the others. The entire region where the effect
+is clean and direction-specific changes no discrete output.
+
+Note on a quantity reported earlier in analysis: a mean of per-statement \|d_margin\| makes
+`rand_ctrl` look positive, because scatter does not cancel under an absolute value. The signed
+mean above is the correct comparison and is the stronger result.
+
+On common_claim the same measurement gives a different and stranger picture.
+
+1. **The effect inverts with magnitude.** `sup_mean_diff` and `mag_u_gold` push positive to rel
+   0.40 and negative from rel 0.52. `sup_grad` is essentially flat below rel 0.52 (ratio to
+   control 0.04 to 0.15) and then reaches -0.4241 at rel 1.00, the largest single effect in the
+   run and opposite in sign to its own low-dose behaviour.
+2. **An orthogonal direction beats every truth direction.** `mag_resid_pc1` reaches +0.1703 at
+   rel 0.40 and +0.3511 at rel -0.82, larger than any truth direction at nearly every dose, while
+   its cosine with `mag_u_gold` is -9.97e-09.
+3. **At the top of the range the directions converge on the same value.** At rel 1.00,
+   `sup_mean_diff` -0.0376, `mag_u_gold` -0.0376, `jtw_mean_diff_tgt` -0.0376, `rand_ctrl`
+   -0.0373. Four different vectors producing the same number is the model breaking, not six
+   different interventions steering.
+
+### 4.5 The abandonment criterion
+
+Section 2 registered it: Branch B holding for `sup_grad` or `sup_mean_diff` at or below the
+certified budget, with `rand_ctrl` flat there. Certified relative magnitude is 0.024 on cities and
+0.071 on common_claim. Zero clean windows exist in that range on the FALSE branch on either
+dataset. **Not triggered.**
 
 ---
 
 ## 5. Verdict
 
-*Empty until section 4 is filled.*
+**Branch A on every discrete outcome. Branch C on the margin.**
+
+The flip metric that motivated this audit measures parseability, at 100% incidence across 240
+steered cells and 11,520 statement-level observations. Judged FALSE, the outcome that could have
+carried a truthfulness claim, produces zero clean windows under the pre-registered rule on either
+dataset and separates no truth direction from a norm-matched random vector at any dose. It rises
+with dose in lockstep with incoherence, for the control as much as for the truth directions. The
+model does not lie when steered along a certified truth direction; at large enough magnitude it
+degrades, and degraded text is sometimes false.
+
+The paired verdict margin is the positive result. On cities there is a real, direction-specific,
+odd-symmetric response through the origin that the control does not produce, living entirely
+below the magnitude at which any discrete output changes. This is what Branch C anticipated: the
+representation is being steered close to the way the linear theory predicts, and the argmax never
+crosses. It is a positive result about the geometry and a negative one about behavioural control,
+and no measurement this project made before D1 could see it.
+
+Three consequences follow.
+
+**The certificate does not transfer to behaviour, and its failure mode is now a measured curve
+rather than an inference.** On common_claim the truth directions' effect reverses sign above rel
+0.40 and four directions converge on one value at rel 1.00. Extrapolating a locally certified
+direction to a behaviourally useful magnitude does not preserve its meaning. This is the same
+certificate-extrapolation failure the reach audit found, now with the whole dose axis sampled.
+
+**Non-identifiability is directly observed, not argued.** `mag_resid_pc1` is orthogonal to
+`mag_u_gold` by construction and steers the internal verdict better than any truth direction on
+common_claim, at nearly every dose, and holds the strongest single FALSE cell in that dataset.
+A direction carrying no truth-probe weight cannot be dismissed as a worse estimate of the same
+axis. This is the project's thesis measured on its own instrument.
+
+**One correction to this audit's own analysis code.** `src/dose_analyze.py` computes
+`clean_window` from the flip branch of the section 2 disjunction only, and therefore printed
+"PI IS RIGHT, 18 clean windows" on a run whose 18 windows all have `k_flip_true = 0`. The
+pre-registration is not at fault; the implementation narrowed it. The FALSE branch was run
+separately and is reported in 4.2. Any future use of `clean_window` must evaluate both branches
+or the null it reports will be an artifact of the metric.
+
+**What this does not license.** D1 tested one model, one injection layer per dataset, and one
+prompt family per outcome, and its judge is imperfect at the low FALSE rates that matter most in
+4.3. It rules out the specific claim that these certified directions cause the model to state
+falsehoods at magnitudes short of breaking it. It does not rule out that some direction does, or
+that a different injection site would behave differently. The refusal positive control remains
+the publication gate: without a concept where steering demonstrably works on this harness, a null
+on truth cannot be separated from a harness that cannot steer anything.

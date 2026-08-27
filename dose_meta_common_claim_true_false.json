@@ -1,0 +1,65 @@
+{
+  "dataset": "common_claim_true_false",
+  "layer": 13,
+  "h_src_median": 151.28118890116218,
+  "A_prefix_norm": 118.17029571533203,
+  "input_scale": 86.73299026489194,
+  "model_name": "google/gemma-2-2b",
+  "eps_star_mean_diff_tgt": 10.688731722297756,
+  "rel_grid": [
+    0.01,
+    0.02,
+    0.04,
+    0.08,
+    0.15,
+    0.22,
+    0.3,
+    0.4,
+    0.52,
+    0.66,
+    0.82,
+    1.0
+  ],
+  "n_doses": 25,
+  "directions": [
+    "sup_grad",
+    "sup_mean_diff",
+    "mag_u_gold",
+    "mag_resid_pc1",
+    "jtw_mean_diff_tgt",
+    "rand_ctrl"
+  ],
+  "direction_cosines": {
+    "sup_grad|sup_mean_diff": 0.08461630276813048,
+    "sup_grad|mag_u_gold": 0.08761642521267277,
+    "sup_grad|mag_resid_pc1": -0.0013630734489336709,
+    "sup_grad|jtw_mean_diff_tgt": 0.040820380781719255,
+    "sup_grad|rand_ctrl": -0.0034970250243527316,
+    "sup_mean_diff|mag_u_gold": 0.9811633539940496,
+    "sup_mean_diff|mag_resid_pc1": -0.03876845784520854,
+    "sup_mean_diff|jtw_mean_diff_tgt": 0.33058106337978105,
+    "sup_mean_diff|rand_ctrl": -0.007281085568843718,
+    "mag_u_gold|mag_resid_pc1": 1.1502250987609208e-09,
+    "mag_u_gold|jtw_mean_diff_tgt": 0.32395629758334343,
+    "mag_u_gold|rand_ctrl": -0.008918288477934213,
+    "mag_resid_pc1|jtw_mean_diff_tgt": -0.007242041926550382,
+    "mag_resid_pc1|rand_ctrl": -0.014727400449379379,
+    "jtw_mean_diff_tgt|rand_ctrl": -0.02193173054496636
+  },
+  "n_factual_prompts": 32,
+  "n_yesno_statements": 24,
+  "max_new_tokens": {
+    "factual": 8,
+    "yesno": 3
+  },
+  "decoding": {
+    "do_sample": false,
+    "repetition_penalty": 1.3
+  },
+  "baseline_parse_rate": 0.0,
+  "baseline_yes": 0,
+  "baseline_no": 0,
+  "baseline_mean_margin": 0.03760409299847261,
+  "rand_seed": 1234,
+  "smoke": false
+}

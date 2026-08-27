@@ -1,0 +1,65 @@
+{
+  "dataset": "cities",
+  "layer": 11,
+  "h_src_median": 118.06451017794106,
+  "A_prefix_norm": 113.7951431274414,
+  "input_scale": 47.716029511013176,
+  "model_name": "google/gemma-2-2b",
+  "eps_star_mean_diff_tgt": 2.8022593890631358,
+  "rel_grid": [
+    0.01,
+    0.02,
+    0.04,
+    0.08,
+    0.15,
+    0.22,
+    0.3,
+    0.4,
+    0.52,
+    0.66,
+    0.82,
+    1.0
+  ],
+  "n_doses": 25,
+  "directions": [
+    "sup_grad",
+    "sup_mean_diff",
+    "mag_u_gold",
+    "mag_resid_pc1",
+    "jtw_mean_diff_tgt",
+    "rand_ctrl"
+  ],
+  "direction_cosines": {
+    "sup_grad|sup_mean_diff": 0.41300686587523533,
+    "sup_grad|mag_u_gold": 0.40808775292854677,
+    "sup_grad|mag_resid_pc1": 0.19771041124521377,
+    "sup_grad|jtw_mean_diff_tgt": 0.08176558200438584,
+    "sup_grad|rand_ctrl": 0.02819755799533798,
+    "sup_mean_diff|mag_u_gold": 0.9881526556346619,
+    "sup_mean_diff|mag_resid_pc1": -0.034520816925945524,
+    "sup_mean_diff|jtw_mean_diff_tgt": 0.1102185136599921,
+    "sup_mean_diff|rand_ctrl": -0.0018526112952537853,
+    "mag_u_gold|mag_resid_pc1": -9.97347970033949e-09,
+    "mag_u_gold|jtw_mean_diff_tgt": 0.10999791105546691,
+    "mag_u_gold|rand_ctrl": -0.0007754620985249375,
+    "mag_resid_pc1|jtw_mean_diff_tgt": -0.07848422695374012,
+    "mag_resid_pc1|rand_ctrl": -0.021641720868691018,
+    "jtw_mean_diff_tgt|rand_ctrl": 0.002365070105571289
+  },
+  "n_factual_prompts": 32,
+  "n_yesno_statements": 24,
+  "max_new_tokens": {
+    "factual": 8,
+    "yesno": 3
+  },
+  "decoding": {
+    "do_sample": false,
+    "repetition_penalty": 1.3
+  },
+  "baseline_parse_rate": 0.0,
+  "baseline_yes": 0,
+  "baseline_no": 0,
+  "baseline_mean_margin": 0.03760409299847261,
+  "rand_seed": 1234,
+  "smoke": false
+}
