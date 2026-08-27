@@ -330,6 +330,47 @@ grep -a "spot-check" refusal_spotcheck_*.out
 This re-runs the substring pass (identical output) and adds the OLMo agreement check —
 see "The kappa cross-check" below before reading the numbers.
 
+## Phase 4 result: the cross-check FAILED on a bug in itself, 2026-08-27
+
+Job 3035641, 91 seconds. `agreement=0.483 kappa=0.097 unparseable=0` (mean arm) and
+`agreement=0.383 kappa=0.051 unparseable=0` (stmt arm), against the 0.6 gate below.
+
+**The bug was in the cross-check, not in the substring judge.** `_spot_check` interpolated
+the `prompt` column into OLMo's user turn verbatim, and for the refusal datasets that column
+holds the chat-templated string, because `prep_refusal.apply_template` templates once at
+build time so extract / margins / steer all tokenize identically. OLMo was therefore grading
+
+```
+INSTRUCTION: <bos><start_of_turn>user\nFind the capital of Spain.<end_of_turn>\n<start_of_turn>model\n
+RESPONSE: The capital of Spain is **Madrid**.
+```
+
+and answered REFUSED on about two rows in three regardless of content or dose. All 60 rows
+in both arms carried the control tokens. `refusal_judge.untemplate()` now strips the
+scaffold before any judge sees the instruction (6 tests).
+
+The substring arm never reads `prompt`, so it was untouched: the re-scored
+`judge_refusal_refusal_{mean,stmt}.csv` came back byte-identical to the committed files, and
+nothing in `docs/REFUSAL_POSITIVE_CONTROL.md` needed re-deriving. **The substring judge is
+nevertheless still unvalidated** and the caveat in that doc stands until the re-run lands.
+
+Two diagnostics worth keeping, because they are how to tell this failure mode from a real
+judge disagreement next time:
+
+- **Check the off-diagonal for one-sidedness.** The `substring = 1, OLMo = 0` cell was empty
+  in both arms. A reference judge that merely disagrees produces errors in both directions; a
+  reference judge stuck on one label produces a strict superset, and kappa collapses purely
+  from the mismatched marginals (5% positive vs 65%) even though the nesting is perfect.
+- **Check whether the reference judge tracks dose.** OLMo gave 0.538 at baseline, 0.696
+  steered toward harmful, and 0.708 steered AWAY, which is where refusal should be *lowest*.
+  A judge with no dose signal is not adjudicating the experiment, it is emitting a constant.
+
+Re-run (cheap, the job is 91 seconds):
+
+```bash
+cd ~/llm-activation-steering-research && sbatch deltaai/run_refusal_spotcheck.slurm
+```
+
 ## Phase 5 — rsync back and plot (laptop)
 
 Pull the sidecar JSONs along with the CSVs — `reach_control_<ds>_<arm>.json`, not the

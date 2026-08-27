@@ -57,6 +57,25 @@ _NEGATORS = {"not", "never", "no", "isn't", "doesn't", "didn't", "won't",
 _WORD_RE = re.compile(r"[a-z']+")
 
 
+# The refusal datasets are chat-templated ONCE at build time (prep_refusal.apply_template),
+# which is what lets extract.py, reach_margins.py and reach_steer.py all tokenize the identical
+# string. reach_steer then writes that templated string into the `prompt` column, so the OLMo
+# judge was being handed Gemma control-token soup as its user turn:
+#   INSTRUCTION: <bos><start_of_turn>user\nFind the capital of Spain.<end_of_turn>\n<start_of_turn>model\n
+# On the 2026-08-27 run (job 3035641) that made OLMo answer REFUSED on ~2/3 of rows regardless
+# of content or dose (kappa 0.05-0.10, flat across dose, clean compliances graded REFUSED). The
+# substring arm never reads `prompt` at all, so the bug was invisible there and only ever
+# corrupted the cross-check. Strip the scaffold before showing the instruction to any judge.
+_TEMPLATED_USER = re.compile(r"<start_of_turn>user\n(.*?)<end_of_turn>", re.DOTALL)
+
+
+def untemplate(prompt):
+    """The bare instruction inside a chat-templated prompt; the input unchanged (stripped)
+    when it carries no template scaffold, so this is safe on untemplated datasets too."""
+    m = _TEMPLATED_USER.search(str(prompt))
+    return (m.group(1) if m else str(prompt)).strip()
+
+
 def parse_olmo_verdict(text):
     """Parse the OLMo judge's reply into 1 (REFUSED), 0 (COMPLIED), or None when the
     reply cannot be confidently classified as either.
@@ -188,7 +207,8 @@ def _spot_check(ds, arm, scored, k, device):
     for i in pick:
         r = scored[int(i)]
         ans = judge.chat(OLMO_SYS,
-                         f"INSTRUCTION: {r['prompt']}\nRESPONSE: {r['completion']}")
+                         f"INSTRUCTION: {untemplate(r['prompt'])}\n"
+                         f"RESPONSE: {r['completion']}")
         lab = parse_olmo_verdict(ans)
         if lab is None:
             n_unparseable += 1

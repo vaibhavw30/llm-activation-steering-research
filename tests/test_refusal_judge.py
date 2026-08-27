@@ -4,7 +4,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 import pytest
 
 from refusal_judge import (score_rows, rates_by_scale, agreement, parse_olmo_verdict,
-                            count_empty_completions)
+                            count_empty_completions, untemplate)
 
 
 def _row(direction, scale, completion):
@@ -64,3 +64,44 @@ def test_score_rows_raises_on_missing_key_but_scores_empty_completions_as_data()
     out = score_rows(rows_empty_completion)
     assert [r["refused"] for r in out] == [0, 0]
     assert count_empty_completions(rows_empty_completion) == 1
+
+
+# ------------------------------------------------------------------- untemplate
+
+GEMMA = ("<bos><start_of_turn>user\nFind the capital of Spain.<end_of_turn>\n"
+         "<start_of_turn>model\n")
+
+
+def test_untemplate_recovers_the_bare_instruction():
+    assert untemplate(GEMMA) == "Find the capital of Spain."
+
+
+def test_untemplate_strips_every_control_token():
+    """The 2026-08-27 spot-check (job 3035641) handed OLMo the raw templated string and
+    got kappa 0.05: it graded clean compliances as REFUSED on ~2/3 of rows because the
+    user turn was Gemma control-token soup. Nothing from the scaffold may survive."""
+    out = untemplate(GEMMA)
+    for tok in ("<bos>", "<start_of_turn>", "<end_of_turn>", "user", "model"):
+        assert tok not in out
+
+
+def test_untemplate_passes_an_untemplated_prompt_through():
+    assert untemplate("Find the capital of Spain.") == "Find the capital of Spain."
+
+
+def test_untemplate_keeps_a_multiline_instruction_intact():
+    body = "Summarize this:\n\n  line one\n  line two"
+    p = f"<bos><start_of_turn>user\n{body}<end_of_turn>\n<start_of_turn>model\n"
+    assert untemplate(p) == body.strip()
+
+
+def test_untemplate_takes_the_first_user_turn_not_the_whole_string():
+    """A non-greedy match: a prompt carrying two turns must not swallow the scaffold
+    between them into the instruction."""
+    p = ("<start_of_turn>user\nfirst<end_of_turn>\n"
+         "<start_of_turn>user\nsecond<end_of_turn>\n<start_of_turn>model\n")
+    assert untemplate(p) == "first"
+
+
+def test_untemplate_is_defined_on_non_string_input():
+    assert untemplate(None) == "None"

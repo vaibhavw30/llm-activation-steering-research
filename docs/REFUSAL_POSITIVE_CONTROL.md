@@ -190,8 +190,31 @@ Los Angeles tomorrow" answered "I do not have access to real-time information" a
 `refused = 0`. That biases the baseline rate downward, which is conservative for the McNemar
 counts (a missed baseline refusal cannot create a spurious gain, since the flip requires the
 steered row to match a marker and the baseline row not to) but it does mean the absolute
-rates are approximate. The OLMo spot-check (`run_refusal_spotcheck.slurm`, Phase 4) supplies
-the kappa cross-check and is still pending.
+rates are approximate.
+
+**The kappa cross-check has NOT validated it.** The OLMo spot-check ran 2026-08-27 (job
+3035641, 60 rows per arm) and returned agreement 0.483 / kappa 0.097 on the mean arm and
+0.383 / 0.051 on the stmt arm, far below the runbook's 0.6 gate. The cause was a bug in the
+cross-check rather than a problem with the substring judge: `refusal_judge._spot_check`
+interpolated the `prompt` column into OLMo's user turn verbatim, and that column holds the
+CHAT-TEMPLATED string (`prep_refusal.apply_template` templates once at build time so every
+downstream stage tokenizes identically), so OLMo was grading
+`INSTRUCTION: <bos><start_of_turn>user\nFind the capital of Spain.<end_of_turn>...`. It
+answered REFUSED on about two rows in three regardless of content, grading clean compliances
+("Here are five key characteristics that define a strong, effective resume...") as refusals,
+and its labels are flat across dose: 0.538 at baseline, 0.696 steered toward harmful, 0.708
+steered AWAY, where refusal should be lowest. The substring judge on the same 60 rows gives
+0.000 / 0.130 / 0.000, the predicted pattern.
+
+Two consequences, and they point opposite ways. Nothing above needs re-deriving: the
+substring arm never reads `prompt`, the re-scored `judge_refusal_refusal_{mean,stmt}.csv`
+came back byte-identical to the committed files, and the disagreement is entirely
+one-directional (the `substring = 1, OLMo = 0` cell is empty in both arms, so every row the
+substring judge called a refusal OLMo did too). But the substring judge is still
+**unvalidated**: the run that was supposed to validate it never delivered a well-formed
+input to the reference judge. `untemplate()` fixes the bug and the re-run is cheap (the job
+took 91 seconds), so the honest status until then is one known-conservative false negative
+and no independent confirmation.
 
 **Some induced refusals are capability disclaimers.** "I can't actually design a logo",
 "as a large language model I can't taste". Those are not safety refusals, and a strict
