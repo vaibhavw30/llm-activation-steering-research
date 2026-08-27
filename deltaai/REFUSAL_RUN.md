@@ -277,6 +277,48 @@ runs against a real model. Check the smoke section of the log, and specifically 
 the `[reach] slice fidelity cos=…` line. If a job instead dies with `SlicedModel
 unfaithful`, **stop** — its Jacobians would be of the wrong map (see Gotchas).
 
+## Phase 3 result: the control PASSED, decided 2026-08-27
+
+`verdict = actuatable` on the per-statement arm. **The instrument can actuate**, so by the
+pre-commitment recorded in `ad6bf58` no second injection layer is needed and D1's truth
+nulls stand as facts about truth rather than about the harness.
+
+Full write-up with every number and caveat: `docs/REFUSAL_POSITIVE_CONTROL.md`.
+Paired statistics: `PYTHONPATH=src .venv/bin/python src/refusal_analyze.py --dataset refusal`
+(writes `refusal_control_stats_refusal.json`).
+
+The four numbers that carry it, all within the same 64 statements that were observed at
+every dose:
+
+| | |
+|---|---|
+| McNemar, baseline to -2 eps\* | **14 statements flipped INTO refusal** (of 59 compliant at baseline), **0 flipped out**, p = 1.22e-04 |
+| sign control, -2 vs +2 eps\* | same statements, same perturbation size, opposite direction: 19/64 vs 1/64, OR 26.60, p = 9.66e-06 |
+| Cochran-Armitage trend | slope -0.0549 per eps\*, z = -6.86, p = 6.73e-12 |
+| Mantel-Haenszel OR for CROSSING, magnitude held fixed | **24.2** (crossed 26-40% refuse, pushed-as-hard-but-not-crossed 2%) |
+
+Two things a reader of the raw sidecar will get wrong without this note:
+
+- **Do not use `reach_control`'s bucket table for an effect size.** Its frac buckets hold
+  different statements (the `1.5 x input_scale` clamp decides which statements ever reach
+  |frac| = 2), so its -2-vs-0 contrast mixes the dose effect with that selection. Comparing
+  19/64 against the pooled 5/199 baseline gives OR 16.4; the honest paired comparison on the
+  same 64 statements is 19/64 vs 5/64, OR 4.98, p = 2.7e-03. The bucket table is right for
+  the *verdict*, wrong for the *magnitude*.
+- **The two `VERDICT` lines are consistent, not contradictory.** The mean arm reports
+  `no-crossing` because the clamp caps it at 1.61 eps\* and it never crosses; its behavior is
+  flat at 1/32 in all nine buckets. The stmt arm reaches 2 eps\*, crosses, and moves 27
+  points. Crossing looks necessary as well as sufficient.
+- **The off-target WARNING naming fracs [-1.86, -1.48, -1.07] is answered.** Those are the
+  18 clamped statements whose only non-zero scale is +/- cap, so they land in their own small
+  buckets. The +2 arm is the real control for "does any large layer-5 push induce refusal",
+  and it does not: it *removes* four of the five baseline refusals.
+
+**The caveat to carry into any write-up:** the per-statement arm's 200 statements come from
+the fit set's label-1 rows, not from `refusal_holdout.csv`. The held-out arm is the mean arm,
+and that is the arm that never crossed. This establishes that the instrument can actuate; it
+is not a held-out generalization number.
+
 ## Phase 4 — spot-check (cluster)
 
 ```bash

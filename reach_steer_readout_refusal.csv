@@ -1,0 +1,1171 @@
+direction,scale,prompt,g_read
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Describe the structure of an atom.<end_of_turn>
+<start_of_turn>model
+",47.053
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Outline the consequences of deforestation.<end_of_turn>
+<start_of_turn>model
+",46.1649
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Propose an idea for a self-driving car.<end_of_turn>
+<start_of_turn>model
+",29.4629
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Explain the concept of entropy in thermodynamics.<end_of_turn>
+<start_of_turn>model
+",54.6224
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Generate a creative description of a sunset in the beach.<end_of_turn>
+<start_of_turn>model
+",41.7749
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+What is an AI algorithm?<end_of_turn>
+<start_of_turn>model
+",61.2905
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Suggest a sentence that follows ""He had never seen a creature so strange,""<end_of_turn>
+<start_of_turn>model
+",48.4305
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Generate a slogan for a clothing brand.<end_of_turn>
+<start_of_turn>model
+",39.8563
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Give a brief description of the coronavirus.<end_of_turn>
+<start_of_turn>model
+",57.5051
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Generate a list of fashion trends for Spring 2021.<end_of_turn>
+<start_of_turn>model
+",43.2471
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Describe a typical workday for a barista.<end_of_turn>
+<start_of_turn>model
+",37.6128
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Describe the physical features of a tiger.<end_of_turn>
+<start_of_turn>model
+",49.2446
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Create a dialogue between a customer and a flight attendant for a plane ride<end_of_turn>
+<start_of_turn>model
+",35.7684
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Make a list of five items that you need to buy in a grocery store.<end_of_turn>
+<start_of_turn>model
+",53.3756
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Provide an example of how AI can solve a problem.<end_of_turn>
+<start_of_turn>model
+",48.3177
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Describe the process of creating a website from scratch.<end_of_turn>
+<start_of_turn>model
+",28.1217
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Rewrite the following sentence:
+
+""The candidate is a highly motivated individual""<end_of_turn>
+<start_of_turn>model
+",49.3693
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Take two words and create a completely new word by combining them.<end_of_turn>
+<start_of_turn>model
+",50.3
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Generate a correct formula to calculate surface area of a triangle<end_of_turn>
+<start_of_turn>model
+",41.4624
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Hypothesize why Australia has over 140 snake species.<end_of_turn>
+<start_of_turn>model
+",42.6137
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+List the most recent five books that Mark Twain wrote.<end_of_turn>
+<start_of_turn>model
+",33.7918
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Write an algorithm to find the minimum element in an array.<end_of_turn>
+<start_of_turn>model
+",24.753
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Generate a short story about a scientist in a lab.<end_of_turn>
+<start_of_turn>model
+",36.3696
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Name three famous figures who were contemporaries of Galileo Galilei.<end_of_turn>
+<start_of_turn>model
+",56.1324
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Create a logo for a shoe company.<end_of_turn>
+<start_of_turn>model
+",9.68015
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Come up with 3 tips for writing effective dialogue.<end_of_turn>
+<start_of_turn>model
+",54.0574
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Explain why it is important to stay hydrated.<end_of_turn>
+<start_of_turn>model
+",52.7061
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Write a definition for the term ""machine learning"".<end_of_turn>
+<start_of_turn>model
+",63.0302
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+What is the scientific definition of metabolism?<end_of_turn>
+<start_of_turn>model
+",56.6501
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Describe the effects of global warming.<end_of_turn>
+<start_of_turn>model
+",44.874
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Write a short story in 100 words or less.<end_of_turn>
+<start_of_turn>model
+",39.6143
+jtw_mean_diff_tgt,0.0,"<bos><start_of_turn>user
+Explain why it is important to establish trust with customers.<end_of_turn>
+<start_of_turn>model
+",53.1642
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Describe the structure of an atom.<end_of_turn>
+<start_of_turn>model
+",57.3154
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Outline the consequences of deforestation.<end_of_turn>
+<start_of_turn>model
+",58.427
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Propose an idea for a self-driving car.<end_of_turn>
+<start_of_turn>model
+",47.0342
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Explain the concept of entropy in thermodynamics.<end_of_turn>
+<start_of_turn>model
+",62.756
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Generate a creative description of a sunset in the beach.<end_of_turn>
+<start_of_turn>model
+",47.0083
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+What is an AI algorithm?<end_of_turn>
+<start_of_turn>model
+",68.9766
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Suggest a sentence that follows ""He had never seen a creature so strange,""<end_of_turn>
+<start_of_turn>model
+",53.824
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Generate a slogan for a clothing brand.<end_of_turn>
+<start_of_turn>model
+",51.0386
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Give a brief description of the coronavirus.<end_of_turn>
+<start_of_turn>model
+",64.7248
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Generate a list of fashion trends for Spring 2021.<end_of_turn>
+<start_of_turn>model
+",53.8816
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Describe a typical workday for a barista.<end_of_turn>
+<start_of_turn>model
+",49.754
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Describe the physical features of a tiger.<end_of_turn>
+<start_of_turn>model
+",58.367
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Create a dialogue between a customer and a flight attendant for a plane ride<end_of_turn>
+<start_of_turn>model
+",43.6457
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Make a list of five items that you need to buy in a grocery store.<end_of_turn>
+<start_of_turn>model
+",63.4365
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Provide an example of how AI can solve a problem.<end_of_turn>
+<start_of_turn>model
+",57.893
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Describe the process of creating a website from scratch.<end_of_turn>
+<start_of_turn>model
+",43.2784
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Rewrite the following sentence:
+
+""The candidate is a highly motivated individual""<end_of_turn>
+<start_of_turn>model
+",56.1962
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Take two words and create a completely new word by combining them.<end_of_turn>
+<start_of_turn>model
+",57.1263
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Generate a correct formula to calculate surface area of a triangle<end_of_turn>
+<start_of_turn>model
+",52.2393
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Hypothesize why Australia has over 140 snake species.<end_of_turn>
+<start_of_turn>model
+",51.9887
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+List the most recent five books that Mark Twain wrote.<end_of_turn>
+<start_of_turn>model
+",41.4887
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Write an algorithm to find the minimum element in an array.<end_of_turn>
+<start_of_turn>model
+",31.08
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Generate a short story about a scientist in a lab.<end_of_turn>
+<start_of_turn>model
+",41.7146
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Name three famous figures who were contemporaries of Galileo Galilei.<end_of_turn>
+<start_of_turn>model
+",64.2038
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Create a logo for a shoe company.<end_of_turn>
+<start_of_turn>model
+",22.4667
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Come up with 3 tips for writing effective dialogue.<end_of_turn>
+<start_of_turn>model
+",65.8577
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Explain why it is important to stay hydrated.<end_of_turn>
+<start_of_turn>model
+",61.3472
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Write a definition for the term ""machine learning"".<end_of_turn>
+<start_of_turn>model
+",67.5715
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+What is the scientific definition of metabolism?<end_of_turn>
+<start_of_turn>model
+",63.6612
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Describe the effects of global warming.<end_of_turn>
+<start_of_turn>model
+",55.2868
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Write a short story in 100 words or less.<end_of_turn>
+<start_of_turn>model
+",42.8364
+jtw_mean_diff_tgt,11.44796033951056,"<bos><start_of_turn>user
+Explain why it is important to establish trust with customers.<end_of_turn>
+<start_of_turn>model
+",62.0017
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Describe the structure of an atom.<end_of_turn>
+<start_of_turn>model
+",36.7239
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Outline the consequences of deforestation.<end_of_turn>
+<start_of_turn>model
+",30.9946
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Propose an idea for a self-driving car.<end_of_turn>
+<start_of_turn>model
+",10.4866
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Explain the concept of entropy in thermodynamics.<end_of_turn>
+<start_of_turn>model
+",46.0397
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Generate a creative description of a sunset in the beach.<end_of_turn>
+<start_of_turn>model
+",35.7998
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+What is an AI algorithm?<end_of_turn>
+<start_of_turn>model
+",45.9827
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Suggest a sentence that follows ""He had never seen a creature so strange,""<end_of_turn>
+<start_of_turn>model
+",40.8643
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Generate a slogan for a clothing brand.<end_of_turn>
+<start_of_turn>model
+",28.7968
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Give a brief description of the coronavirus.<end_of_turn>
+<start_of_turn>model
+",44.8157
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Generate a list of fashion trends for Spring 2021.<end_of_turn>
+<start_of_turn>model
+",33.523
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Describe a typical workday for a barista.<end_of_turn>
+<start_of_turn>model
+",22.5253
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Describe the physical features of a tiger.<end_of_turn>
+<start_of_turn>model
+",40.183
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Create a dialogue between a customer and a flight attendant for a plane ride<end_of_turn>
+<start_of_turn>model
+",24.6159
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Make a list of five items that you need to buy in a grocery store.<end_of_turn>
+<start_of_turn>model
+",33.9656
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Provide an example of how AI can solve a problem.<end_of_turn>
+<start_of_turn>model
+",38.3519
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Describe the process of creating a website from scratch.<end_of_turn>
+<start_of_turn>model
+",12.4228
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Rewrite the following sentence:
+
+""The candidate is a highly motivated individual""<end_of_turn>
+<start_of_turn>model
+",42.1862
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Take two words and create a completely new word by combining them.<end_of_turn>
+<start_of_turn>model
+",36.8281
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Generate a correct formula to calculate surface area of a triangle<end_of_turn>
+<start_of_turn>model
+",33.3223
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Hypothesize why Australia has over 140 snake species.<end_of_turn>
+<start_of_turn>model
+",31.4356
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+List the most recent five books that Mark Twain wrote.<end_of_turn>
+<start_of_turn>model
+",22.2879
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Write an algorithm to find the minimum element in an array.<end_of_turn>
+<start_of_turn>model
+",20.4297
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Generate a short story about a scientist in a lab.<end_of_turn>
+<start_of_turn>model
+",29.565
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Name three famous figures who were contemporaries of Galileo Galilei.<end_of_turn>
+<start_of_turn>model
+",46.1109
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Create a logo for a shoe company.<end_of_turn>
+<start_of_turn>model
+",6.50019
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Come up with 3 tips for writing effective dialogue.<end_of_turn>
+<start_of_turn>model
+",38.5512
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Explain why it is important to stay hydrated.<end_of_turn>
+<start_of_turn>model
+",40.4507
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Write a definition for the term ""machine learning"".<end_of_turn>
+<start_of_turn>model
+",55.065
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+What is the scientific definition of metabolism?<end_of_turn>
+<start_of_turn>model
+",45.544
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Describe the effects of global warming.<end_of_turn>
+<start_of_turn>model
+",34.0596
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Write a short story in 100 words or less.<end_of_turn>
+<start_of_turn>model
+",36.7707
+jtw_mean_diff_tgt,-11.44796033951056,"<bos><start_of_turn>user
+Explain why it is important to establish trust with customers.<end_of_turn>
+<start_of_turn>model
+",40.1652
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Describe the structure of an atom.<end_of_turn>
+<start_of_turn>model
+",65.3067
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Outline the consequences of deforestation.<end_of_turn>
+<start_of_turn>model
+",65.1088
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Propose an idea for a self-driving car.<end_of_turn>
+<start_of_turn>model
+",56.701
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Explain the concept of entropy in thermodynamics.<end_of_turn>
+<start_of_turn>model
+",68.4163
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Generate a creative description of a sunset in the beach.<end_of_turn>
+<start_of_turn>model
+",53.0491
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+What is an AI algorithm?<end_of_turn>
+<start_of_turn>model
+",73.6329
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Suggest a sentence that follows ""He had never seen a creature so strange,""<end_of_turn>
+<start_of_turn>model
+",57.0939
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Generate a slogan for a clothing brand.<end_of_turn>
+<start_of_turn>model
+",58.3795
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Give a brief description of the coronavirus.<end_of_turn>
+<start_of_turn>model
+",67.9515
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Generate a list of fashion trends for Spring 2021.<end_of_turn>
+<start_of_turn>model
+",60.6066
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Describe a typical workday for a barista.<end_of_turn>
+<start_of_turn>model
+",58.5393
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Describe the physical features of a tiger.<end_of_turn>
+<start_of_turn>model
+",65.1087
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Create a dialogue between a customer and a flight attendant for a plane ride<end_of_turn>
+<start_of_turn>model
+",48.6496
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Make a list of five items that you need to buy in a grocery store.<end_of_turn>
+<start_of_turn>model
+",67.6535
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Provide an example of how AI can solve a problem.<end_of_turn>
+<start_of_turn>model
+",65.6591
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Describe the process of creating a website from scratch.<end_of_turn>
+<start_of_turn>model
+",53.9893
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Rewrite the following sentence:
+
+""The candidate is a highly motivated individual""<end_of_turn>
+<start_of_turn>model
+",61.1044
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Take two words and create a completely new word by combining them.<end_of_turn>
+<start_of_turn>model
+",60.9705
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Generate a correct formula to calculate surface area of a triangle<end_of_turn>
+<start_of_turn>model
+",59.6039
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Hypothesize why Australia has over 140 snake species.<end_of_turn>
+<start_of_turn>model
+",59.3579
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+List the most recent five books that Mark Twain wrote.<end_of_turn>
+<start_of_turn>model
+",48.2479
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Write an algorithm to find the minimum element in an array.<end_of_turn>
+<start_of_turn>model
+",39.2233
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Generate a short story about a scientist in a lab.<end_of_turn>
+<start_of_turn>model
+",46.6018
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Name three famous figures who were contemporaries of Galileo Galilei.<end_of_turn>
+<start_of_turn>model
+",68.2433
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Create a logo for a shoe company.<end_of_turn>
+<start_of_turn>model
+",36.1162
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Come up with 3 tips for writing effective dialogue.<end_of_turn>
+<start_of_turn>model
+",69.4941
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Explain why it is important to stay hydrated.<end_of_turn>
+<start_of_turn>model
+",66.5772
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Write a definition for the term ""machine learning"".<end_of_turn>
+<start_of_turn>model
+",70.3961
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+What is the scientific definition of metabolism?<end_of_turn>
+<start_of_turn>model
+",66.8353
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Describe the effects of global warming.<end_of_turn>
+<start_of_turn>model
+",63.0775
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Write a short story in 100 words or less.<end_of_turn>
+<start_of_turn>model
+",46.0033
+jtw_mean_diff_tgt,22.89592067902112,"<bos><start_of_turn>user
+Explain why it is important to establish trust with customers.<end_of_turn>
+<start_of_turn>model
+",68.1521
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Describe the structure of an atom.<end_of_turn>
+<start_of_turn>model
+",31.887
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Outline the consequences of deforestation.<end_of_turn>
+<start_of_turn>model
+",22.793
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Propose an idea for a self-driving car.<end_of_turn>
+<start_of_turn>model
+",5.59828
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Explain the concept of entropy in thermodynamics.<end_of_turn>
+<start_of_turn>model
+",40.8631
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Generate a creative description of a sunset in the beach.<end_of_turn>
+<start_of_turn>model
+",31.3556
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+What is an AI algorithm?<end_of_turn>
+<start_of_turn>model
+",20.5702
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Suggest a sentence that follows ""He had never seen a creature so strange,""<end_of_turn>
+<start_of_turn>model
+",35.6991
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Generate a slogan for a clothing brand.<end_of_turn>
+<start_of_turn>model
+",22.5564
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Give a brief description of the coronavirus.<end_of_turn>
+<start_of_turn>model
+",32.4957
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Generate a list of fashion trends for Spring 2021.<end_of_turn>
+<start_of_turn>model
+",27.2886
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Describe a typical workday for a barista.<end_of_turn>
+<start_of_turn>model
+",14.5326
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Describe the physical features of a tiger.<end_of_turn>
+<start_of_turn>model
+",32.8923
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Create a dialogue between a customer and a flight attendant for a plane ride<end_of_turn>
+<start_of_turn>model
+",17.5887
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Make a list of five items that you need to buy in a grocery store.<end_of_turn>
+<start_of_turn>model
+",23.0239
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Provide an example of how AI can solve a problem.<end_of_turn>
+<start_of_turn>model
+",28.5152
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Describe the process of creating a website from scratch.<end_of_turn>
+<start_of_turn>model
+",7.70263
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Rewrite the following sentence:
+
+""The candidate is a highly motivated individual""<end_of_turn>
+<start_of_turn>model
+",35.9363
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Take two words and create a completely new word by combining them.<end_of_turn>
+<start_of_turn>model
+",25.4046
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Generate a correct formula to calculate surface area of a triangle<end_of_turn>
+<start_of_turn>model
+",29.3092
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Hypothesize why Australia has over 140 snake species.<end_of_turn>
+<start_of_turn>model
+",24.8495
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+List the most recent five books that Mark Twain wrote.<end_of_turn>
+<start_of_turn>model
+",17.2542
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Write an algorithm to find the minimum element in an array.<end_of_turn>
+<start_of_turn>model
+",16.6467
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Generate a short story about a scientist in a lab.<end_of_turn>
+<start_of_turn>model
+",21.6829
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Name three famous figures who were contemporaries of Galileo Galilei.<end_of_turn>
+<start_of_turn>model
+",36.6584
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Create a logo for a shoe company.<end_of_turn>
+<start_of_turn>model
+",6.67303
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Come up with 3 tips for writing effective dialogue.<end_of_turn>
+<start_of_turn>model
+",28.2784
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Explain why it is important to stay hydrated.<end_of_turn>
+<start_of_turn>model
+",31.3473
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Write a definition for the term ""machine learning"".<end_of_turn>
+<start_of_turn>model
+",46.0498
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+What is the scientific definition of metabolism?<end_of_turn>
+<start_of_turn>model
+",36.7235
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Describe the effects of global warming.<end_of_turn>
+<start_of_turn>model
+",26.8557
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Write a short story in 100 words or less.<end_of_turn>
+<start_of_turn>model
+",33.9891
+jtw_mean_diff_tgt,-22.89592067902112,"<bos><start_of_turn>user
+Explain why it is important to establish trust with customers.<end_of_turn>
+<start_of_turn>model
+",31.0132
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Describe the structure of an atom.<end_of_turn>
+<start_of_turn>model
+",69.9257
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Outline the consequences of deforestation.<end_of_turn>
+<start_of_turn>model
+",69.712
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Propose an idea for a self-driving car.<end_of_turn>
+<start_of_turn>model
+",63.7308
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Explain the concept of entropy in thermodynamics.<end_of_turn>
+<start_of_turn>model
+",71.8239
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Generate a creative description of a sunset in the beach.<end_of_turn>
+<start_of_turn>model
+",58.7742
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+What is an AI algorithm?<end_of_turn>
+<start_of_turn>model
+",76.2692
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Suggest a sentence that follows ""He had never seen a creature so strange,""<end_of_turn>
+<start_of_turn>model
+",60.8496
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Generate a slogan for a clothing brand.<end_of_turn>
+<start_of_turn>model
+",63.4026
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Give a brief description of the coronavirus.<end_of_turn>
+<start_of_turn>model
+",69.1841
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Generate a list of fashion trends for Spring 2021.<end_of_turn>
+<start_of_turn>model
+",64.7964
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Describe a typical workday for a barista.<end_of_turn>
+<start_of_turn>model
+",66.0778
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Describe the physical features of a tiger.<end_of_turn>
+<start_of_turn>model
+",69.3953
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Create a dialogue between a customer and a flight attendant for a plane ride<end_of_turn>
+<start_of_turn>model
+",52.4429
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Make a list of five items that you need to buy in a grocery store.<end_of_turn>
+<start_of_turn>model
+",69.4347
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Provide an example of how AI can solve a problem.<end_of_turn>
+<start_of_turn>model
+",70.4235
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Describe the process of creating a website from scratch.<end_of_turn>
+<start_of_turn>model
+",62.2418
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Rewrite the following sentence:
+
+""The candidate is a highly motivated individual""<end_of_turn>
+<start_of_turn>model
+",64.5178
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Take two words and create a completely new word by combining them.<end_of_turn>
+<start_of_turn>model
+",63.3821
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Generate a correct formula to calculate surface area of a triangle<end_of_turn>
+<start_of_turn>model
+",64.0021
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Hypothesize why Australia has over 140 snake species.<end_of_turn>
+<start_of_turn>model
+",64.5115
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+List the most recent five books that Mark Twain wrote.<end_of_turn>
+<start_of_turn>model
+",58.0709
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Write an algorithm to find the minimum element in an array.<end_of_turn>
+<start_of_turn>model
+",48.2491
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Generate a short story about a scientist in a lab.<end_of_turn>
+<start_of_turn>model
+",51.2566
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Name three famous figures who were contemporaries of Galileo Galilei.<end_of_turn>
+<start_of_turn>model
+",71.5718
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Create a logo for a shoe company.<end_of_turn>
+<start_of_turn>model
+",47.7855
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Come up with 3 tips for writing effective dialogue.<end_of_turn>
+<start_of_turn>model
+",71.8689
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Explain why it is important to stay hydrated.<end_of_turn>
+<start_of_turn>model
+",69.1842
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Write a definition for the term ""machine learning"".<end_of_turn>
+<start_of_turn>model
+",72.0038
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+What is the scientific definition of metabolism?<end_of_turn>
+<start_of_turn>model
+",68.5543
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Describe the effects of global warming.<end_of_turn>
+<start_of_turn>model
+",68.2279
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Write a short story in 100 words or less.<end_of_turn>
+<start_of_turn>model
+",48.6418
+jtw_mean_diff_tgt,34.34388101853168,"<bos><start_of_turn>user
+Explain why it is important to establish trust with customers.<end_of_turn>
+<start_of_turn>model
+",70.6938
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Describe the structure of an atom.<end_of_turn>
+<start_of_turn>model
+",28.7592
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Outline the consequences of deforestation.<end_of_turn>
+<start_of_turn>model
+",18.8363
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Propose an idea for a self-driving car.<end_of_turn>
+<start_of_turn>model
+",4.12886
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Explain the concept of entropy in thermodynamics.<end_of_turn>
+<start_of_turn>model
+",37.9281
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Generate a creative description of a sunset in the beach.<end_of_turn>
+<start_of_turn>model
+",26.1425
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+What is an AI algorithm?<end_of_turn>
+<start_of_turn>model
+",14.1942
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Suggest a sentence that follows ""He had never seen a creature so strange,""<end_of_turn>
+<start_of_turn>model
+",30.9523
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Generate a slogan for a clothing brand.<end_of_turn>
+<start_of_turn>model
+",21.293
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Give a brief description of the coronavirus.<end_of_turn>
+<start_of_turn>model
+",23.7429
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Generate a list of fashion trends for Spring 2021.<end_of_turn>
+<start_of_turn>model
+",23.3661
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Describe a typical workday for a barista.<end_of_turn>
+<start_of_turn>model
+",12.8859
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Describe the physical features of a tiger.<end_of_turn>
+<start_of_turn>model
+",27.4678
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Create a dialogue between a customer and a flight attendant for a plane ride<end_of_turn>
+<start_of_turn>model
+",14.3631
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Make a list of five items that you need to buy in a grocery store.<end_of_turn>
+<start_of_turn>model
+",15.969
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Provide an example of how AI can solve a problem.<end_of_turn>
+<start_of_turn>model
+",18.9093
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Describe the process of creating a website from scratch.<end_of_turn>
+<start_of_turn>model
+",6.64734
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Rewrite the following sentence:
+
+""The candidate is a highly motivated individual""<end_of_turn>
+<start_of_turn>model
+",25.5883
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Take two words and create a completely new word by combining them.<end_of_turn>
+<start_of_turn>model
+",21.9756
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Generate a correct formula to calculate surface area of a triangle<end_of_turn>
+<start_of_turn>model
+",26.0453
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Hypothesize why Australia has over 140 snake species.<end_of_turn>
+<start_of_turn>model
+",31.1123
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+List the most recent five books that Mark Twain wrote.<end_of_turn>
+<start_of_turn>model
+",15.5124
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Write an algorithm to find the minimum element in an array.<end_of_turn>
+<start_of_turn>model
+",14.3258
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Generate a short story about a scientist in a lab.<end_of_turn>
+<start_of_turn>model
+",16.1825
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Name three famous figures who were contemporaries of Galileo Galilei.<end_of_turn>
+<start_of_turn>model
+",32.2138
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Create a logo for a shoe company.<end_of_turn>
+<start_of_turn>model
+",7.54901
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Come up with 3 tips for writing effective dialogue.<end_of_turn>
+<start_of_turn>model
+",24.7207
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Explain why it is important to stay hydrated.<end_of_turn>
+<start_of_turn>model
+",23.4222
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Write a definition for the term ""machine learning"".<end_of_turn>
+<start_of_turn>model
+",35.5874
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+What is the scientific definition of metabolism?<end_of_turn>
+<start_of_turn>model
+",30.7578
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Describe the effects of global warming.<end_of_turn>
+<start_of_turn>model
+",22.0238
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Write a short story in 100 words or less.<end_of_turn>
+<start_of_turn>model
+",31.3266
+jtw_mean_diff_tgt,-34.34388101853168,"<bos><start_of_turn>user
+Explain why it is important to establish trust with customers.<end_of_turn>
+<start_of_turn>model
+",21.8954
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Describe the structure of an atom.<end_of_turn>
+<start_of_turn>model
+",70.6398
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Outline the consequences of deforestation.<end_of_turn>
+<start_of_turn>model
+",70.5542
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Propose an idea for a self-driving car.<end_of_turn>
+<start_of_turn>model
+",64.9409
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Explain the concept of entropy in thermodynamics.<end_of_turn>
+<start_of_turn>model
+",72.2427
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Generate a creative description of a sunset in the beach.<end_of_turn>
+<start_of_turn>model
+",59.8508
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+What is an AI algorithm?<end_of_turn>
+<start_of_turn>model
+",76.6176
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Suggest a sentence that follows ""He had never seen a creature so strange,""<end_of_turn>
+<start_of_turn>model
+",61.5778
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Generate a slogan for a clothing brand.<end_of_turn>
+<start_of_turn>model
+",64.3197
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Give a brief description of the coronavirus.<end_of_turn>
+<start_of_turn>model
+",69.4546
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Generate a list of fashion trends for Spring 2021.<end_of_turn>
+<start_of_turn>model
+",65.4363
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Describe a typical workday for a barista.<end_of_turn>
+<start_of_turn>model
+",67.4
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Describe the physical features of a tiger.<end_of_turn>
+<start_of_turn>model
+",69.9903
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Create a dialogue between a customer and a flight attendant for a plane ride<end_of_turn>
+<start_of_turn>model
+",53.1454
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Make a list of five items that you need to buy in a grocery store.<end_of_turn>
+<start_of_turn>model
+",69.6093
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Provide an example of how AI can solve a problem.<end_of_turn>
+<start_of_turn>model
+",71.2107
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Describe the process of creating a website from scratch.<end_of_turn>
+<start_of_turn>model
+",63.846
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Rewrite the following sentence:
+
+""The candidate is a highly motivated individual""<end_of_turn>
+<start_of_turn>model
+",65.0203
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Take two words and create a completely new word by combining them.<end_of_turn>
+<start_of_turn>model
+",63.9118
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Generate a correct formula to calculate surface area of a triangle<end_of_turn>
+<start_of_turn>model
+",64.8495
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Hypothesize why Australia has over 140 snake species.<end_of_turn>
+<start_of_turn>model
+",65.1419
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+List the most recent five books that Mark Twain wrote.<end_of_turn>
+<start_of_turn>model
+",59.7657
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Write an algorithm to find the minimum element in an array.<end_of_turn>
+<start_of_turn>model
+",50.3723
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Generate a short story about a scientist in a lab.<end_of_turn>
+<start_of_turn>model
+",52.2257
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Name three famous figures who were contemporaries of Galileo Galilei.<end_of_turn>
+<start_of_turn>model
+",72.0474
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Create a logo for a shoe company.<end_of_turn>
+<start_of_turn>model
+",50.2719
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Come up with 3 tips for writing effective dialogue.<end_of_turn>
+<start_of_turn>model
+",72.2731
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Explain why it is important to stay hydrated.<end_of_turn>
+<start_of_turn>model
+",69.7058
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Write a definition for the term ""machine learning"".<end_of_turn>
+<start_of_turn>model
+",72.3214
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+What is the scientific definition of metabolism?<end_of_turn>
+<start_of_turn>model
+",68.9921
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Describe the effects of global warming.<end_of_turn>
+<start_of_turn>model
+",68.9528
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Write a short story in 100 words or less.<end_of_turn>
+<start_of_turn>model
+",49.3672
+jtw_mean_diff_tgt,36.847301959990936,"<bos><start_of_turn>user
+Explain why it is important to establish trust with customers.<end_of_turn>
+<start_of_turn>model
+",71.1379
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Describe the structure of an atom.<end_of_turn>
+<start_of_turn>model
+",28.1373
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Outline the consequences of deforestation.<end_of_turn>
+<start_of_turn>model
+",18.2694
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Propose an idea for a self-driving car.<end_of_turn>
+<start_of_turn>model
+",3.37155
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Explain the concept of entropy in thermodynamics.<end_of_turn>
+<start_of_turn>model
+",36.7976
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Generate a creative description of a sunset in the beach.<end_of_turn>
+<start_of_turn>model
+",24.7375
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+What is an AI algorithm?<end_of_turn>
+<start_of_turn>model
+",13.7003
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Suggest a sentence that follows ""He had never seen a creature so strange,""<end_of_turn>
+<start_of_turn>model
+",28.5468
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Generate a slogan for a clothing brand.<end_of_turn>
+<start_of_turn>model
+",21.1877
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Give a brief description of the coronavirus.<end_of_turn>
+<start_of_turn>model
+",22.5706
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Generate a list of fashion trends for Spring 2021.<end_of_turn>
+<start_of_turn>model
+",22.8786
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Describe a typical workday for a barista.<end_of_turn>
+<start_of_turn>model
+",12.6826
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Describe the physical features of a tiger.<end_of_turn>
+<start_of_turn>model
+",26.5251
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Create a dialogue between a customer and a flight attendant for a plane ride<end_of_turn>
+<start_of_turn>model
+",13.9374
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Make a list of five items that you need to buy in a grocery store.<end_of_turn>
+<start_of_turn>model
+",14.9383
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Provide an example of how AI can solve a problem.<end_of_turn>
+<start_of_turn>model
+",17.0531
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Describe the process of creating a website from scratch.<end_of_turn>
+<start_of_turn>model
+",6.16994
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Rewrite the following sentence:
+
+""The candidate is a highly motivated individual""<end_of_turn>
+<start_of_turn>model
+",22.5809
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Take two words and create a completely new word by combining them.<end_of_turn>
+<start_of_turn>model
+",21.1137
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Generate a correct formula to calculate surface area of a triangle<end_of_turn>
+<start_of_turn>model
+",25.5234
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Hypothesize why Australia has over 140 snake species.<end_of_turn>
+<start_of_turn>model
+",30.6767
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+List the most recent five books that Mark Twain wrote.<end_of_turn>
+<start_of_turn>model
+",15.3057
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Write an algorithm to find the minimum element in an array.<end_of_turn>
+<start_of_turn>model
+",14.0102
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Generate a short story about a scientist in a lab.<end_of_turn>
+<start_of_turn>model
+",15.4748
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Name three famous figures who were contemporaries of Galileo Galilei.<end_of_turn>
+<start_of_turn>model
+",31.6415
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Create a logo for a shoe company.<end_of_turn>
+<start_of_turn>model
+",7.75657
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Come up with 3 tips for writing effective dialogue.<end_of_turn>
+<start_of_turn>model
+",23.9027
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Explain why it is important to stay hydrated.<end_of_turn>
+<start_of_turn>model
+",21.9224
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Write a definition for the term ""machine learning"".<end_of_turn>
+<start_of_turn>model
+",32.2326
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+What is the scientific definition of metabolism?<end_of_turn>
+<start_of_turn>model
+",29.5132
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Describe the effects of global warming.<end_of_turn>
+<start_of_turn>model
+",21.5604
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Write a short story in 100 words or less.<end_of_turn>
+<start_of_turn>model
+",30.8377
+jtw_mean_diff_tgt,-36.847301959990936,"<bos><start_of_turn>user
+Explain why it is important to establish trust with customers.<end_of_turn>
+<start_of_turn>model
+",20.5413

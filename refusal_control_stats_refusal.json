@@ -1,0 +1,126 @@
+{
+  "dataset": "refusal",
+  "n_paired_statements": 64,
+  "n_rows_total": 959,
+  "dropped_never_steered_rows": 1,
+  "core_fracs": [
+    -2.0,
+    -1.0,
+    0.0,
+    1.0,
+    2.0
+  ],
+  "dose_table_paired": [
+    {
+      "frac": -2.0,
+      "n": 64,
+      "mean_g_read": -1.3193839375,
+      "n_crossed": 35,
+      "n_refused": 19,
+      "frac_refused": 0.296875
+    },
+    {
+      "frac": -1.0,
+      "n": 64,
+      "mean_g_read": 6.326577939062499,
+      "n_crossed": 21,
+      "n_refused": 12,
+      "frac_refused": 0.1875
+    },
+    {
+      "frac": 0.0,
+      "n": 64,
+      "mean_g_read": 32.437869218749995,
+      "n_crossed": 0,
+      "n_refused": 5,
+      "frac_refused": 0.078125
+    },
+    {
+      "frac": 1.0,
+      "n": 64,
+      "mean_g_read": 49.34662656249999,
+      "n_crossed": 0,
+      "n_refused": 2,
+      "frac_refused": 0.03125
+    },
+    {
+      "frac": 2.0,
+      "n": 64,
+      "mean_g_read": 53.930724999999995,
+      "n_crossed": 0,
+      "n_refused": 1,
+      "frac_refused": 0.015625
+    }
+  ],
+  "mcnemar_baseline_to_low": {
+    "from_frac": 0.0,
+    "to_frac": -2.0,
+    "gained": 14,
+    "lost": 0,
+    "n_discordant": 14,
+    "p_exact": 0.0001220703125,
+    "n_eligible_to_gain": 59,
+    "n_eligible_to_lose": 5
+  },
+  "mcnemar_baseline_to_high": {
+    "from_frac": 0.0,
+    "to_frac": 2.0,
+    "gained": 0,
+    "lost": 4,
+    "n_discordant": 4,
+    "p_exact": 0.125,
+    "n_eligible_to_gain": 59,
+    "n_eligible_to_lose": 5
+  },
+  "sign_control": {
+    "frac_a": -2.0,
+    "frac_b": 2.0,
+    "n": 64,
+    "n_refused_a": 19,
+    "n_refused_b": 1,
+    "odds_ratio": 26.6,
+    "p_fisher": 9.655822605087397e-06
+  },
+  "dose_vs_baseline": {
+    "frac_a": -2.0,
+    "frac_b": 0.0,
+    "n": 64,
+    "n_refused_a": 19,
+    "n_refused_b": 5,
+    "odds_ratio": 4.982222222222222,
+    "p_fisher": 0.0026789901604300816
+  },
+  "trend_pooled": {
+    "n": 689,
+    "z": -6.863178774137809,
+    "p": 6.734485893860657e-12,
+    "slope_per_eps_star": -0.05491990846681922
+  },
+  "crossing_vs_magnitude": {
+    "strata": [
+      {
+        "abs_frac_lo": 0.0,
+        "abs_frac_hi": 1.2,
+        "n": 454,
+        "crossed_refused": 6,
+        "crossed_total": 23,
+        "not_crossed_refused": 11,
+        "not_crossed_total": 431,
+        "odds_ratio": 13.475935828877006,
+        "p_fisher": 7.364154122414613e-05
+      },
+      {
+        "abs_frac_lo": 1.2,
+        "abs_frac_hi": 2.1,
+        "n": 306,
+        "crossed_refused": 18,
+        "crossed_total": 45,
+        "not_crossed_refused": 5,
+        "not_crossed_total": 261,
+        "odds_ratio": 34.13333333333333,
+        "p_fisher": 6.965788153661169e-13
+      }
+    ],
+    "mh_odds_ratio": 24.1591737545565
+  }
+}
