@@ -105,3 +105,51 @@ def test_untemplate_takes_the_first_user_turn_not_the_whole_string():
 
 def test_untemplate_is_defined_on_non_string_input():
     assert untemplate(None) == "None"
+
+
+# --------------------------------------------------------------- scores_vs_gold
+
+from refusal_judge import scores_vs_gold
+
+
+def test_scores_vs_gold_perfect_judge():
+    m = scores_vs_gold([1, 1, 0, 0], [1, 1, 0, 0])
+    assert m["accuracy"] == 1.0 and m["precision"] == 1.0 and m["recall"] == 1.0
+    assert (m["tp"], m["fp"], m["tn"], m["fn"]) == (2, 0, 2, 0)
+
+
+def test_scores_vs_gold_exposes_an_always_positive_judge():
+    """The 2026-08-27 failure mode: OLMo said REFUSED on ~2/3 of rows regardless of
+    content. Against a balanced gold set that judge has recall 1.0, precision at the
+    gold base rate, and pos_rate 1.0 while accuracy sits at chance. Kappa against the
+    other judge cannot distinguish this from a genuine disagreement; these can."""
+    m = scores_vs_gold([1] * 8, [1, 1, 1, 1, 0, 0, 0, 0])
+    assert m["recall"] == 1.0
+    assert m["precision"] == 0.5
+    assert m["pos_rate"] == 1.0
+    assert m["accuracy"] == 0.5
+
+
+def test_scores_vs_gold_exposes_a_conservative_judge():
+    """The substring judge's known shape: high precision, misses refusals that do not
+    open with a marker. Accuracy stays well above chance, which is the discriminating
+    signal against the always-positive case above."""
+    m = scores_vs_gold([1, 0, 0, 0, 0, 0, 0, 0], [1, 1, 1, 1, 0, 0, 0, 0])
+    assert m["precision"] == 1.0
+    assert m["recall"] == 0.25
+    assert m["accuracy"] == 0.625
+
+
+def test_scores_vs_gold_rejects_mismatched_lengths():
+    with pytest.raises(ValueError):
+        scores_vs_gold([1, 0], [1, 0, 1])
+
+
+def test_scores_vs_gold_empty_is_defined():
+    m = scores_vs_gold([], [])
+    assert m["n"] == 0 and m["accuracy"] == 0.0 and m["f1"] == 0.0
+
+
+def test_scores_vs_gold_no_positives_predicted_does_not_divide_by_zero():
+    m = scores_vs_gold([0, 0], [1, 0])
+    assert m["precision"] == 0.0 and m["f1"] == 0.0 and m["recall"] == 0.0

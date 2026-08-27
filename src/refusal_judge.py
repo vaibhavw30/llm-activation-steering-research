@@ -226,15 +226,116 @@ def _spot_check(ds, arm, scored, k, device):
           f"kappa={ag['cohen_kappa']:.3f}  unparseable={n_unparseable} -> {out}")
 
 
+def scores_vs_gold(pred, gold):
+    """Accuracy / precision / recall / F1 of one binary judge against a gold label, plus
+    the judge's own positive rate. Reported instead of agreement because AGREEMENT
+    CANNOT SAY WHICH JUDGE IS WRONG: on 2026-08-27 the substring and OLMo judges scored
+    kappa 0.03-0.10 against each other twice running, and only a gold label distinguished
+    "the judges disagree" from "one judge is emitting a biased coin". `pos_rate` is the
+    tell for the latter: a judge whose pos_rate sits near its accuracy while recall is
+    ~1.0 and precision ~= the gold base rate is labelling almost everything positive."""
+    pred = np.asarray(pred, int)
+    gold = np.asarray(gold, int)
+    if len(pred) != len(gold):
+        raise ValueError(f"lengths differ: {len(pred)} vs {len(gold)}")
+    if not len(pred):
+        return {"n": 0, "accuracy": 0.0, "precision": 0.0, "recall": 0.0, "f1": 0.0,
+                "pos_rate": 0.0, "tp": 0, "fp": 0, "tn": 0, "fn": 0}
+    tp = int(((pred == 1) & (gold == 1)).sum())
+    fp = int(((pred == 1) & (gold == 0)).sum())
+    tn = int(((pred == 0) & (gold == 0)).sum())
+    fn = int(((pred == 0) & (gold == 1)).sum())
+    prec = tp / (tp + fp) if tp + fp else 0.0
+    rec = tp / (tp + fn) if tp + fn else 0.0
+    f1 = 2 * prec * rec / (prec + rec) if prec + rec else 0.0
+    return {"n": int(len(pred)), "accuracy": float((pred == gold).mean()),
+            "precision": float(prec), "recall": float(rec), "f1": float(f1),
+            "pos_rate": float(pred.mean()), "tp": tp, "fp": fp, "tn": tn, "fn": fn}
+
+
+def gold_check(screen_path, k=0, device="cuda"):
+    """Grade BOTH judges against a label neither of them produced.
+
+    refusal_screen.py writes one row per held-out prompt tagged `kind` (harmful or
+    harmless) together with the model's own completion. The Phase 2 screen measured
+    gemma-2-2b-it refusing 0.969 of harmful and 0.031 of harmless prompts, so
+    `kind == "harmful"` is a ~97%-accurate stand-in for "this completion is a refusal"
+    that is grounded in PROMPT HARMFULNESS rather than in either judge's opinion. The
+    completions come from the same model at the same max_new_tokens as the experiment,
+    so they carry the same truncation profile.
+
+    This is the calibration the spot-check could not provide. A judge scoring near the
+    97% ceiling is working; a judge scoring near the 50% base rate is not, and the
+    accuracy says which one without either judge being assumed correct."""
+    from judges.olmo_judge import OlmoJudge
+    rows = _read(screen_path)
+    if not rows:
+        raise ValueError(f"[refusal_judge] {screen_path} has no data rows")
+    if "kind" not in rows[0]:
+        raise ValueError(f"[refusal_judge] {screen_path} has no `kind` column, so there "
+                         f"is no gold label to grade against (expected the output of "
+                         f"refusal_screen.py, columns model,chat_template,kind,prompt,"
+                         f"completion,refused)")
+    if k:
+        rng = np.random.default_rng(SEED)
+        rows = [rows[int(i)] for i in sorted(rng.permutation(len(rows))[:min(k, len(rows))])]
+    judge = OlmoJudge(device=device)
+    out_rows, gold, substr, olmo = [], [], [], []
+    n_unparseable = 0
+    for r in rows:
+        g = 1 if str(r["kind"]).strip().lower() == "harmful" else 0
+        sub = int(refused(r.get("completion") or ""))
+        ans = judge.chat(OLMO_SYS, f"INSTRUCTION: {untemplate(r['prompt'])}\n"
+                                   f"RESPONSE: {r['completion']}")
+        lab = parse_olmo_verdict(ans)
+        if lab is None:
+            n_unparseable += 1
+        else:
+            gold.append(g)
+            substr.append(sub)
+            olmo.append(lab)
+        out_rows.append(dict(r, gold_refused=g, substr_refused=sub, olmo_refused=lab,
+                             olmo_raw=str(ans).strip()))
+    res = {"substring": scores_vs_gold(substr, gold), "olmo": scores_vs_gold(olmo, gold),
+           "unparseable": n_unparseable,
+           "gold_positive_rate": float(np.mean(gold)) if gold else 0.0}
+    out = "judge_refusal_goldcheck.csv"
+    with open(out, "w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=list(out_rows[0].keys()))
+        w.writeheader()
+        w.writerows(out_rows)
+    print(f"[refusal_judge] gold check n={res['substring']['n']} "
+          f"(gold positive rate {res['gold_positive_rate']:.3f}, "
+          f"unparseable={n_unparseable}) -> {out}")
+    for name in ("substring", "olmo"):
+        m = res[name]
+        print(f"[refusal_judge]   {name:>9s}: acc={m['accuracy']:.3f} "
+              f"prec={m['precision']:.3f} rec={m['recall']:.3f} f1={m['f1']:.3f} "
+              f"pos_rate={m['pos_rate']:.3f}  (tp={m['tp']} fp={m['fp']} "
+              f"tn={m['tn']} fn={m['fn']})")
+    print(f"[refusal_judge]   agreement between them: "
+          f"{agreement(substr, olmo)['cohen_kappa']:.3f} kappa "
+          f"(reported for continuity; the ACCURACY rows above are the verdict)")
+    return res
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dataset", required=True)
-    ap.add_argument("--arm", required=True, choices=sorted(ARM_FILES))
+    ap.add_argument("--dataset", default="refusal")
+    ap.add_argument("--arm", default="mean", choices=sorted(ARM_FILES))
     ap.add_argument("--spot-check", type=int, default=0,
                     help="re-score this many random rows with the OLMo judge "
                          "(needs .venv-judge-gpu)")
     ap.add_argument("--device", default="cuda")
+    ap.add_argument("--gold-screen", default=None,
+                    help="grade BOTH judges against refusal_screen.py's `kind` column "
+                         "instead of against each other; skips the arm run entirely")
+    ap.add_argument("--gold-n", type=int, default=0,
+                    help="subsample this many screen rows (0 = all)")
     a = ap.parse_args()
+    if a.gold_screen:
+        gold_check(a.gold_screen, a.gold_n, a.device)
+        return
     run(a.dataset, a.arm, a.spot_check, a.device)
 
 
