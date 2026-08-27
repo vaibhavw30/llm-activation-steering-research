@@ -41,7 +41,7 @@ Horizon-0 context-shift confound on truth.
 
 ```bash
 cd ~/llm-activation-steering-research
-PYTHONPATH=src .venv/bin/python -m pytest tests/ -q      # 298 passed, 1 skipped
+PYTHONPATH=src .venv/bin/python -m pytest tests/ -q      # 399 passed, 1 skipped (as of 2026-08-27)
 .venv/bin/python src/prep_refusal.py                     # needs internet (AdvBench + Alpaca)
 ls -l got_datasets/refusal.csv got_datasets/refusal_holdout.csv
 ```
@@ -72,9 +72,46 @@ rsync -av \
 huggingface.co/google/gemma-2-2b-it before you submit it, even if you expect to keep the
 base model.
 
+### Phase 2a — stage the `-it` weights on the LOGIN node (one time, required)
+
+Compute nodes are offline and all four jobs now run with `TRANSFORMERS_OFFLINE=1`, so a
+checkpoint that is not already in `$HF_HOME` cannot be fetched from inside a job. The base
+model is staged from the truth runs; `google/gemma-2-2b-it` almost certainly is not. Skip
+this and the screen job burns a queue cycle and exits 1 on a missing `-it` CSV.
+
 ```bash
 ssh vwudaru@dtai-login.delta.ncsa.illinois.edu
 cd ~/llm-activation-steering-research
+source .venv-dct-gpu/bin/activate
+export HF_HOME=$HOME/hf_cache HF_HUB_DISABLE_XET=1
+hf auth login          # only if the -it license was just accepted; gated repo needs a token
+hf download google/gemma-2-2b-it
+```
+
+Verify both checkpoints resolve offline before spending a queue slot. This is the exact
+check the job does, run on the login node where a failure costs nothing:
+
+```bash
+HF_HOME=$HOME/hf_cache TRANSFORMERS_OFFLINE=1 python3 - <<'EOF'
+from transformers import AutoTokenizer, AutoConfig
+for m in ("google/gemma-2-2b", "google/gemma-2-2b-it"):
+    try:
+        AutoTokenizer.from_pretrained(m); AutoConfig.from_pretrained(m)
+        print(f"OK      {m}")
+    except Exception as e:
+        print(f"MISSING {m}: {type(e).__name__}")
+EOF
+```
+
+Two `OK` lines means Phase 2b can proceed. A `MISSING` line means `hf download` did not
+complete for that model, and the screen job would fail the same way.
+
+Disk: the `-it` checkpoint is another ~5 GB in `$HF_HOME`. Check `du -sh $HOME/hf_cache`
+and your quota before downloading.
+
+### Phase 2b — submit the screen
+
+```bash
 sed -i "s/ACCOUNT_NAME/bhhv-dtai-gh/" deltaai/run_refusal_*.slurm
 grep -h -- --account deltaai/run_refusal_*.slurm     # verify before submitting — must print bhhv-dtai-gh, not ACCOUNT_NAME
 sbatch deltaai/run_refusal_screen.slurm

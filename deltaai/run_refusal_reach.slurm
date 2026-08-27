@@ -17,6 +17,12 @@ module load python/miniforge3_pytorch
 source .venv-dct-gpu/bin/activate
 export PYTHONPATH=src
 export HF_HUB_DISABLE_XET=1
+# Compute nodes are OFFLINE (deltaai/CLUSTER_OPERATIONS.md:65). Without these two the
+# job looks in ~/.cache/huggingface, finds nothing, and dies trying to reach the network.
+# Every working job on this cluster sets both; these three refusal jobs did not.
+# Both models must be pre-staged on the LOGIN node first: see REFUSAL_RUN.md Phase 2.
+export HF_HOME=${HF_HOME:-$HOME/hf_cache}
+export TRANSFORMERS_OFFLINE=1
 echo "Job $SLURM_JOB_ID on $(hostname)"; nvidia-smi
 
 # "optional artifacts absent for refusal: dct, mag" is EXPECTED here — the minimal
