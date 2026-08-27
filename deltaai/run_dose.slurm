@@ -25,10 +25,11 @@
 # committed artifact, and it refuses to start if a dose file already exists (pass --resume).
 #
 # Cost: 56 baseline + 6 directions x 24 non-zero doses x 56 prompts = 8,120 generations per
-# dataset, plus 3,480 single forwards for the verdict margin. Scaling from MAG E4 (2,520
-# generations in 15 to 40 min), budget 50 min to 2.2 h per dataset; the 6h wall covers both
-# datasets with headroom. If it times out anyway, resubmit with RESUME=1 and it picks up at the
-# first cell that is not complete in BOTH output files.
+# dataset, plus 3,480 single forwards for the verdict margin. MEASURED 2026-08-26 at 14.2 s per
+# (direction, dose) cell: about 34 min per dataset, 1.2 h for both including model loads. The 6h
+# wall below is therefore generous; 3h would schedule better under backfill and still leave 2.5x.
+# If it ever does time out, resubmit with RESUME=1 and it picks up at the first cell that is not
+# complete in BOTH output files.
 set -e
 module load python/miniforge3_pytorch
 source .venv-dct-gpu/bin/activate

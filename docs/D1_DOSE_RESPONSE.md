@@ -202,11 +202,20 @@ PYTHONPATH=src ./.venv/bin/python src/dose_response.py --dataset cities --device
 ### 3.6 Cost and artifact safety
 
 8,120 generations per dataset (56 baseline plus 6 directions x 24 non-zero doses x 56 prompts)
-plus 3,480 extra single forwards for the verdict margin. Scaling from the MAG E4 run, which did
-2,520 generations in 15 to 40 minutes, that is roughly 50 minutes to 2.2 hours per dataset;
-`run_dose.slurm` caps the wall at 6 hours for both. Judging is 4,640 completions per dataset,
-9,280 total, about 3.2x the MAG E4 judge run that took 40 minutes; `run_dose_judge.slurm` caps at
-4 hours.
+plus 3,480 extra single forwards for the verdict margin.
+
+**Measured on DeltaAI, 2026-08-26: 14.2 s per (direction, dose) cell**, giving about 34 minutes
+per dataset and 1.2 hours for both, model loads included. The pre-run figure of 50 minutes to 2.2
+hours per dataset was scaled from the MAG E4 run and was conservative by roughly 3x; use the
+measured number for planning T1. The per-cell cost is the same for both datasets because
+`FACTUAL_PROMPTS` and `YESNO_STATEMENTS` are fixed lists rather than dataset-derived, so only the
+directions and the injection layer differ.
+
+`run_dose.slurm` still caps the wall at 6 hours. That is now much more headroom than the job
+needs; 3 hours would schedule better under backfill and still leave a 2.5x margin. Judging is
+4,640 completions per dataset, 9,280 total, about 3.2x the MAG E4 judge run that took 40 minutes,
+so roughly 2 hours; `run_dose_judge.slurm` caps at 4 hours. That judge estimate is still a
+scaling, not a measurement, since it runs a different model (OLMo-3-7B).
 
 Writes only `dose_<ds>.csv`, `dose_yesno_<ds>.csv`, `dose_meta_<ds>.json`, and downstream
 `judge_dose_<ds>.csv`, `dose_summary_<ds>.csv`, `dose_window_<ds>.csv`,

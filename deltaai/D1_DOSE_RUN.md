@@ -17,8 +17,19 @@ run_dose.slurm  ->  dose_<ds>.csv          ->  run_dose_judge.slurm  ->  judge_d
                                                                             (laptop, CPU)
 ```
 
-**Rough cost:** generation 1.5 to 4.5 h for both datasets, judge about 2 h. Both walls are capped
-(`06:00:00` and `04:00:00`) so a hang cannot drain the allocation.
+**Cost, measured 2026-08-26:** generation runs at 14.2 s per (direction, dose) cell, so about
+34 min per dataset and **1.2 h for both**, model loads included. The judge is still an estimate at
+about 2 h. Walls are capped at `06:00:00` and `04:00:00` so a hang cannot drain the allocation;
+the generation wall could safely come down to `03:00:00` and would schedule better under backfill.
+
+To watch progress and project the finish:
+
+```bash
+n=$(grep -a -c "rel=" dose_*.out); t=$(squeue -u $USER -h -o "%M" | head -1); echo "$n $t" | awk '{split($2,a,"-"); if(length(a)>1){d=a[1];hms=a[2]}else{d=0;hms=a[1]}; split(hms,b,":"); if(length(b)==3){s=b[1]*3600+b[2]*60+b[3]}else if(length(b)==2){s=b[1]*60+b[2]}else{s=b[1]}; s+=d*86400; r=s/$1; printf "cells %d/288  elapsed %s  %.1f s/cell  projected total %.1f h\n", $1, $2, r, 288*r/3600}'
+```
+
+288 cells total, 144 per dataset. The rate is stable across datasets because `FACTUAL_PROMPTS`
+and `YESNO_STATEMENTS` are fixed lists, not dataset-derived.
 
 ---
 
