@@ -388,14 +388,151 @@ was then built specifically to put four points inside that band. One honest corr
 *not* generalise. On common_claim the gap is 1.66x and the ranges overlap once the per-statement
 arm is included, so our original 6.1x claim was generalising from the mean arm on one dataset.
 
-**4, the halfspace.** This is where the PI's instinct paid off most. The target set is not merely
-imperfect, it is **semantically vacuous by construction**. All 200 certified argmax flips
-succeed, which means the control machinery does exactly what it promises. But 85% of the cities
-targets are the tokens " North" and " South", so a perfect flip turns "South Korea" into "North
-Korea" and leaves the sentence's truth value untouched. Vacuity 0.855 to 0.945; **at most 5.5% of
-our successes actually made the claim false.** The two datasets are vacuous for different reasons
-(`countries` on cities, `runnerup` on common_claim), which is itself a correction to what we had
-recorded.
+**4, the halfspace.** This is where the PI's instinct paid off most, and it is the strongest
+single result in the audit, so it gets the long treatment below rather than a paragraph.
+
+---
+
+#### 3.1 What the target set actually is
+
+The reachability program needs a **target**: a region of activation space you are steering into.
+In token space that region is an **argmax cone**, the set of activations for which one particular
+token wins the output competition.
+
+Geometrically the cone for token T is bounded by faces, and each face is a *tie* with some other
+token, the plane where T and that competitor have equal logits. The cone's **nearest** face is
+the tie with whatever token is currently in second place.
+
+The certificate solves for the **least-norm displacement** into that cone. That is the design
+philosophy of the whole reachability approach, and for control it is the right philosophy: find
+the cheapest intervention that provably works.
+
+#### 3.2 The mechanism: minimum norm is adversarial to semantics
+
+Here is the trap, and it is worth stating as a general principle rather than as a fact about our
+particular run.
+
+> The cheapest face of the argmax cone is the tie with the token the model was **already nearly
+> going to emit**. So a minimum-norm objective, by construction, selects the target that is
+> *least semantically distant* from what the model was going to do anyway. Cheapness and
+> meaninglessness are the same property seen from two directions.
+
+Concretely. Take "The city of Weifang is in". Unsteered, the model continues "the north of
+Shandong Province, China." The token " North" is already sitting right next to the argmax in
+logit space, because "North East China" was an entirely plausible continuation. That makes
+" North" extremely cheap to reach, and completely inert, because North East China is still China.
+
+The optimiser did exactly what it was asked. The request was wrong.
+
+#### 3.3 The census: what the optimiser actually picked
+
+| | cities | common_claim |
+|---|---:|---:|
+| distinct target tokens over 200 statements | **16** | 161 |
+| top 2 tokens as a share of all targets | **85.0%** | 9.0% |
+| directional (" North", " South", ...) | **170 (85.0%)** | 2 (1.0%) |
+| content words | 22 (11.0%) | 151 (75.5%) |
+| function words | 8 (4.0%) | 36 (18.0%) |
+| punctuation | 0 | 11 (5.5%) |
+
+Sixteen distinct tokens across two hundred statements. " North" was chosen 87 times and " South"
+83 times. **89% of certified targets are tokens that cannot carry the truth value of the claim**,
+being 85% directional plus 4% function words. Only 22 targets are content words, Wilson interval
+[0.070, 0.162].
+
+#### 3.4 The measurement, and why it needed three outcomes rather than two
+
+The cities dataset is templated and `got_datasets/cities.csv` carries `correct_country` for every
+row, so "did the claim's truth value change?" reduces to a **string test against ground truth**.
+No judge, no model opinion, deterministic and auditable. That is better than judging it, not a
+compromise.
+
+The first pass used two buckets, still names the true country or not. Inspection killed that
+immediately:
+
+| stem | true | unsteered | steered | outcome |
+|---|---|---|---|---|
+| Weifang is in | China | the north of Shandong Province, China. | **North** East China, and is the capital | vacuous |
+| Dehra Dun is in | India | the state of Uttarakhand, India. It | **North** India, in the state North North | vacuous |
+| Mosul is in | Iraq | the north of Iraq, and it is | **Syria**, and it is the largest city | changed |
+| Krasnodar is in | Russia | Russia, in the Krasnodar Kra | **Ukraine**, and it is the second largest | changed |
+| Langfang is in | China | Hebei province, China. It is | the northern part of Hebei Province, | **indeterminate** |
+
+The Langfang row is the reason for the third bucket. That completion ran out of its 8-token
+budget before reaching "China". It has not become false, it is a truncated true statement. A
+two-way test scores it as a steering success. The three-way split (vacuous / changed /
+indeterminate) is what makes the vacuity lower bound honest.
+
+#### 3.5 The denominator problem, which is a separate flaw
+
+Of 200 statements, only **110 named the true country in the unsteered completion**. The other 90
+never asserted the fact within 8 tokens, so they cannot demonstrate a steering-induced loss of it
+either way. They are uninformative, not negative. So 45% of the certified set is measurement-dead
+at this budget, and that is a design flaw in our own evaluation, separate from the target-set
+flaw.
+
+#### 3.6 The result
+
+Of the 110 informative statements:
+
+| outcome | n | share |
+|---|---:|---:|
+| **vacuous**, still names the true country | 94 | **85.5%** |
+| indeterminate, names no country | 10 | 9.1% |
+| **changed**, names a different country | **6** | **5.5%** |
+
+- Vacuity, lower bound **0.855**, Wilson 95% [0.775, 0.915]
+- Vacuity, upper bound **0.945**, [0.885, 0.980], counting indeterminate as vacuous
+- Certified flips that demonstrably made the claim false: **6 of 110**
+
+Say this in the same breath as the number above: `hit_target` is **1.000**. Two hundred of two
+hundred argmax flips succeeded. The certificate was tight, the perturbation left the text fluent,
+the control did precisely what it promised. The fact moved in at most six cases.
+
+#### 3.7 The two datasets fail for genuinely different reasons
+
+This is the part our own design spec got wrong, and it should be reported as a correction rather
+than buried.
+
+- **cities uses `target_mode = countries`.** The objective *did* aim at country names. Minimum
+  norm then collapsed it onto country-adjacent modifiers, because " North" is a cheap step toward
+  the country region while being semantically null. Failure by optimisation pressure.
+- **common_claim uses `target_mode = runnerup`.** The target simply **is** the model's
+  second-most-likely token. This objective never aimed at falsity at all, it aimed at the smallest
+  available semantic step, by definition. Failure by specification.
+
+The spec recorded `countries` for both and generalised. So common_claim's target set is vacuous
+*by definition* rather than by accident, and its healthier-looking census (75.5% content words) is
+misleading: a content-word target under `runnerup` is still just the model's own second choice.
+**Never describe both datasets with one sentence.**
+
+#### 3.8 Why this is the good kind of negative result
+
+Everything that could have been broken was not. The control theory works, the certificate is
+tight, the perturbation is benign to fluency, and the defect is located entirely in *how the
+target region was specified*, which is a parameter rather than a fact about the model.
+
+That is the difference between "steering does not work" and "we aimed it at the wrong thing".
+Only the second is fixable, and this result says we are in the second case.
+
+**The one-line version for the meeting:** we solved the control problem perfectly and discovered
+we had written down the wrong control problem.
+
+#### 3.9 What it hands to T1
+
+1. **The stoplist is now empirical rather than guessed.** Excluding North, South, East, West and
+   function words removes **178 of 200** cities targets. T1 is therefore a genuinely different
+   optimisation problem rather than a tweak, and the budget ratio should be expected to be
+   substantial, because the cheap faces of the cone have been banned.
+2. **The success criterion is calibrated.** T1 has to beat 5.5%. Realistically, below roughly 20%
+   of certified flips producing a real falsehood is not worth reporting as a fix.
+3. **The denominator must be fixed too.** Extend the generation budget past 8 tokens, or restrict
+   to statements whose unsteered completion actually asserts the fact.
+4. **common_claim needs a different target mode before T1 can touch it.** Starting with cities
+   only was the right call, and the reason is now stronger than "the allowed set is harder to
+   define".
+
+---
 
 **5 and 6, the layer sweep.** The PI asked whether the same linear relationship holds mapping
 from different source layers. It does, and that is not the interesting part. Truth is readable at
