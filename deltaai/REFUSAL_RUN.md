@@ -166,6 +166,43 @@ and see "The sign of the deciding frac" below.
   context-shift confound this design exists to avoid. Do not "simplify" this by templating
   later in the pipeline. **Record the model change as a stated caveat in the writeup.**
 
+## Phase 2 result — decided 2026-08-27, job 3034032
+
+```
+[decision] base google/gemma-2-2b     harmful refusal rate = 0.000
+[decision] it   google/gemma-2-2b-it  harmful refusal rate = 0.969   (31/32)
+[decision] harmless-prompt rate (gates nothing): base=0.000  it=0.031
+[decision] DECISION: use google/gemma-2-2b-it --chat-template (base_rate=0.000 < 0.10)
+```
+
+The base checkpoint never refuses anything, so the fallback branch is taken and
+**`google/gemma-2-2b-it` is the model for the whole refusal control**. Two consequences
+that must reach the writeup:
+
+- **Stated caveat.** The positive control runs on a different checkpoint than the truth
+  run (`gemma-2-2b`). A `readout-only` verdict here therefore cannot be blamed on the
+  model being incapable of refusal: at 0.969 this checkpoint plainly refuses. But an
+  `actuatable` verdict does not automatically transfer back to the truth run's model.
+- **The harmless baseline is low.** At 0.031 (1 of 32) the nonzero-`frac=0` hazard the
+  screen warns about is small, but the sign check at the deciding frac is still required.
+
+`got_datasets/refusal.csv` and `refusal_holdout.csv` were rebuilt on the laptop with
+`--chat-template google/gemma-2-2b-it` and re-rsynced. Verified after the rebuild: 976 fit
+rows (488/488), 64 holdout (32/32), exactly two `<start_of_turn>` markers per row (no
+double-templating), every row ending at the open model turn, and fit/holdout overlap 0.
+
+`prep_refusal.apply_template` and `refusal_screen.chat_wrap` issue byte-identical
+`apply_chat_template(..., tokenize=False, add_generation_prompt=True)` calls, so the string
+the 0.969 gate measured is exactly the string stored in the CSVs. Every downstream stage
+(`extract.py:125`, `reach_steer.py:92`, `dct_steer_utils.generate:64`) tokenizes with the
+default `add_special_tokens=True`, adding a BOS on top of the template's own `<bos>` in all
+cases. That is consistent across stages, which is what the linearization point requires.
+
+**Do not re-submit `run_refusal_screen.slurm` now.** It would apply the template a second
+time to the already-templated holdout file. See the warning in Phase 2b.
+
+---
+
 ## Phase 3 — prep, then reach (cluster)
 
 Wait for `run_refusal_prep.slurm` (submitted above), then check the meta before spending
