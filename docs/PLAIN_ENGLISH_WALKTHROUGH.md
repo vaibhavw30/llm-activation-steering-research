@@ -537,6 +537,39 @@ versus behavior: what the probe reports against what the model actually writes.
 **direction.** A unit vector in activation space that supposedly encodes a concept. Steering means
 adding a multiple of it to the activation.
 
+**arm.** A whole experimental protocol: how the direction is chosen *and* how the magnitude is
+chosen. Not a synonym for direction. The word gets used for two different splits, so check which
+one is meant:
+
+- *naive against reachability* (the S3 sense, and the PI's item 3). The **naive arm**
+  (`src/mag/steer.py`) takes MAG's truth direction and sweeps a hand-picked `tau`. The
+  **reachability arm** (`src/reach_steer.py`) takes the Jacobian pullback and sweeps fractions of
+  the computed certificate `eps*`. Same injection operator, same layer, same broadcast convention,
+  all three verified in code. On cities the naive arm swept 0.2892 to 0.9638 of the activation
+  norm and the reachability mean arm swept 0.0119 to 0.0475, which is the 6.09x disjointness.
+- *mean against per-statement* (inside the reachability arm). The **mean arm** applies one shared
+  direction to the 32 `FACTUAL_PROMPTS` and is the held-out arm. The **per-statement arm** gives
+  every statement its own direction and its own budget `eps_i`, on 200 statement stems that share
+  zero prompts with those 32. In the refusal control the mean arm never crossed and the
+  per-statement arm produced the `actuatable` verdict, which is why that verdict is in-sample.
+
+**the six directions in D1's panel.** Directions are what arms push along. D1 tests all six on one
+common axis, and significance is always measured against `rand_ctrl` at the same dose rather than
+against zero:
+
+| direction | what it is |
+|---|---|
+| `sup_grad` | the logistic regression gradient, the only cleanly directional truth axis per S1 |
+| `sup_mean_diff` | the contrastive mean difference, the reference axis used throughout |
+| `mag_u_gold` | the naive arm's headline direction |
+| `mag_resid_pc1` | **not a truth axis**, the norm-effect control |
+| `jtw_mean_diff_tgt` | the reachability arm's direction |
+| `rand_ctrl` | seeded Gaussian unit vector, the significance control |
+
+`sup_grad` and `sup_mean_diff` are the same pair from step 01 that only agreed at cosine 0.413.
+That is why "no direction beats the control" is the honest statement of D1's result, rather than
+"no direction did anything".
+
 **halfspace.** A linear probe splits the 2304-dimensional space with a flat boundary. Everything
 on one side is TRUE, everything on the other is FALSE. The FALSE side is a halfspace, and for a
 long time it was our target set.
