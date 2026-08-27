@@ -112,7 +112,11 @@ def load_geometry(ds):
         "h_src_median": float(np.median(h)),
         "A_prefix_norm": float(md["A_prefix_norm"]),
         "input_scale": float(meta["input_scale"]),
-        "model_name": str(meta.get("model_name", su.MODEL_NAME)),
+        # The key is "model", not "model_name". reach_hop.load_meta reads it this way and
+        # reach_steer.py:102 documents why it matters: falling through to the base gemma-2-2b
+        # literal on an -it run would steer the wrong checkpoint silently. `or` not a get()
+        # default, because make_reach_meta.py writes the key and it can be present as null.
+        "model_name": str(meta.get("model") or su.MODEL_NAME),
         "eps_star_mean_diff_tgt": float(summ["directions"]["mean_diff_tgt"]["median_eps_star"]),
     }
 

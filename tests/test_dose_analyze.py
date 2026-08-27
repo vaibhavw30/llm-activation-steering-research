@@ -31,10 +31,48 @@ def test_holm_never_exceeds_one():
     assert np.all(A.holm([0.4, 0.5, 0.9]) <= 1.0)
 
 
+def test_flip_decomposition_separates_parse_gain_from_verdict_reversal(tmp_path, monkeypatch):
+    """The committed flip definition counts "baseline did not answer, steered did" and
+    "baseline said yes, steered said no" as the same event. Only the second is truthfulness."""
+    monkeypatch.chdir(tmp_path)
+    rows = []
+    for i in range(10):
+        # 6 statements where the unsteered model produced no yes/no at all
+        base = "?" if i < 6 else "yes"
+        ans = "no" if i < 8 else "yes"
+        rows.append(dict(direction="sup_grad", scale="+0.3000", statement=f"S{i}",
+                         answer=ans, base_answer=base,
+                         flipped=int(ans != base and ans != "?"),
+                         margin=0.4, base_margin=0.5, d_margin=-0.1, p_yes=0.4, p_no=0.5))
+    pd.DataFrame(rows).to_csv("dose_yesno_x.csv", index=False)
+    out = A.yesno_counts("x").iloc[0]
+    assert out["k_flip"] == 8            # 6 parse gains + 2 real reversals
+    assert out["k_parse_gain"] == 6
+    assert out["k_flip_true"] == 2
+    assert out["base_parse_rate"] == 0.4
+
+
+def test_a_fully_unparseable_baseline_makes_every_flip_a_parse_gain(tmp_path, monkeypatch):
+    """The case the cluster run actually hit: 0% baseline parse rate. Every flip is then a
+    parse gain by construction and none of them is evidence about truthfulness."""
+    monkeypatch.chdir(tmp_path)
+    rows = [dict(direction="sup_grad", scale="+0.3000", statement=f"S{i}",
+                 answer="no", base_answer="?", flipped=1,
+                 margin=0.4, base_margin=0.5, d_margin=-0.1, p_yes=0.4, p_no=0.5)
+            for i in range(24)]
+    pd.DataFrame(rows).to_csv("dose_yesno_z.csv", index=False)
+    out = A.yesno_counts("z").iloc[0]
+    assert out["k_flip"] == 24
+    assert out["k_parse_gain"] == 24
+    assert out["k_flip_true"] == 0
+    assert out["base_parse_rate"] == 0.0
+
+
 def _summary(flip_by_dir, k_incoh=5, n=24, n_j=32):
     """One summary row per (direction, dose), plus the unsteered baseline row."""
     rows = [{"direction": "baseline", "scale": 0.0, "n_yesno": n, "k_flip": 0,
-             "flip_rate": 0.0, "mean_d_margin": 0.0, "sd_d_margin": 0.0,
+             "flip_rate": 0.0, "k_parse_gain": 0, "k_flip_true": 0, "base_parse_rate": 1.0,
+             "mean_d_margin": 0.0, "sd_d_margin": 0.0,
              "wilcoxon_p_raw": 1.0, "n_judged": n_j, "k_false": 1, "k_incoh": 5,
              "false_rate": 1 / n_j, "incoh_rate": 5 / n_j}]
     for d in DIRS:
@@ -42,7 +80,9 @@ def _summary(flip_by_dir, k_incoh=5, n=24, n_j=32):
             k = flip_by_dir(d, s)
             ki = k_incoh(d, s) if callable(k_incoh) else k_incoh
             rows.append({"direction": d, "scale": s, "n_yesno": n, "k_flip": k,
-                         "flip_rate": k / n, "mean_d_margin": 0.0, "sd_d_margin": 0.1,
+                         "flip_rate": k / n, "k_parse_gain": 0, "k_flip_true": k,
+                         "base_parse_rate": 1.0,
+                         "mean_d_margin": 0.0, "sd_d_margin": 0.1,
                          "wilcoxon_p_raw": 1.0, "n_judged": n_j, "k_false": k,
                          "k_incoh": ki, "false_rate": k / n_j, "incoh_rate": ki / n_j})
     return pd.DataFrame(rows)

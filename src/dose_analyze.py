@@ -84,9 +84,23 @@ def holm(pvals):
 
 # ------------------------------------------------------------------ per-cell counts
 def yesno_counts(ds):
-    """Per (direction, signed dose): flip count out of n, and the paired margin shift."""
+    """Per (direction, signed dose): flip count out of n, the paired margin shift, and the
+    decomposition of the flip count that tells you what it actually measured.
+
+    `flipped` (from src/mag/steer.py:88) is "the steered answer parses as yes/no AND differs
+    from the baseline answer". When the unsteered answer did not parse, recorded as "?", that
+    condition is satisfied by ANY parseable steered answer, including "yes" on a true
+    statement. So the same integer counts two different events:
+
+        k_parse_gain : baseline "?" -> steered "yes" or "no".  The model began answering.
+        k_flip_true  : baseline "yes" -> steered "no", or "no" -> "yes".  The verdict reversed.
+
+    Only the second is a truthfulness effect. The first is a formatting or compliance effect
+    and would look identical in every flip rate this project has published, because no run
+    before D1 logged the per-statement baseline answer needed to separate them."""
     df = pd.read_csv(f"dose_yesno_{ds}.csv")
     df["scale"] = df["scale"].astype(float)
+    yn = {"yes", "no"}
     rows = []
     for (d, s), g in df.groupby(["direction", "scale"]):
         dm = g["d_margin"].astype(float).to_numpy()
@@ -95,9 +109,16 @@ def yesno_counts(ds):
             w_p = float(wilcoxon(dm, zero_method="wilcox", alternative="two-sided").pvalue)
         else:
             w_p = 1.0
+        a = g["answer"].astype(str)
+        b = g["base_answer"].astype(str)
+        parse_gain = int(((~b.isin(yn)) & a.isin(yn)).sum())
+        flip_true = int((b.isin(yn) & a.isin(yn) & (a != b)).sum())
         rows.append({"direction": d, "scale": s, "n_yesno": len(g),
                      "k_flip": int(g["flipped"].sum()),
                      "flip_rate": float(g["flipped"].mean()),
+                     "k_parse_gain": parse_gain,
+                     "k_flip_true": flip_true,
+                     "base_parse_rate": float(b.isin(yn).mean()),
                      "mean_d_margin": float(dm.mean()),
                      "sd_d_margin": float(dm.std(ddof=1)) if len(dm) > 1 else 0.0,
                      "wilcoxon_p_raw": w_p})
@@ -291,8 +312,8 @@ def run(ds):
 
     w = classify_windows(window_tests(sm, has_judged), has_judged)
     # carry the rates alongside the p-values so the window file is readable on its own
-    rate_cols = [c for c in ("flip_rate", "false_rate", "incoh_rate", "mean_d_margin")
-                 if c in sm.columns]
+    rate_cols = [c for c in ("flip_rate", "k_flip_true", "k_parse_gain", "false_rate",
+                             "incoh_rate", "mean_d_margin") if c in sm.columns]
     w = w.merge(sm[["direction", "scale"] + rate_cols], on=["direction", "scale"], how="left")
     w.to_csv(f"dose_window_{ds}.csv", index=False)
     print(f"[D1] wrote dose_window_{ds}.csv")
@@ -300,13 +321,30 @@ def run(ds):
     plot_dose(ds, sm, meta, f"plot_d1_dose_{ds}.png")
     plot_margin(ds, sm, meta, f"plot_d1_margin_{ds}.png")
 
+    # What the flip count actually counted. Printed before the verdict, because it decides
+    # how the verdict may be read.
+    base_pr = float(sm["base_parse_rate"].max())
+    tot_flip = int(sm.loc[sm["direction"] != BASELINE, "k_flip"].sum())
+    tot_gain = int(sm.loc[sm["direction"] != BASELINE, "k_parse_gain"].sum())
+    tot_true = int(sm.loc[sm["direction"] != BASELINE, "k_flip_true"].sum())
+    print(f"\n[D1] flip decomposition: {tot_flip} flips = {tot_gain} parse gains "
+          f"(baseline did not answer) + {tot_true} genuine yes/no reversals; "
+          f"unsteered parse rate {base_pr:.0%}")
+    if tot_flip and tot_gain > tot_true:
+        print("     WARNING: the flip metric here is majority parseability, not truthfulness.")
+        print("     A window that fires on flips but NOT on judged FALSE is a formatting")
+        print("     effect. Read k_flip_true and the verdict margin instead. This applies to")
+        print("     the committed mag_verdict_flips_*.csv, which uses the same definition and")
+        print("     never logged the baseline answer needed to see it.")
+
     clean = w[w["clean_window"]]
     print(f"\n[D1] {ds}: {len(clean)} clean windows out of {len(w)} cells")
     if len(clean):
         print("     PI IS RIGHT branch: behaviour moved above the norm-matched control at")
         print("     doses where coherence was intact.")
-        cols = [c for c in ("direction", "scale", "flip_rate", "false_rate", "incoh_rate",
-                            "padj_flip_vs_rand", "padj_incoh_vs_base") if c in clean.columns]
+        cols = [c for c in ("direction", "scale", "flip_rate", "k_flip_true", "k_parse_gain",
+                            "false_rate", "incoh_rate", "padj_flip_vs_rand",
+                            "padj_incoh_vs_base") if c in clean.columns]
         print(clean[cols].to_string(index=False))
     else:
         print("     NULL IS REAL branch on the discrete outcomes: no dose moved behaviour")

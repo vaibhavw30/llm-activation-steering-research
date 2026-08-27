@@ -240,6 +240,21 @@ artifact.
   verdict margin is immune: `p(yes) - p(no)` is defined whether or not the sampled token happens
   to be a yes/no word. If the parse rate comes back low, section 5 must lead with the margin.
 
+  **Observed on the cluster, 2026-08-26: the cities baseline parse rate is 0%.** Not low, zero.
+  gemma-2-2b is a base completion model and its next token after `Answer:` is never " yes" or
+  " no" on any of the 24 statements. So on this run `flipped` reduces exactly to "the steered
+  output began with yes or no", with no truthfulness content at all. The same code, prompts,
+  model and greedy decoding produced `mag_verdict_flips_*.csv`, so the same is almost certainly
+  true of every flip rate this project has published, including the ones S1 read as
+  directionality. No run before D1 logged the per-statement baseline answer needed to see it.
+
+  `dose_yesno_<ds>.csv` does log it, so `src/dose_analyze.py` now splits the count into
+  `k_parse_gain` (baseline "?" to steered yes/no, a formatting effect) and `k_flip_true`
+  (baseline yes to steered no or the reverse, a real verdict reversal), prints the split before
+  the verdict, and warns when parse gains dominate. The pre-registered rule in section 2 is
+  unchanged; this is a reporting refinement over data the run was already collecting. A window
+  that fires on `k_flip` but not on judged FALSE must be reported as a formatting effect.
+
 ---
 
 ## 4. Result
