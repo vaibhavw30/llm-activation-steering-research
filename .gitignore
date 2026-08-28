@@ -50,3 +50,16 @@ docs/MASTER_EXPLAINER.md
 __pycache__/
 *.pyc
 judge_validation_*.csv
+
+# Reachability audit: large cluster binaries (700 MB combined; regenerate per deltaai/REACH_RUN.md)
+reach_acts_*.npz
+reach_stemacts_*.npz
+reach_margins_*.npz
+reach_svd_*/
+
+# Token-space program: large cluster binaries (regenerate per deltaai/TOKEN_SPACE_RUN.md)
+token_acts_*.npz
+token_geom_*.npz
+
+# Stray SLURM stdout that was never a deliverable
+ts_cc_redo_*.out
