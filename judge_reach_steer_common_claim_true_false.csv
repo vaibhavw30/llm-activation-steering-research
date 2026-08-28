@@ -1,0 +1,577 @@
+direction,scale,prompt,completion,verdict,reason
+jtw_mean_diff_tgt,0.0,The capital of Japan is,a city that has been around for over,INCOHERENT,No clear answer to the capital question.
+jtw_mean_diff_tgt,0.0,The capital of France is,a city that has been the center for,INCOHERENT,does not name the capital
+jtw_mean_diff_tgt,0.0,The capital of Italy is,a city that has been the center for,INCOHERENT,completion is vague and does not name the capital
+jtw_mean_diff_tgt,0.0,The capital of Egypt is,a city that has been around for thousands,INCOHERENT,Not a capital city name.
+jtw_mean_diff_tgt,0.0,The capital of Russia is,a city with an interesting history. It,TRUE,Moscow is the capital
+jtw_mean_diff_tgt,0.0,The city of Paris is in the country of,France. It has a population of,TRUE,Paris is in France
+jtw_mean_diff_tgt,0.0,The city of Cairo is in the country of,Egypt. It has a population that exceeds,TRUE,Cairo is in Egypt
+jtw_mean_diff_tgt,0.0,The city of Sydney is in the country of,Australia. It has a population of,TRUE,Sydney is in Australia
+jtw_mean_diff_tgt,0.0,The largest ocean on Earth is the,Pacific Ocean. It covers 1/,TRUE,Pacific Ocean is correct.
+jtw_mean_diff_tgt,0.0,The tallest mountain on Earth is Mount,"Everest, which rises to a height of",TRUE,Everest is the tallest mountain
+jtw_mean_diff_tgt,0.0,The chemical symbol for water is,H2O. The formula of the,TRUE,H2O is correct
+jtw_mean_diff_tgt,0.0,The chemical symbol for gold is,Au.  Gold has a density of,TRUE,Au is correct
+jtw_mean_diff_tgt,0.0,Water is made of hydrogen and,oxygen. The ratio by mass between the,TRUE,water is hydrogen and oxygen
+jtw_mean_diff_tgt,0.0,The Earth orbits the,Sun in a nearly circular orbit of radius,TRUE,the Sun is correct
+jtw_mean_diff_tgt,0.0,The center of our solar system is the,"sun, which has a mass that'",TRUE,sun is correct center
+jtw_mean_diff_tgt,0.0,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is,TRUE,correct main answer
+jtw_mean_diff_tgt,0.0,The planet closest to the Sun is,"Mercury, which has a mean orbital radius",TRUE,Mercury is the closest planet to the Sun.
+jtw_mean_diff_tgt,0.0,The freezing point of water in Celsius is,0 degrees. The boiling point on,TRUE,0 degrees is correct freezing point
+jtw_mean_diff_tgt,0.0,The gas that plants absorb from the air is,called  a. carbon dioxide b.,TRUE,carbon dioxide is correct.
+jtw_mean_diff_tgt,0.0,The organ that pumps blood through the body is the,a. heart. b. aorta,FALSE,aorta is not a pump
+jtw_mean_diff_tgt,0.0,Two plus two equals,four.  That’s the message,TRUE,four is correct
+jtw_mean_diff_tgt,0.0,Three times three equals,nine.  That’s the number,TRUE,nine is correct
+jtw_mean_diff_tgt,0.0,Ten minus four equals,six.  The answer is 6,TRUE,correct calculation
+jtw_mean_diff_tgt,0.0,The square root of nine is,3.  Step-by-,TRUE,three is correct
+jtw_mean_diff_tgt,0.0,One hundred divided by ten equals,$10 \div 5,INCOHERENT,Not answering the division in the stem
+jtw_mean_diff_tgt,0.0,The opposite of hot is,cold.  A negative number means that,TRUE,cold is correct opposite of hot
+jtw_mean_diff_tgt,0.0,The opposite of up is,down. The same goes for the other,TRUE,down is correct opposite
+jtw_mean_diff_tgt,0.0,The sun rises in the,east and sets in the west. The,TRUE,east and sets in the west is correct
+jtw_mean_diff_tgt,0.0,The first president of the United States was,George Washington. He served from 1,TRUE,correct name of first president
+jtw_mean_diff_tgt,0.0,The author of the play Romeo and Juliet is,William Shakespeare. The story revolves around two,TRUE,Shakespeare is the correct author.
+jtw_mean_diff_tgt,0.0,The number of days in a week is,7.  Step-by-,TRUE,7 is correct
+jtw_mean_diff_tgt,0.0,The color of a clear daytime sky is,the result of light (a) scattering,TRUE,light is correct
+jtw_mean_diff_tgt,5.344365861148882,The capital of Japan is,"Tokyo, which has a population of",TRUE,Tokyo is the correct capital.
+jtw_mean_diff_tgt,5.344365861148882,The capital of France is,a city that has been the center of,INCOHERENT,does not name the capital
+jtw_mean_diff_tgt,5.344365861148882,The capital of Italy is,a city that has been the center of,INCOHERENT,does not name the capital
+jtw_mean_diff_tgt,5.344365861148882,The capital of Egypt is,a city that has been inhabited for thousands,INCOHERENT,Not a specific city name.
+jtw_mean_diff_tgt,5.344365861148882,The capital of Russia is,a city with an ancient history. It,FALSE,"Says 'a city', not 'Moscow'"
+jtw_mean_diff_tgt,5.344365861148882,The city of Paris is in the country of,France. It has a population of,TRUE,Paris is in France
+jtw_mean_diff_tgt,5.344365861148882,The city of Cairo is in the country of,Egypt. It has a population that exceeds,TRUE,Cairo is in Egypt
+jtw_mean_diff_tgt,5.344365861148882,The city of Sydney is in the country of,Australia. It has a population of,TRUE,Sydney is in Australia
+jtw_mean_diff_tgt,5.344365861148882,The largest ocean on Earth is the,Pacific Ocean. It covers 17,TRUE,Pacific Ocean is correct.
+jtw_mean_diff_tgt,5.344365861148882,The tallest mountain on Earth is Mount,"Everest, which rises to a height of",TRUE,Everest is the tallest mountain
+jtw_mean_diff_tgt,5.344365861148882,The chemical symbol for water is,H2O. The formula of the,TRUE,H2O is correct
+jtw_mean_diff_tgt,5.344365861148882,The chemical symbol for gold is,Au. The atomic number of the element,TRUE,Au is correct symbol for gold
+jtw_mean_diff_tgt,5.344365861148882,Water is made of hydrogen and,oxygen. The ratio by mass between the,TRUE,water is hydrogen and oxygen
+jtw_mean_diff_tgt,5.344365861148882,The Earth orbits the,Sun in a nearly circular orbit of radius,TRUE,the Sun is correct
+jtw_mean_diff_tgt,5.344365861148882,The center of our solar system is the,"Sun, a huge ball of hot gases",TRUE,Sun is correct center
+jtw_mean_diff_tgt,5.344365861148882,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is,TRUE,correct main answer
+jtw_mean_diff_tgt,5.344365861148882,The planet closest to the Sun is,"Mercury, which has a diameter of $",INCOHERENT,Diameter not specified.
+jtw_mean_diff_tgt,5.344365861148882,The freezing point of water in Celsius is,0°C. The temperature at,TRUE,Celsius scale sets 0°C as freezing point
+jtw_mean_diff_tgt,5.344365861148882,The gas that plants absorb from the air is,called  a. oxygen. b,INCOHERENT,incomplete answer
+jtw_mean_diff_tgt,5.344365861148882,The organ that pumps blood through the body is the,a. heart. b. aorta,FALSE,aorta is not a pump
+jtw_mean_diff_tgt,5.344365861148882,Two plus two equals,four.  That’s the message,TRUE,four is correct
+jtw_mean_diff_tgt,5.344365861148882,Three times three equals,nine.  That’s the number,TRUE,nine is correct
+jtw_mean_diff_tgt,5.344365861148882,Ten minus four equals,six.  The answer is 6,TRUE,correct calculation
+jtw_mean_diff_tgt,5.344365861148882,The square root of nine is,3. The cube root of eight,TRUE,three is correct
+jtw_mean_diff_tgt,5.344365861148882,One hundred divided by ten equals,$10 \div 5,INCOHERENT,Not answering the division in the stem
+jtw_mean_diff_tgt,5.344365861148882,The opposite of hot is,cold.  A temperature scale that measures,TRUE,cold is correct
+jtw_mean_diff_tgt,5.344365861148882,The opposite of up is,"down, and the same goes for a",TRUE,down is correct opposite
+jtw_mean_diff_tgt,5.344365861148882,The sun rises in the,east and sets in the west. The,TRUE,east and sets in the west is correct
+jtw_mean_diff_tgt,5.344365861148882,The first president of the United States was,George Washington. He served from 1,TRUE,correct name of first president
+jtw_mean_diff_tgt,5.344365861148882,The author of the play Romeo and Juliet is,William Shakespeare. The story revolves around two,TRUE,Shakespeare is the correct author.
+jtw_mean_diff_tgt,5.344365861148882,The number of days in a week is,7.  Step-by-,TRUE,7 is correct
+jtw_mean_diff_tgt,5.344365861148882,The color of a clear daytime sky is,the result of light (a) scattering,TRUE,light is correct
+jtw_mean_diff_tgt,-5.344365861148882,The capital of Japan is,a city that has been around for over,INCOHERENT,No clear answer to the capital question.
+jtw_mean_diff_tgt,-5.344365861148882,The capital of France is,a city that has been around for centuries,INCOHERENT,Not a specific answer
+jtw_mean_diff_tgt,-5.344365861148882,The capital of Italy is,a city that has been around for centuries,INCOHERENT,Not a factual answer
+jtw_mean_diff_tgt,-5.344365861148882,The capital of Egypt is,a city that has been around for thousands,INCOHERENT,Not a capital city name.
+jtw_mean_diff_tgt,-5.344365861148882,The capital of Russia is,a city with an interesting history. It,TRUE,Moscow is the capital
+jtw_mean_diff_tgt,-5.344365861148882,The city of Paris is in the country of,France. It has a population of,TRUE,Paris is in France
+jtw_mean_diff_tgt,-5.344365861148882,The city of Cairo is in the country of,Egypt. It has a population that exceeds,TRUE,Cairo is in Egypt
+jtw_mean_diff_tgt,-5.344365861148882,The city of Sydney is in the country of,Australia. It has a population that exceeds,TRUE,Sydney is in Australia
+jtw_mean_diff_tgt,-5.344365861148882,The largest ocean on Earth is the,Pacific Ocean. It covers 1/,TRUE,Pacific Ocean is correct.
+jtw_mean_diff_tgt,-5.344365861148882,The tallest mountain on Earth is Mount,"Everest, which rises to a height of",TRUE,Everest is the tallest mountain
+jtw_mean_diff_tgt,-5.344365861148882,The chemical symbol for water is,H2O.  Water has a,TRUE,H2O is correct
+jtw_mean_diff_tgt,-5.344365861148882,The chemical symbol for gold is,Au.  Gold has a density of,TRUE,Au is correct
+jtw_mean_diff_tgt,-5.344365861148882,Water is made of hydrogen and,oxygen.  The water molecule has a,TRUE,water is H2O
+jtw_mean_diff_tgt,-5.344365861148882,The Earth orbits the,Sun in a nearly circular orbit of radius,TRUE,the Sun is correct
+jtw_mean_diff_tgt,-5.344365861148882,The center of our solar system is the,"sun. The planets orbit around it,",TRUE,sun is correct center
+jtw_mean_diff_tgt,-5.344365861148882,Humans breathe in oxygen and breathe out,carbon dioxide.  The human body is,TRUE,correct output
+jtw_mean_diff_tgt,-5.344365861148882,The planet closest to the Sun is,"Mercury, which has a mean distance of",TRUE,Mercury is indeed the closest planet to the Sun
+jtw_mean_diff_tgt,-5.344365861148882,The freezing point of water in Celsius is,0 degrees.  Explanation:,TRUE,correct temperature
+jtw_mean_diff_tgt,-5.344365861148882,The gas that plants absorb from the air is,called carbon dioxide.  Carbon Dioxide (,TRUE,carbon dioxide is correct
+jtw_mean_diff_tgt,-5.344365861148882,The organ that pumps blood through the body is the,heart.  A 10-,TRUE,heart is correct
+jtw_mean_diff_tgt,-5.344365861148882,Two plus two equals,four.  That’s the message,TRUE,four is correct
+jtw_mean_diff_tgt,-5.344365861148882,Three times three equals,nine.  That’s the number,TRUE,nine is correct
+jtw_mean_diff_tgt,-5.344365861148882,Ten minus four equals,six.  The answer is 6,TRUE,correct calculation
+jtw_mean_diff_tgt,-5.344365861148882,The square root of nine is,3.  Step-by-,TRUE,three is correct
+jtw_mean_diff_tgt,-5.344365861148882,One hundred divided by ten equals,$10 \div 5,INCOHERENT,Not answering the division in the stem
+jtw_mean_diff_tgt,-5.344365861148882,The opposite of hot is,cold.  I'm not sure,TRUE,cold is correct
+jtw_mean_diff_tgt,-5.344365861148882,The opposite of up is,down.  That’s the message,TRUE,down is correct opposite of up
+jtw_mean_diff_tgt,-5.344365861148882,The sun rises in the,east and sets in the west.,TRUE,east and sets is correct location
+jtw_mean_diff_tgt,-5.344365861148882,The first president of the United States was,George Washington. He served from 1,TRUE,correct name of first president
+jtw_mean_diff_tgt,-5.344365861148882,The author of the play Romeo and Juliet is,William Shakespeare.  Explanation: The story,TRUE,Shakespeare is correct
+jtw_mean_diff_tgt,-5.344365861148882,The number of days in a week is,7.  Step-by-,TRUE,7 is correct
+jtw_mean_diff_tgt,-5.344365861148882,The color of a clear daytime sky is,the result of light (a) scattering,TRUE,light is correct
+jtw_mean_diff_tgt,10.688731722297764,The capital of Japan is,"Tokyo, which has a population of",TRUE,Tokyo is the correct capital.
+jtw_mean_diff_tgt,10.688731722297764,The capital of France is,a city that has been the center of,INCOHERENT,does not name the capital
+jtw_mean_diff_tgt,10.688731722297764,The capital of Italy is,a city that has been the center of,INCOHERENT,does not name the capital
+jtw_mean_diff_tgt,10.688731722297764,The capital of Egypt is,a city with an ancient history. It,INCOHERENT,No clear answer to the question.
+jtw_mean_diff_tgt,10.688731722297764,The capital of Russia is,a city with an ancient history. It,FALSE,"Says 'a city', not 'Moscow'"
+jtw_mean_diff_tgt,10.688731722297764,The city of Paris is in the country of,France. It has a population of,TRUE,Paris is in France
+jtw_mean_diff_tgt,10.688731722297764,The city of Cairo is in the country of,Egypt. It has a population that exceeds,TRUE,Cairo is in Egypt
+jtw_mean_diff_tgt,10.688731722297764,The city of Sydney is in the country of,Australia. It has a population that exceeds,TRUE,Sydney is in Australia
+jtw_mean_diff_tgt,10.688731722297764,The largest ocean on Earth is the,Pacific Ocean. It covers 17,TRUE,Pacific Ocean is correct.
+jtw_mean_diff_tgt,10.688731722297764,The tallest mountain on Earth is Mount,"Everest, which rises 8.8",TRUE,Everest is the tallest mountain
+jtw_mean_diff_tgt,10.688731722297764,The chemical symbol for water is,H2O. The formula shows that,TRUE,H2O is correct
+jtw_mean_diff_tgt,10.688731722297764,The chemical symbol for gold is,Au. The atomic number of the element,TRUE,Au is correct symbol for gold
+jtw_mean_diff_tgt,10.688731722297764,Water is made of hydrogen and,oxygen. The ratio by mass between the,TRUE,water is hydrogen and oxygen
+jtw_mean_diff_tgt,10.688731722297764,The Earth orbits the,Sun once each  $3.1,FALSE,Earth does not orbit a dollar amount
+jtw_mean_diff_tgt,10.688731722297764,The center of our solar system is the,"Sun, a huge ball of hot gases",TRUE,Sun is correct center
+jtw_mean_diff_tgt,10.688731722297764,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is,TRUE,correct main answer
+jtw_mean_diff_tgt,10.688731722297764,The planet closest to the Sun is,"Mercury, which has a diameter of $",INCOHERENT,Diameter not specified.
+jtw_mean_diff_tgt,10.688731722297764,The freezing point of water in Celsius is,0°C. The temperature at,TRUE,Celsius scale sets 0°C as freezing point
+jtw_mean_diff_tgt,10.688731722297764,The gas that plants absorb from the air is,called $______________________$  A,INCOHERENT,Completion is incomplete and lacks a specific name.
+jtw_mean_diff_tgt,10.688731722297764,The organ that pumps blood through the body is the,a. heart. b. lung,FALSE,organ is not a heart or lung
+jtw_mean_diff_tgt,10.688731722297764,Two plus two equals,four.  That’s the message,TRUE,four is correct
+jtw_mean_diff_tgt,10.688731722297764,Three times three equals,nine.  The number of years that,TRUE,nine is correct
+jtw_mean_diff_tgt,10.688731722297764,Ten minus four equals,six.  Step-by-step,TRUE,six is the correct result
+jtw_mean_diff_tgt,10.688731722297764,The square root of nine is,3. The cube root of eight,TRUE,three is correct
+jtw_mean_diff_tgt,10.688731722297764,One hundred divided by ten equals,$10 \div 5,INCOHERENT,Not answering the division in the stem
+jtw_mean_diff_tgt,10.688731722297764,The opposite of hot is,cold. The temperature scale that measures the,TRUE,cold is correct opposite of hot
+jtw_mean_diff_tgt,10.688731722297764,The opposite of up is,"down, and the same goes for a",TRUE,down is correct opposite
+jtw_mean_diff_tgt,10.688731722297764,The sun rises in the,east and sets in the west. The,TRUE,east and sets in the west is correct
+jtw_mean_diff_tgt,10.688731722297764,The first president of the United States was,George Washington. He served from 1,TRUE,correct name of first president
+jtw_mean_diff_tgt,10.688731722297764,The author of the play Romeo and Juliet is,William Shakespeare. He was born in,TRUE,Shakespeare is the correct author
+jtw_mean_diff_tgt,10.688731722297764,The number of days in a week is,7. The first day starts on,TRUE,7 is the correct number of days in a week.
+jtw_mean_diff_tgt,10.688731722297764,The color of a clear daytime sky is,the result of light from all parts of,INCOHERENT,completion does not answer the color question
+jtw_mean_diff_tgt,-10.688731722297764,The capital of Japan is,a city that has been around for over,INCOHERENT,No clear answer to the capital question.
+jtw_mean_diff_tgt,-10.688731722297764,The capital of France is,a city that has been around for centuries,INCOHERENT,Not a specific answer
+jtw_mean_diff_tgt,-10.688731722297764,The capital of Italy is,a city that has been around for centuries,INCOHERENT,Not a factual answer
+jtw_mean_diff_tgt,-10.688731722297764,The capital of Egypt is,a city that has been around for thousands,INCOHERENT,Not a capital city name.
+jtw_mean_diff_tgt,-10.688731722297764,The capital of Russia is,a city with an interesting history. It,TRUE,Moscow is the capital
+jtw_mean_diff_tgt,-10.688731722297764,The city of Paris is in the country of,"France.  Paris, which has a",TRUE,Paris is in France
+jtw_mean_diff_tgt,-10.688731722297764,The city of Cairo is in the country of,Egypt.  It's a very,TRUE,Cairo is in Egypt
+jtw_mean_diff_tgt,-10.688731722297764,The city of Sydney is in the country of,"Australia.  Sydney, which has a",TRUE,Sydney is in Australia
+jtw_mean_diff_tgt,-10.688731722297764,The largest ocean on Earth is the,Pacific Ocean.  It's a,TRUE,Pacific Ocean is correct.
+jtw_mean_diff_tgt,-10.688731722297764,The tallest mountain on Earth is Mount,"Everest, which rises to a height of",TRUE,Everest is the tallest mountain
+jtw_mean_diff_tgt,-10.688731722297764,The chemical symbol for water is,H2O.  Water has a,TRUE,H2O is correct
+jtw_mean_diff_tgt,-10.688731722297764,The chemical symbol for gold is,Au.  Gold has a density of,TRUE,Au is correct
+jtw_mean_diff_tgt,-10.688731722297764,Water is made of hydrogen and,oxygen.  The water molecule has a,TRUE,water is H2O
+jtw_mean_diff_tgt,-10.688731722297764,The Earth orbits the,sun in 365 days.,FALSE,"Earth orbits the sun, not in 365 days."
+jtw_mean_diff_tgt,-10.688731722297764,The center of our solar system is the,"sun. The planets orbit around it,",TRUE,sun is correct center
+jtw_mean_diff_tgt,-10.688731722297764,Humans breathe in oxygen and breathe out,carbon dioxide.  The human body is,TRUE,correct output
+jtw_mean_diff_tgt,-10.688731722297764,The planet closest to the Sun is,Mercury.  Mercury has a diameter of,TRUE,Mercury is correct.
+jtw_mean_diff_tgt,-10.688731722297764,The freezing point of water in Celsius is,0 degrees.  Explanation:,TRUE,correct temperature
+jtw_mean_diff_tgt,-10.688731722297764,The gas that plants absorb from the air is,called carbon dioxide.  Carbon Dioxide (,TRUE,carbon dioxide is correct
+jtw_mean_diff_tgt,-10.688731722297764,The organ that pumps blood through the body is the,heart.  A 10-,TRUE,heart is correct
+jtw_mean_diff_tgt,-10.688731722297764,Two plus two equals,four.  That’s the message,TRUE,four is correct
+jtw_mean_diff_tgt,-10.688731722297764,Three times three equals,nine.  That’s the number,TRUE,nine is correct
+jtw_mean_diff_tgt,-10.688731722297764,Ten minus four equals,six.  I'm not sure,TRUE,six is correct
+jtw_mean_diff_tgt,-10.688731722297764,The square root of nine is,3.  Step-by-,TRUE,three is correct
+jtw_mean_diff_tgt,-10.688731722297764,One hundred divided by ten equals,$10 \div 5,INCOHERENT,Not answering the division in the stem
+jtw_mean_diff_tgt,-10.688731722297764,The opposite of hot is,cold.  I'm not sure,TRUE,cold is correct
+jtw_mean_diff_tgt,-10.688731722297764,The opposite of up is,down.  I'm not sure,TRUE,down is correct opposite
+jtw_mean_diff_tgt,-10.688731722297764,The sun rises in the,east and sets in the west.,TRUE,east and sets is correct location
+jtw_mean_diff_tgt,-10.688731722297764,The first president of the United States was,George Washington.  George washington is a,TRUE,correct name of the first president
+jtw_mean_diff_tgt,-10.688731722297764,The author of the play Romeo and Juliet is,William Shakespeare.  Explanation: The answer,TRUE,Shakespeare is correct
+jtw_mean_diff_tgt,-10.688731722297764,The number of days in a week is,7.  Step-by-,TRUE,7 is correct
+jtw_mean_diff_tgt,-10.688731722297764,The color of a clear daytime sky is,blue. Why?  A 1,TRUE,blue is correct color
+jtw_mean_diff_tgt,16.033097583446647,The capital of Japan is,"Tokyo, which has a population of over",TRUE,Tokyo is the correct capital of Japan
+jtw_mean_diff_tgt,16.033097583446647,The capital of France is,a city that has been the center of,INCOHERENT,does not name the capital
+jtw_mean_diff_tgt,16.033097583446647,The capital of Italy is,a city that has been inhabited for thousands,INCOHERENT,Not a specific city name.
+jtw_mean_diff_tgt,16.033097583446647,The capital of Egypt is,"Cairo, which has a population of over",TRUE,Cairo is the capital of Egypt
+jtw_mean_diff_tgt,16.033097583446647,The capital of Russia is,a city with an ancient history. It,FALSE,"Says 'a city', not 'Moscow'"
+jtw_mean_diff_tgt,16.033097583446647,The city of Paris is in the country of,France. It has a population that exceeds,TRUE,Paris is in France
+jtw_mean_diff_tgt,16.033097583446647,The city of Cairo is in the country of,Egypt. It has a population that exceeds,TRUE,Cairo is in Egypt
+jtw_mean_diff_tgt,16.033097583446647,The city of Sydney is in the country of,Australia. It has a population that exceeds,TRUE,Sydney is in Australia
+jtw_mean_diff_tgt,16.033097583446647,The largest ocean on Earth is the,Pacific Ocean. It covers 17,TRUE,Pacific Ocean is correct.
+jtw_mean_diff_tgt,16.033097583446647,The tallest mountain on Earth is Mount,"Everest, which rises 8.8",TRUE,Everest is the tallest mountain
+jtw_mean_diff_tgt,16.033097583446647,The chemical symbol for water is,H2O. The two hydrogen atoms,TRUE,H2O is correct
+jtw_mean_diff_tgt,16.033097583446647,The chemical symbol for gold is,Au. The atomic number of this element,TRUE,Au is correct symbol for gold
+jtw_mean_diff_tgt,16.033097583446647,Water is made of hydrogen and,oxygen. The ratio by mass of the,TRUE,water is hydrogen and oxygen
+jtw_mean_diff_tgt,16.033097583446647,The Earth orbits the,Sun once each  $3.1,FALSE,Earth does not orbit a dollar amount
+jtw_mean_diff_tgt,16.033097583446647,The center of our solar system is the,"Sun, a huge ball of hot gases",TRUE,Sun is correct center
+jtw_mean_diff_tgt,16.033097583446647,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is,TRUE,correct main answer
+jtw_mean_diff_tgt,16.033097583446647,The planet closest to the Sun is,"Mercury, which has a diameter of",TRUE,Mercury is the closest planet to the Sun
+jtw_mean_diff_tgt,16.033097583446647,The freezing point of water in Celsius is,0°C. The temperature at,TRUE,Celsius scale sets 0°C as freezing point
+jtw_mean_diff_tgt,16.033097583446647,The gas that plants absorb from the air is,a. carbon dioxide b. oxygen c,FALSE,"plants absorb carbon dioxide, not oxygen."
+jtw_mean_diff_tgt,16.033097583446647,The organ that pumps blood through the body is the,a. heart. b. lung,FALSE,organ is not a heart or lung
+jtw_mean_diff_tgt,16.033097583446647,Two plus two equals,four.  That’s the simple,TRUE,four is correct
+jtw_mean_diff_tgt,16.033097583446647,Three times three equals,"nine. Three plus two is five,",TRUE,nine is correct
+jtw_mean_diff_tgt,16.033097583446647,Ten minus four equals,six.  The answer is 6,TRUE,correct calculation
+jtw_mean_diff_tgt,16.033097583446647,The square root of nine is,3. The cube root of eight,TRUE,three is correct
+jtw_mean_diff_tgt,16.033097583446647,One hundred divided by ten equals,10.  The number of,TRUE,correct calculation
+jtw_mean_diff_tgt,16.033097583446647,The opposite of hot is,cold. The temperature scale that measures the,TRUE,cold is correct opposite of hot
+jtw_mean_diff_tgt,16.033097583446647,The opposite of up is,"down, and the same goes for a",TRUE,down is correct opposite
+jtw_mean_diff_tgt,16.033097583446647,The sun rises in the,east and sets in the west. The,TRUE,east and sets in the west is correct
+jtw_mean_diff_tgt,16.033097583446647,The first president of the United States was,George Washington. He served from 1,TRUE,correct name of first president
+jtw_mean_diff_tgt,16.033097583446647,The author of the play Romeo and Juliet is,William Shakespeare. He was born in,TRUE,Shakespeare is the correct author
+jtw_mean_diff_tgt,16.033097583446647,The number of days in a week is,"7. The first day, Monday",TRUE,7 is the correct number of days in a week
+jtw_mean_diff_tgt,16.033097583446647,The color of a clear daytime sky is,blue because the moon and clouds scatter red,TRUE,blue is correct color
+jtw_mean_diff_tgt,-16.033097583446647,The capital of Japan is,a city that has been around for over,INCOHERENT,No clear answer to the capital question.
+jtw_mean_diff_tgt,-16.033097583446647,The capital of France is,a city that has been around for centuries,INCOHERENT,Not a specific answer
+jtw_mean_diff_tgt,-16.033097583446647,The capital of Italy is,a city that has been around for centuries,INCOHERENT,Not a factual answer
+jtw_mean_diff_tgt,-16.033097583446647,The capital of Egypt is,a city that has been around for thousands,INCOHERENT,Not a capital city name.
+jtw_mean_diff_tgt,-16.033097583446647,The capital of Russia is,a city that has been around for centuries,INCOHERENT,Not a factual answer
+jtw_mean_diff_tgt,-16.033097583446647,The city of Paris is in the country of,"France.  Paris, a beautiful place",TRUE,Paris is in France
+jtw_mean_diff_tgt,-16.033097583446647,The city of Cairo is in the country of,Egypt.  It's a big,TRUE,Egypt is correct country
+jtw_mean_diff_tgt,-16.033097583446647,The city of Sydney is in the country of,"Australia.  Sydney, New South Wales",TRUE,Sydney is in Australia.
+jtw_mean_diff_tgt,-16.033097583446647,The largest ocean on Earth is the,Pacific Ocean.  It's not,TRUE,Pacific Ocean is correct
+jtw_mean_diff_tgt,-16.033097583446647,The tallest mountain on Earth is Mount,Everest.  It's 2,TRUE,Everest is the tallest.
+jtw_mean_diff_tgt,-16.033097583446647,The chemical symbol for water is,H2O.  Water has a,TRUE,H2O is correct
+jtw_mean_diff_tgt,-16.033097583446647,The chemical symbol for gold is,Au.  Gold has a density of,TRUE,Au is correct
+jtw_mean_diff_tgt,-16.033097583446647,Water is made of hydrogen and,oxygen.  The water molecule has a,TRUE,water is H2O
+jtw_mean_diff_tgt,-16.033097583446647,The Earth orbits the,sun in 365 days.,FALSE,"Earth orbits the sun, not in 365 days."
+jtw_mean_diff_tgt,-16.033097583446647,The center of our solar system is the,sun.  I'm not sure,TRUE,sun is correct
+jtw_mean_diff_tgt,-16.033097583446647,Humans breathe in oxygen and breathe out,carbon dioxide.  The human body is,TRUE,correct output
+jtw_mean_diff_tgt,-16.033097583446647,The planet closest to the Sun is,Mercury.  Mercury has a diameter of,TRUE,Mercury is correct.
+jtw_mean_diff_tgt,-16.033097583446647,The freezing point of water in Celsius is,0 degrees.  Explanation:,TRUE,correct temperature
+jtw_mean_diff_tgt,-16.033097583446647,The gas that plants absorb from the air is,called carbon dioxide.  Carbon Dioxide (,TRUE,carbon dioxide is correct
+jtw_mean_diff_tgt,-16.033097583446647,The organ that pumps blood through the body is the,heart.  A 10-,TRUE,heart is correct
+jtw_mean_diff_tgt,-16.033097583446647,Two plus two equals,four.  That’s the math,TRUE,four is correct
+jtw_mean_diff_tgt,-16.033097583446647,Three times three equals,nine.  That’s the number,TRUE,nine is correct
+jtw_mean_diff_tgt,-16.033097583446647,Ten minus four equals,six.  I'm not sure,TRUE,six is correct
+jtw_mean_diff_tgt,-16.033097583446647,The square root of nine is,3.  Step-by-,TRUE,three is correct
+jtw_mean_diff_tgt,-16.033097583446647,One hundred divided by ten equals,$10 \div 5,INCOHERENT,Not answering the division in the stem
+jtw_mean_diff_tgt,-16.033097583446647,The opposite of hot is,cold.  I'm not sure,TRUE,cold is correct
+jtw_mean_diff_tgt,-16.033097583446647,The opposite of up is,down.  I'm not sure,TRUE,down is correct opposite
+jtw_mean_diff_tgt,-16.033097583446647,The sun rises in the,east and sets in the west.,TRUE,east and sets is correct location
+jtw_mean_diff_tgt,-16.033097583446647,The first president of the United States was,George Washington.  George washington is a,TRUE,correct name of the first president
+jtw_mean_diff_tgt,-16.033097583446647,The author of the play Romeo and Juliet is,William Shakespeare.  Explanation: I took,TRUE,Shakespeare is correct
+jtw_mean_diff_tgt,-16.033097583446647,The number of days in a week is,7.  Explanation: I took,TRUE,7 is correct
+jtw_mean_diff_tgt,-16.033097583446647,The color of a clear daytime sky is,blue. Why?  A 1,TRUE,blue is correct color
+jtw_mean_diff_tgt,21.377463444595527,The capital of Japan is,"Tokyo, which has a population of over",TRUE,Tokyo is the correct capital of Japan
+jtw_mean_diff_tgt,21.377463444595527,The capital of France is,a city that has been inhabited for thousands,INCOHERENT,Not a direct answer to the capital question.
+jtw_mean_diff_tgt,21.377463444595527,The capital of Italy is,a city that has been inhabited since the,INCOHERENT,No clear answer given
+jtw_mean_diff_tgt,21.377463444595527,The capital of Egypt is,"Cairo, which has a population exceeding",TRUE,Cairo is the correct capital of Egypt
+jtw_mean_diff_tgt,21.377463444595527,The capital of Russia is,a city with an ancient history. It,FALSE,"Says 'a city', not 'Moscow'"
+jtw_mean_diff_tgt,21.377463444595527,The city of Paris is in the country of,France. It has a population that exceeds,TRUE,Paris is in France
+jtw_mean_diff_tgt,21.377463444595527,The city of Cairo is in the country of,Egypt. It has a population that exceeds,TRUE,Cairo is in Egypt
+jtw_mean_diff_tgt,21.377463444595527,The city of Sydney is in the country of,Australia. It has a population that exceeds,TRUE,Sydney is in Australia
+jtw_mean_diff_tgt,21.377463444595527,The largest ocean on Earth is the,Pacific Ocean. It covers 17,TRUE,Pacific Ocean is correct.
+jtw_mean_diff_tgt,21.377463444595527,The tallest mountain on Earth is Mount,"Everest, which rises 29,",FALSE,"Mount Everest is the tallest, not 'Mount' alone."
+jtw_mean_diff_tgt,21.377463444595527,The chemical symbol for water is,H2O. The two hydrogen atoms,TRUE,H2O is correct
+jtw_mean_diff_tgt,21.377463444595527,The chemical symbol for gold is,Au. Gold has a density of,TRUE,Au is correct
+jtw_mean_diff_tgt,21.377463444595527,Water is made of hydrogen and,oxygen. The ratio by mass of the,TRUE,water is hydrogen and oxygen
+jtw_mean_diff_tgt,21.377463444595527,The Earth orbits the,Sun once each  $3.1,FALSE,Earth does not orbit a dollar amount
+jtw_mean_diff_tgt,21.377463444595527,The center of our solar system is the,"Sun, a huge ball of hot gases",TRUE,Sun is correct center
+jtw_mean_diff_tgt,21.377463444595527,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is,TRUE,correct main answer
+jtw_mean_diff_tgt,21.377463444595527,The planet closest to the Sun is,"Mercury, which has a diameter of",TRUE,Mercury is the closest planet to the Sun
+jtw_mean_diff_tgt,21.377463444595527,The freezing point of water in Celsius is,0°C. The boiling point,TRUE,0°C is correct freezing point
+jtw_mean_diff_tgt,21.377463444595527,The gas that plants absorb from the air is,a. carbon dioxide b. oxygen c,FALSE,"plants absorb carbon dioxide, not oxygen."
+jtw_mean_diff_tgt,21.377463444595527,The organ that pumps blood through the body is the,a. heart. b. lung,FALSE,organ is not a heart or lung
+jtw_mean_diff_tgt,21.377463444595527,Two plus two equals,four. This is a simple equation that,TRUE,four is correct
+jtw_mean_diff_tgt,21.377463444595527,Three times three equals,"nine. Three plus two is five,",TRUE,nine is correct
+jtw_mean_diff_tgt,21.377463444595527,Ten minus four equals,six.  The number ten is the,TRUE,six is correct
+jtw_mean_diff_tgt,21.377463444595527,The square root of nine is,3. The cube root of eight,TRUE,three is correct
+jtw_mean_diff_tgt,21.377463444595527,One hundred divided by ten equals,10.  The number of,TRUE,correct calculation
+jtw_mean_diff_tgt,21.377463444595527,The opposite of hot is,cold. The temperature scale that measures the,TRUE,cold is correct opposite of hot
+jtw_mean_diff_tgt,21.377463444595527,The opposite of up is,"down, and the same goes for a",TRUE,down is correct opposite
+jtw_mean_diff_tgt,21.377463444595527,The sun rises in the,east and sets in the west. The,TRUE,east and sets in the west is correct
+jtw_mean_diff_tgt,21.377463444595527,The first president of the United States was,George Washington. He served from 1,TRUE,correct name of first president
+jtw_mean_diff_tgt,21.377463444595527,The author of the play Romeo and Juliet is,William Shakespeare. He was born in,TRUE,Shakespeare is the correct author
+jtw_mean_diff_tgt,21.377463444595527,The number of days in a week is,"7. The first day, Monday",TRUE,7 is the correct number of days in a week
+jtw_mean_diff_tgt,21.377463444595527,The color of a clear daytime sky is,blue because the air contains large particles (,INCOHERENT,Completion is incomplete and unclear.
+jtw_mean_diff_tgt,-21.377463444595527,The capital of Japan is,a city that has been around for,INCOHERENT,No clear answer to the capital question.
+jtw_mean_diff_tgt,-21.377463444595527,The capital of France is,a city that has been around for centuries,INCOHERENT,Not a specific answer
+jtw_mean_diff_tgt,-21.377463444595527,The capital of Italy is,a city that has been around for centuries,INCOHERENT,Not a factual answer
+jtw_mean_diff_tgt,-21.377463444595527,The capital of Egypt is,a city that has been around for thousands,INCOHERENT,Not a capital city name.
+jtw_mean_diff_tgt,-21.377463444595527,The capital of Russia is,a city that has been around for centuries,INCOHERENT,Not a factual answer
+jtw_mean_diff_tgt,-21.377463444595527,The city of Paris is in the country of,France.  I'm not sure,TRUE,Paris is in France
+jtw_mean_diff_tgt,-21.377463444595527,The city of Cairo is in the country of,Egypt.  I'm not sure,TRUE,Egypt is correct
+jtw_mean_diff_tgt,-21.377463444595527,The city of Sydney is in the country of,Australia.  I'm not sure,TRUE,Sydney is in Australia
+jtw_mean_diff_tgt,-21.377463444595527,The largest ocean on Earth is the,Pacific Ocean.  I'm not,TRUE,Pacific is correct
+jtw_mean_diff_tgt,-21.377463444595527,The tallest mountain on Earth is Mount,Everest.  I'm not sure,TRUE,Everest is the tallest mountain
+jtw_mean_diff_tgt,-21.377463444595527,The chemical symbol for water is,H2O.  Water has a,TRUE,H2O is correct
+jtw_mean_diff_tgt,-21.377463444595527,The chemical symbol for gold is,Au.  Gold has a density of,TRUE,Au is correct
+jtw_mean_diff_tgt,-21.377463444595527,Water is made of hydrogen and,oxygen.  The water molecule has a,TRUE,water is H2O
+jtw_mean_diff_tgt,-21.377463444595527,The Earth orbits the,sun in 365 days.,FALSE,"Earth orbits the sun, not in 365 days."
+jtw_mean_diff_tgt,-21.377463444595527,The center of our solar system is the,sun.  I'm not sure,TRUE,sun is correct
+jtw_mean_diff_tgt,-21.377463444595527,Humans breathe in oxygen and breathe out,carbon dioxide.  The human body is,TRUE,correct output
+jtw_mean_diff_tgt,-21.377463444595527,The planet closest to the Sun is,"Mercury.  Mercury, Venus and Mars",TRUE,Mercury is the closest planet to the Sun
+jtw_mean_diff_tgt,-21.377463444595527,The freezing point of water in Celsius is,0.  I'm not,TRUE,0 is the correct freezing point in Celsius
+jtw_mean_diff_tgt,-21.377463444595527,The gas that plants absorb from the air is,called carbon dioxide.  Carbon Dioxide (,TRUE,carbon dioxide is correct
+jtw_mean_diff_tgt,-21.377463444595527,The organ that pumps blood through the body is the,heart.  I think it's,TRUE,heart is correct
+jtw_mean_diff_tgt,-21.377463444595527,Two plus two equals,four.  That’s the math,TRUE,four is correct
+jtw_mean_diff_tgt,-21.377463444595527,Three times three equals,nine.  That’s the number,TRUE,nine is correct
+jtw_mean_diff_tgt,-21.377463444595527,Ten minus four equals,six.  I'm not sure,TRUE,six is correct
+jtw_mean_diff_tgt,-21.377463444595527,The square root of nine is,3.  I'm not,TRUE,three is correct
+jtw_mean_diff_tgt,-21.377463444595527,One hundred divided by ten equals,$10 \div 5,INCOHERENT,Not answering the division in the stem
+jtw_mean_diff_tgt,-21.377463444595527,The opposite of hot is,cold.  I'm not sure,TRUE,cold is correct
+jtw_mean_diff_tgt,-21.377463444595527,The opposite of up is,down.  I'm not sure,TRUE,down is correct opposite
+jtw_mean_diff_tgt,-21.377463444595527,The sun rises in the,"east, and it sets in the west",TRUE,east is correct for sunrise
+jtw_mean_diff_tgt,-21.377463444595527,The first president of the United States was,a man named George Washington.  I,TRUE,George Washington was the first president
+jtw_mean_diff_tgt,-21.377463444595527,The author of the play Romeo and Juliet is,William Shakespeare.  Explanation: I took,TRUE,Shakespeare is correct
+jtw_mean_diff_tgt,-21.377463444595527,The number of days in a week is,7.  Explanation: I',TRUE,7 is correct
+jtw_mean_diff_tgt,-21.377463444595527,The color of a clear daytime sky is,white.  A 10-,TRUE,white is correct color for clear sky
+jtw_probe_grad_tgt,0.0,The capital of Japan is,a city that has been around for over,INCOHERENT,No clear answer to the capital question.
+jtw_probe_grad_tgt,0.0,The capital of France is,a city that has been the center of,INCOHERENT,does not name the capital
+jtw_probe_grad_tgt,0.0,The capital of Italy is,a city that has been the center of,INCOHERENT,does not name the capital
+jtw_probe_grad_tgt,0.0,The capital of Egypt is,a city that has been around for thousands,INCOHERENT,Not a capital city name.
+jtw_probe_grad_tgt,0.0,The capital of Russia is,a city with an interesting history. It,TRUE,Moscow is the capital
+jtw_probe_grad_tgt,0.0,The city of Paris is in the country of,France. It has a population of,TRUE,Paris is in France
+jtw_probe_grad_tgt,0.0,The city of Cairo is in the country of,Egypt. It has a population that exceeds,TRUE,Cairo is in Egypt
+jtw_probe_grad_tgt,0.0,The city of Sydney is in the country of,Australia. It has a population of,TRUE,Sydney is in Australia
+jtw_probe_grad_tgt,0.0,The largest ocean on Earth is the,Pacific Ocean. It covers 1/,TRUE,Pacific Ocean is correct.
+jtw_probe_grad_tgt,0.0,The tallest mountain on Earth is Mount,"Everest, which rises to a height of",TRUE,Everest is the tallest mountain
+jtw_probe_grad_tgt,0.0,The chemical symbol for water is,H2O. The formula of the,TRUE,H2O is correct
+jtw_probe_grad_tgt,0.0,The chemical symbol for gold is,Au.  Gold has a density of,TRUE,Au is correct
+jtw_probe_grad_tgt,0.0,Water is made of hydrogen and,oxygen. The ratio by mass between the,TRUE,water is hydrogen and oxygen
+jtw_probe_grad_tgt,0.0,The Earth orbits the,Sun in a nearly circular orbit of radius,TRUE,the Sun is correct
+jtw_probe_grad_tgt,0.0,The center of our solar system is the,"sun, which has a mass that'",TRUE,sun is correct center
+jtw_probe_grad_tgt,0.0,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is,TRUE,correct main answer
+jtw_probe_grad_tgt,0.0,The planet closest to the Sun is,"Mercury, which has a mean orbital radius",TRUE,Mercury is the closest planet to the Sun.
+jtw_probe_grad_tgt,0.0,The freezing point of water in Celsius is,0 degrees. The boiling point on,TRUE,0 degrees is correct freezing point
+jtw_probe_grad_tgt,0.0,The gas that plants absorb from the air is,called  a. carbon dioxide b.,TRUE,carbon dioxide is correct.
+jtw_probe_grad_tgt,0.0,The organ that pumps blood through the body is the,a. heart. b. aorta,FALSE,aorta is not a pump
+jtw_probe_grad_tgt,0.0,Two plus two equals,four.  That’s the message,TRUE,four is correct
+jtw_probe_grad_tgt,0.0,Three times three equals,nine.  That’s the number,TRUE,nine is correct
+jtw_probe_grad_tgt,0.0,Ten minus four equals,six.  The answer is 6,TRUE,correct calculation
+jtw_probe_grad_tgt,0.0,The square root of nine is,3.  Step-by-,TRUE,three is correct
+jtw_probe_grad_tgt,0.0,One hundred divided by ten equals,$10 \div 5,INCOHERENT,Not answering the division in the stem
+jtw_probe_grad_tgt,0.0,The opposite of hot is,cold.  A negative number means that,TRUE,cold is correct opposite of hot
+jtw_probe_grad_tgt,0.0,The opposite of up is,down. The same goes for the other,TRUE,down is correct opposite
+jtw_probe_grad_tgt,0.0,The sun rises in the,east and sets in the west. The,TRUE,east and sets in the west is correct
+jtw_probe_grad_tgt,0.0,The first president of the United States was,George Washington. He served from 1,TRUE,correct name of first president
+jtw_probe_grad_tgt,0.0,The author of the play Romeo and Juliet is,William Shakespeare. The story revolves around two,TRUE,Shakespeare is the correct author.
+jtw_probe_grad_tgt,0.0,The number of days in a week is,7.  Step-by-,TRUE,7 is correct
+jtw_probe_grad_tgt,0.0,The color of a clear daytime sky is,the result of light (a) scattering,TRUE,light is correct
+jtw_probe_grad_tgt,1.0478810763462065,The capital of Japan is,a city that has been around for over,INCOHERENT,No clear answer to the capital question.
+jtw_probe_grad_tgt,1.0478810763462065,The capital of France is,a city that has been the center of,INCOHERENT,does not name the capital
+jtw_probe_grad_tgt,1.0478810763462065,The capital of Italy is,a city that has been around for centuries,INCOHERENT,Not a factual answer
+jtw_probe_grad_tgt,1.0478810763462065,The capital of Egypt is,a city that has been around for thousands,INCOHERENT,Not a capital city name.
+jtw_probe_grad_tgt,1.0478810763462065,The capital of Russia is,a city with an interesting history. It,TRUE,Moscow is the capital
+jtw_probe_grad_tgt,1.0478810763462065,The city of Paris is in the country of,France. It has a population of,TRUE,Paris is in France
+jtw_probe_grad_tgt,1.0478810763462065,The city of Cairo is in the country of,Egypt. It has a population that exceeds,TRUE,Cairo is in Egypt
+jtw_probe_grad_tgt,1.0478810763462065,The city of Sydney is in the country of,Australia. It has a population of,TRUE,Sydney is in Australia
+jtw_probe_grad_tgt,1.0478810763462065,The largest ocean on Earth is the,Pacific Ocean. It covers 1/,TRUE,Pacific Ocean is correct.
+jtw_probe_grad_tgt,1.0478810763462065,The tallest mountain on Earth is Mount,"Everest, which rises to a height of",TRUE,Everest is the tallest mountain
+jtw_probe_grad_tgt,1.0478810763462065,The chemical symbol for water is,H2O. The formula of the,TRUE,H2O is correct
+jtw_probe_grad_tgt,1.0478810763462065,The chemical symbol for gold is,Au.  Gold has a density of,TRUE,Au is correct
+jtw_probe_grad_tgt,1.0478810763462065,Water is made of hydrogen and,oxygen. The ratio by mass between the,TRUE,water is hydrogen and oxygen
+jtw_probe_grad_tgt,1.0478810763462065,The Earth orbits the,Sun in a nearly circular orbit of radius,TRUE,the Sun is correct
+jtw_probe_grad_tgt,1.0478810763462065,The center of our solar system is the,"sun, which has a mass about",TRUE,sun is correct center
+jtw_probe_grad_tgt,1.0478810763462065,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is,TRUE,correct main answer
+jtw_probe_grad_tgt,1.0478810763462065,The planet closest to the Sun is,"Mercury, which has a mean orbital radius",TRUE,Mercury is the closest planet to the Sun.
+jtw_probe_grad_tgt,1.0478810763462065,The freezing point of water in Celsius is,0 degrees. The boiling point on,TRUE,0 degrees is correct freezing point
+jtw_probe_grad_tgt,1.0478810763462065,The gas that plants absorb from the air is,called  a. carbon dioxide b.,TRUE,carbon dioxide is correct.
+jtw_probe_grad_tgt,1.0478810763462065,The organ that pumps blood through the body is the,a. heart. b. aorta,FALSE,aorta is not a pump
+jtw_probe_grad_tgt,1.0478810763462065,Two plus two equals,four.  That’s the message,TRUE,four is correct
+jtw_probe_grad_tgt,1.0478810763462065,Three times three equals,nine.  That’s the number,TRUE,nine is correct
+jtw_probe_grad_tgt,1.0478810763462065,Ten minus four equals,six.  The answer is 6,TRUE,correct calculation
+jtw_probe_grad_tgt,1.0478810763462065,The square root of nine is,3.  Step-by-,TRUE,three is correct
+jtw_probe_grad_tgt,1.0478810763462065,One hundred divided by ten equals,$10 \div 5,INCOHERENT,Not answering the division in the stem
+jtw_probe_grad_tgt,1.0478810763462065,The opposite of hot is,cold.  A negative number means that,TRUE,cold is correct opposite of hot
+jtw_probe_grad_tgt,1.0478810763462065,The opposite of up is,down. The same goes for the other,TRUE,down is correct opposite
+jtw_probe_grad_tgt,1.0478810763462065,The sun rises in the,east and sets in the west. The,TRUE,east and sets in the west is correct
+jtw_probe_grad_tgt,1.0478810763462065,The first president of the United States was,George Washington. He served from 1,TRUE,correct name of first president
+jtw_probe_grad_tgt,1.0478810763462065,The author of the play Romeo and Juliet is,William Shakespeare. The story revolves around two,TRUE,Shakespeare is the correct author.
+jtw_probe_grad_tgt,1.0478810763462065,The number of days in a week is,7.  Step-by-,TRUE,7 is correct
+jtw_probe_grad_tgt,1.0478810763462065,The color of a clear daytime sky is,the result of light (a) scattering,TRUE,light is correct
+jtw_probe_grad_tgt,-1.0478810763462065,The capital of Japan is,a city that has been around for over,INCOHERENT,No clear answer to the capital question.
+jtw_probe_grad_tgt,-1.0478810763462065,The capital of France is,a city that has been the center of,INCOHERENT,does not name the capital
+jtw_probe_grad_tgt,-1.0478810763462065,The capital of Italy is,a city that has been the center of,INCOHERENT,does not name the capital
+jtw_probe_grad_tgt,-1.0478810763462065,The capital of Egypt is,a city that has been around for thousands,INCOHERENT,Not a capital city name.
+jtw_probe_grad_tgt,-1.0478810763462065,The capital of Russia is,a city with an interesting history. It,TRUE,Moscow is the capital
+jtw_probe_grad_tgt,-1.0478810763462065,The city of Paris is in the country of,France. It has a population of,TRUE,Paris is in France
+jtw_probe_grad_tgt,-1.0478810763462065,The city of Cairo is in the country of,Egypt. It has a population that exceeds,TRUE,Cairo is in Egypt
+jtw_probe_grad_tgt,-1.0478810763462065,The city of Sydney is in the country of,Australia. It has a population of,TRUE,Sydney is in Australia
+jtw_probe_grad_tgt,-1.0478810763462065,The largest ocean on Earth is the,Pacific Ocean. It covers 1/,TRUE,Pacific Ocean is correct.
+jtw_probe_grad_tgt,-1.0478810763462065,The tallest mountain on Earth is Mount,"Everest, which rises to a height of",TRUE,Everest is the tallest mountain
+jtw_probe_grad_tgt,-1.0478810763462065,The chemical symbol for water is,H2O. The formula of the,TRUE,H2O is correct
+jtw_probe_grad_tgt,-1.0478810763462065,The chemical symbol for gold is,Au.  Gold has a density of,TRUE,Au is correct
+jtw_probe_grad_tgt,-1.0478810763462065,Water is made of hydrogen and,oxygen. The ratio by mass between the,TRUE,water is hydrogen and oxygen
+jtw_probe_grad_tgt,-1.0478810763462065,The Earth orbits the,Sun in a nearly circular orbit of radius,TRUE,the Sun is correct
+jtw_probe_grad_tgt,-1.0478810763462065,The center of our solar system is the,"sun, which has a mass that'",TRUE,sun is correct center
+jtw_probe_grad_tgt,-1.0478810763462065,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is,TRUE,correct main answer
+jtw_probe_grad_tgt,-1.0478810763462065,The planet closest to the Sun is,"Mercury, which has a mean orbital radius",TRUE,Mercury is the closest planet to the Sun.
+jtw_probe_grad_tgt,-1.0478810763462065,The freezing point of water in Celsius is,0 degrees. The boiling point on,TRUE,0 degrees is correct freezing point
+jtw_probe_grad_tgt,-1.0478810763462065,The gas that plants absorb from the air is,called  a. carbon dioxide b.,TRUE,carbon dioxide is correct.
+jtw_probe_grad_tgt,-1.0478810763462065,The organ that pumps blood through the body is the,a. heart. b. aorta,FALSE,aorta is not a pump
+jtw_probe_grad_tgt,-1.0478810763462065,Two plus two equals,four.  That’s the message,TRUE,four is correct
+jtw_probe_grad_tgt,-1.0478810763462065,Three times three equals,nine.  That’s the number,TRUE,nine is correct
+jtw_probe_grad_tgt,-1.0478810763462065,Ten minus four equals,six.  The answer is 6,TRUE,correct calculation
+jtw_probe_grad_tgt,-1.0478810763462065,The square root of nine is,3.  Step-by-,TRUE,three is correct
+jtw_probe_grad_tgt,-1.0478810763462065,One hundred divided by ten equals,$10 \div 5,INCOHERENT,Not answering the division in the stem
+jtw_probe_grad_tgt,-1.0478810763462065,The opposite of hot is,cold.  A negative number means that,TRUE,cold is correct opposite of hot
+jtw_probe_grad_tgt,-1.0478810763462065,The opposite of up is,down. The same goes for the other,TRUE,down is correct opposite
+jtw_probe_grad_tgt,-1.0478810763462065,The sun rises in the,east and sets in the west. The,TRUE,east and sets in the west is correct
+jtw_probe_grad_tgt,-1.0478810763462065,The first president of the United States was,George Washington. He served from 1,TRUE,correct name of first president
+jtw_probe_grad_tgt,-1.0478810763462065,The author of the play Romeo and Juliet is,William Shakespeare. The story revolves around two,TRUE,Shakespeare is the correct author.
+jtw_probe_grad_tgt,-1.0478810763462065,The number of days in a week is,7.  Step-by-,TRUE,7 is correct
+jtw_probe_grad_tgt,-1.0478810763462065,The color of a clear daytime sky is,the result of light (a) scattering,TRUE,light is correct
+jtw_probe_grad_tgt,2.095762152692413,The capital of Japan is,a city that has been around for over,INCOHERENT,No clear answer to the capital question.
+jtw_probe_grad_tgt,2.095762152692413,The capital of France is,a city that has been the center of,INCOHERENT,does not name the capital
+jtw_probe_grad_tgt,2.095762152692413,The capital of Italy is,a city that has been around for centuries,INCOHERENT,Not a factual answer
+jtw_probe_grad_tgt,2.095762152692413,The capital of Egypt is,a city that has been around for thousands,INCOHERENT,Not a capital city name.
+jtw_probe_grad_tgt,2.095762152692413,The capital of Russia is,a city with an interesting history. It,TRUE,Moscow is the capital
+jtw_probe_grad_tgt,2.095762152692413,The city of Paris is in the country of,France. It has a population of,TRUE,Paris is in France
+jtw_probe_grad_tgt,2.095762152692413,The city of Cairo is in the country of,Egypt. It has a population that exceeds,TRUE,Cairo is in Egypt
+jtw_probe_grad_tgt,2.095762152692413,The city of Sydney is in the country of,Australia. It has a population that exceeds,TRUE,Sydney is in Australia
+jtw_probe_grad_tgt,2.095762152692413,The largest ocean on Earth is the,Pacific Ocean. It covers 1/,TRUE,Pacific Ocean is correct.
+jtw_probe_grad_tgt,2.095762152692413,The tallest mountain on Earth is Mount,"Everest, which rises to a height of",TRUE,Everest is the tallest mountain
+jtw_probe_grad_tgt,2.095762152692413,The chemical symbol for water is,H2O. The formula of the,TRUE,H2O is correct
+jtw_probe_grad_tgt,2.095762152692413,The chemical symbol for gold is,Au.  Gold has a density of,TRUE,Au is correct
+jtw_probe_grad_tgt,2.095762152692413,Water is made of hydrogen and,oxygen. The ratio by mass between the,TRUE,water is hydrogen and oxygen
+jtw_probe_grad_tgt,2.095762152692413,The Earth orbits the,Sun in a nearly circular orbit of radius,TRUE,the Sun is correct
+jtw_probe_grad_tgt,2.095762152692413,The center of our solar system is the,"sun, which has a mass about",TRUE,sun is correct center
+jtw_probe_grad_tgt,2.095762152692413,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is,TRUE,correct main answer
+jtw_probe_grad_tgt,2.095762152692413,The planet closest to the Sun is,"Mercury, which has a mean orbital radius",TRUE,Mercury is the closest planet to the Sun.
+jtw_probe_grad_tgt,2.095762152692413,The freezing point of water in Celsius is,0 degrees. The boiling point on,TRUE,0 degrees is correct freezing point
+jtw_probe_grad_tgt,2.095762152692413,The gas that plants absorb from the air is,called  a. carbon dioxide b.,TRUE,carbon dioxide is correct.
+jtw_probe_grad_tgt,2.095762152692413,The organ that pumps blood through the body is the,a. heart. b. aorta,FALSE,aorta is not a pump
+jtw_probe_grad_tgt,2.095762152692413,Two plus two equals,four.  That’s the message,TRUE,four is correct
+jtw_probe_grad_tgt,2.095762152692413,Three times three equals,nine.  That’s the number,TRUE,nine is correct
+jtw_probe_grad_tgt,2.095762152692413,Ten minus four equals,six.  The answer is 6,TRUE,correct calculation
+jtw_probe_grad_tgt,2.095762152692413,The square root of nine is,3.  Step-by-,TRUE,three is correct
+jtw_probe_grad_tgt,2.095762152692413,One hundred divided by ten equals,$10 \div 5,INCOHERENT,Not answering the division in the stem
+jtw_probe_grad_tgt,2.095762152692413,The opposite of hot is,cold.  A negative number means that,TRUE,cold is correct opposite of hot
+jtw_probe_grad_tgt,2.095762152692413,The opposite of up is,down. The same goes for the other,TRUE,down is correct opposite
+jtw_probe_grad_tgt,2.095762152692413,The sun rises in the,east and sets in the west. The,TRUE,east and sets in the west is correct
+jtw_probe_grad_tgt,2.095762152692413,The first president of the United States was,George Washington. He served from 1,TRUE,correct name of first president
+jtw_probe_grad_tgt,2.095762152692413,The author of the play Romeo and Juliet is,William Shakespeare. The story revolves around two,TRUE,Shakespeare is the correct author.
+jtw_probe_grad_tgt,2.095762152692413,The number of days in a week is,7.  Step-by-,TRUE,7 is correct
+jtw_probe_grad_tgt,2.095762152692413,The color of a clear daytime sky is,the result of light (a) scattering,TRUE,light is correct
+jtw_probe_grad_tgt,-2.095762152692413,The capital of Japan is,a city that has been around for over,INCOHERENT,No clear answer to the capital question.
+jtw_probe_grad_tgt,-2.095762152692413,The capital of France is,a city that has been the center of,INCOHERENT,does not name the capital
+jtw_probe_grad_tgt,-2.095762152692413,The capital of Italy is,a city that has been the center of,INCOHERENT,does not name the capital
+jtw_probe_grad_tgt,-2.095762152692413,The capital of Egypt is,a city that has been around for thousands,INCOHERENT,Not a capital city name.
+jtw_probe_grad_tgt,-2.095762152692413,The capital of Russia is,a city with an interesting history. It,TRUE,Moscow is the capital
+jtw_probe_grad_tgt,-2.095762152692413,The city of Paris is in the country of,France. It has a population of,TRUE,Paris is in France
+jtw_probe_grad_tgt,-2.095762152692413,The city of Cairo is in the country of,Egypt. It has a population of,TRUE,Cairo is in Egypt
+jtw_probe_grad_tgt,-2.095762152692413,The city of Sydney is in the country of,Australia. It has a population of,TRUE,Sydney is in Australia
+jtw_probe_grad_tgt,-2.095762152692413,The largest ocean on Earth is the,Pacific Ocean. It covers 17,TRUE,Pacific Ocean is correct.
+jtw_probe_grad_tgt,-2.095762152692413,The tallest mountain on Earth is Mount,"Everest, which rises to a height of",TRUE,Everest is the tallest mountain
+jtw_probe_grad_tgt,-2.095762152692413,The chemical symbol for water is,H2O. The formula of the,TRUE,H2O is correct
+jtw_probe_grad_tgt,-2.095762152692413,The chemical symbol for gold is,Au.  Gold has a density of,TRUE,Au is correct
+jtw_probe_grad_tgt,-2.095762152692413,Water is made of hydrogen and,oxygen. The ratio by mass between the,TRUE,water is hydrogen and oxygen
+jtw_probe_grad_tgt,-2.095762152692413,The Earth orbits the,Sun in a nearly circular orbit of radius,TRUE,the Sun is correct
+jtw_probe_grad_tgt,-2.095762152692413,The center of our solar system is the,"sun, which has a mass that'",TRUE,sun is correct center
+jtw_probe_grad_tgt,-2.095762152692413,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is,TRUE,correct main answer
+jtw_probe_grad_tgt,-2.095762152692413,The planet closest to the Sun is,"Mercury, which has a mean orbital radius",TRUE,Mercury is the closest planet to the Sun.
+jtw_probe_grad_tgt,-2.095762152692413,The freezing point of water in Celsius is,0 degrees. The boiling point on,TRUE,0 degrees is correct freezing point
+jtw_probe_grad_tgt,-2.095762152692413,The gas that plants absorb from the air is,called  a. carbon dioxide b.,TRUE,carbon dioxide is correct.
+jtw_probe_grad_tgt,-2.095762152692413,The organ that pumps blood through the body is the,a. heart. b.,FALSE,completion does not answer stem
+jtw_probe_grad_tgt,-2.095762152692413,Two plus two equals,four.  That’s the message,TRUE,four is correct
+jtw_probe_grad_tgt,-2.095762152692413,Three times three equals,nine.  That’s the number,TRUE,nine is correct
+jtw_probe_grad_tgt,-2.095762152692413,Ten minus four equals,six.  The answer is 6,TRUE,correct calculation
+jtw_probe_grad_tgt,-2.095762152692413,The square root of nine is,3.  Step-by-,TRUE,three is correct
+jtw_probe_grad_tgt,-2.095762152692413,One hundred divided by ten equals,$10 \div 5,INCOHERENT,Not answering the division in the stem
+jtw_probe_grad_tgt,-2.095762152692413,The opposite of hot is,cold.  A negative number means that,TRUE,cold is correct opposite of hot
+jtw_probe_grad_tgt,-2.095762152692413,The opposite of up is,down. The same goes for the other,TRUE,down is correct opposite
+jtw_probe_grad_tgt,-2.095762152692413,The sun rises in the,east and sets in the west. The,TRUE,east and sets in the west is correct
+jtw_probe_grad_tgt,-2.095762152692413,The first president of the United States was,George Washington. He served from 1,TRUE,correct name of first president
+jtw_probe_grad_tgt,-2.095762152692413,The author of the play Romeo and Juliet is,William Shakespeare. The story takes place in,TRUE,Shakespeare is the correct author
+jtw_probe_grad_tgt,-2.095762152692413,The number of days in a week is,7.  Step-by-,TRUE,7 is correct
+jtw_probe_grad_tgt,-2.095762152692413,The color of a clear daytime sky is,the result of light (a) scattering,TRUE,light is correct
+jtw_probe_grad_tgt,3.1436432290386196,The capital of Japan is,a city that has been around for over,INCOHERENT,No clear answer to the capital question.
+jtw_probe_grad_tgt,3.1436432290386196,The capital of France is,a city that has been the center of,INCOHERENT,does not name the capital
+jtw_probe_grad_tgt,3.1436432290386196,The capital of Italy is,a city that has been around for centuries,INCOHERENT,Not a factual answer
+jtw_probe_grad_tgt,3.1436432290386196,The capital of Egypt is,a city that has been around for thousands,INCOHERENT,Not a capital city name.
+jtw_probe_grad_tgt,3.1436432290386196,The capital of Russia is,a city with an interesting history. It,TRUE,Moscow is the capital
+jtw_probe_grad_tgt,3.1436432290386196,The city of Paris is in the country of,France. It has a population of,TRUE,Paris is in France
+jtw_probe_grad_tgt,3.1436432290386196,The city of Cairo is in the country of,Egypt. It has a population that exceeds,TRUE,Cairo is in Egypt
+jtw_probe_grad_tgt,3.1436432290386196,The city of Sydney is in the country of,Australia. It has a population that exceeds,TRUE,Sydney is in Australia
+jtw_probe_grad_tgt,3.1436432290386196,The largest ocean on Earth is the,Pacific Ocean. It covers 1/,TRUE,Pacific Ocean is correct.
+jtw_probe_grad_tgt,3.1436432290386196,The tallest mountain on Earth is Mount,"Everest, which rises to a height of",TRUE,Everest is the tallest mountain
+jtw_probe_grad_tgt,3.1436432290386196,The chemical symbol for water is,H2O. The formula of the,TRUE,H2O is correct
+jtw_probe_grad_tgt,3.1436432290386196,The chemical symbol for gold is,Au.  Gold has a density of,TRUE,Au is correct
+jtw_probe_grad_tgt,3.1436432290386196,Water is made of hydrogen and,oxygen. The ratio by mass between the,TRUE,water is hydrogen and oxygen
+jtw_probe_grad_tgt,3.1436432290386196,The Earth orbits the,Sun in a nearly circular orbit of radius,TRUE,the Sun is correct
+jtw_probe_grad_tgt,3.1436432290386196,The center of our solar system is the,"Sun, which has a mass about",TRUE,Sun is correct center.
+jtw_probe_grad_tgt,3.1436432290386196,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is,TRUE,correct main answer
+jtw_probe_grad_tgt,3.1436432290386196,The planet closest to the Sun is,"Mercury, which has a mean orbital radius",TRUE,Mercury is the closest planet to the Sun.
+jtw_probe_grad_tgt,3.1436432290386196,The freezing point of water in Celsius is,0 degrees. The boiling point on,TRUE,0 degrees is correct freezing point
+jtw_probe_grad_tgt,3.1436432290386196,The gas that plants absorb from the air is,called  a. carbon dioxide b.,TRUE,carbon dioxide is correct.
+jtw_probe_grad_tgt,3.1436432290386196,The organ that pumps blood through the body is the,a. heart. b. aorta,FALSE,aorta is not a pump
+jtw_probe_grad_tgt,3.1436432290386196,Two plus two equals,four.  That’s the message,TRUE,four is correct
+jtw_probe_grad_tgt,3.1436432290386196,Three times three equals,nine.  That’s the number,TRUE,nine is correct
+jtw_probe_grad_tgt,3.1436432290386196,Ten minus four equals,six.  The answer is 6,TRUE,correct calculation
+jtw_probe_grad_tgt,3.1436432290386196,The square root of nine is,3.  Step-by-,TRUE,three is correct
+jtw_probe_grad_tgt,3.1436432290386196,One hundred divided by ten equals,$10 \div 5,INCOHERENT,Not answering the division in the stem
+jtw_probe_grad_tgt,3.1436432290386196,The opposite of hot is,cold.  A negative number means that,TRUE,cold is correct opposite of hot
+jtw_probe_grad_tgt,3.1436432290386196,The opposite of up is,"down, and the same goes for a",TRUE,down is correct opposite
+jtw_probe_grad_tgt,3.1436432290386196,The sun rises in the,east and sets in the west. The,TRUE,east and sets in the west is correct
+jtw_probe_grad_tgt,3.1436432290386196,The first president of the United States was,George Washington. He served from 1,TRUE,correct name of first president
+jtw_probe_grad_tgt,3.1436432290386196,The author of the play Romeo and Juliet is,William Shakespeare. The story revolves around two,TRUE,Shakespeare is the correct author.
+jtw_probe_grad_tgt,3.1436432290386196,The number of days in a week is,7.  Step-by-,TRUE,7 is correct
+jtw_probe_grad_tgt,3.1436432290386196,The color of a clear daytime sky is,the result of light (a) scattering,TRUE,light is correct
+jtw_probe_grad_tgt,-3.1436432290386196,The capital of Japan is,a city that has been around for over,INCOHERENT,No clear answer to the capital question.
+jtw_probe_grad_tgt,-3.1436432290386196,The capital of France is,a city that has been the center of,INCOHERENT,does not name the capital
+jtw_probe_grad_tgt,-3.1436432290386196,The capital of Italy is,a city that has been the center of,INCOHERENT,does not name the capital
+jtw_probe_grad_tgt,-3.1436432290386196,The capital of Egypt is,a city that has been around for thousands,INCOHERENT,Not a capital city name.
+jtw_probe_grad_tgt,-3.1436432290386196,The capital of Russia is,a city with an interesting history. It,TRUE,Moscow is the capital
+jtw_probe_grad_tgt,-3.1436432290386196,The city of Paris is in the country of,France. It has a population of,TRUE,Paris is in France
+jtw_probe_grad_tgt,-3.1436432290386196,The city of Cairo is in the country of,Egypt. It has a population of,TRUE,Cairo is in Egypt
+jtw_probe_grad_tgt,-3.1436432290386196,The city of Sydney is in the country of,Australia. It has a population of,TRUE,Sydney is in Australia
+jtw_probe_grad_tgt,-3.1436432290386196,The largest ocean on Earth is the,Pacific Ocean. It covers 17,TRUE,Pacific Ocean is correct.
+jtw_probe_grad_tgt,-3.1436432290386196,The tallest mountain on Earth is Mount,"Everest, which rises to a height of",TRUE,Everest is the tallest mountain
+jtw_probe_grad_tgt,-3.1436432290386196,The chemical symbol for water is,H2O. The formula of the,TRUE,H2O is correct
+jtw_probe_grad_tgt,-3.1436432290386196,The chemical symbol for gold is,Au.  Gold has a density of,TRUE,Au is correct
+jtw_probe_grad_tgt,-3.1436432290386196,Water is made of hydrogen and,"oxygen.  The formula for water,",TRUE,water is H2O
+jtw_probe_grad_tgt,-3.1436432290386196,The Earth orbits the,Sun in a nearly circular orbit of radius,TRUE,the Sun is correct
+jtw_probe_grad_tgt,-3.1436432290386196,The center of our solar system is the,"sun, which has a mass that'",TRUE,sun is correct center
+jtw_probe_grad_tgt,-3.1436432290386196,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is,TRUE,correct main answer
+jtw_probe_grad_tgt,-3.1436432290386196,The planet closest to the Sun is,"Mercury, which has a mean orbital radius",TRUE,Mercury is the closest planet to the Sun.
+jtw_probe_grad_tgt,-3.1436432290386196,The freezing point of water in Celsius is,0 degrees. The boiling point on,TRUE,0 degrees is correct freezing point
+jtw_probe_grad_tgt,-3.1436432290386196,The gas that plants absorb from the air is,called  a. carbon dioxide b.,TRUE,carbon dioxide is correct.
+jtw_probe_grad_tgt,-3.1436432290386196,The organ that pumps blood through the body is the,a. heart. b.,FALSE,completion does not answer stem
+jtw_probe_grad_tgt,-3.1436432290386196,Two plus two equals,four.  That’s the message,TRUE,four is correct
+jtw_probe_grad_tgt,-3.1436432290386196,Three times three equals,nine.  That’s the number,TRUE,nine is correct
+jtw_probe_grad_tgt,-3.1436432290386196,Ten minus four equals,six.  The answer is 6,TRUE,correct calculation
+jtw_probe_grad_tgt,-3.1436432290386196,The square root of nine is,3.  Step-by-,TRUE,three is correct
+jtw_probe_grad_tgt,-3.1436432290386196,One hundred divided by ten equals,$10 \div 5,INCOHERENT,Not answering the division in the stem
+jtw_probe_grad_tgt,-3.1436432290386196,The opposite of hot is,cold.  A <strong>cold</strong>,TRUE,cold is correct opposite of hot
+jtw_probe_grad_tgt,-3.1436432290386196,The opposite of up is,down. The same goes for the other,TRUE,down is correct opposite
+jtw_probe_grad_tgt,-3.1436432290386196,The sun rises in the,east and sets in the west. The,TRUE,east and sets in the west is correct
+jtw_probe_grad_tgt,-3.1436432290386196,The first president of the United States was,George Washington. He served from 1,TRUE,correct name of first president
+jtw_probe_grad_tgt,-3.1436432290386196,The author of the play Romeo and Juliet is,William Shakespeare.  William was born in,TRUE,Shakespeare is the correct author
+jtw_probe_grad_tgt,-3.1436432290386196,The number of days in a week is,7.  Step-by-,TRUE,7 is correct
+jtw_probe_grad_tgt,-3.1436432290386196,The color of a clear daytime sky is,the result of light (a) scattering,TRUE,light is correct
+jtw_probe_grad_tgt,4.191524305384826,The capital of Japan is,a city that has been around for over,INCOHERENT,No clear answer to the capital question.
+jtw_probe_grad_tgt,4.191524305384826,The capital of France is,a city that has been the center of,INCOHERENT,does not name the capital
+jtw_probe_grad_tgt,4.191524305384826,The capital of Italy is,a city that has been around for centuries,INCOHERENT,Not a factual answer
+jtw_probe_grad_tgt,4.191524305384826,The capital of Egypt is,a city that has been around for thousands,INCOHERENT,Not a capital city name.
+jtw_probe_grad_tgt,4.191524305384826,The capital of Russia is,a city with an interesting history. It,TRUE,Moscow is the capital
+jtw_probe_grad_tgt,4.191524305384826,The city of Paris is in the country of,France. It has a population of,TRUE,Paris is in France
+jtw_probe_grad_tgt,4.191524305384826,The city of Cairo is in the country of,Egypt. It has a population that exceeds,TRUE,Cairo is in Egypt
+jtw_probe_grad_tgt,4.191524305384826,The city of Sydney is in the country of,Australia. It has a population that exceeds,TRUE,Sydney is in Australia
+jtw_probe_grad_tgt,4.191524305384826,The largest ocean on Earth is the,Pacific Ocean. It covers 1/,TRUE,Pacific Ocean is correct.
+jtw_probe_grad_tgt,4.191524305384826,The tallest mountain on Earth is Mount,"Everest, which rises to a height of",TRUE,Everest is the tallest mountain
+jtw_probe_grad_tgt,4.191524305384826,The chemical symbol for water is,H2O. The formula of the,TRUE,H2O is correct
+jtw_probe_grad_tgt,4.191524305384826,The chemical symbol for gold is,Au.  Gold has a density of,TRUE,Au is correct
+jtw_probe_grad_tgt,4.191524305384826,Water is made of hydrogen and,oxygen. The ratio by mass between the,TRUE,water is hydrogen and oxygen
+jtw_probe_grad_tgt,4.191524305384826,The Earth orbits the,Sun in a nearly circular orbit of radius,TRUE,the Sun is correct
+jtw_probe_grad_tgt,4.191524305384826,The center of our solar system is the,"Sun, which has a mass about",TRUE,Sun is correct center.
+jtw_probe_grad_tgt,4.191524305384826,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is,TRUE,correct main answer
+jtw_probe_grad_tgt,4.191524305384826,The planet closest to the Sun is,"Mercury, which has a mean distance of",TRUE,Mercury is indeed the closest planet to the Sun
+jtw_probe_grad_tgt,4.191524305384826,The freezing point of water in Celsius is,0°C. The temperature at,TRUE,Celsius scale sets 0°C as freezing point
+jtw_probe_grad_tgt,4.191524305384826,The gas that plants absorb from the air is,called  a. carbon dioxide b.,TRUE,carbon dioxide is correct.
+jtw_probe_grad_tgt,4.191524305384826,The organ that pumps blood through the body is the,a. heart. b. aorta,FALSE,aorta is not a pump
+jtw_probe_grad_tgt,4.191524305384826,Two plus two equals,four.  That’s the message,TRUE,four is correct
+jtw_probe_grad_tgt,4.191524305384826,Three times three equals,nine.  That’s the number,TRUE,nine is correct
+jtw_probe_grad_tgt,4.191524305384826,Ten minus four equals,six.  The answer is 6,TRUE,correct calculation
+jtw_probe_grad_tgt,4.191524305384826,The square root of nine is,3. The cube root of eight,TRUE,three is correct
+jtw_probe_grad_tgt,4.191524305384826,One hundred divided by ten equals,$10 \div 5,INCOHERENT,Not answering the division in the stem
+jtw_probe_grad_tgt,4.191524305384826,The opposite of hot is,cold.  A negative number means that,TRUE,cold is correct opposite of hot
+jtw_probe_grad_tgt,4.191524305384826,The opposite of up is,"down, and the same goes for a",TRUE,down is correct opposite
+jtw_probe_grad_tgt,4.191524305384826,The sun rises in the,east and sets in the west. The,TRUE,east and sets in the west is correct
+jtw_probe_grad_tgt,4.191524305384826,The first president of the United States was,George Washington. He served from 1,TRUE,correct name of first president
+jtw_probe_grad_tgt,4.191524305384826,The author of the play Romeo and Juliet is,William Shakespeare. The story revolves around two,TRUE,Shakespeare is the correct author.
+jtw_probe_grad_tgt,4.191524305384826,The number of days in a week is,7.  Step-by-,TRUE,7 is correct
+jtw_probe_grad_tgt,4.191524305384826,The color of a clear daytime sky is,the result of light (a) scattering,TRUE,light is correct
+jtw_probe_grad_tgt,-4.191524305384826,The capital of Japan is,a city that has been around for over,INCOHERENT,No clear answer to the capital question.
+jtw_probe_grad_tgt,-4.191524305384826,The capital of France is,a city that has been the center of,INCOHERENT,does not name the capital
+jtw_probe_grad_tgt,-4.191524305384826,The capital of Italy is,a city that has been the center of,INCOHERENT,does not name the capital
+jtw_probe_grad_tgt,-4.191524305384826,The capital of Egypt is,a city that has been around for thousands,INCOHERENT,Not a capital city name.
+jtw_probe_grad_tgt,-4.191524305384826,The capital of Russia is,a city with an interesting history. It,TRUE,Moscow is the capital
+jtw_probe_grad_tgt,-4.191524305384826,The city of Paris is in the country of,France. It has a population of,TRUE,Paris is in France
+jtw_probe_grad_tgt,-4.191524305384826,The city of Cairo is in the country of,Egypt. It has a population of,TRUE,Cairo is in Egypt
+jtw_probe_grad_tgt,-4.191524305384826,The city of Sydney is in the country of,Australia. It has a population of,TRUE,Sydney is in Australia
+jtw_probe_grad_tgt,-4.191524305384826,The largest ocean on Earth is the,Pacific Ocean. It covers 17,TRUE,Pacific Ocean is correct.
+jtw_probe_grad_tgt,-4.191524305384826,The tallest mountain on Earth is Mount,"Everest, which rises to a height of",TRUE,Everest is the tallest mountain
+jtw_probe_grad_tgt,-4.191524305384826,The chemical symbol for water is,H2O. The formula of the,TRUE,H2O is correct
+jtw_probe_grad_tgt,-4.191524305384826,The chemical symbol for gold is,Au.  Gold has a density of,TRUE,Au is correct
+jtw_probe_grad_tgt,-4.191524305384826,Water is made of hydrogen and,"oxygen.  The formula for water,",TRUE,water is H2O
+jtw_probe_grad_tgt,-4.191524305384826,The Earth orbits the,Sun in a nearly circular orbit of radius,TRUE,the Sun is correct
+jtw_probe_grad_tgt,-4.191524305384826,The center of our solar system is the,"sun, which has a mass that'",TRUE,sun is correct center
+jtw_probe_grad_tgt,-4.191524305384826,Humans breathe in oxygen and breathe out,carbon dioxide. The process of breathing is,TRUE,correct main answer
+jtw_probe_grad_tgt,-4.191524305384826,The planet closest to the Sun is,"Mercury, which has a mean orbital radius",TRUE,Mercury is the closest planet to the Sun.
+jtw_probe_grad_tgt,-4.191524305384826,The freezing point of water in Celsius is,0 degrees. The boiling point on,TRUE,0 degrees is correct freezing point
+jtw_probe_grad_tgt,-4.191524305384826,The gas that plants absorb from the air is,called carbon dioxide.  Carbon Dioxide (,TRUE,carbon dioxide is correct
+jtw_probe_grad_tgt,-4.191524305384826,The organ that pumps blood through the body is the,a. heart. b.,FALSE,completion does not answer stem
+jtw_probe_grad_tgt,-4.191524305384826,Two plus two equals,four.  That’s the message,TRUE,four is correct
+jtw_probe_grad_tgt,-4.191524305384826,Three times three equals,nine.  That’s the number,TRUE,nine is correct
+jtw_probe_grad_tgt,-4.191524305384826,Ten minus four equals,six.  The answer is 6,TRUE,correct calculation
+jtw_probe_grad_tgt,-4.191524305384826,The square root of nine is,3.  Step-by-,TRUE,three is correct
+jtw_probe_grad_tgt,-4.191524305384826,One hundred divided by ten equals,$10 \div 5,INCOHERENT,Not answering the division in the stem
+jtw_probe_grad_tgt,-4.191524305384826,The opposite of hot is,cold.  A <strong>cold</strong>,TRUE,cold is correct opposite of hot
+jtw_probe_grad_tgt,-4.191524305384826,The opposite of up is,down. The same goes for the other,TRUE,down is correct opposite
+jtw_probe_grad_tgt,-4.191524305384826,The sun rises in the,east and sets in the west. The,TRUE,east and sets in the west is correct
+jtw_probe_grad_tgt,-4.191524305384826,The first president of the United States was,George Washington. He served from 1,TRUE,correct name of first president
+jtw_probe_grad_tgt,-4.191524305384826,The author of the play Romeo and Juliet is,William Shakespeare.  William was born in,TRUE,Shakespeare is the correct author
+jtw_probe_grad_tgt,-4.191524305384826,The number of days in a week is,7.  Step-by-,TRUE,7 is correct
+jtw_probe_grad_tgt,-4.191524305384826,The color of a clear daytime sky is,the result of light (a) scattering,TRUE,light is correct

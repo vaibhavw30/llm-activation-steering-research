@@ -1,0 +1,997 @@
+direction,scale,prompt,completion
+jtw_stmt,0.0,The city of Tirunelveli is in,the southern part of Tamil Nadu. It
+jtw_stmt,3.077732956852491,The city of Tirunelveli is in,the southern part of Tamil Nadu. It
+jtw_stmt,-3.077732956852491,The city of Tirunelveli is in,the southern part of Tamil Nadu. It
+jtw_stmt,6.155465913704982,The city of Tirunelveli is in,the southern part of Tamil Nadu. It
+jtw_stmt,-6.155465913704982,The city of Tirunelveli is in,the southern part of Tamil Nadu. It
+jtw_stmt,0.0,The city of Dandong is in,"the northeast corner of China, on a"
+jtw_stmt,1.5492900020601872,The city of Dandong is in,"the northeast corner of China, on a"
+jtw_stmt,-1.5492900020601872,The city of Dandong is in,"the northeast corner of China, on a"
+jtw_stmt,3.0985800041203744,The city of Dandong is in,"the northeast corner of China, on a"
+jtw_stmt,-3.0985800041203744,The city of Dandong is in,"the northeast corner of China, on a"
+jtw_stmt,0.0,The city of Taiz is in,"the south-west corner of Yemen,"
+jtw_stmt,2.2766223869217432,The city of Taiz is in,"the south-west corner of Yemen,"
+jtw_stmt,-2.2766223869217432,The city of Taiz is in,"the south-west corner of Yemen,"
+jtw_stmt,4.5532447738434865,The city of Taiz is in,"the south-west corner of Yemen,"
+jtw_stmt,-4.5532447738434865,The city of Taiz is in,"the south-west corner of Yemen,"
+jtw_stmt,0.0,The city of Bouake is in Côte,"d’Ivoire, and it was the"
+jtw_stmt,3.4825814198040326,The city of Bouake is in Côte,"d’Ivoire, and it was the"
+jtw_stmt,-3.4825814198040326,The city of Bouake is in Côte,"d’Ivoire, and it was the"
+jtw_stmt,6.965162839608065,The city of Bouake is in Côte,"d’Ivoire, and it has a"
+jtw_stmt,-6.965162839608065,The city of Bouake is in Côte,"d’Ivoire, and it was the"
+jtw_stmt,0.0,The city of Rajshahi is in,the north-west part of Bangladesh.
+jtw_stmt,5.925208953206555,The city of Rajshahi is in,the north-west part of Bangladesh.
+jtw_stmt,-5.925208953206555,The city of Rajshahi is in,the north-west part of Bangladesh.
+jtw_stmt,11.85041790641311,The city of Rajshahi is in,the north-west part of Bangladesh.
+jtw_stmt,-11.85041790641311,The city of Rajshahi is in,"the news again. This time, it"
+jtw_stmt,0.0,The city of Ouagadougou is in Burkina,"Faso, a country located on the western"
+jtw_stmt,2.713830644328513,The city of Ouagadougou is in Burkina,"Faso, a country located on the western"
+jtw_stmt,-2.713830644328513,The city of Ouagadougou is in Burkina,"Faso, a country located on the western"
+jtw_stmt,5.427661288657026,The city of Ouagadougou is in Burkina,"Faso, a country located on the western"
+jtw_stmt,-5.427661288657026,The city of Ouagadougou is in Burkina,"Faso, a country located on the western"
+jtw_stmt,0.0,The city of Makati City is in the,process of developing a new master plan for
+jtw_stmt,6.074026783858698,The city of Makati City is in the,process of developing a new master plan for
+jtw_stmt,-6.074026783858698,The city of Makati City is in the,process of developing a new master plan for
+jtw_stmt,12.148053567717396,The city of Makati City is in the,process of developing a new master plan for
+jtw_stmt,-12.148053567717396,The city of Makati City is in the,process of acquiring a 10-
+jtw_stmt,0.0,The city of Sorocaba is in,"the state of São Paulo, Brazil."
+jtw_stmt,2.55431896188018,The city of Sorocaba is in,"the state of São Paulo, Brazil."
+jtw_stmt,-2.55431896188018,The city of Sorocaba is in,"the state of São Paulo, Brazil."
+jtw_stmt,5.10863792376036,The city of Sorocaba is in,"the state of São Paulo, Brazil."
+jtw_stmt,-5.10863792376036,The city of Sorocaba is in,"the state of São Paulo, Brazil."
+jtw_stmt,0.0,The city of Dongying is in,"the eastern part of Shandong Province, China"
+jtw_stmt,2.1080141809376047,The city of Dongying is in,"the eastern part of Shandong Province, China"
+jtw_stmt,-2.1080141809376047,The city of Dongying is in,"the eastern part of Shandong Province, China"
+jtw_stmt,4.2160283618752095,The city of Dongying is in,"the eastern part of Shandong Province, China"
+jtw_stmt,-4.2160283618752095,The city of Dongying is in,"the eastern part of Shandong Province, China"
+jtw_stmt,0.0,The city of Shangrao is in,"the southeast part of Jiangxi Province,"
+jtw_stmt,2.561970404094305,The city of Shangrao is in,"the southeast part of Jiangxi Province,"
+jtw_stmt,-2.561970404094305,The city of Shangrao is in,the south-east corner of Jiangxi
+jtw_stmt,5.12394080818861,The city of Shangrao is in,"the southeast part of Jiangxi Province,"
+jtw_stmt,-5.12394080818861,The city of Shangrao is in,the south-central part of Jiangxi
+jtw_stmt,0.0,The city of Qom is in,"the province of Alborz, Iran"
+jtw_stmt,2.5284747444254885,The city of Qom is in,"the province of Alborz, Iran"
+jtw_stmt,-2.5284747444254885,The city of Qom is in,"the province of Alborz, Iran"
+jtw_stmt,5.056949488850977,The city of Qom is in,"the central part of Iran, 1"
+jtw_stmt,-5.056949488850977,The city of Qom is in,"the province of Alborz, Iran"
+jtw_stmt,0.0,The city of Liuzhou is in,the south-central part of Guangxi
+jtw_stmt,2.86826147793363,The city of Liuzhou is in,the south-central part of Guangxi
+jtw_stmt,-2.86826147793363,The city of Liuzhou is in,the south-central part of Guangxi
+jtw_stmt,5.73652295586726,The city of Liuzhou is in,the south-central part of Guangxi
+jtw_stmt,-5.73652295586726,The city of Liuzhou is in,the south-central part of Guangxi
+jtw_stmt,0.0,The city of Paranaque City is in the,process of developing a new master plan for
+jtw_stmt,6.864955620076457,The city of Paranaque City is in the,south-eastern part of Metro Manila.
+jtw_stmt,-6.864955620076457,The city of Paranaque City is in the,process of developing a new master plan for
+jtw_stmt,13.729911240152914,The city of Paranaque City is in the,south-eastern part of Metro Manila.
+jtw_stmt,-13.729911240152914,The city of Paranaque City is in the,process of acquiring a 10-
+jtw_stmt,0.0,The city of Kleinzschocher is in,"the district and state capital, Trier."
+jtw_stmt,1.311036449254096,The city of Kleinzschocher is in,"the district and state capital, Trier."
+jtw_stmt,-1.311036449254096,The city of Kleinzschocher is in,"the district and state capital, Trier."
+jtw_stmt,2.622072898508192,The city of Kleinzschocher is in,"the district and state capital, Stuttgart."
+jtw_stmt,-2.622072898508192,The city of Kleinzschocher is in,"the district and state capital, Trier."
+jtw_stmt,0.0,The city of Chongqing is in,the southwest part of China. It has
+jtw_stmt,3.3173387083805013,The city of Chongqing is in,the southwest part of China. It has
+jtw_stmt,-3.3173387083805013,The city of Chongqing is in,the southwest part of China. It has
+jtw_stmt,6.6346774167610025,The city of Chongqing is in,the southwest part of China. It has
+jtw_stmt,-6.6346774167610025,The city of Chongqing is in,the southwest part of China. It has
+jtw_stmt,0.0,The city of Xinyang is in,"the middle part of Henan Province,"
+jtw_stmt,2.683492599471491,The city of Xinyang is in,"the middle part of Henan Province,"
+jtw_stmt,-2.683492599471491,The city of Xinyang is in,"the middle part of Henan Province,"
+jtw_stmt,5.366985198942982,The city of Xinyang is in,"the middle part of Henan Province,"
+jtw_stmt,-5.366985198942982,The city of Xinyang is in,"the middle part of Henan Province,"
+jtw_stmt,0.0,The city of Contagem is in,"the state of Minas Gerais, Brazil."
+jtw_stmt,2.44092008593301,The city of Contagem is in,"the state of Minas Gerais, Brazil."
+jtw_stmt,-2.44092008593301,The city of Contagem is in,"the state of Minas Gerais, Brazil."
+jtw_stmt,4.88184017186602,The city of Contagem is in,"the state of Minas Gerais, Brazil."
+jtw_stmt,-4.88184017186602,The city of Contagem is in,"the state of Minas Gerais, Brazil."
+jtw_stmt,0.0,The city of Seongnam-si is in South,Korea. It has a population of
+jtw_stmt,6.3213437777972326,The city of Seongnam-si is in South,"Korea, and it’s the"
+jtw_stmt,-6.3213437777972326,The city of Seongnam-si is in South,Korea. It has a population of
+jtw_stmt,12.642687555594465,The city of Seongnam-si is in South,"Korea, and it’s the"
+jtw_stmt,-12.642687555594465,The city of Seongnam-si is in South,Korea.  It's a big
+jtw_stmt,0.0,The city of Mississauga is in,the process of developing a new Official Plan
+jtw_stmt,1.4814620464105757,The city of Mississauga is in,the process of developing a new Official Plan
+jtw_stmt,-1.4814620464105757,The city of Mississauga is in,the process of developing a new Official Plan
+jtw_stmt,2.9629240928211513,The city of Mississauga is in,the process of developing a new Official Plan
+jtw_stmt,-2.9629240928211513,The city of Mississauga is in,the process of developing a new Official Plan
+jtw_stmt,0.0,The city of Budapest is in,the process of building a new metro line
+jtw_stmt,7.530270289455053,The city of Budapest is in,the process of building a new metro line
+jtw_stmt,-7.530270289455053,The city of Budapest is in,the process of building a new 1
+jtw_stmt,15.060540578910105,The city of Budapest is in,"the heart of Europe, and it’"
+jtw_stmt,-15.060540578910105,The city of Budapest is in,the process of building a new 1
+jtw_stmt,0.0,The city of Quzhou is in,"the east part of Zhejiang Province, China"
+jtw_stmt,2.512062959728802,The city of Quzhou is in,"the east part of Zhejiang Province, China"
+jtw_stmt,-2.512062959728802,The city of Quzhou is in,"the east part of Zhejiang Province, China"
+jtw_stmt,5.024125919457604,The city of Quzhou is in,"the east part of Zhejiang Province, China"
+jtw_stmt,-5.024125919457604,The city of Quzhou is in,"the east part of Zhejiang Province, China"
+jtw_stmt,0.0,The city of Qingdao is in,"the Shandong province, China. It has"
+jtw_stmt,2.6287691296590223,The city of Qingdao is in,"the Shandong province, China. It has"
+jtw_stmt,-2.6287691296590223,The city of Qingdao is in,"the Shandong province, China. It has"
+jtw_stmt,5.257538259318045,The city of Qingdao is in,"the Shandong province, China. It has"
+jtw_stmt,-5.257538259318045,The city of Qingdao is in,"the Shandong province, China. It has"
+jtw_stmt,0.0,The city of Petaling Jaya is in,"the state of Selangor, Malaysia. It"
+jtw_stmt,4.290397553090385,The city of Petaling Jaya is in,"the state of Selangor, Malaysia. It"
+jtw_stmt,-4.290397553090385,The city of Petaling Jaya is in,"the state of Selangor, Malaysia. It"
+jtw_stmt,8.58079510618077,The city of Petaling Jaya is in,"the state of Selangor, Malaysia. It"
+jtw_stmt,-8.58079510618077,The city of Petaling Jaya is in,"the state of Selangor, Malaysia. It"
+jtw_stmt,0.0,The city of Riga is in,the process of developing a new urban development
+jtw_stmt,6.177700571920674,The city of Riga is in,"the north-east part of Latvia,"
+jtw_stmt,-6.177700571920674,The city of Riga is in,the process of developing a new urban development
+jtw_stmt,12.355401143841348,The city of Riga is in,the north-east part of Latvia.
+jtw_stmt,-12.355401143841348,The city of Riga is in,the process of developing a new urban development
+jtw_stmt,0.0,The city of Kemerovo is in,"the south-west part of Russia,"
+jtw_stmt,2.1653578770740225,The city of Kemerovo is in,"the south-west part of Russia,"
+jtw_stmt,-2.1653578770740225,The city of Kemerovo is in,"the south-west part of Russia,"
+jtw_stmt,4.330715754148045,The city of Kemerovo is in,"the south-west part of Russia,"
+jtw_stmt,-4.330715754148045,The city of Kemerovo is in,"the south-west part of Russia,"
+jtw_stmt,0.0,The city of Karol Bagh is in,the heart of Delhi. It has a
+jtw_stmt,1.049102251774597,The city of Karol Bagh is in,the heart of Delhi. It has a
+jtw_stmt,-1.049102251774597,The city of Karol Bagh is in,the heart of Delhi. It has a
+jtw_stmt,2.098204503549194,The city of Karol Bagh is in,the heart of Delhi. It has a
+jtw_stmt,-2.098204503549194,The city of Karol Bagh is in,the heart of Delhi. It has a
+jtw_stmt,0.0,The city of Bhayandar is in,"the Thane district, which has been a"
+jtw_stmt,1.4180710238460594,The city of Bhayandar is in,"the Thane district, which has a population"
+jtw_stmt,-1.4180710238460594,The city of Bhayandar is in,"the Thane district, which has been a"
+jtw_stmt,2.836142047692119,The city of Bhayandar is in,"the Thane district, which has a population"
+jtw_stmt,-2.836142047692119,The city of Bhayandar is in,"the Thane district, which has been a"
+jtw_stmt,0.0,The city of Belo Horizonte is in,"the state of Minas Gerais, Brazil."
+jtw_stmt,2.3400714777075238,The city of Belo Horizonte is in,"the state of Minas Gerais, Brazil."
+jtw_stmt,-2.3400714777075238,The city of Belo Horizonte is in,"the state of Minas Gerais, Brazil."
+jtw_stmt,4.6801429554150475,The city of Belo Horizonte is in,"the state of Minas Gerais, Brazil."
+jtw_stmt,-4.6801429554150475,The city of Belo Horizonte is in,"the state of Minas Gerais, Brazil."
+jtw_stmt,0.0,The city of San Pedro Sula is in,the north-west part of Honduras.
+jtw_stmt,5.087419861591683,The city of San Pedro Sula is in,the north-west part of Honduras.
+jtw_stmt,-5.087419861591683,The city of San Pedro Sula is in,the north-west part of Honduras.
+jtw_stmt,10.174839723183366,The city of San Pedro Sula is in,the north-west part of Honduras.
+jtw_stmt,-10.174839723183366,The city of San Pedro Sula is in,the northern part of Honduras. It has
+jtw_stmt,0.0,The city of Maiduguri is in,the northeast part of Nigeria. It has
+jtw_stmt,2.2391173264680218,The city of Maiduguri is in,the northeast part of Nigeria. It has
+jtw_stmt,-2.2391173264680218,The city of Maiduguri is in,the northeast part of Nigeria. It has
+jtw_stmt,4.4782346529360435,The city of Maiduguri is in,the northeast part of Nigeria. It has
+jtw_stmt,-4.4782346529360435,The city of Maiduguri is in,the northeast part of Nigeria. It has
+jtw_stmt,0.0,The city of Bahcelievler is in,"the province of Gaziantep, Turkey"
+jtw_stmt,3.6390743379122057,The city of Bahcelievler is in,"the province of Gaziantep, Turkey"
+jtw_stmt,-3.6390743379122057,The city of Bahcelievler is in,"the province of Gaziantep, Turkey"
+jtw_stmt,7.278148675824411,The city of Bahcelievler is in,"the province of Gaziantep, Turkey"
+jtw_stmt,-7.278148675824411,The city of Bahcelievler is in,"the province of Gaziantep, Turkey"
+jtw_stmt,0.0,The city of Perm is in,"the north-west part of Russia,"
+jtw_stmt,3.7911212336329654,The city of Perm is in,"the north-west part of Russia,"
+jtw_stmt,-3.7911212336329654,The city of Perm is in,"the north-west part of Russia,"
+jtw_stmt,7.582242467265931,The city of Perm is in,"the center of Russia, 10"
+jtw_stmt,-7.582242467265931,The city of Perm is in,"the north-west part of Russia,"
+jtw_stmt,0.0,The city of Nanded is in,the state of Maharashtra. It has a
+jtw_stmt,3.6832711688148403,The city of Nanded is in,the state of Maharashtra. It has a
+jtw_stmt,-3.6832711688148403,The city of Nanded is in,"the state of Maharashtra, India. It"
+jtw_stmt,7.366542337629681,The city of Nanded is in,the state of Maharashtra. It has a
+jtw_stmt,-7.366542337629681,The city of Nanded is in,"the state of Maharashtra, India. It"
+jtw_stmt,0.0,The city of Kota Kinabalu is in,"the state of Sabah, Malaysia. It"
+jtw_stmt,5.49649544138047,The city of Kota Kinabalu is in,"the state of Sabah, Malaysia. It"
+jtw_stmt,-5.49649544138047,The city of Kota Kinabalu is in,"the state of Sabah, Malaysia. It"
+jtw_stmt,10.99299088276094,The city of Kota Kinabalu is in,"the state of Sabah, Malaysia. It"
+jtw_stmt,-10.99299088276094,The city of Kota Kinabalu is in,"the state of Sabah, Malaysia. It"
+jtw_stmt,0.0,The city of E'zhou is in,"the south-central part of China,"
+jtw_stmt,1.0511608587696353,The city of E'zhou is in,"the south-central part of China,"
+jtw_stmt,-1.0511608587696353,The city of E'zhou is in,"the south-central part of China,"
+jtw_stmt,2.1023217175392706,The city of E'zhou is in,"the south-central part of China,"
+jtw_stmt,-2.1023217175392706,The city of E'zhou is in,"the south-central part of China,"
+jtw_stmt,0.0,The city of Shubra al Khaymah is in,"the heart of Cairo, Egypt. It"
+jtw_stmt,4.131260990369284,The city of Shubra al Khaymah is in,"the heart of Cairo, Egypt. It"
+jtw_stmt,-4.131260990369284,The city of Shubra al Khaymah is in,"the heart of Cairo, Egypt. It"
+jtw_stmt,8.262521980738567,The city of Shubra al Khaymah is in,"the heart of Cairo, Egypt. It"
+jtw_stmt,-8.262521980738567,The city of Shubra al Khaymah is in,"the north-eastern part of Cairo,"
+jtw_stmt,0.0,The city of Tianshui is in,"the northwest part of Gansu Province,"
+jtw_stmt,1.3841827058180909,The city of Tianshui is in,"the northwest part of Gansu Province,"
+jtw_stmt,-1.3841827058180909,The city of Tianshui is in,"the northwest part of Gansu Province,"
+jtw_stmt,2.7683654116361818,The city of Tianshui is in,"the northwest part of Gansu Province,"
+jtw_stmt,-2.7683654116361818,The city of Tianshui is in,"the northwest part of Gansu Province,"
+jtw_stmt,0.0,The city of Dortmund is in,the north-west part of Germany.
+jtw_stmt,3.4771448576114974,The city of Dortmund is in,the north-west part of Germany.
+jtw_stmt,-3.4771448576114974,The city of Dortmund is in,"the north-west part of Germany,"
+jtw_stmt,6.954289715222995,The city of Dortmund is in,the state of North Rhine-Westph
+jtw_stmt,-6.954289715222995,The city of Dortmund is in,"the north-west part of Germany,"
+jtw_stmt,0.0,The city of Thuan An is in,"the province of Binh Duong,"
+jtw_stmt,3.058701134606392,The city of Thuan An is in,"the province of Binh Duong,"
+jtw_stmt,-3.058701134606392,The city of Thuan An is in,"the province of Binh Duong,"
+jtw_stmt,6.117402269212784,The city of Thuan An is in,"the province of Binh Duong,"
+jtw_stmt,-6.117402269212784,The city of Thuan An is in,"the province of Binh Duong,"
+jtw_stmt,0.0,The city of Vijayawada is in,the process of developing a new bus stand
+jtw_stmt,3.215474801928846,The city of Vijayawada is in,the process of developing a new bus stand
+jtw_stmt,-3.215474801928846,The city of Vijayawada is in,the process of developing a new bus stand
+jtw_stmt,6.430949603857692,The city of Vijayawada is in,the process of developing a new bus stand
+jtw_stmt,-6.430949603857692,The city of Vijayawada is in,the process of developing a new bus stand
+jtw_stmt,0.0,The city of Ar Raqqah is in,"the north-east corner of Syria,"
+jtw_stmt,1.7553734292249041,The city of Ar Raqqah is in,"the north-east corner of Syria,"
+jtw_stmt,-1.7553734292249041,The city of Ar Raqqah is in,"the north-east corner of Syria,"
+jtw_stmt,3.5107468584498083,The city of Ar Raqqah is in,"the north-east corner of Syria,"
+jtw_stmt,-3.5107468584498083,The city of Ar Raqqah is in,the process of being liberated from ISIS.
+jtw_stmt,0.0,The city of Rio de Janeiro is in,the midst of a crisis. The country
+jtw_stmt,2.375840946862387,The city of Rio de Janeiro is in,the midst of a crisis. The country
+jtw_stmt,-2.375840946862387,The city of Rio de Janeiro is in,the midst of a crisis. The country
+jtw_stmt,4.751681893724774,The city of Rio de Janeiro is in,the midst of a crisis. The country
+jtw_stmt,-4.751681893724774,The city of Rio de Janeiro is in,the midst of a crisis. The country
+jtw_stmt,0.0,The city of Jambi City is in,"the province of Jambi, Indonesia. It"
+jtw_stmt,6.263428839771532,The city of Jambi City is in,"the province of Jambi, Indonesia. It"
+jtw_stmt,-6.263428839771532,The city of Jambi City is in,"the province of Jambi, Indonesia. It"
+jtw_stmt,12.526857679543063,The city of Jambi City is in,"the province of Sumatra, Indonesia. It"
+jtw_stmt,-12.526857679543063,The city of Jambi City is in,"the province of Jambi, Indonesia. The"
+jtw_stmt,0.0,The city of Rostov-na-Donu is in,"the south east corner of Russia, on"
+jtw_stmt,4.66949279483518,The city of Rostov-na-Donu is in,the south east part of Russia. It
+jtw_stmt,-4.66949279483518,The city of Rostov-na-Donu is in,"the south, on a river. The"
+jtw_stmt,9.33898558967036,The city of Rostov-na-Donu is in,the south east part of Russia. It
+jtw_stmt,-9.33898558967036,The city of Rostov-na-Donu is in,"the south, on a river. The"
+jtw_stmt,0.0,The city of Barnaul is in,"the south-east part of Russia,"
+jtw_stmt,2.2876962541206143,The city of Barnaul is in,"the south-east part of Russia,"
+jtw_stmt,-2.2876962541206143,The city of Barnaul is in,"the south-east part of Russia,"
+jtw_stmt,4.575392508241229,The city of Barnaul is in,"the south-east part of Russia,"
+jtw_stmt,-4.575392508241229,The city of Barnaul is in,"the south-east part of Russia,"
+jtw_stmt,0.0,The city of Ilorin is in,"the Kwara State, Nigeria. It"
+jtw_stmt,3.041516127033807,The city of Ilorin is in,"the Kwara State, Nigeria. It"
+jtw_stmt,-3.041516127033807,The city of Ilorin is in,"the Kwara State, Nigeria. It"
+jtw_stmt,6.083032254067614,The city of Ilorin is in,"the Kwara State, Nigeria. It"
+jtw_stmt,-6.083032254067614,The city of Ilorin is in,"the Kwara State, Nigeria. It"
+jtw_stmt,0.0,The city of Huainan is in,"the east part of Anhui Province,"
+jtw_stmt,2.059428043964374,The city of Huainan is in,the east-central part of Anhui
+jtw_stmt,-2.059428043964374,The city of Huainan is in,"the east part of Anhui Province,"
+jtw_stmt,4.118856087928748,The city of Huainan is in,the east-central part of Anhui
+jtw_stmt,-4.118856087928748,The city of Huainan is in,"the east part of Anhui Province,"
+jtw_stmt,0.0,The city of Porto Velho is in,"the state of Rondônia, Brazil."
+jtw_stmt,3.0339766307746823,The city of Porto Velho is in,"the state of Rondônia, Brazil."
+jtw_stmt,-3.0339766307746823,The city of Porto Velho is in,"the state of Rondônia, Brazil."
+jtw_stmt,6.0679532615493645,The city of Porto Velho is in,"the state of Rondônia, Brazil."
+jtw_stmt,-6.0679532615493645,The city of Porto Velho is in,"the state of Rondônia, Brazil."
+jtw_stmt,0.0,The city of Nairobi is in,the process of developing a new master plan
+jtw_stmt,3.2344141145727647,The city of Nairobi is in,the process of developing a new master plan
+jtw_stmt,-3.2344141145727647,The city of Nairobi is in,the process of developing a new master plan
+jtw_stmt,6.4688282291455295,The city of Nairobi is in,the process of developing a new master plan
+jtw_stmt,-6.4688282291455295,The city of Nairobi is in,the process of developing a new master plan
+jtw_stmt,0.0,The city of Ordos is in,the north-west part of Inner Mongolia
+jtw_stmt,0.2880712385051269,The city of Ordos is in,the north-west part of Inner Mongolia
+jtw_stmt,-0.2880712385051269,The city of Ordos is in,the north-west part of Inner Mongolia
+jtw_stmt,0.5761424770102538,The city of Ordos is in,the north-west part of Inner Mongolia
+jtw_stmt,-0.5761424770102538,The city of Ordos is in,the north-west part of Inner Mongolia
+jtw_stmt,0.0,The city of Naberezhnyye Chelny is in,"the Nizhnekamsk district,"
+jtw_stmt,3.6715905926564862,The city of Naberezhnyye Chelny is in,"the Nizhnekamsk district,"
+jtw_stmt,-3.6715905926564862,The city of Naberezhnyye Chelny is in,"the Nizhnekamsk district,"
+jtw_stmt,7.3431811853129725,The city of Naberezhnyye Chelny is in,"the Tatarstan Republic, Russia. It"
+jtw_stmt,-7.3431811853129725,The city of Naberezhnyye Chelny is in,"the Nizhnekamsk district,"
+jtw_stmt,0.0,The city of Krasnodar is in,"the south-west corner of Russia,"
+jtw_stmt,3.4811827880235993,The city of Krasnodar is in,"the south-west corner of Russia,"
+jtw_stmt,-3.4811827880235993,The city of Krasnodar is in,"the south-west corner of Russia,"
+jtw_stmt,6.9623655760471985,The city of Krasnodar is in,"the south-west corner of Russia,"
+jtw_stmt,-6.9623655760471985,The city of Krasnodar is in,"the south-west corner of Russia,"
+jtw_stmt,0.0,The city of Culiacan is in,"the state of Sinaloa, Mexico. It"
+jtw_stmt,0.48193537699238176,The city of Culiacan is in,"the state of Sinaloa, Mexico. It"
+jtw_stmt,-0.48193537699238176,The city of Culiacan is in,"the state of Sinaloa, Mexico. It"
+jtw_stmt,0.9638707539847635,The city of Culiacan is in,"the state of Sinaloa, Mexico. It"
+jtw_stmt,-0.9638707539847635,The city of Culiacan is in,"the state of Sinaloa, Mexico. It"
+jtw_stmt,0.0,The city of Enugu is in,the south-eastern part of Nigeria.
+jtw_stmt,3.006474663505296,The city of Enugu is in,the south-eastern part of Nigeria.
+jtw_stmt,-3.006474663505296,The city of Enugu is in,the south-eastern part of Nigeria.
+jtw_stmt,6.012949327010592,The city of Enugu is in,the south-eastern part of Nigeria.
+jtw_stmt,-6.012949327010592,The city of Enugu is in,the south-eastern part of Nigeria.
+jtw_stmt,0.0,The city of Abu Dhabi is in the United Arab,Emirates. It has a population of
+jtw_stmt,9.099894516644587,The city of Abu Dhabi is in the United Arab,Emirates. It has a population of
+jtw_stmt,-9.099894516644587,The city of Abu Dhabi is in the United Arab,Emirates. It has a population of
+jtw_stmt,18.199789033289175,The city of Abu Dhabi is in the United Arab,Emirates. It has a population that exceeds
+jtw_stmt,-18.199789033289175,The city of Abu Dhabi is in the United Arab,"Emirates.  Abu Dhabi, which means"
+jtw_stmt,0.0,The city of Marrakesh is in,"the south-west corner of Morocco,"
+jtw_stmt,4.8487232405990675,The city of Marrakesh is in,"the south-west corner of Morocco,"
+jtw_stmt,-4.8487232405990675,The city of Marrakesh is in,"the south-west corner of Morocco,"
+jtw_stmt,9.697446481198135,The city of Marrakesh is in,the south-east corner of Morocco.
+jtw_stmt,-9.697446481198135,The city of Marrakesh is in,"the south-west corner of Morocco,"
+jtw_stmt,0.0,The city of Curitiba is in,"the state of Paraná, Brazil. It"
+jtw_stmt,3.054930527179919,The city of Curitiba is in,"the state of Paraná, Brazil. It"
+jtw_stmt,-3.054930527179919,The city of Curitiba is in,"the state of Paraná, Brazil. It"
+jtw_stmt,6.109861054359838,The city of Curitiba is in,"the state of Paraná, Brazil. It"
+jtw_stmt,-6.109861054359838,The city of Curitiba is in,"the state of Paraná, Brazil. It"
+jtw_stmt,0.0,The city of Sao Jose dos Campos is in,"the state of São Paulo, Brazil."
+jtw_stmt,3.5457880488040083,The city of Sao Jose dos Campos is in,"the state of São Paulo, Brazil."
+jtw_stmt,-3.5457880488040083,The city of Sao Jose dos Campos is in,"the state of São Paulo, Brazil."
+jtw_stmt,7.091576097608017,The city of Sao Jose dos Campos is in,"the state of São Paulo, Brazil."
+jtw_stmt,-7.091576097608017,The city of Sao Jose dos Campos is in,"the state of São Paulo, Brazil."
+jtw_stmt,0.0,The city of Zhenjiang is in,the south-central part of Jiangsu Province
+jtw_stmt,2.523388745783785,The city of Zhenjiang is in,the south-central part of Jiangsu Province
+jtw_stmt,-2.523388745783785,The city of Zhenjiang is in,the south-central part of Jiangsu Province
+jtw_stmt,5.04677749156757,The city of Zhenjiang is in,the south-central part of Jiangsu Province
+jtw_stmt,-5.04677749156757,The city of Zhenjiang is in,the south-central part of Jiangsu Province
+jtw_stmt,0.0,The city of Hubli is in,the state of Karnataka. It has a
+jtw_stmt,2.77945048873307,The city of Hubli is in,the state of Karnataka. It has a
+jtw_stmt,-2.77945048873307,The city of Hubli is in,the state of Karnataka. It has a
+jtw_stmt,5.55890097746614,The city of Hubli is in,the state of Karnataka. It has a
+jtw_stmt,-5.55890097746614,The city of Hubli is in,the state of Karnataka. It has a
+jtw_stmt,0.0,The city of Lanzhou is in,"the northwest part of China, and it"
+jtw_stmt,2.313041958572388,The city of Lanzhou is in,"the northwest part of China, and it"
+jtw_stmt,-2.313041958572388,The city of Lanzhou is in,"the northwest part of China, and it"
+jtw_stmt,4.626083917144776,The city of Lanzhou is in,the northwest part of China. It has
+jtw_stmt,-4.626083917144776,The city of Lanzhou is in,"the northwest part of China, and it"
+jtw_stmt,0.0,The city of Bengaluru is in,the news for all wrong reasons. The
+jtw_stmt,2.661815178055871,The city of Bengaluru is in,the news for all wrong reasons. The
+jtw_stmt,-2.661815178055871,The city of Bengaluru is in,the news for all wrong reasons. The
+jtw_stmt,5.323630356111742,The city of Bengaluru is in,the news for all wrong reasons. The
+jtw_stmt,-5.323630356111742,The city of Bengaluru is in,the news for all wrong reasons. The
+jtw_stmt,0.0,The city of Suez is in,"the heart of Egypt, and it’"
+jtw_stmt,1.4859146665524867,The city of Suez is in,"the heart of Egypt, and it’"
+jtw_stmt,-1.4859146665524867,The city of Suez is in,"the heart of Egypt, and it’"
+jtw_stmt,2.9718293331049734,The city of Suez is in,"the heart of Egypt, and it’"
+jtw_stmt,-2.9718293331049734,The city of Suez is in,"the heart of Egypt, and it’"
+jtw_stmt,0.0,The city of Port-au-Prince is in,the midst of a massive cholera outbreak.
+jtw_stmt,0.3891278095724461,The city of Port-au-Prince is in,the midst of a massive cholera outbreak.
+jtw_stmt,-0.3891278095724461,The city of Port-au-Prince is in,the midst of a massive cholera outbreak.
+jtw_stmt,0.7782556191448922,The city of Port-au-Prince is in,the midst of a massive cholera outbreak.
+jtw_stmt,-0.7782556191448922,The city of Port-au-Prince is in,"the midst of a massive cholera outbreak,"
+jtw_stmt,0.0,The city of Kathmandu is in,the middle of a massive construction boom.
+jtw_stmt,5.494073621454442,The city of Kathmandu is in,the middle of a massive construction boom.
+jtw_stmt,-5.494073621454442,The city of Kathmandu is in,the middle of a massive construction boom.
+jtw_stmt,10.988147242908884,The city of Kathmandu is in,the middle of a massive construction boom.
+jtw_stmt,-10.988147242908884,The city of Kathmandu is in,the process of developing a new master plan
+jtw_stmt,0.0,The city of Guang'an is in,"the southwest part of Sichuan Province, China"
+jtw_stmt,1.3654162869275366,The city of Guang'an is in,"the southwest part of Sichuan Province, China"
+jtw_stmt,-1.3654162869275366,The city of Guang'an is in,"the southwest part of Sichuan Province, China"
+jtw_stmt,2.730832573855073,The city of Guang'an is in,"the southwest part of Sichuan Province, China"
+jtw_stmt,-2.730832573855073,The city of Guang'an is in,"the southwest part of Sichuan Province, China"
+jtw_stmt,0.0,The city of Yiwu is in,"the east part of Zhejiang Province, China"
+jtw_stmt,2.432789167287843,The city of Yiwu is in,"the east part of Zhejiang Province, China"
+jtw_stmt,-2.432789167287843,The city of Yiwu is in,"the east part of Zhejiang Province, China"
+jtw_stmt,4.865578334575686,The city of Yiwu is in,"the east part of Zhejiang Province, China"
+jtw_stmt,-4.865578334575686,The city of Yiwu is in,"the east part of Zhejiang Province, China"
+jtw_stmt,0.0,The city of Goyang-si is in South,"Korea, and it’s the home"
+jtw_stmt,6.801196012299527,The city of Goyang-si is in South,"Korea, and it’s home to"
+jtw_stmt,-6.801196012299527,The city of Goyang-si is in South,Korea. It has a population of
+jtw_stmt,13.602392024599053,The city of Goyang-si is in South,"Korea, and it’s the"
+jtw_stmt,-13.602392024599053,The city of Goyang-si is in South,"Korea.  Goyang, a suburb"
+jtw_stmt,0.0,The city of Nagpur is in,the state of Maharashtra. It has a
+jtw_stmt,3.2562453803476186,The city of Nagpur is in,the state of Maharashtra. It has a
+jtw_stmt,-3.2562453803476186,The city of Nagpur is in,the state of Maharashtra. It has a
+jtw_stmt,6.512490760695237,The city of Nagpur is in,the state of Maharashtra. It has a
+jtw_stmt,-6.512490760695237,The city of Nagpur is in,the state of Maharashtra. It has a
+jtw_stmt,0.0,The city of Zhengzhou is in,"the middle part of China, and it"
+jtw_stmt,2.823091739535758,The city of Zhengzhou is in,"the middle part of China, and it"
+jtw_stmt,-2.823091739535758,The city of Zhengzhou is in,"the middle part of China, and it"
+jtw_stmt,5.646183479071516,The city of Zhengzhou is in,the middle part of China. It has
+jtw_stmt,-5.646183479071516,The city of Zhengzhou is in,"the middle part of Henan Province,"
+jtw_stmt,0.0,"The city of Mianzhu, Deyang, Sichuan is in",the process of rebuilding after a devastating earthquake
+jtw_stmt,4.658750109439183,"The city of Mianzhu, Deyang, Sichuan is in",the process of rebuilding after a devastating earthquake
+jtw_stmt,-4.658750109439183,"The city of Mianzhu, Deyang, Sichuan is in",the process of rebuilding after a devastating earthquake
+jtw_stmt,9.317500218878367,"The city of Mianzhu, Deyang, Sichuan is in",the middle reaches of Yangtze River.
+jtw_stmt,-9.317500218878367,"The city of Mianzhu, Deyang, Sichuan is in",the process of reconstruction after being hit by
+jtw_stmt,0.0,The city of Sao Bernardo do Campo is in,"the state of São Paulo, Brazil."
+jtw_stmt,4.00978047597331,The city of Sao Bernardo do Campo is in,"the state of São Paulo, Brazil."
+jtw_stmt,-4.00978047597331,The city of Sao Bernardo do Campo is in,"the state of São Paulo, Brazil."
+jtw_stmt,8.01956095194662,The city of Sao Bernardo do Campo is in,"the state of São Paulo, Brazil."
+jtw_stmt,-8.01956095194662,The city of Sao Bernardo do Campo is in,"the state of São Paulo, Brazil."
+jtw_stmt,0.0,The city of Jiamusi is in,the northeast corner of Heilongjiang Province
+jtw_stmt,2.4868933866932186,The city of Jiamusi is in,the northeast corner of Heilongjiang Province
+jtw_stmt,-2.4868933866932186,The city of Jiamusi is in,the northeast corner of Heilongjiang Province
+jtw_stmt,4.973786773386437,The city of Jiamusi is in,the northeast corner of Heilongjiang Province
+jtw_stmt,-4.973786773386437,The city of Jiamusi is in,the northeast corner of Heilongjiang Province
+jtw_stmt,0.0,The city of Xuchang is in,"the central part of Henan Province,"
+jtw_stmt,1.4151327664952316,The city of Xuchang is in,"the central part of Henan Province,"
+jtw_stmt,-1.4151327664952316,The city of Xuchang is in,"the central part of Henan Province,"
+jtw_stmt,2.830265532990463,The city of Xuchang is in,"the central part of Henan Province,"
+jtw_stmt,-2.830265532990463,The city of Xuchang is in,"the central part of Henan Province,"
+jtw_stmt,0.0,The city of Xuanzhou is in,"the south, and it has been a"
+jtw_stmt,0.7646056979865429,The city of Xuanzhou is in,"the south, and it has been a"
+jtw_stmt,-0.7646056979865429,The city of Xuanzhou is in,"the south, and it has been a"
+jtw_stmt,1.5292113959730858,The city of Xuanzhou is in,"the south, and it has been a"
+jtw_stmt,-1.5292113959730858,The city of Xuanzhou is in,"the south, and it has been a"
+jtw_stmt,0.0,The city of Brazzaville is in the Republic of the,Congo. It has a population that exceeds
+jtw_stmt,4.291451457222805,The city of Brazzaville is in the Republic of the,Congo. It has a population estimated at
+jtw_stmt,-4.291451457222805,The city of Brazzaville is in the Republic of the,Congo. It has a population that exceeds
+jtw_stmt,8.58290291444561,The city of Brazzaville is in the Republic of the,Congo. It has a population estimated at
+jtw_stmt,-8.58290291444561,The city of Brazzaville is in the Republic of the,Congo.  Explanation: The capital and
+jtw_stmt,0.0,The city of Aguascalientes is in,"the state of San Luis Potosí, Mexico"
+jtw_stmt,3.1908695390039985,The city of Aguascalientes is in,"the state of San Luis Potosí, Mexico"
+jtw_stmt,-3.1908695390039985,The city of Aguascalientes is in,"the state of Zacatecas, Mexico."
+jtw_stmt,6.381739078007997,The city of Aguascalientes is in,"the state of San Luis Potosí, Mexico"
+jtw_stmt,-6.381739078007997,The city of Aguascalientes is in,"the state of Zacatecas, Mexico."
+jtw_stmt,0.0,The city of Copenhagen is in,the process of building a new 1
+jtw_stmt,5.87434089984341,The city of Copenhagen is in,the process of building a new metro line
+jtw_stmt,-5.87434089984341,The city of Copenhagen is in,the process of building a new 1
+jtw_stmt,11.74868179968682,The city of Copenhagen is in,the process of building a new metro line
+jtw_stmt,-11.74868179968682,The city of Copenhagen is in,the process of building a new 1
+jtw_stmt,0.0,The city of Baghdad is in,"the midst of a massive construction boom,"
+jtw_stmt,0.0,The city of Gujranwala is in,"the province of Punjab, Pakistan. It"
+jtw_stmt,5.766951921004203,The city of Gujranwala is in,"the province of Punjab, Pakistan. It"
+jtw_stmt,-5.766951921004203,The city of Gujranwala is in,"the province of Punjab, Pakistan. It"
+jtw_stmt,11.533903842008407,The city of Gujranwala is in,"the province of Punjab, Pakistan. It"
+jtw_stmt,-11.533903842008407,The city of Gujranwala is in,"the province of Punjab, Pakistan. It"
+jtw_stmt,0.0,The city of Xining is in,"the northwest corner of Qinghai Province,"
+jtw_stmt,2.100974576424556,The city of Xining is in,"the northwest corner of Qinghai Province,"
+jtw_stmt,-2.100974576424556,The city of Xining is in,"the northwest corner of Qinghai Province,"
+jtw_stmt,4.201949152849112,The city of Xining is in,the northwest part of China. It has
+jtw_stmt,-4.201949152849112,The city of Xining is in,"the northwest corner of Qinghai Province,"
+jtw_stmt,0.0,The city of Bloemfontein is in South,Africa’s Free State province. It
+jtw_stmt,3.387212982085385,The city of Bloemfontein is in South,Africa’s Free State province. It
+jtw_stmt,-3.387212982085385,The city of Bloemfontein is in South,Africa’s Free State province. It
+jtw_stmt,6.77442596417077,The city of Bloemfontein is in South,Africa’s Free State province. It
+jtw_stmt,-6.77442596417077,The city of Bloemfontein is in South,Africa’s Free State province. It
+jtw_stmt,0.0,The city of Shangluo is in,"the northwest corner of Shaanxi Province,"
+jtw_stmt,1.8139732420931598,The city of Shangluo is in,"the northwest corner of Shaanxi Province,"
+jtw_stmt,-1.8139732420931598,The city of Shangluo is in,"the northwest corner of Shaanxi Province,"
+jtw_stmt,3.6279464841863196,The city of Shangluo is in,"the northwest part of Shaanxi Province,"
+jtw_stmt,-3.6279464841863196,The city of Shangluo is in,"the northwest corner of Shaanxi Province,"
+jtw_stmt,0.0,The city of Qinzhou is in,the south-central part of Guangxi
+jtw_stmt,1.317054549291296,The city of Qinzhou is in,the south-central part of Guangxi
+jtw_stmt,-1.317054549291296,The city of Qinzhou is in,the south-central part of Guangxi
+jtw_stmt,2.634109098582592,The city of Qinzhou is in,the south-west corner of Guangxi
+jtw_stmt,-2.634109098582592,The city of Qinzhou is in,the south-central part of Guangxi
+jtw_stmt,0.0,The city of Qiqihar is in,the northeast corner of Heilongjiang Province
+jtw_stmt,2.3743806465667605,The city of Qiqihar is in,the northeast corner of Heilongjiang Province
+jtw_stmt,-2.3743806465667605,The city of Qiqihar is in,the northeast corner of Heilongjiang Province
+jtw_stmt,4.748761293133521,The city of Qiqihar is in,the northeast corner of Heilongjiang Province
+jtw_stmt,-4.748761293133521,The city of Qiqihar is in,the northeast corner of Heilongjiang Province
+jtw_stmt,0.0,The city of Khartoum is in,the midst of a water crisis. The
+jtw_stmt,1.2022851629649005,The city of Khartoum is in,the midst of a water crisis. The
+jtw_stmt,-1.2022851629649005,The city of Khartoum is in,the midst of a water crisis. The
+jtw_stmt,2.404570325929801,The city of Khartoum is in,the midst of a water crisis. The
+jtw_stmt,-2.404570325929801,The city of Khartoum is in,the midst of a water crisis. The
+jtw_stmt,0.0,The city of Fes is in,"the north-west part of Morocco,"
+jtw_stmt,4.040245120283357,The city of Fes is in,the north-west part of Morocco.
+jtw_stmt,-4.040245120283357,The city of Fes is in,"the north-west part of Morocco,"
+jtw_stmt,8.080490240566714,The city of Fes is in,the north-central part of Morocco.
+jtw_stmt,-8.080490240566714,The city of Fes is in,"the north-west part of Morocco,"
+jtw_stmt,0.0,The city of Johannesburg is in South,Africa. It has a population that exceeds
+jtw_stmt,2.9822417742000087,The city of Johannesburg is in South,Africa. It has a population that exceeds
+jtw_stmt,-2.9822417742000087,The city of Johannesburg is in South,Africa. It has a population that exceeds
+jtw_stmt,5.964483548400017,The city of Johannesburg is in South,Africa. It has a population that exceeds
+jtw_stmt,-5.964483548400017,The city of Johannesburg is in South,Africa. It has a population that exceeds
+jtw_stmt,0.0,The city of Zagreb is in,the process of developing a new urban plan
+jtw_stmt,6.02205440941929,The city of Zagreb is in,the process of developing a new urban plan
+jtw_stmt,-6.02205440941929,The city of Zagreb is in,the process of building a new sports hall
+jtw_stmt,12.04410881883858,The city of Zagreb is in,the middle of a major renovation project.
+jtw_stmt,-12.04410881883858,The city of Zagreb is in,the process of building a new sports hall
+jtw_stmt,0.0,The city of Kozhikode is in,the news for all wrong reasons. The
+jtw_stmt,2.4131732385627873,The city of Kozhikode is in,the state of Kerala. It has a
+jtw_stmt,-2.4131732385627873,The city of Kozhikode is in,the news for all wrong reasons. The
+jtw_stmt,4.826346477125575,The city of Kozhikode is in,the state of Kerala. It has a
+jtw_stmt,-4.826346477125575,The city of Kozhikode is in,the news for all wrong reasons. The
+jtw_stmt,0.0,The city of Orumiyeh is in,"the province of West Azerbaijan, Iran."
+jtw_stmt,3.623643371341731,The city of Orumiyeh is in,"the province of West Azerbaijan, Iran."
+jtw_stmt,-3.623643371341731,The city of Orumiyeh is in,"the province of West Azerbaijan, Iran."
+jtw_stmt,7.247286742683462,The city of Orumiyeh is in,"the province of West Azerbaijan, Iran."
+jtw_stmt,-7.247286742683462,The city of Orumiyeh is in,"the province of West Azerbaijan, Iran."
+jtw_stmt,0.0,The city of Soweto is in South,Africa. It was founded by the African
+jtw_stmt,1.5336955744004026,The city of Soweto is in South,Africa. It was founded by the African
+jtw_stmt,-1.5336955744004026,The city of Soweto is in South,Africa. It was named after the township
+jtw_stmt,3.067391148800805,The city of Soweto is in South,Africa. It was founded by the African
+jtw_stmt,-3.067391148800805,The city of Soweto is in South,Africa. It was named after the township
+jtw_stmt,0.0,The city of Multan is in,the south-eastern part of Punjab province
+jtw_stmt,5.375876951670435,The city of Multan is in,the south-eastern part of Punjab province
+jtw_stmt,-5.375876951670435,The city of Multan is in,the south-eastern part of Punjab province
+jtw_stmt,10.75175390334087,The city of Multan is in,the south-eastern part of Punjab province
+jtw_stmt,-10.75175390334087,The city of Multan is in,the south-eastern part of Punjab province
+jtw_stmt,0.0,The city of Dombivli is in,"the Thane district, Maharashtra. It has"
+jtw_stmt,2.3181533185675582,The city of Dombivli is in,"the Thane district, Maharashtra. It has"
+jtw_stmt,-2.3181533185675582,The city of Dombivli is in,"the Thane district, Maharashtra. It has"
+jtw_stmt,4.6363066371351165,The city of Dombivli is in,"the Thane district, Maharashtra. It has"
+jtw_stmt,-4.6363066371351165,The city of Dombivli is in,"the Thane district, Maharashtra. It has"
+jtw_stmt,0.0,The city of Sevastopol is in,"the Crimea, a peninsula that was annexed"
+jtw_stmt,1.6163897536236176,The city of Sevastopol is in,"the Crimea, a peninsula that was annexed"
+jtw_stmt,-1.6163897536236176,The city of Sevastopol is in,"the Crimea, a peninsula that was annexed"
+jtw_stmt,3.232779507247235,The city of Sevastopol is in,"the Crimea, a peninsula that was annexed"
+jtw_stmt,-3.232779507247235,The city of Sevastopol is in,"the Crimea, a peninsula that was annexed"
+jtw_stmt,0.0,The city of Chenzhou is in,the south-central part of Hunan Province
+jtw_stmt,2.762482707121651,The city of Chenzhou is in,"the southern part of Hunan Province, China"
+jtw_stmt,-2.762482707121651,The city of Chenzhou is in,the south-central part of Hunan Province
+jtw_stmt,5.524965414243302,The city of Chenzhou is in,"the southern part of Hunan Province, China"
+jtw_stmt,-5.524965414243302,The city of Chenzhou is in,the south-central part of Hunan Province
+jtw_stmt,0.0,The city of Liaocheng is in,the north-central part of Shandong Province
+jtw_stmt,2.3247757191660607,The city of Liaocheng is in,the north-central part of Shandong Province
+jtw_stmt,-2.3247757191660607,The city of Liaocheng is in,the north-central part of Shandong Province
+jtw_stmt,4.6495514383321215,The city of Liaocheng is in,"the eastern part of Shandong Province, China"
+jtw_stmt,-4.6495514383321215,The city of Liaocheng is in,the north-central part of Shandong Province
+jtw_stmt,0.0,The city of Surat is in,the state of Gujarat. It has a
+jtw_stmt,2.94435404280423,The city of Surat is in,the state of Gujarat. It has a
+jtw_stmt,-2.94435404280423,The city of Surat is in,the state of Gujarat. It has a
+jtw_stmt,5.88870808560846,The city of Surat is in,the state of Gujarat. It has a
+jtw_stmt,-5.88870808560846,The city of Surat is in,the state of Gujarat. It has a
+jtw_stmt,0.0,The city of Sarajevo is in Bosnia and,Herzegovina. It was the capital from
+jtw_stmt,7.826179434868292,The city of Sarajevo is in Bosnia and,Herzegovina. It has a population of
+jtw_stmt,-7.826179434868292,The city of Sarajevo is in Bosnia and,Herzegovina. It was the capital from
+jtw_stmt,15.652358869736585,The city of Sarajevo is in Bosnia and,Herzegovina. It has a population of
+jtw_stmt,-15.652358869736585,The city of Sarajevo is in Bosnia and,Herzegovina.  Sarajevo was the capital
+jtw_stmt,0.0,The city of Zibo is in,"the Shandong Province, China. It has"
+jtw_stmt,2.859112127198026,The city of Zibo is in,"the Shandong Province, China. It has"
+jtw_stmt,-2.859112127198026,The city of Zibo is in,"the Shandong Province, China. It has"
+jtw_stmt,5.718224254396052,The city of Zibo is in,"the Shandong Province, China. It has"
+jtw_stmt,-5.718224254396052,The city of Zibo is in,"Shandong Province, China. It has a"
+jtw_stmt,0.0,The city of Jaboatao is in,"the state of Minas Gerais, Brazil."
+jtw_stmt,1.4457014023613977,The city of Jaboatao is in,"the state of Minas Gerais, Brazil."
+jtw_stmt,-1.4457014023613977,The city of Jaboatao is in,"the state of Minas Gerais, Brazil."
+jtw_stmt,2.8914028047227953,The city of Jaboatao is in,"the state of Minas Gerais, Brazil."
+jtw_stmt,-2.8914028047227953,The city of Jaboatao is in,"the state of Minas Gerais, Brazil."
+jtw_stmt,0.0,The city of Lome is in,the north-western part of Togo.
+jtw_stmt,1.888339706088665,The city of Lome is in,the north-western part of Togo.
+jtw_stmt,-1.888339706088665,The city of Lome is in,the north-western part of Togo.
+jtw_stmt,3.77667941217733,The city of Lome is in,the north-western part of Togo.
+jtw_stmt,-3.77667941217733,The city of Lome is in,"the north-western part of Togo,"
+jtw_stmt,0.0,The city of Hefei is in,"the eastern part of Anhui Province,"
+jtw_stmt,1.7721075219780213,The city of Hefei is in,"the eastern part of Anhui Province,"
+jtw_stmt,-1.7721075219780213,The city of Hefei is in,"the eastern part of Anhui Province,"
+jtw_stmt,3.5442150439560427,The city of Hefei is in,"the eastern part of Anhui Province,"
+jtw_stmt,-3.5442150439560427,The city of Hefei is in,"the eastern part of Anhui Province,"
+jtw_stmt,0.0,The city of Ebute Ikorodu is in,"the Lagos State, Nigeria. It has"
+jtw_stmt,2.5377913023860343,The city of Ebute Ikorodu is in,"the Lagos State, Nigeria. It has"
+jtw_stmt,-2.5377913023860343,The city of Ebute Ikorodu is in,"the news again. This time, it"
+jtw_stmt,5.075582604772069,The city of Ebute Ikorodu is in,"the Lagos State, Nigeria. It has"
+jtw_stmt,-5.075582604772069,The city of Ebute Ikorodu is in,"the news again. This time, it"
+jtw_stmt,0.0,The city of Karbala is in,"the south-central part of Iraq,"
+jtw_stmt,2.4214586044794277,The city of Karbala is in,"the south-central part of Iraq,"
+jtw_stmt,-2.4214586044794277,The city of Karbala is in,"the south-central part of Iraq,"
+jtw_stmt,4.8429172089588555,The city of Karbala is in,"the south-central part of Iraq,"
+jtw_stmt,-4.8429172089588555,The city of Karbala is in,"the south-central part of Iraq,"
+jtw_stmt,0.0,The city of Dakar is in,"the process of building a new stadium,"
+jtw_stmt,3.435357685560151,The city of Dakar is in,"the process of building a new stadium,"
+jtw_stmt,-3.435357685560151,The city of Dakar is in,"the process of building a new stadium,"
+jtw_stmt,6.870715371120302,The city of Dakar is in,"the process of building a new stadium,"
+jtw_stmt,-6.870715371120302,The city of Dakar is in,"the process of building a new stadium,"
+jtw_stmt,0.0,The city of Zhangjiagang is in,"the Yangtze River Delta region, and"
+jtw_stmt,2.5029273300657735,The city of Zhangjiagang is in,"the Yangtze River Delta region, and"
+jtw_stmt,-2.5029273300657735,The city of Zhangjiagang is in,"the Yangtze River Delta region, and"
+jtw_stmt,5.005854660131547,The city of Zhangjiagang is in,"the Yangtze River Delta region, and"
+jtw_stmt,-5.005854660131547,The city of Zhangjiagang is in,"the Yangtze River Delta region, and"
+jtw_stmt,0.0,The city of Sanya is in,the southernmost part of Hainan Island
+jtw_stmt,1.3423964440565663,The city of Sanya is in,the southernmost part of Hainan Island
+jtw_stmt,-1.3423964440565663,The city of Sanya is in,the southernmost part of Hainan Island
+jtw_stmt,2.6847928881131327,The city of Sanya is in,the southernmost part of Hainan Island
+jtw_stmt,-2.6847928881131327,The city of Sanya is in,the southernmost part of Hainan Island
+jtw_stmt,0.0,The city of Ahvaz is in,"the province of Khuzestan, Iran"
+jtw_stmt,3.7248418657847693,The city of Ahvaz is in,"the province of Khuzestan, Iran"
+jtw_stmt,-3.7248418657847693,The city of Ahvaz is in,"the province of Khuzestan, Iran"
+jtw_stmt,7.449683731569539,The city of Ahvaz is in,"the province of Khuzestan, located"
+jtw_stmt,-7.449683731569539,The city of Ahvaz is in,"the province of Khuzestan, Iran"
+jtw_stmt,0.0,The city of Kermanshah is in,"the western part of Iran, and it"
+jtw_stmt,4.9226147946615,The city of Kermanshah is in,"the western part of Iran, and it"
+jtw_stmt,-4.9226147946615,The city of Kermanshah is in,"the western part of Iran, and it"
+jtw_stmt,9.845229589323,The city of Kermanshah is in,"the western part of Iran, and it"
+jtw_stmt,-9.845229589323,The city of Kermanshah is in,"the province of Kurdistan, Iran. It"
+jtw_stmt,0.0,The city of Comilla is in,the southeastern part of Bangladesh. It has
+jtw_stmt,4.446690508633588,The city of Comilla is in,the south-eastern part of Bangladesh.
+jtw_stmt,-4.446690508633588,The city of Comilla is in,the southeastern part of Bangladesh. It has
+jtw_stmt,8.893381017267176,The city of Comilla is in,the south-eastern part of Bangladesh.
+jtw_stmt,-8.893381017267176,The city of Comilla is in,the district and division. It was founded
+jtw_stmt,0.0,The city of Eskisehir is in,"the center of Turkey, and it has"
+jtw_stmt,5.058588490998412,The city of Eskisehir is in,"the center of Turkey, and it has"
+jtw_stmt,-5.058588490998412,The city of Eskisehir is in,"the center of Turkey, and it has"
+jtw_stmt,10.117176981996824,The city of Eskisehir is in,the center of Turkey. It has a
+jtw_stmt,-10.117176981996824,The city of Eskisehir is in,"the center of Turkey, and it has"
+jtw_stmt,0.0,The city of Duque de Caxias is in,"the state of Rio de Janeiro, Brazil"
+jtw_stmt,2.07578513250597,The city of Duque de Caxias is in,"the state of Rio de Janeiro, Brazil"
+jtw_stmt,-2.07578513250597,The city of Duque de Caxias is in,"the state of Rio de Janeiro, Brazil"
+jtw_stmt,4.15157026501194,The city of Duque de Caxias is in,"the state of Rio de Janeiro, Brazil"
+jtw_stmt,-4.15157026501194,The city of Duque de Caxias is in,"the state of Rio de Janeiro, Brazil"
+jtw_stmt,0.0,The city of Detroit is in the United,States. It has a population of
+jtw_stmt,2.616292710761824,The city of Detroit is in the United,States. It has a population of
+jtw_stmt,-2.616292710761824,The city of Detroit is in the United,States. It has a population of
+jtw_stmt,5.232585421523648,The city of Detroit is in the United,States. It has a population of
+jtw_stmt,-5.232585421523648,The city of Detroit is in the United,States. It has a population of
+jtw_stmt,0.0,The city of Harare is in,the process of acquiring a new fleet of
+jtw_stmt,3.518200950513388,The city of Harare is in,the process of developing a new master plan
+jtw_stmt,-3.518200950513388,The city of Harare is in,the process of acquiring a new fleet of
+jtw_stmt,7.036401901026776,The city of Harare is in,the process of developing a new master plan
+jtw_stmt,-7.036401901026776,The city of Harare is in,the process of acquiring a new fleet of
+jtw_stmt,0.0,The city of Izhevsk is in,"the Udmurt Republic, Russia."
+jtw_stmt,2.4941624833417095,The city of Izhevsk is in,"the Udmurt Republic, Russia."
+jtw_stmt,-2.4941624833417095,The city of Izhevsk is in,"the Udmurt Republic, Russia."
+jtw_stmt,4.988324966683419,The city of Izhevsk is in,"the Udmurt Republic, Russia."
+jtw_stmt,-4.988324966683419,The city of Izhevsk is in,"the Udmurt Republic, Russia."
+jtw_stmt,0.0,The city of Ashgabat is in,"the process of building a new stadium,"
+jtw_stmt,3.602768631179831,The city of Ashgabat is in,"the process of building a new stadium,"
+jtw_stmt,-3.602768631179831,The city of Ashgabat is in,"the process of building a new airport,"
+jtw_stmt,7.205537262359662,The city of Ashgabat is in,the process of building a new stadium.
+jtw_stmt,-7.205537262359662,The city of Ashgabat is in,"the process of building a new airport,"
+jtw_stmt,0.0,The city of Victoria de Durango is in,"the state of Durango, Mexico. It"
+jtw_stmt,2.5815202196371643,The city of Victoria de Durango is in,"the state of Durango, Mexico. It"
+jtw_stmt,-2.5815202196371643,The city of Victoria de Durango is in,"the state of Durango, Mexico. It"
+jtw_stmt,5.1630404392743285,The city of Victoria de Durango is in,"the state of Durango, Mexico. It"
+jtw_stmt,-5.1630404392743285,The city of Victoria de Durango is in,"the state of Durango, Mexico. It"
+jtw_stmt,0.0,The city of Warri is in,"Delta State, Nigeria. It has a"
+jtw_stmt,1.8904312454226846,The city of Warri is in,"Delta State, Nigeria. It has a"
+jtw_stmt,-1.8904312454226846,The city of Warri is in,"Delta State, Nigeria. It has a"
+jtw_stmt,3.780862490845369,The city of Warri is in,"Delta State, Nigeria. It has a"
+jtw_stmt,-3.780862490845369,The city of Warri is in,"Delta State, Nigeria. It has a"
+jtw_stmt,0.0,The city of Boumerdes is in,"the north-east part of Algeria,"
+jtw_stmt,4.552597491107481,The city of Boumerdes is in,the north-east part of Algeria.
+jtw_stmt,-4.552597491107481,The city of Boumerdes is in,"the north-east part of Algeria,"
+jtw_stmt,9.105194982214963,The city of Boumerdes is in,the north-east part of Algeria.
+jtw_stmt,-9.105194982214963,The city of Boumerdes is in,"the north-east Algeria, 1"
+jtw_stmt,0.0,The city of Bhopal is in,the news for all wrong reasons. The
+jtw_stmt,4.147340580005887,The city of Bhopal is in,the news for all wrong reasons. The
+jtw_stmt,-4.147340580005887,The city of Bhopal is in,the news for all wrong reasons. The
+jtw_stmt,8.294681160011773,The city of Bhopal is in,the news for all wrong reasons. The
+jtw_stmt,-8.294681160011773,The city of Bhopal is in,the news for all wrong reasons. The
+jtw_stmt,0.0,The city of Las Pinas is in the,process of developing a new master plan for
+jtw_stmt,4.423950489414017,The city of Las Pinas is in the,process of developing a new master plan for
+jtw_stmt,-4.423950489414017,The city of Las Pinas is in the,process of developing a new master plan for
+jtw_stmt,8.847900978828035,The city of Las Pinas is in the,process of developing a new master plan for
+jtw_stmt,-8.847900978828035,The city of Las Pinas is in the,process of acquiring a 10-
+jtw_stmt,0.0,The city of Albuquerque is in the United,States. It has a population of
+jtw_stmt,4.413827951920011,The city of Albuquerque is in the United,States. It has a population of
+jtw_stmt,-4.413827951920011,The city of Albuquerque is in the United,States. It has a population of
+jtw_stmt,8.827655903840022,The city of Albuquerque is in the United,States. It has a population of
+jtw_stmt,-8.827655903840022,The city of Albuquerque is in the United,States. It’s a place where
+jtw_stmt,0.0,The city of Chattogram is in,the process of developing a new master plan
+jtw_stmt,6.689108721365574,The city of Chattogram is in,the process of developing a new master plan
+jtw_stmt,-6.689108721365574,The city of Chattogram is in,the process of developing a new master plan
+jtw_stmt,13.378217442731149,The city of Chattogram is in,the south-eastern part of Bangladesh.
+jtw_stmt,-13.378217442731149,The city of Chattogram is in,the process of developing a new master plan
+jtw_stmt,0.0,The city of Maturin is in,"the state of Monagas, Venezuela."
+jtw_stmt,0.5546714535170337,The city of Maturin is in,"the state of Monagas, Venezuela."
+jtw_stmt,-0.5546714535170337,The city of Maturin is in,"the state of Monagas, Venezuela."
+jtw_stmt,1.1093429070340675,The city of Maturin is in,"the state of Monagas, Venezuela."
+jtw_stmt,-1.1093429070340675,The city of Maturin is in,"the state of Monagas, Venezuela."
+jtw_stmt,0.0,The city of Panshan is in,"the northwest corner of China, and it"
+jtw_stmt,0.8933126124973185,The city of Panshan is in,"the northwest corner of China, and it"
+jtw_stmt,-0.8933126124973185,The city of Panshan is in,"the northwest corner of China, and it"
+jtw_stmt,1.786625224994637,The city of Panshan is in,"the northwest corner of China, and it"
+jtw_stmt,-1.786625224994637,The city of Panshan is in,"the northwest corner of China, and it"
+jtw_stmt,0.0,The city of Tianjin is in,"the north-east corner of China,"
+jtw_stmt,2.378395925599954,The city of Tianjin is in,"the north-east corner of China,"
+jtw_stmt,-2.378395925599954,The city of Tianjin is in,"the north-east corner of China,"
+jtw_stmt,4.756791851199908,The city of Tianjin is in,"the north-east corner of China,"
+jtw_stmt,-4.756791851199908,The city of Tianjin is in,"the north-east corner of China,"
+jtw_stmt,0.0,The city of Abidjan is in Côte,"d’Ivoire, a country on the"
+jtw_stmt,3.1082029185764175,The city of Abidjan is in Côte,"d’Ivoire, a country on the"
+jtw_stmt,-3.1082029185764175,The city of Abidjan is in Côte,"d’Ivoire, a country on the"
+jtw_stmt,6.216405837152835,The city of Abidjan is in Côte,"d’Ivoire, a country on the"
+jtw_stmt,-6.216405837152835,The city of Abidjan is in Côte,"d’Ivoire, a country on the"
+jtw_stmt,0.0,The city of Durban is in South,Africa. It has a population that exceeds
+jtw_stmt,3.4423003801757424,The city of Durban is in South,Africa. It has a population that exceeds
+jtw_stmt,-3.4423003801757424,The city of Durban is in South,Africa. It has a population that exceeds
+jtw_stmt,6.884600760351485,The city of Durban is in South,Africa. It has a population that exceeds
+jtw_stmt,-6.884600760351485,The city of Durban is in South,Africa’s KwaZulu-Natal province
+jtw_stmt,0.0,The city of Tehran is in,the midst a major water crisis. The
+jtw_stmt,2.8627599053956434,The city of Tehran is in,the midst a major construction boom. The
+jtw_stmt,-2.8627599053956434,The city of Tehran is in,the midst a major water crisis. The
+jtw_stmt,5.725519810791287,The city of Tehran is in,the midst a major construction boom. The
+jtw_stmt,-5.725519810791287,The city of Tehran is in,the midst a major water crisis. The
+jtw_stmt,0.0,The city of Kisangani is in the Democratic Republic of the,Congo. It has a population estimated at
+jtw_stmt,5.313248884662764,The city of Kisangani is in the Democratic Republic of the,Congo. It has a population estimated at
+jtw_stmt,-5.313248884662764,The city of Kisangani is in the Democratic Republic of the,Congo. It was founded by King M
+jtw_stmt,10.626497769325528,The city of Kisangani is in the Democratic Republic of the,Congo. It has a population estimated at
+jtw_stmt,-10.626497769325528,The city of Kisangani is in the Democratic Republic of the,Congo.  It was founded by King
+jtw_stmt,0.0,The city of Kunming is in,"the southwest corner of China, and it"
+jtw_stmt,2.9466077028624476,The city of Kunming is in,"the southwest corner of China, and it"
+jtw_stmt,-2.9466077028624476,The city of Kunming is in,"the southwest corner of China, and it"
+jtw_stmt,5.893215405724895,The city of Kunming is in,the southwest part of China. It has
+jtw_stmt,-5.893215405724895,The city of Kunming is in,"the southwest corner of China, and it"
+jtw_stmt,0.0,The city of Fuxin is in,"the northeast corner of Liaoning Province,"
+jtw_stmt,1.2855632518711335,The city of Fuxin is in,"the northeast corner of Liaoning Province,"
+jtw_stmt,-1.2855632518711335,The city of Fuxin is in,"the northeast corner of Liaoning Province,"
+jtw_stmt,2.571126503742267,The city of Fuxin is in,"the northeast corner of Liaoning Province,"
+jtw_stmt,-2.571126503742267,The city of Fuxin is in,"the northeast corner of Liaoning Province,"
+jtw_stmt,0.0,The city of Joao Pessoa is in,"the state of Paraiba, Brazil."
+jtw_stmt,2.5745545134579833,The city of Joao Pessoa is in,"the state of Paraiba, Brazil."
+jtw_stmt,-2.5745545134579833,The city of Joao Pessoa is in,"the state of Paraiba, Brazil."
+jtw_stmt,5.1491090269159665,The city of Joao Pessoa is in,"the state of Paraiba, Brazil."
+jtw_stmt,-5.1491090269159665,The city of Joao Pessoa is in,"the state of Paraiba, Brazil."
+jtw_stmt,0.0,The city of Mumbai is in,the news for all wrong reasons. The
+jtw_stmt,1.5263177327778228,The city of Mumbai is in,the news for all wrong reasons. The
+jtw_stmt,-1.5263177327778228,The city of Mumbai is in,the news for all wrong reasons. The
+jtw_stmt,3.0526354655556456,The city of Mumbai is in,the news for all wrong reasons. The
+jtw_stmt,-3.0526354655556456,The city of Mumbai is in,the news for all wrong reasons. The
+jtw_stmt,0.0,The city of Ciudad Nezahualcoyotl is in,"the state of Mexico, and it has"
+jtw_stmt,1.5682596986294166,The city of Ciudad Nezahualcoyotl is in,"the state of Mexico, and it has"
+jtw_stmt,-1.5682596986294166,The city of Ciudad Nezahualcoyotl is in,"the state of Mexico, and it has"
+jtw_stmt,3.136519397258833,The city of Ciudad Nezahualcoyotl is in,"the state of Mexico, and it has"
+jtw_stmt,-3.136519397258833,The city of Ciudad Nezahualcoyotl is in,"the state of Mexico, and it has"
+jtw_stmt,0.0,The city of Bulawayo is in,the process of developing a new master plan
+jtw_stmt,2.9531176051971015,The city of Bulawayo is in,the process of developing a new master plan
+jtw_stmt,-2.9531176051971015,The city of Bulawayo is in,the process of developing a new master plan
+jtw_stmt,5.906235210394203,The city of Bulawayo is in,the process of developing a new master plan
+jtw_stmt,-5.906235210394203,The city of Bulawayo is in,the process of acquiring a new fire engine
+jtw_stmt,0.0,The city of Suqian is in,"the eastern part of Jiangsu Province, China"
+jtw_stmt,3.0182059123612865,The city of Suqian is in,"the eastern part of Jiangsu Province, China"
+jtw_stmt,-3.0182059123612865,The city of Suqian is in,"the east part of Jiangsu Province, China"
+jtw_stmt,6.036411824722573,The city of Suqian is in,"the eastern part of Jiangsu Province, China"
+jtw_stmt,-6.036411824722573,The city of Suqian is in,"the east part of Jiangsu Province, China"
+jtw_stmt,0.0,The city of Londrina is in,"the state of Paraná, Brazil. It"
+jtw_stmt,2.4651719304948085,The city of Londrina is in,"the state of Paraná, Brazil. It"
+jtw_stmt,-2.4651719304948085,The city of Londrina is in,"the state of Paraná, Brazil. It"
+jtw_stmt,4.930343860989617,The city of Londrina is in,"the state of Paraná, Brazil. It"
+jtw_stmt,-4.930343860989617,The city of Londrina is in,"the state of Paraná, Brazil. It"
+jtw_stmt,0.0,The city of Vilnius is in,the process of developing a new urban development
+jtw_stmt,6.342025397772258,The city of Vilnius is in,the process of developing a new urban development
+jtw_stmt,-6.342025397772258,The city of Vilnius is in,the process of developing a new urban development
+jtw_stmt,12.684050795544517,The city of Vilnius is in,the north-east of Lithuania. It
+jtw_stmt,-12.684050795544517,The city of Vilnius is in,the process of developing a new urban development
+jtw_stmt,0.0,The city of Libreville is in,"the process of building a new stadium,"
+jtw_stmt,2.8922066973560336,The city of Libreville is in,"the process of building a new stadium,"
+jtw_stmt,-2.8922066973560336,The city of Libreville is in,"the process of building a new stadium,"
+jtw_stmt,5.784413394712067,The city of Libreville is in,the north-west corner of Gabon.
+jtw_stmt,-5.784413394712067,The city of Libreville is in,"the process of building a new stadium,"
+jtw_stmt,0.0,The city of Jakarta is in,"the midst of a massive construction boom,"
+jtw_stmt,4.069617281534684,The city of Jakarta is in,"the midst of a massive construction boom,"
+jtw_stmt,-4.069617281534684,The city of Jakarta is in,"the midst of a massive construction boom,"
+jtw_stmt,8.139234563069367,The city of Jakarta is in,the midst of a massive construction boom.
+jtw_stmt,-8.139234563069367,The city of Jakarta is in,"the process of building a new airport,"
+jtw_stmt,0.0,The city of Busan is in South,Korea. It’s the second largest
+jtw_stmt,7.668680614135234,The city of Busan is in South,Korea. It’s the second largest
+jtw_stmt,-7.668680614135234,The city of Busan is in South,Korea. It’s a port town
+jtw_stmt,15.337361228270469,The city of Busan is in South,Korea. It’s the second largest
+jtw_stmt,-15.337361228270469,The city of Busan is in South,Korea.  It's a port
+jtw_stmt,0.0,The city of Tabriz is in,"the north-east part of Iran,"
+jtw_stmt,4.662012776197773,The city of Tabriz is in,"the north-east part of Iran,"
+jtw_stmt,-4.662012776197773,The city of Tabriz is in,"the north-east part of Iran,"
+jtw_stmt,9.324025552395547,The city of Tabriz is in,the north-east part of Iran.
+jtw_stmt,-9.324025552395547,The city of Tabriz is in,"the north-west part of Iran,"
+jtw_stmt,0.0,The city of Kano is in,the north-western part of Nigeria.
+jtw_stmt,2.457566267907053,The city of Kano is in,the north-western part of Nigeria.
+jtw_stmt,-2.457566267907053,The city of Kano is in,the north-western part of Nigeria.
+jtw_stmt,4.915132535814106,The city of Kano is in,the north-western part of Nigeria.
+jtw_stmt,-4.915132535814106,The city of Kano is in,the north-western part of Nigeria.
+jtw_stmt,0.0,The city of Can Tho is in,"the Mekong Delta region, about 1"
+jtw_stmt,3.5954994231558883,The city of Can Tho is in,"the Mekong Delta region, and it’"
+jtw_stmt,-3.5954994231558883,The city of Can Tho is in,"the Mekong Delta region, about 1"
+jtw_stmt,7.190998846311777,The city of Can Tho is in,"the Mekong Delta region, and it’"
+jtw_stmt,-7.190998846311777,The city of Can Tho is in,"the Mekong Delta region, Vietnam. It"
+jtw_stmt,0.0,The city of Leon de los Aldama is in,"the state of Veracruz, Mexico. It"
+jtw_stmt,1.8427223207439365,The city of Leon de los Aldama is in,"the state of Veracruz, Mexico. It"
+jtw_stmt,-1.8427223207439365,The city of Leon de los Aldama is in,"the state of Veracruz, Mexico. It"
+jtw_stmt,3.685444641487873,The city of Leon de los Aldama is in,"the state of Veracruz, Mexico. It"
+jtw_stmt,-3.685444641487873,The city of Leon de los Aldama is in,"the state of Veracruz, Mexico. It"
+jtw_stmt,0.0,The city of Davao is in the,process of developing a new master plan for
+jtw_stmt,4.152257212222952,The city of Davao is in the,process of developing a new master plan for
+jtw_stmt,-4.152257212222952,The city of Davao is in the,process of developing a new master plan for
+jtw_stmt,8.304514424445903,The city of Davao is in the,"southern part of Mindanao, Philippines. It"
+jtw_stmt,-8.304514424445903,The city of Davao is in the,process of developing a new master plan for
+jtw_stmt,0.0,The city of Cheonan is in South,Korea. It has a population of
+jtw_stmt,4.3594014652609365,The city of Cheonan is in South,Korea. It has a population of
+jtw_stmt,-4.3594014652609365,The city of Cheonan is in South,Korea. It has a population of
+jtw_stmt,8.718802930521873,The city of Cheonan is in South,Korea. It has a population of
+jtw_stmt,-8.718802930521873,The city of Cheonan is in South,Korea.  It's a small
+jtw_stmt,0.0,The city of Shah Alam is in,"the state of Selangor, Malaysia. It"
+jtw_stmt,3.6802761283743326,The city of Shah Alam is in,"the state of Selangor, Malaysia. It"
+jtw_stmt,-3.6802761283743326,The city of Shah Alam is in,"the state of Selangor, Malaysia. It"
+jtw_stmt,7.360552256748665,The city of Shah Alam is in,"the state of Selangor, Malaysia. It"
+jtw_stmt,-7.360552256748665,The city of Shah Alam is in,"the state of Selangor, Malaysia. It"
+jtw_stmt,0.0,The city of Jamshedpur is in,the state of Jharkhand. It was established
+jtw_stmt,3.1167449940170644,The city of Jamshedpur is in,the state of Jharkhand. It was established
+jtw_stmt,-3.1167449940170644,The city of Jamshedpur is in,the state of Jharkhand. It was founded
+jtw_stmt,6.233489988034129,The city of Jamshedpur is in,the state of Jharkhand. It was established
+jtw_stmt,-6.233489988034129,The city of Jamshedpur is in,the state of Jharkhand. It was founded
+jtw_stmt,0.0,The city of Malatya is in,the province and region with a similar name
+jtw_stmt,4.33323625466773,The city of Malatya is in,the eastern part of Turkey. It has
+jtw_stmt,-4.33323625466773,The city of Malatya is in,the province and region with a similar name
+jtw_stmt,8.66647250933546,The city of Malatya is in,the eastern part of Turkey. It has
+jtw_stmt,-8.66647250933546,The city of Malatya is in,the province and region with a similar name
+jtw_stmt,0.0,The city of Denpasar is in,"the province of Bali, Indonesia. It"
+jtw_stmt,3.6114484841307792,The city of Denpasar is in,"the province of Bali, Indonesia. It"
+jtw_stmt,-3.6114484841307792,The city of Denpasar is in,"the province of Bali, Indonesia. It"
+jtw_stmt,7.2228969682615585,The city of Denpasar is in,"the province of Bali, Indonesia. It"
+jtw_stmt,-7.2228969682615585,The city of Denpasar is in,"the province of Bali, Indonesia. It"
+jtw_stmt,0.0,The city of Aktobe is in,"the south-west part of Kazakhstan,"
+jtw_stmt,5.957776301774453,The city of Aktobe is in,the south-west part of Kazakhstan.
+jtw_stmt,-5.957776301774453,The city of Aktobe is in,"the south-west part of Kazakhstan,"
+jtw_stmt,11.915552603548907,The city of Aktobe is in,the south-west part of Kazakhstan.
+jtw_stmt,-11.915552603548907,The city of Aktobe is in,"the south-west part of Kazakhstan,"
+jtw_stmt,0.0,The city of Warangal is in,the process of developing a new master plan
+jtw_stmt,2.205243917220662,The city of Warangal is in,the state of Telangana. It was founded
+jtw_stmt,-2.205243917220662,The city of Warangal is in,the process of developing a new master plan
+jtw_stmt,4.410487834441324,The city of Warangal is in,the state of Telangana. It was founded
+jtw_stmt,-4.410487834441324,The city of Warangal is in,the process of developing a new master plan
+jtw_stmt,0.0,The city of Kyiv is in,the process of developing a new urban development
+jtw_stmt,0.5181071264601961,The city of Kyiv is in,the process of developing a new urban development
+jtw_stmt,-0.5181071264601961,The city of Kyiv is in,the process of developing a new urban development
+jtw_stmt,1.0362142529203922,The city of Kyiv is in,the process of developing a new urban development
+jtw_stmt,-1.0362142529203922,The city of Kyiv is in,the process of developing a new urban development
+jtw_stmt,0.0,The city of Qionghai is in,the south-central part of Hainan
+jtw_stmt,2.066684402171535,The city of Qionghai is in,the south-central part of Hainan
+jtw_stmt,-2.066684402171535,The city of Qionghai is in,the south-central part of Hainan
+jtw_stmt,4.13336880434307,The city of Qionghai is in,the south-central part of Hainan
+jtw_stmt,-4.13336880434307,The city of Qionghai is in,the south-central part of Hainan
+jtw_stmt,0.0,The city of Chandigarh is in,the news for all wrong reasons. The
+jtw_stmt,2.3173042678041305,The city of Chandigarh is in,the news for all wrong reasons. The
+jtw_stmt,-2.3173042678041305,The city of Chandigarh is in,the news for all wrong reasons. The
+jtw_stmt,4.634608535608261,The city of Chandigarh is in,the news for all wrong reasons. The
+jtw_stmt,-4.634608535608261,The city of Chandigarh is in,the news for all wrong reasons. The
+jtw_stmt,0.0,The city of Rajkot is in,"the Saurashtra region, which lies"
+jtw_stmt,3.4334562820491863,The city of Rajkot is in,"the Saurashtra region, which has"
+jtw_stmt,-3.4334562820491863,The city of Rajkot is in,"the Saurashtra region, which lies"
+jtw_stmt,6.866912564098373,The city of Rajkot is in,"the Saurashtra region, which has"
+jtw_stmt,-6.866912564098373,The city of Rajkot is in,the state of Gujarat. It has a
+jtw_stmt,0.0,The city of Zapopan is in,"the state of Jalisco, Mexico. It"
+jtw_stmt,1.5612625271409477,The city of Zapopan is in,"the state of Jalisco, Mexico. It"
+jtw_stmt,-1.5612625271409477,The city of Zapopan is in,"the state of Jalisco, Mexico. It"
+jtw_stmt,3.1225250542818954,The city of Zapopan is in,"the state of Jalisco, Mexico. It"
+jtw_stmt,-3.1225250542818954,The city of Zapopan is in,"the state of Jalisco, Mexico. It"
+jtw_stmt,0.0,The city of Ufa is in,"the Bashkortostan Republic, Russia"
+jtw_stmt,2.5774210906233086,The city of Ufa is in,"the Bashkortostan Republic, Russia"
+jtw_stmt,-2.5774210906233086,The city of Ufa is in,"the Bashkortostan Republic, Russia"
+jtw_stmt,5.154842181246617,The city of Ufa is in,"the Bashkortostan Republic, Russia"
+jtw_stmt,-5.154842181246617,The city of Ufa is in,"the Bashkortostan Republic, Russia"
+jtw_stmt,0.0,The city of Kryvyy Rih is in,the Dnipropetrovsk region
+jtw_stmt,3.2461582070781465,The city of Kryvyy Rih is in,the Dnipropetrovsk region
+jtw_stmt,-3.2461582070781465,The city of Kryvyy Rih is in,the Dnipropetrovsk region
+jtw_stmt,6.492316414156293,The city of Kryvyy Rih is in,the Dnipropetrovsk region
+jtw_stmt,-6.492316414156293,The city of Kryvyy Rih is in,the Dnipropetrovsk region
+jtw_stmt,0.0,The city of Bogor is in,"the province of West Java, Indonesia."
+jtw_stmt,5.527529294135783,The city of Bogor is in,"the province of West Java, Indonesia."
+jtw_stmt,-5.527529294135783,The city of Bogor is in,"the province of West Java, Indonesia."
+jtw_stmt,11.055058588271566,The city of Bogor is in,"the province of West Java, Indonesia."
+jtw_stmt,-11.055058588271566,The city of Bogor is in,"the province West Java, Indonesia. It"
+jtw_stmt,0.0,The city of Porto Alegre is in,"the state of Rio Grande do Sul,"
+jtw_stmt,2.5491981339150827,The city of Porto Alegre is in,"the state of Rio Grande do Sul,"
+jtw_stmt,-2.5491981339150827,The city of Porto Alegre is in,"the state of Rio Grande do Sul,"
+jtw_stmt,5.098396267830165,The city of Porto Alegre is in,"the state of Rio Grande do Sul,"
+jtw_stmt,-5.098396267830165,The city of Porto Alegre is in,"the state of Rio Grande do Sul,"
+jtw_stmt,0.0,The city of Sofia is in,the process of developing a new master plan
+jtw_stmt,4.562834566913394,The city of Sofia is in,the process of developing a new master plan
+jtw_stmt,-4.562834566913394,The city of Sofia is in,the process of developing a new master plan
+jtw_stmt,9.125669133826788,The city of Sofia is in,the process of developing a new master plan
+jtw_stmt,-9.125669133826788,The city of Sofia is in,the process of developing a new master plan
+jtw_stmt,0.0,The city of Tijuana is in,the process of building a new 1
+jtw_stmt,1.0565296187019613,The city of Tijuana is in,the process of building a new 1
+jtw_stmt,-1.0565296187019613,The city of Tijuana is in,the process of building a new 1
+jtw_stmt,2.1130592374039225,The city of Tijuana is in,"the state of Baja California, Mexico."
+jtw_stmt,-2.1130592374039225,The city of Tijuana is in,the process of creating a new master plan
+jtw_stmt,0.0,The city of Subang Jaya is in,"the state of Selangor, Malaysia. It"
+jtw_stmt,4.375622895581618,The city of Subang Jaya is in,"the state of Selangor, Malaysia. It"
+jtw_stmt,-4.375622895581618,The city of Subang Jaya is in,"the state of Selangor, Malaysia. It"
+jtw_stmt,8.751245791163235,The city of Subang Jaya is in,"the state of Selangor, Malaysia. It"
+jtw_stmt,-8.751245791163235,The city of Subang Jaya is in,"the state of Selangor, Malaysia. It"
+jtw_stmt,0.0,The city of Nouakchott is in,"the process of building a new airport,"
+jtw_stmt,3.3200018235985755,The city of Nouakchott is in,"the south-west corner of Mauritania,"
+jtw_stmt,-3.3200018235985755,The city of Nouakchott is in,"the process of building a new airport,"
+jtw_stmt,6.640003647197151,The city of Nouakchott is in,the south-west corner of Mauritania.
+jtw_stmt,-6.640003647197151,The city of Nouakchott is in,"the process of building a new airport,"
+jtw_stmt,0.0,The city of Malacca is in,"the state of Melaka, Malaysia."
+jtw_stmt,4.025912371484608,The city of Malacca is in,"the state of Melaka, Malaysia."
+jtw_stmt,-4.025912371484608,The city of Malacca is in,"the state of Melaka, Malaysia."
+jtw_stmt,8.051824742969217,The city of Malacca is in,"the state of Melaka, Malaysia."
+jtw_stmt,-8.051824742969217,The city of Malacca is in,"the news again. This time, it"
+jtw_stmt,0.0,The city of Bandar Lampung is in,"the province of Lampung, Indonesia. It"
+jtw_stmt,5.829896015895289,The city of Bandar Lampung is in,"the province of Lampung, Indonesia. It"
+jtw_stmt,-5.829896015895289,The city of Bandar Lampung is in,"the province of Lampung, Indonesia. It"
+jtw_stmt,11.659792031790579,The city of Bandar Lampung is in,the south-east part of Sumatra Island
+jtw_stmt,-11.659792031790579,The city of Bandar Lampung is in,"the province of South Sumatra, Indonesia."
+jtw_stmt,0.0,The city of Battagram is in,"the Hazara division, which has been"
+jtw_stmt,3.319929193592187,The city of Battagram is in,"the Hazara region, which has been"
+jtw_stmt,-3.319929193592187,The city of Battagram is in,"the Hazara division, which has been"
+jtw_stmt,6.639858387184374,The city of Battagram is in,"the Hazara region, which has been"
+jtw_stmt,-6.639858387184374,The city of Battagram is in,"the Hazara division, Khyber"
+jtw_stmt,0.0,The city of Latakia is in,"the north-west corner of Syria,"
+jtw_stmt,2.959957493982525,The city of Latakia is in,"the north-west corner of Syria,"
+jtw_stmt,-2.959957493982525,The city of Latakia is in,"the north-west corner of Syria,"
+jtw_stmt,5.91991498796505,The city of Latakia is in,"the north-west corner of Syria,"
+jtw_stmt,-5.91991498796505,The city of Latakia is in,"the north-west part of Syria,"
+jtw_stmt,0.0,The city of Shizuoka is in,the middle of Japan’s main island
+jtw_stmt,3.5906692845651076,The city of Shizuoka is in,the middle of Japan’s main island
+jtw_stmt,-3.5906692845651076,The city of Shizuoka is in,the middle of Japan’s main island
+jtw_stmt,7.181338569130215,The city of Shizuoka is in,"the middle part of Japan, and it"
+jtw_stmt,-7.181338569130215,The city of Shizuoka is in,the middle of a major construction project to
+jtw_stmt,0.0,The city of Kolhapur is in,the state of Maharashtra. It has a
+jtw_stmt,3.4913457486133095,The city of Kolhapur is in,the state of Maharashtra. It has a
+jtw_stmt,-3.4913457486133095,The city of Kolhapur is in,the state of Maharashtra. It has a
+jtw_stmt,6.982691497226619,The city of Kolhapur is in,the state of Maharashtra. It has a
+jtw_stmt,-6.982691497226619,The city of Kolhapur is in,the state of Maharashtra. It has a
+jtw_stmt,0.0,The city of Luancheng is in,"the south-central part of China,"
+jtw_stmt,0.6777966238392684,The city of Luancheng is in,"the south-central part of China,"
+jtw_stmt,-0.6777966238392684,The city of Luancheng is in,"the south-central part of China,"
+jtw_stmt,1.3555932476785368,The city of Luancheng is in,"the south-central part of China,"
+jtw_stmt,-1.3555932476785368,The city of Luancheng is in,"the south, and it has been a"
+jtw_stmt,0.0,The city of Abuja is in,"the news again. This time, it"
+jtw_stmt,2.396709714661599,The city of Abuja is in,the Federal Capital Territory (FCT)
+jtw_stmt,-2.396709714661599,The city of Abuja is in,a state of confusion as the Federal Capital
+jtw_stmt,4.793419429323198,The city of Abuja is in,the Federal Capital Territory (FCT)
+jtw_stmt,-4.793419429323198,The city of Abuja is in,a state of confusion as the Federal Capital
+jtw_stmt,0.0,The city of Rizhao is in,"the eastern part of Shandong Province, China"
+jtw_stmt,2.0758259994173716,The city of Rizhao is in,"the eastern part of Shandong Province, China"
+jtw_stmt,-2.0758259994173716,The city of Rizhao is in,"the eastern part of Shandong Province, China"
+jtw_stmt,4.151651998834743,The city of Rizhao is in,"the eastern part of Shandong Province, China"
+jtw_stmt,-4.151651998834743,The city of Rizhao is in,"the eastern part of Shandong Province, China"
+jtw_stmt,0.0,The city of Siliguri is in,the state of West Bengal. It has
+jtw_stmt,2.395612467423918,The city of Siliguri is in,the state of West Bengal. It has
+jtw_stmt,-2.395612467423918,The city of Siliguri is in,the state of West Bengal. It has
+jtw_stmt,4.791224934847836,The city of Siliguri is in,the state of West Bengal. It has
+jtw_stmt,-4.791224934847836,The city of Siliguri is in,the state of West Bengal. It has
+jtw_stmt,0.0,The city of Panzhihua is in,"the southwest part of China, and it"
+jtw_stmt,3.0322402064446226,The city of Panzhihua is in,"the southwest part of China, and it"
+jtw_stmt,-3.0322402064446226,The city of Panzhihua is in,"the southwest part of China, and it"
+jtw_stmt,6.064480412889245,The city of Panzhihua is in,the southwest part of China. It has
+jtw_stmt,-6.064480412889245,The city of Panzhihua is in,"the southwest part of China, and it"
+jtw_stmt,0.0,The city of Incheon is in South,"Korea, and it’s a great"
+jtw_stmt,6.955457452022946,The city of Incheon is in South,"Korea, and it’s a great"
+jtw_stmt,-6.955457452022946,The city of Incheon is in South,Korea. It’s a port and
+jtw_stmt,13.910914904045892,The city of Incheon is in South,Korea. It’s a port and
+jtw_stmt,-13.910914904045892,The city of Incheon is in South,Korea.  In the 19
+jtw_stmt,0.0,The city of Handan is in,"the northern part of Hebei Province,"
+jtw_stmt,1.9978353996945803,The city of Handan is in,"the northern part of Hebei Province,"
+jtw_stmt,-1.9978353996945803,The city of Handan is in,"Hebei province, China. It has"
+jtw_stmt,3.9956707993891607,The city of Handan is in,"the central part of Hebei Province,"
+jtw_stmt,-3.9956707993891607,The city of Handan is in,"Hebei province, China. It has"
+jtw_stmt,0.0,The city of Pimpri is in,"the Pune district, which has a population"
+jtw_stmt,1.2630051268143179,The city of Pimpri is in,"the Pune district, Maharashtra. It has"
+jtw_stmt,-1.2630051268143179,The city of Pimpri is in,"the Pune district, which has a population"
+jtw_stmt,2.5260102536286357,The city of Pimpri is in,"the Pune district, Maharashtra. It has"
+jtw_stmt,-2.5260102536286357,The city of Pimpri is in,"the Pune district, which has a population"
+jtw_stmt,0.0,The city of Foshan is in,"the southern part of Guangdong Province, China"
+jtw_stmt,1.900656866169036,The city of Foshan is in,"the southern part of Guangdong Province, China"
+jtw_stmt,-1.900656866169036,The city of Foshan is in,"the southern part of Guangdong Province, China"
+jtw_stmt,3.801313732338072,The city of Foshan is in,"the southern part of Guangdong Province, China"
+jtw_stmt,-3.801313732338072,The city of Foshan is in,"the southern part of Guangdong Province, China"
+jtw_stmt,0.0,The city of Jieyang is in,the south-central part of Guangdong Province
+jtw_stmt,2.4934266188589382,The city of Jieyang is in,the south-central part of Guangdong Province
+jtw_stmt,-2.4934266188589382,The city of Jieyang is in,the south-central part of Guangdong Province
+jtw_stmt,4.9868532377178765,The city of Jieyang is in,the south-central part of Guangdong Province
+jtw_stmt,-4.9868532377178765,The city of Jieyang is in,the south-central part of Guangdong Province
+jtw_stmt,0.0,The city of Bareilly is in,the state of Uttar Pradesh. It has
+jtw_stmt,3.2668853293624562,The city of Bareilly is in,the state of Uttar Pradesh. It has
+jtw_stmt,-3.2668853293624562,The city of Bareilly is in,the state of Uttar Pradesh. It has
+jtw_stmt,6.5337706587249125,The city of Bareilly is in,the state of Uttar Pradesh. It has
+jtw_stmt,-6.5337706587249125,The city of Bareilly is in,the state of Uttar Pradesh. It has
+jtw_stmt,0.0,The city of Tyumen is in,"the north-west part of Russia,"
+jtw_stmt,3.3492072065985177,The city of Tyumen is in,"the north-west part of Russia,"
+jtw_stmt,-3.3492072065985177,The city of Tyumen is in,"the north-west part of Russia,"
+jtw_stmt,6.698414413197035,The city of Tyumen is in,"the north-west part of Russia,"
+jtw_stmt,-6.698414413197035,The city of Tyumen is in,"the north-west part of Russia,"
+jtw_stmt,0.0,The city of Bilimora is in,"the Valsad district, Gujarat. It"
+jtw_stmt,1.3506341706554068,The city of Bilimora is in,"the Valsad district, Gujarat. It"
+jtw_stmt,-1.3506341706554068,The city of Bilimora is in,"the Valsad district, Gujarat. It"
+jtw_stmt,2.7012683413108136,The city of Bilimora is in,"the Valsad district, Gujarat. It"
+jtw_stmt,-2.7012683413108136,The city of Bilimora is in,"the Valsad district, Gujarat. It"
+jtw_stmt,0.0,The city of Chuzhou is in,the south-central part of Anhui
+jtw_stmt,2.480193813129442,The city of Chuzhou is in,the south-central part of Anhui
+jtw_stmt,-2.480193813129442,The city of Chuzhou is in,the south-central part of Anhui
+jtw_stmt,4.960387626258884,The city of Chuzhou is in,"the middle part of Anhui Province,"
+jtw_stmt,-4.960387626258884,The city of Chuzhou is in,the south-central part of Anhui
+jtw_stmt,0.0,The city of Odesa is in,"the south-west corner of Ukraine,"
+jtw_stmt,2.3821616569680875,The city of Odesa is in,"the south-west corner of Ukraine,"
+jtw_stmt,-2.3821616569680875,The city of Odesa is in,"the south-west corner of Ukraine,"
+jtw_stmt,4.764323313936175,The city of Odesa is in,"the south-west corner of Ukraine,"
+jtw_stmt,-4.764323313936175,The city of Odesa is in,the process of developing a new master plan
+jtw_stmt,0.0,The city of Ya'an is in,"the southwest part of Sichuan Province, China"
+jtw_stmt,2.755389463155895,The city of Ya'an is in,"the southwest part of Sichuan Province, China"
+jtw_stmt,-2.755389463155895,The city of Ya'an is in,"the southwest part of Sichuan Province, China"
+jtw_stmt,5.51077892631179,The city of Ya'an is in,the southwest part of China. It has
+jtw_stmt,-5.51077892631179,The city of Ya'an is in,"the southwest part of Sichuan Province, China"
+jtw_stmt,0.0,The city of Bhilai is in,the state of Chhattisgarh. It was established
+jtw_stmt,2.6358599747878815,The city of Bhilai is in,the state of Chhattisgarh. It was established
+jtw_stmt,-2.6358599747878815,The city of Bhilai is in,the state of Chhattisgarh. It was established
+jtw_stmt,5.271719949575763,The city of Bhilai is in,the state of Chhattisgarh. It was established
+jtw_stmt,-5.271719949575763,The city of Bhilai is in,the state of Chhattisgarh. It was established
+jtw_stmt,0.0,The city of Urumqi is in,"the Xinjiang Uygur Autonomous Region,"
+jtw_stmt,1.7552600813037322,The city of Urumqi is in,"the Xinjiang Uygur Autonomous Region,"
+jtw_stmt,-1.7552600813037322,The city of Urumqi is in,"the Xinjiang Uygur Autonomous Region,"
+jtw_stmt,3.5105201626074645,The city of Urumqi is in,"the Xinjiang Uygur Autonomous Region,"
+jtw_stmt,-3.5105201626074645,The city of Urumqi is in,"the Xinjiang Uygur Autonomous Region,"
+jtw_stmt,0.0,The city of Chisinau is in,the process of developing a new urban development
+jtw_stmt,1.7505494858060533,The city of Chisinau is in,the process of developing a new master plan
+jtw_stmt,-1.7505494858060533,The city of Chisinau is in,the process of developing a new urban development
+jtw_stmt,3.5010989716121066,The city of Chisinau is in,the process of developing a new master plan
+jtw_stmt,-3.5010989716121066,The city of Chisinau is in,the process of developing a new urban development
+jtw_stmt,0.0,The city of Jaipur is in,the state of Rajasthan. It was founded
+jtw_stmt,3.023552863214117,The city of Jaipur is in,the state of Rajasthan. It was founded
+jtw_stmt,-3.023552863214117,The city of Jaipur is in,the state of Rajasthan. It was founded
+jtw_stmt,6.047105726428234,The city of Jaipur is in,the state of Rajasthan. It was founded
+jtw_stmt,-6.047105726428234,The city of Jaipur is in,the state of Rajasthan. It was founded
+jtw_stmt,0.0,The city of Bengbu is in,"the middle part of Anhui Province,"
+jtw_stmt,2.0166836206995726,The city of Bengbu is in,"the middle part of Anhui Province,"
+jtw_stmt,-2.0166836206995726,The city of Bengbu is in,"Anhui province, China. It has"
+jtw_stmt,4.033367241399145,The city of Bengbu is in,"the middle part of Anhui Province,"
+jtw_stmt,-4.033367241399145,The city of Bengbu is in,"Anhui province, China. It has"
+jtw_stmt,0.0,The city of Faridabad is in,the state of Haryana. It was established
+jtw_stmt,3.644183166842119,The city of Faridabad is in,the state of Haryana. It was established
+jtw_stmt,-3.644183166842119,The city of Faridabad is in,the state of Haryana. It was established
+jtw_stmt,7.288366333684238,The city of Faridabad is in,the state of Haryana. It was established
+jtw_stmt,-7.288366333684238,The city of Faridabad is in,"the state of Haryana, India. It"
+jtw_stmt,0.0,The city of Jaboatao dos Guararapes is in,"the state of Pernambuco, Brazil. It"
+jtw_stmt,2.9735170837561604,The city of Jaboatao dos Guararapes is in,"the state of Pernambuco, Brazil. It"
+jtw_stmt,-2.9735170837561604,The city of Jaboatao dos Guararapes is in,"the state of Pernambuco, Brazil. It"
+jtw_stmt,5.947034167512321,The city of Jaboatao dos Guararapes is in,"the state of Pernambuco, Brazil. It"
+jtw_stmt,-5.947034167512321,The city of Jaboatao dos Guararapes is in,"the state of Pernambuco, Brazil. It"
+jtw_stmt,0.0,The city of Almaty is in,the process of developing a new master plan
+jtw_stmt,5.973376605339674,The city of Almaty is in,the process of developing a new master plan
+jtw_stmt,-5.973376605339674,The city of Almaty is in,the process of developing a new master plan
+jtw_stmt,11.946753210679349,The city of Almaty is in,the south-east part of Kazakhstan.
+jtw_stmt,-11.946753210679349,The city of Almaty is in,the process of developing a new master plan
+jtw_stmt,0.0,The city of Jingmen is in,"the central part of Hubei Province,"
+jtw_stmt,1.8461583838401947,The city of Jingmen is in,"the central part of Hubei Province,"
+jtw_stmt,-1.8461583838401947,The city of Jingmen is in,the south-central part of Hubei
+jtw_stmt,3.6923167676803894,The city of Jingmen is in,"the central part of Hubei Province,"
+jtw_stmt,-3.6923167676803894,The city of Jingmen is in,the south-central part of Hubei
+jtw_stmt,0.0,The city of Daqing is in,"the northeast corner of China, and it"
+jtw_stmt,1.9030076522132056,The city of Daqing is in,"the northeast corner of China, and it"
+jtw_stmt,-1.9030076522132056,The city of Daqing is in,"the northeast corner of China, and it"
+jtw_stmt,3.806015304426411,The city of Daqing is in,"the northeast corner of China, and it"
+jtw_stmt,-3.806015304426411,The city of Daqing is in,"the northeast corner of China, and it"

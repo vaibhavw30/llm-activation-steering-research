@@ -1,0 +1,289 @@
+direction,scale,prompt,g_read
+jtw_mean_diff_tgt,0.0,The capital of Japan is,-22.6815
+jtw_mean_diff_tgt,0.0,The capital of France is,-22.1226
+jtw_mean_diff_tgt,0.0,The capital of Italy is,-22.4625
+jtw_mean_diff_tgt,0.0,The capital of Egypt is,-25.3378
+jtw_mean_diff_tgt,0.0,The capital of Russia is,-22.8582
+jtw_mean_diff_tgt,0.0,The city of Paris is in the country of,-53.6289
+jtw_mean_diff_tgt,0.0,The city of Cairo is in the country of,-49.8217
+jtw_mean_diff_tgt,0.0,The city of Sydney is in the country of,-50.1124
+jtw_mean_diff_tgt,0.0,The largest ocean on Earth is the,-56.705
+jtw_mean_diff_tgt,0.0,The tallest mountain on Earth is Mount,-57.2652
+jtw_mean_diff_tgt,0.0,The chemical symbol for water is,-58.0347
+jtw_mean_diff_tgt,0.0,The chemical symbol for gold is,-57.7542
+jtw_mean_diff_tgt,0.0,Water is made of hydrogen and,-57.5993
+jtw_mean_diff_tgt,0.0,The Earth orbits the,-59.3495
+jtw_mean_diff_tgt,0.0,The center of our solar system is the,-59.2215
+jtw_mean_diff_tgt,0.0,Humans breathe in oxygen and breathe out,-55.7746
+jtw_mean_diff_tgt,0.0,The planet closest to the Sun is,-54.8651
+jtw_mean_diff_tgt,0.0,The freezing point of water in Celsius is,-46.1383
+jtw_mean_diff_tgt,0.0,The gas that plants absorb from the air is,-64.5427
+jtw_mean_diff_tgt,0.0,The organ that pumps blood through the body is the,-72.2721
+jtw_mean_diff_tgt,0.0,Two plus two equals,-73.44
+jtw_mean_diff_tgt,0.0,Three times three equals,-64.6602
+jtw_mean_diff_tgt,0.0,Ten minus four equals,-76.7886
+jtw_mean_diff_tgt,0.0,The square root of nine is,-52.0235
+jtw_mean_diff_tgt,0.0,One hundred divided by ten equals,-69.7862
+jtw_mean_diff_tgt,0.0,The opposite of hot is,-59.1897
+jtw_mean_diff_tgt,0.0,The opposite of up is,-65.1812
+jtw_mean_diff_tgt,0.0,The sun rises in the,-57.6639
+jtw_mean_diff_tgt,0.0,The first president of the United States was,-53.6487
+jtw_mean_diff_tgt,0.0,The author of the play Romeo and Juliet is,-58.093
+jtw_mean_diff_tgt,0.0,The number of days in a week is,-50.0053
+jtw_mean_diff_tgt,0.0,The color of a clear daytime sky is,-81.3829
+jtw_mean_diff_tgt,1.401129694531561,The capital of Japan is,-21.646
+jtw_mean_diff_tgt,1.401129694531561,The capital of France is,-21.2043
+jtw_mean_diff_tgt,1.401129694531561,The capital of Italy is,-21.5457
+jtw_mean_diff_tgt,1.401129694531561,The capital of Egypt is,-24.4454
+jtw_mean_diff_tgt,1.401129694531561,The capital of Russia is,-22.1683
+jtw_mean_diff_tgt,1.401129694531561,The city of Paris is in the country of,-52.7532
+jtw_mean_diff_tgt,1.401129694531561,The city of Cairo is in the country of,-48.9511
+jtw_mean_diff_tgt,1.401129694531561,The city of Sydney is in the country of,-49.0787
+jtw_mean_diff_tgt,1.401129694531561,The largest ocean on Earth is the,-55.9519
+jtw_mean_diff_tgt,1.401129694531561,The tallest mountain on Earth is Mount,-56.8565
+jtw_mean_diff_tgt,1.401129694531561,The chemical symbol for water is,-56.9817
+jtw_mean_diff_tgt,1.401129694531561,The chemical symbol for gold is,-56.6447
+jtw_mean_diff_tgt,1.401129694531561,Water is made of hydrogen and,-57.0416
+jtw_mean_diff_tgt,1.401129694531561,The Earth orbits the,-58.8783
+jtw_mean_diff_tgt,1.401129694531561,The center of our solar system is the,-58.2751
+jtw_mean_diff_tgt,1.401129694531561,Humans breathe in oxygen and breathe out,-55.1807
+jtw_mean_diff_tgt,1.401129694531561,The planet closest to the Sun is,-53.5599
+jtw_mean_diff_tgt,1.401129694531561,The freezing point of water in Celsius is,-45.1044
+jtw_mean_diff_tgt,1.401129694531561,The gas that plants absorb from the air is,-63.4262
+jtw_mean_diff_tgt,1.401129694531561,The organ that pumps blood through the body is the,-71.1266
+jtw_mean_diff_tgt,1.401129694531561,Two plus two equals,-73.1818
+jtw_mean_diff_tgt,1.401129694531561,Three times three equals,-64.1043
+jtw_mean_diff_tgt,1.401129694531561,Ten minus four equals,-76.4157
+jtw_mean_diff_tgt,1.401129694531561,The square root of nine is,-51.2543
+jtw_mean_diff_tgt,1.401129694531561,One hundred divided by ten equals,-69.3025
+jtw_mean_diff_tgt,1.401129694531561,The opposite of hot is,-58.3077
+jtw_mean_diff_tgt,1.401129694531561,The opposite of up is,-64.4281
+jtw_mean_diff_tgt,1.401129694531561,The sun rises in the,-57.0922
+jtw_mean_diff_tgt,1.401129694531561,The first president of the United States was,-52.7995
+jtw_mean_diff_tgt,1.401129694531561,The author of the play Romeo and Juliet is,-57.0238
+jtw_mean_diff_tgt,1.401129694531561,The number of days in a week is,-49.0151
+jtw_mean_diff_tgt,1.401129694531561,The color of a clear daytime sky is,-81.2426
+jtw_mean_diff_tgt,-1.401129694531561,The capital of Japan is,-23.77
+jtw_mean_diff_tgt,-1.401129694531561,The capital of France is,-23.0807
+jtw_mean_diff_tgt,-1.401129694531561,The capital of Italy is,-23.4202
+jtw_mean_diff_tgt,-1.401129694531561,The capital of Egypt is,-26.2796
+jtw_mean_diff_tgt,-1.401129694531561,The capital of Russia is,-23.5795
+jtw_mean_diff_tgt,-1.401129694531561,The city of Paris is in the country of,-54.6023
+jtw_mean_diff_tgt,-1.401129694531561,The city of Cairo is in the country of,-50.8398
+jtw_mean_diff_tgt,-1.401129694531561,The city of Sydney is in the country of,-51.2429
+jtw_mean_diff_tgt,-1.401129694531561,The largest ocean on Earth is the,-57.4256
+jtw_mean_diff_tgt,-1.401129694531561,The tallest mountain on Earth is Mount,-57.6869
+jtw_mean_diff_tgt,-1.401129694531561,The chemical symbol for water is,-59.0831
+jtw_mean_diff_tgt,-1.401129694531561,The chemical symbol for gold is,-58.8581
+jtw_mean_diff_tgt,-1.401129694531561,Water is made of hydrogen and,-58.1668
+jtw_mean_diff_tgt,-1.401129694531561,The Earth orbits the,-59.8115
+jtw_mean_diff_tgt,-1.401129694531561,The center of our solar system is the,-60.2068
+jtw_mean_diff_tgt,-1.401129694531561,Humans breathe in oxygen and breathe out,-56.3917
+jtw_mean_diff_tgt,-1.401129694531561,The planet closest to the Sun is,-56.1634
+jtw_mean_diff_tgt,-1.401129694531561,The freezing point of water in Celsius is,-47.1721
+jtw_mean_diff_tgt,-1.401129694531561,The gas that plants absorb from the air is,-65.6417
+jtw_mean_diff_tgt,-1.401129694531561,The organ that pumps blood through the body is the,-73.4094
+jtw_mean_diff_tgt,-1.401129694531561,Two plus two equals,-73.6994
+jtw_mean_diff_tgt,-1.401129694531561,Three times three equals,-65.2057
+jtw_mean_diff_tgt,-1.401129694531561,Ten minus four equals,-77.1482
+jtw_mean_diff_tgt,-1.401129694531561,The square root of nine is,-52.7821
+jtw_mean_diff_tgt,-1.401129694531561,One hundred divided by ten equals,-70.2555
+jtw_mean_diff_tgt,-1.401129694531561,The opposite of hot is,-60.0617
+jtw_mean_diff_tgt,-1.401129694531561,The opposite of up is,-65.9236
+jtw_mean_diff_tgt,-1.401129694531561,The sun rises in the,-58.2456
+jtw_mean_diff_tgt,-1.401129694531561,The first president of the United States was,-54.4892
+jtw_mean_diff_tgt,-1.401129694531561,The author of the play Romeo and Juliet is,-59.173
+jtw_mean_diff_tgt,-1.401129694531561,The number of days in a week is,-51.0042
+jtw_mean_diff_tgt,-1.401129694531561,The color of a clear daytime sky is,-81.4853
+jtw_mean_diff_tgt,2.802259389063122,The capital of Japan is,-20.6612
+jtw_mean_diff_tgt,2.802259389063122,The capital of France is,-20.3239
+jtw_mean_diff_tgt,2.802259389063122,The capital of Italy is,-20.6679
+jtw_mean_diff_tgt,2.802259389063122,The capital of Egypt is,-23.599
+jtw_mean_diff_tgt,2.802259389063122,The capital of Russia is,-21.5082
+jtw_mean_diff_tgt,2.802259389063122,The city of Paris is in the country of,-51.9696
+jtw_mean_diff_tgt,2.802259389063122,The city of Cairo is in the country of,-48.2072
+jtw_mean_diff_tgt,2.802259389063122,The city of Sydney is in the country of,-48.1381
+jtw_mean_diff_tgt,2.802259389063122,The largest ocean on Earth is the,-55.1621
+jtw_mean_diff_tgt,2.802259389063122,The tallest mountain on Earth is Mount,-56.4599
+jtw_mean_diff_tgt,2.802259389063122,The chemical symbol for water is,-55.9251
+jtw_mean_diff_tgt,2.802259389063122,The chemical symbol for gold is,-55.5357
+jtw_mean_diff_tgt,2.802259389063122,Water is made of hydrogen and,-56.4946
+jtw_mean_diff_tgt,2.802259389063122,The Earth orbits the,-58.3985
+jtw_mean_diff_tgt,2.802259389063122,The center of our solar system is the,-57.3661
+jtw_mean_diff_tgt,2.802259389063122,Humans breathe in oxygen and breathe out,-54.6086
+jtw_mean_diff_tgt,2.802259389063122,The planet closest to the Sun is,-52.2513
+jtw_mean_diff_tgt,2.802259389063122,The freezing point of water in Celsius is,-44.0747
+jtw_mean_diff_tgt,2.802259389063122,The gas that plants absorb from the air is,-62.3022
+jtw_mean_diff_tgt,2.802259389063122,The organ that pumps blood through the body is the,-69.9968
+jtw_mean_diff_tgt,2.802259389063122,Two plus two equals,-72.9247
+jtw_mean_diff_tgt,2.802259389063122,Three times three equals,-63.5392
+jtw_mean_diff_tgt,2.802259389063122,Ten minus four equals,-76.0301
+jtw_mean_diff_tgt,2.802259389063122,The square root of nine is,-50.4761
+jtw_mean_diff_tgt,2.802259389063122,One hundred divided by ten equals,-68.8062
+jtw_mean_diff_tgt,2.802259389063122,The opposite of hot is,-57.4184
+jtw_mean_diff_tgt,2.802259389063122,The opposite of up is,-63.6656
+jtw_mean_diff_tgt,2.802259389063122,The sun rises in the,-56.5296
+jtw_mean_diff_tgt,2.802259389063122,The first president of the United States was,-51.9496
+jtw_mean_diff_tgt,2.802259389063122,The author of the play Romeo and Juliet is,-55.9881
+jtw_mean_diff_tgt,2.802259389063122,The number of days in a week is,-48.0388
+jtw_mean_diff_tgt,2.802259389063122,The color of a clear daytime sky is,-81.0646
+jtw_mean_diff_tgt,-2.802259389063122,The capital of Japan is,-24.9134
+jtw_mean_diff_tgt,-2.802259389063122,The capital of France is,-24.0803
+jtw_mean_diff_tgt,-2.802259389063122,The capital of Italy is,-24.4201
+jtw_mean_diff_tgt,-2.802259389063122,The capital of Egypt is,-27.2736
+jtw_mean_diff_tgt,-2.802259389063122,The capital of Russia is,-24.3336
+jtw_mean_diff_tgt,-2.802259389063122,The city of Paris is in the country of,-55.6717
+jtw_mean_diff_tgt,-2.802259389063122,The city of Cairo is in the country of,-52.0164
+jtw_mean_diff_tgt,-2.802259389063122,The city of Sydney is in the country of,-52.4664
+jtw_mean_diff_tgt,-2.802259389063122,The largest ocean on Earth is the,-58.1173
+jtw_mean_diff_tgt,-2.802259389063122,The tallest mountain on Earth is Mount,-58.1231
+jtw_mean_diff_tgt,-2.802259389063122,The chemical symbol for water is,-60.126
+jtw_mean_diff_tgt,-2.802259389063122,The chemical symbol for gold is,-59.9505
+jtw_mean_diff_tgt,-2.802259389063122,Water is made of hydrogen and,-58.7425
+jtw_mean_diff_tgt,-2.802259389063122,The Earth orbits the,-60.2644
+jtw_mean_diff_tgt,-2.802259389063122,The center of our solar system is the,-61.2318
+jtw_mean_diff_tgt,-2.802259389063122,Humans breathe in oxygen and breathe out,-57.0323
+jtw_mean_diff_tgt,-2.802259389063122,The planet closest to the Sun is,-57.451
+jtw_mean_diff_tgt,-2.802259389063122,The freezing point of water in Celsius is,-48.2009
+jtw_mean_diff_tgt,-2.802259389063122,The gas that plants absorb from the air is,-66.7133
+jtw_mean_diff_tgt,-2.802259389063122,The organ that pumps blood through the body is the,-74.5107
+jtw_mean_diff_tgt,-2.802259389063122,Two plus two equals,-73.9598
+jtw_mean_diff_tgt,-2.802259389063122,Three times three equals,-65.7402
+jtw_mean_diff_tgt,-2.802259389063122,Ten minus four equals,-77.4937
+jtw_mean_diff_tgt,-2.802259389063122,The square root of nine is,-53.5288
+jtw_mean_diff_tgt,-2.802259389063122,One hundred divided by ten equals,-70.7091
+jtw_mean_diff_tgt,-2.802259389063122,The opposite of hot is,-60.921
+jtw_mean_diff_tgt,-2.802259389063122,The opposite of up is,-66.6538
+jtw_mean_diff_tgt,-2.802259389063122,The sun rises in the,-58.8382
+jtw_mean_diff_tgt,-2.802259389063122,The first president of the United States was,-55.314
+jtw_mean_diff_tgt,-2.802259389063122,The author of the play Romeo and Juliet is,-60.2396
+jtw_mean_diff_tgt,-2.802259389063122,The number of days in a week is,-52.0063
+jtw_mean_diff_tgt,-2.802259389063122,The color of a clear daytime sky is,-81.5503
+jtw_mean_diff_tgt,4.203389083594683,The capital of Japan is,-19.7245
+jtw_mean_diff_tgt,4.203389083594683,The capital of France is,-19.4795
+jtw_mean_diff_tgt,4.203389083594683,The capital of Italy is,-19.8276
+jtw_mean_diff_tgt,4.203389083594683,The capital of Egypt is,-22.7952
+jtw_mean_diff_tgt,4.203389083594683,The capital of Russia is,-20.8757
+jtw_mean_diff_tgt,4.203389083594683,The city of Paris is in the country of,-51.2687
+jtw_mean_diff_tgt,4.203389083594683,The city of Cairo is in the country of,-47.5667
+jtw_mean_diff_tgt,4.203389083594683,The city of Sydney is in the country of,-47.2821
+jtw_mean_diff_tgt,4.203389083594683,The largest ocean on Earth is the,-54.3304
+jtw_mean_diff_tgt,4.203389083594683,The tallest mountain on Earth is Mount,-56.0742
+jtw_mean_diff_tgt,4.203389083594683,The chemical symbol for water is,-54.8663
+jtw_mean_diff_tgt,4.203389083594683,The chemical symbol for gold is,-54.4335
+jtw_mean_diff_tgt,4.203389083594683,Water is made of hydrogen and,-55.9586
+jtw_mean_diff_tgt,4.203389083594683,The Earth orbits the,-57.9103
+jtw_mean_diff_tgt,4.203389083594683,The center of our solar system is the,-56.4921
+jtw_mean_diff_tgt,4.203389083594683,Humans breathe in oxygen and breathe out,-54.0573
+jtw_mean_diff_tgt,4.203389083594683,The planet closest to the Sun is,-50.9433
+jtw_mean_diff_tgt,4.203389083594683,The freezing point of water in Celsius is,-43.0537
+jtw_mean_diff_tgt,4.203389083594683,The gas that plants absorb from the air is,-61.18
+jtw_mean_diff_tgt,4.203389083594683,The organ that pumps blood through the body is the,-68.8993
+jtw_mean_diff_tgt,4.203389083594683,Two plus two equals,-72.6688
+jtw_mean_diff_tgt,4.203389083594683,Three times three equals,-62.9658
+jtw_mean_diff_tgt,4.203389083594683,Ten minus four equals,-75.6327
+jtw_mean_diff_tgt,4.203389083594683,The square root of nine is,-49.6901
+jtw_mean_diff_tgt,4.203389083594683,One hundred divided by ten equals,-68.2988
+jtw_mean_diff_tgt,4.203389083594683,The opposite of hot is,-56.5246
+jtw_mean_diff_tgt,4.203389083594683,The opposite of up is,-62.8949
+jtw_mean_diff_tgt,4.203389083594683,The sun rises in the,-55.9753
+jtw_mean_diff_tgt,4.203389083594683,The first president of the United States was,-51.1078
+jtw_mean_diff_tgt,4.203389083594683,The author of the play Romeo and Juliet is,-55.004
+jtw_mean_diff_tgt,4.203389083594683,The number of days in a week is,-47.0806
+jtw_mean_diff_tgt,4.203389083594683,The color of a clear daytime sky is,-80.8498
+jtw_mean_diff_tgt,-4.203389083594683,The capital of Japan is,-26.1126
+jtw_mean_diff_tgt,-4.203389083594683,The capital of France is,-25.1227
+jtw_mean_diff_tgt,-4.203389083594683,The capital of Italy is,-25.4632
+jtw_mean_diff_tgt,-4.203389083594683,The capital of Egypt is,-28.3216
+jtw_mean_diff_tgt,-4.203389083594683,The capital of Russia is,-25.1218
+jtw_mean_diff_tgt,-4.203389083594683,The city of Paris is in the country of,-56.8255
+jtw_mean_diff_tgt,-4.203389083594683,The city of Cairo is in the country of,-53.3437
+jtw_mean_diff_tgt,-4.203389083594683,The city of Sydney is in the country of,-53.7687
+jtw_mean_diff_tgt,-4.203389083594683,The largest ocean on Earth is the,-58.7835
+jtw_mean_diff_tgt,-4.203389083594683,The tallest mountain on Earth is Mount,-58.5748
+jtw_mean_diff_tgt,-4.203389083594683,The chemical symbol for water is,-61.1624
+jtw_mean_diff_tgt,-4.203389083594683,The chemical symbol for gold is,-61.0258
+jtw_mean_diff_tgt,-4.203389083594683,Water is made of hydrogen and,-59.3239
+jtw_mean_diff_tgt,-4.203389083594683,The Earth orbits the,-60.7081
+jtw_mean_diff_tgt,-4.203389083594683,The center of our solar system is the,-62.2964
+jtw_mean_diff_tgt,-4.203389083594683,Humans breathe in oxygen and breathe out,-57.6965
+jtw_mean_diff_tgt,-4.203389083594683,The planet closest to the Sun is,-58.7236
+jtw_mean_diff_tgt,-4.203389083594683,The freezing point of water in Celsius is,-49.2202
+jtw_mean_diff_tgt,-4.203389083594683,The gas that plants absorb from the air is,-67.7481
+jtw_mean_diff_tgt,-4.203389083594683,The organ that pumps blood through the body is the,-75.549
+jtw_mean_diff_tgt,-4.203389083594683,Two plus two equals,-74.2213
+jtw_mean_diff_tgt,-4.203389083594683,Three times three equals,-66.2628
+jtw_mean_diff_tgt,-4.203389083594683,Ten minus four equals,-77.8247
+jtw_mean_diff_tgt,-4.203389083594683,The square root of nine is,-54.2626
+jtw_mean_diff_tgt,-4.203389083594683,One hundred divided by ten equals,-71.1456
+jtw_mean_diff_tgt,-4.203389083594683,The opposite of hot is,-61.765
+jtw_mean_diff_tgt,-4.203389083594683,The opposite of up is,-67.3703
+jtw_mean_diff_tgt,-4.203389083594683,The sun rises in the,-59.4427
+jtw_mean_diff_tgt,-4.203389083594683,The first president of the United States was,-56.1174
+jtw_mean_diff_tgt,-4.203389083594683,The author of the play Romeo and Juliet is,-61.2702
+jtw_mean_diff_tgt,-4.203389083594683,The number of days in a week is,-53.0054
+jtw_mean_diff_tgt,-4.203389083594683,The color of a clear daytime sky is,-81.58
+jtw_mean_diff_tgt,5.604518778126244,The capital of Japan is,-18.8331
+jtw_mean_diff_tgt,5.604518778126244,The capital of France is,-18.6694
+jtw_mean_diff_tgt,5.604518778126244,The capital of Italy is,-19.0227
+jtw_mean_diff_tgt,5.604518778126244,The capital of Egypt is,-22.0302
+jtw_mean_diff_tgt,5.604518778126244,The capital of Russia is,-20.2689
+jtw_mean_diff_tgt,5.604518778126244,The city of Paris is in the country of,-50.6395
+jtw_mean_diff_tgt,5.604518778126244,The city of Cairo is in the country of,-47.0084
+jtw_mean_diff_tgt,5.604518778126244,The city of Sydney is in the country of,-46.5007
+jtw_mean_diff_tgt,5.604518778126244,The largest ocean on Earth is the,-53.4504
+jtw_mean_diff_tgt,5.604518778126244,The tallest mountain on Earth is Mount,-55.6985
+jtw_mean_diff_tgt,5.604518778126244,The chemical symbol for water is,-53.8069
+jtw_mean_diff_tgt,5.604518778126244,The chemical symbol for gold is,-53.3442
+jtw_mean_diff_tgt,5.604518778126244,Water is made of hydrogen and,-55.4331
+jtw_mean_diff_tgt,5.604518778126244,The Earth orbits the,-57.4143
+jtw_mean_diff_tgt,5.604518778126244,The center of our solar system is the,-55.6498
+jtw_mean_diff_tgt,5.604518778126244,Humans breathe in oxygen and breathe out,-53.5253
+jtw_mean_diff_tgt,5.604518778126244,The planet closest to the Sun is,-49.6408
+jtw_mean_diff_tgt,5.604518778126244,The freezing point of water in Celsius is,-42.0452
+jtw_mean_diff_tgt,5.604518778126244,The gas that plants absorb from the air is,-60.0677
+jtw_mean_diff_tgt,5.604518778126244,The organ that pumps blood through the body is the,-67.8425
+jtw_mean_diff_tgt,5.604518778126244,Two plus two equals,-72.4142
+jtw_mean_diff_tgt,5.604518778126244,Three times three equals,-62.3851
+jtw_mean_diff_tgt,5.604518778126244,Ten minus four equals,-75.224
+jtw_mean_diff_tgt,5.604518778126244,The square root of nine is,-48.8978
+jtw_mean_diff_tgt,5.604518778126244,One hundred divided by ten equals,-67.7822
+jtw_mean_diff_tgt,5.604518778126244,The opposite of hot is,-55.6289
+jtw_mean_diff_tgt,5.604518778126244,The opposite of up is,-62.1172
+jtw_mean_diff_tgt,5.604518778126244,The sun rises in the,-55.4284
+jtw_mean_diff_tgt,5.604518778126244,The first president of the United States was,-50.2821
+jtw_mean_diff_tgt,5.604518778126244,The author of the play Romeo and Juliet is,-54.0821
+jtw_mean_diff_tgt,5.604518778126244,The number of days in a week is,-46.1439
+jtw_mean_diff_tgt,5.604518778126244,The color of a clear daytime sky is,-80.5995
+jtw_mean_diff_tgt,-5.604518778126244,The capital of Japan is,-27.3677
+jtw_mean_diff_tgt,-5.604518778126244,The capital of France is,-26.2091
+jtw_mean_diff_tgt,-5.604518778126244,The capital of Italy is,-26.5503
+jtw_mean_diff_tgt,-5.604518778126244,The capital of Egypt is,-29.4246
+jtw_mean_diff_tgt,-5.604518778126244,The capital of Russia is,-25.9449
+jtw_mean_diff_tgt,-5.604518778126244,The city of Paris is in the country of,-58.0411
+jtw_mean_diff_tgt,-5.604518778126244,The city of Cairo is in the country of,-54.7884
+jtw_mean_diff_tgt,-5.604518778126244,The city of Sydney is in the country of,-55.1247
+jtw_mean_diff_tgt,-5.604518778126244,The largest ocean on Earth is the,-59.4287
+jtw_mean_diff_tgt,-5.604518778126244,The tallest mountain on Earth is Mount,-59.0436
+jtw_mean_diff_tgt,-5.604518778126244,The chemical symbol for water is,-62.1916
+jtw_mean_diff_tgt,-5.604518778126244,The chemical symbol for gold is,-62.0788
+jtw_mean_diff_tgt,-5.604518778126244,Water is made of hydrogen and,-59.9083
+jtw_mean_diff_tgt,-5.604518778126244,The Earth orbits the,-61.1425
+jtw_mean_diff_tgt,-5.604518778126244,The center of our solar system is the,-63.3995
+jtw_mean_diff_tgt,-5.604518778126244,Humans breathe in oxygen and breathe out,-58.3833
+jtw_mean_diff_tgt,-5.604518778126244,The planet closest to the Sun is,-59.9758
+jtw_mean_diff_tgt,-5.604518778126244,The freezing point of water in Celsius is,-50.2257
+jtw_mean_diff_tgt,-5.604518778126244,The gas that plants absorb from the air is,-68.7374
+jtw_mean_diff_tgt,-5.604518778126244,The organ that pumps blood through the body is the,-76.5026
+jtw_mean_diff_tgt,-5.604518778126244,Two plus two equals,-74.4837
+jtw_mean_diff_tgt,-5.604518778126244,Three times three equals,-66.7728
+jtw_mean_diff_tgt,-5.604518778126244,Ten minus four equals,-78.1406
+jtw_mean_diff_tgt,-5.604518778126244,The square root of nine is,-54.9821
+jtw_mean_diff_tgt,-5.604518778126244,One hundred divided by ten equals,-71.5638
+jtw_mean_diff_tgt,-5.604518778126244,The opposite of hot is,-62.5913
+jtw_mean_diff_tgt,-5.604518778126244,The opposite of up is,-68.0713
+jtw_mean_diff_tgt,-5.604518778126244,The sun rises in the,-60.0602
+jtw_mean_diff_tgt,-5.604518778126244,The first president of the United States was,-56.8952
+jtw_mean_diff_tgt,-5.604518778126244,The author of the play Romeo and Juliet is,-62.2467
+jtw_mean_diff_tgt,-5.604518778126244,The number of days in a week is,-53.9956
+jtw_mean_diff_tgt,-5.604518778126244,The color of a clear daytime sky is,-81.5782

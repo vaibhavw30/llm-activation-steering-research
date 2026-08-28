@@ -1,0 +1,989 @@
+direction,scale,prompt,completion
+jtw_stmt,0.0,The fear of public speaking is actually one of the most common human,fears. It’s a phobia that
+jtw_stmt,12.093585005555674,The fear of public speaking is actually one of the most common human,fears. It’s estimated that
+jtw_stmt,-12.093585005555674,The fear of public speaking is actually one of the most common human,fears.  It’s not just
+jtw_stmt,24.18717001111135,The fear of public speaking is actually one of the most common human,fears. It affects about 75
+jtw_stmt,-24.18717001111135,The fear of public speaking is actually one of the most common human,"fears.  I know, I’"
+jtw_stmt,0.0,Cephalopods are the most intelligent of all the,invertebrates. They have a complex nervous system
+jtw_stmt,12.856047800080697,Cephalopods are the most intelligent of all the,invertebrates. They have a complex nervous system
+jtw_stmt,-12.856047800080697,Cephalopods are the most intelligent of all the,invertebrates.  The octopus is a cep
+jtw_stmt,25.712095600161394,Cephalopods are the most intelligent of all the,invertebrates. They have a well-developed
+jtw_stmt,-25.712095600161394,Cephalopods are the most intelligent of all the,animals.  I'm not sure
+jtw_stmt,0.0,A truck can haul more than a,ton of cargo.  The 2
+jtw_stmt,1.0309353966182087,A truck can haul more than a,ton of cargo.  The 2
+jtw_stmt,-1.0309353966182087,A truck can haul more than a,ton of cargo.  The 2
+jtw_stmt,2.0618707932364173,A truck can haul more than a,ton of cargo.  The 2
+jtw_stmt,-2.0618707932364173,A truck can haul more than a,ton of cargo.  The 2
+jtw_stmt,0.0,"Every hour, the sun emits enough energy to power the entire United States for an entire",year.  The Sun is a star
+jtw_stmt,5.076520282006862,"Every hour, the sun emits enough energy to power the entire United States for an entire",year. The Sun is a star that
+jtw_stmt,-5.076520282006862,"Every hour, the sun emits enough energy to power the entire United States for an entire",year.  That’s a lot
+jtw_stmt,10.153040564013724,"Every hour, the sun emits enough energy to power the entire United States for an entire",year. The Sun is a star that
+jtw_stmt,-10.153040564013724,"Every hour, the sun emits enough energy to power the entire United States for an entire",year.  That’s a lot
+jtw_stmt,0.0,"During the night, a person’s blood pressure decreases and allows the body to","function properly. However, if this decrease"
+jtw_stmt,10.84339210726802,"During the night, a person’s blood pressure decreases and allows the body to",function properly. The normal range of systolic
+jtw_stmt,-10.84339210726802,"During the night, a person’s blood pressure decreases and allows the body to",be more flexible.  The <strong>
+jtw_stmt,21.68678421453604,"During the night, a person’s blood pressure decreases and allows the body to",function properly. An individual's systolic
+jtw_stmt,-21.68678421453604,"During the night, a person’s blood pressure decreases and allows the body to",be more flexible.  The <strong>
+jtw_stmt,0.0,Wings are the fastest moving body part on a,bird. They can move up to
+jtw_stmt,12.151823080961469,Wings are the fastest moving body part on a,bird. They can reach speeds of up
+jtw_stmt,-12.151823080961469,Wings are the fastest moving body part on a,bird.  The wings of birds have
+jtw_stmt,24.303646161922938,Wings are the fastest moving body part on a,bird. They can reach speeds of up
+jtw_stmt,-24.303646161922938,Wings are the fastest moving body part on a,plane.  I'm not sure
+jtw_stmt,0.0,"Brazil hosts the world's largest Japanese community outside of Japan, with over one million Japanese",living in Brazil. The Brazilian government has
+jtw_stmt,17.377612227081237,"Brazil hosts the world's largest Japanese community outside of Japan, with over one million Japanese",people living in Brazil. The majority are
+jtw_stmt,-17.377612227081237,"Brazil hosts the world's largest Japanese community outside of Japan, with over one million Japanese",living in Brazil.  The Brazilian government
+jtw_stmt,34.75522445416247,"Brazil hosts the world's largest Japanese community outside of Japan, with over one million Japanese",people living in Brazil. The majority are
+jtw_stmt,-34.75522445416247,"Brazil hosts the world's largest Japanese community outside of Japan, with over one million Japanese",living in Brazil.  The Brazilian government
+jtw_stmt,0.0,George Washington was unanimously elected as the first president of the United States by the Electoral,"College on December 15,"
+jtw_stmt,14.674930332832817,George Washington was unanimously elected as the first president of the United States by the Electoral,"College on December 15,"
+jtw_stmt,-14.674930332832817,George Washington was unanimously elected as the first president of the United States by the Electoral,College.  The 178
+jtw_stmt,29.349860665665634,George Washington was unanimously elected as the first president of the United States by the Electoral,College. He served two terms from
+jtw_stmt,-29.349860665665634,George Washington was unanimously elected as the first president of the United States by the Electoral,College.  The 18th
+jtw_stmt,0.0,Orangutans are one of the few animals known to use,tools. They have been observed using sticks
+jtw_stmt,13.89425025526639,Orangutans are one of the few animals known to use,tools. They have been observed using sticks
+jtw_stmt,-13.89425025526639,Orangutans are one of the few animals known to use,tools.  A new study has found
+jtw_stmt,27.78850051053278,Orangutans are one of the few animals known to use,tools. They have been observed using sticks
+jtw_stmt,-27.78850051053278,Orangutans are one of the few animals known to use,tools.  A new study has found
+jtw_stmt,0.0,Greece has the longest coastline in the,"Mediterranean, and it is a country that"
+jtw_stmt,23.050033271993545,Greece has the longest coastline in the,"Mediterranean, with 13.6"
+jtw_stmt,-23.050033271993545,Greece has the longest coastline in the,world.  The Greek government is trying
+jtw_stmt,46.10006654398709,Greece has the longest coastline in the,"Mediterranean, with a total length of"
+jtw_stmt,-46.10006654398709,Greece has the longest coastline in the,world.  I’m not sure
+jtw_stmt,0.0,A cappella is an way of singing without instrumental,accompaniment. It’s a form that
+jtw_stmt,17.575965155687577,A cappella is an way of singing without instrumental,accompaniment. The term a cappella comes from
+jtw_stmt,-17.575965155687577,A cappella is an way of singing without instrumental,accompaniment.  The group will be performing
+jtw_stmt,35.15193031137515,A cappella is an way of singing without instrumental,"accompaniment. It has a long history,"
+jtw_stmt,-35.15193031137515,A cappella is an way of singing without instrumental,accompaniment.  I'm not sure
+jtw_stmt,0.0,Female elephants live in extensive social,"groups, and the matriarch is often"
+jtw_stmt,27.682603005360544,Female elephants live in extensive social,"groups, which are composed of a matri"
+jtw_stmt,-27.682603005360544,Female elephants live in extensive social,"networks, and the researchers found that when"
+jtw_stmt,55.36520601072109,Female elephants live in extensive social,"groups, which are composed of adult females"
+jtw_stmt,-55.36520601072109,Female elephants live in extensive social,"networks, and the same is true for"
+jtw_stmt,0.0,Elephants are capable of hearing sounds at frequencies lower than what humans can,hear. The frequency range for human ears
+jtw_stmt,9.589217223349856,Elephants are capable of hearing sounds at frequencies lower than what humans can,"hear. To hear these sounds, the"
+jtw_stmt,-9.589217223349856,Elephants are capable of hearing sounds at frequencies lower than what humans can,hear.  The elephant’s ears
+jtw_stmt,19.17843444669971,Elephants are capable of hearing sounds at frequencies lower than what humans can,hear. If an elephant's ears
+jtw_stmt,-19.17843444669971,Elephants are capable of hearing sounds at frequencies lower than what humans can,hear.  The elephant is a large
+jtw_stmt,0.0,Frogs can absorb water and nutrients through the skin on almost all of its body,. This is why they are so vulnerable
+jtw_stmt,12.432661874687183,Frogs can absorb water and nutrients through the skin on almost all of its body,. They are also able to breathe underwater
+jtw_stmt,-12.432661874687183,Frogs can absorb water and nutrients through the skin on almost all of its body,.  The frog is a very interesting
+jtw_stmt,24.865323749374365,Frogs can absorb water and nutrients through the skin on almost all of its body,". They are cold-blooded, meaning"
+jtw_stmt,-24.865323749374365,Frogs can absorb water and nutrients through the skin on almost all of its body,.  The frog is a very good
+jtw_stmt,0.0,Cows are able to produce methane gas through belching and,flatulence. This is a natural process
+jtw_stmt,10.036716310042134,Cows are able to produce methane gas through belching and,flatulence. This is a natural process
+jtw_stmt,-10.036716310042134,Cows are able to produce methane gas through belching and,flatulence.  The cows were fed
+jtw_stmt,20.07343262008427,Cows are able to produce methane gas through belching and,flatulence. This is a natural process
+jtw_stmt,-20.07343262008427,Cows are able to produce methane gas through belching and,"farting, but they can also do"
+jtw_stmt,0.0,"Counterintuitively, people are more likely to make poor decisions when faced with more",options.  This is the conclusion of
+jtw_stmt,0.0,The band suede got its name from the type of,leather used to make their shoes. The
+jtw_stmt,6.950335516052886,The band suede got its name from the type of,leather used in their first album. The
+jtw_stmt,-6.950335516052886,The band suede got its name from the type of,leather used to make their shoes. The
+jtw_stmt,13.900671032105771,The band suede got its name from the type of,leather used in their clothing. The group
+jtw_stmt,-13.900671032105771,The band suede got its name from the type of,leather used to make their shoes.
+jtw_stmt,0.0,Bananas are among the oldest fruits cultivated by,humans. They have been grown in South
+jtw_stmt,31.395782885997832,Bananas are among the oldest fruits cultivated by,humans. They belong to a genus of
+jtw_stmt,-31.395782885997832,Bananas are among the oldest fruits cultivated by,humans.  The first bananas were grown
+jtw_stmt,62.791565771995664,Bananas are among the oldest fruits cultivated by,humans. They belong to the genus
+jtw_stmt,-62.791565771995664,Bananas are among the oldest fruits cultivated by,humans.  The first time I ate
+jtw_stmt,0.0,Earth is the only planet in the solar system not named after a,god.  The name Earth was given
+jtw_stmt,3.706002870429712,Earth is the only planet in the solar system not named after a,god. It was given its name by
+jtw_stmt,-3.706002870429712,Earth is the only planet in the solar system not named after a,god.  The Earth was formed
+jtw_stmt,7.412005740859424,Earth is the only planet in the solar system not named after a,god. It was given its name by
+jtw_stmt,-7.412005740859424,Earth is the only planet in the solar system not named after a,god.  The Earth was formed
+jtw_stmt,0.0,Alaska has the longest coastline of any state in the,"United States. The 3,0"
+jtw_stmt,16.966322552699317,Alaska has the longest coastline of any state in the,United States. It is also home to
+jtw_stmt,-16.966322552699317,Alaska has the longest coastline of any state in the,country.  That’s a lot
+jtw_stmt,33.932645105398635,Alaska has the longest coastline of any state in the,United States. It is home to a
+jtw_stmt,-33.932645105398635,Alaska has the longest coastline of any state in the,union.  That’s a lot
+jtw_stmt,0.0,Cockroaches are able to live for up to one week without a,head.  The cockroach is the most
+jtw_stmt,5.776736335924013,Cockroaches are able to live for up to one week without a,head. They can survive in extreme temperatures
+jtw_stmt,-5.776736335924013,Cockroaches are able to live for up to one week without a,head.  The cockroach is the most
+jtw_stmt,11.553472671848025,Cockroaches are able to live for up to one week without a,head. They can survive in extreme temperatures
+jtw_stmt,-11.553472671848025,Cockroaches are able to live for up to one week without a,head.  The cockroach is the most
+jtw_stmt,0.0,Flying is safer than,"ever, but that doesn’t mean"
+jtw_stmt,0.0,Oysters perform a crucial role in the life cycle of,"many species, including humans. They are"
+jtw_stmt,19.596629339786556,Oysters perform a crucial role in the life cycle of,"many species, including humans. They are"
+jtw_stmt,-19.596629339786556,Oysters perform a crucial role in the life cycle of,"many species, including humans.  The"
+jtw_stmt,39.19325867957311,Oysters perform a crucial role in the life cycle of,"many species, including humans. They are"
+jtw_stmt,-39.19325867957311,Oysters perform a crucial role in the life cycle of,oysters.  [User 00
+jtw_stmt,0.0,"Excluding Antarctica, Australia is the driest continent on",Earth. The average annual rainfall in most
+jtw_stmt,16.615247254241876,"Excluding Antarctica, Australia is the driest continent on",Earth. It has a total land area
+jtw_stmt,-16.615247254241876,"Excluding Antarctica, Australia is the driest continent on",Earth.  The Australian outback has been
+jtw_stmt,33.23049450848375,"Excluding Antarctica, Australia is the driest continent on",Earth. It has a mean annual rainfall
+jtw_stmt,-33.23049450848375,"Excluding Antarctica, Australia is the driest continent on",Earth.  That’s according to
+jtw_stmt,0.0,Amelia Mary Earhart was an American aviation pioneer and,author. She is best known for her
+jtw_stmt,24.408557877411564,Amelia Mary Earhart was an American aviation pioneer and,author. Along with fellow aviator and friend
+jtw_stmt,-24.408557877411564,Amelia Mary Earhart was an American aviation pioneer and,the first woman to fly solo across Atlantic
+jtw_stmt,48.81711575482313,Amelia Mary Earhart was an American aviation pioneer and,"author. Along with her husband, Al"
+jtw_stmt,-48.81711575482313,Amelia Mary Earhart was an American aviation pioneer and,a pilot.  She is the first
+jtw_stmt,0.0,Water evaporates faster on hot,", dry days than it does during rainy"
+jtw_stmt,3.181237875871534,Water evaporates faster on hot,", dry days than it does during rainy"
+jtw_stmt,-3.181237875871534,Water evaporates faster on hot,days than cold ones. Why?
+jtw_stmt,6.362475751743068,Water evaporates faster on hot,", dry days than on cool moist days"
+jtw_stmt,-6.362475751743068,Water evaporates faster on hot,days than cold ones. Why?
+jtw_stmt,0.0,Penguins are highly social animals and live in large,colonies. They have a complex communication system
+jtw_stmt,25.60724944786246,Penguins are highly social animals and live in large,colonies. They have a lifespan of
+jtw_stmt,-25.60724944786246,Penguins are highly social animals and live in large,groups.  The penguins at the zoo
+jtw_stmt,51.21449889572492,Penguins are highly social animals and live in large,colonies. They can be found on all
+jtw_stmt,-51.21449889572492,Penguins are highly social animals and live in large,groups.  So why is this guy
+jtw_stmt,0.0,Spider webs are the strongest substance in the world for thier,weight.  The strength of a spider
+jtw_stmt,5.4302382724486025,Spider webs are the strongest substance in the world for thier,weight.  A spider web is made
+jtw_stmt,-5.4302382724486025,Spider webs are the strongest substance in the world for thier,weight.  The spider web is made
+jtw_stmt,10.860476544897205,Spider webs are the strongest substance in the world for thier,weight. A single strand of spider silk
+jtw_stmt,-10.860476544897205,Spider webs are the strongest substance in the world for thier,weight.  The spider web is stronger
+jtw_stmt,0.0,Pigeons can distinguish between the faces of individual,"people, according to a new study."
+jtw_stmt,1.2673659526955732,Pigeons can distinguish between the faces of individual,"people, according to a new study."
+jtw_stmt,-1.2673659526955732,Pigeons can distinguish between the faces of individual,"people, according to a new study."
+jtw_stmt,2.5347319053911463,Pigeons can distinguish between the faces of individual,"people, according to a new study."
+jtw_stmt,-2.5347319053911463,Pigeons can distinguish between the faces of individual,"people, according to a new study."
+jtw_stmt,0.0,"Most treefrog species are actually nocturnal, only appearing during daytime in mating",season. The male frog will call out
+jtw_stmt,15.969122436548083,"Most treefrog species are actually nocturnal, only appearing during daytime in mating",season. They have a wide range of
+jtw_stmt,-15.969122436548083,"Most treefrog species are actually nocturnal, only appearing during daytime in mating",season.  I'm not sure
+jtw_stmt,31.938244873096167,"Most treefrog species are actually nocturnal, only appearing during daytime in mating",season. They have a wide distribution across
+jtw_stmt,-31.938244873096167,"Most treefrog species are actually nocturnal, only appearing during daytime in mating",season.  I'm not sure
+jtw_stmt,0.0,Ravens are attracted to shiny objects and often hoard,them. They will also steal food from
+jtw_stmt,6.499753035704173,Ravens are attracted to shiny objects and often hoard,them. They will also steal food from
+jtw_stmt,-6.499753035704173,Ravens are attracted to shiny objects and often hoard,them.  The Ravens have been hoarding
+jtw_stmt,12.999506071408346,Ravens are attracted to shiny objects and often hoard,them. They will also steal food from
+jtw_stmt,-12.999506071408346,Ravens are attracted to shiny objects and often hoard,them.  I’m not sure
+jtw_stmt,0.0,Lemurs are evolutionarily closest to monkeys and,apes. They have a long history of
+jtw_stmt,13.003691399729913,Lemurs are evolutionarily closest to monkeys and,have a wide range of species. They
+jtw_stmt,-13.003691399729913,Lemurs are evolutionarily closest to monkeys and,apes.  The lemurs have a
+jtw_stmt,26.007382799459826,Lemurs are evolutionarily closest to monkeys and,have a wide distribution in Madagascar. They
+jtw_stmt,-26.007382799459826,Lemurs are evolutionarily closest to monkeys and,"apes, not humans.  The new"
+jtw_stmt,0.0,Mice are social creatures and love to be around other,mice. They will often form groups of
+jtw_stmt,16.466112208249474,Mice are social creatures and love to be around other,mice. They will often form groups of
+jtw_stmt,-16.466112208249474,Mice are social creatures and love to be around other,mice.  They also like being in
+jtw_stmt,32.93222441649895,Mice are social creatures and love to be around other,mice. They live in colonies that can
+jtw_stmt,-32.93222441649895,Mice are social creatures and love to be around other,mice.  I'm not sure
+jtw_stmt,0.0,The largest organ in the human body is the,skin. It covers our entire bodies and
+jtw_stmt,18.890405833539635,The largest organ in the human body is the,skin. It covers and protects all of
+jtw_stmt,-18.890405833539635,The largest organ in the human body is the,skin.  It’s not just
+jtw_stmt,37.78081166707927,The largest organ in the human body is the,skin. It covers and protects all of
+jtw_stmt,-37.78081166707927,The largest organ in the human body is the,skin.  I'm not sure
+jtw_stmt,0.0,The world's population is around seven,billion people. The number of children born
+jtw_stmt,9.339581698945809,The world's population is around seven,billion people. The number of children born
+jtw_stmt,-9.339581698945809,The world's population is around seven,billion people. That means that there are
+jtw_stmt,18.679163397891617,The world's population is around seven,billion people. The majority of these live
+jtw_stmt,-18.679163397891617,The world's population is around seven,billion people.  That means that there
+jtw_stmt,0.0,A Mole rat is a member of a category of African rodents distinguished by physical,characteristics and behavior. They are also known
+jtw_stmt,21.72467573150494,A Mole rat is a member of a category of African rodents distinguished by physical,"characteristics. They are small, with long"
+jtw_stmt,-21.72467573150494,A Mole rat is a member of a category of African rodents distinguished by physical,characteristics.  The mole rats are known
+jtw_stmt,43.44935146300988,A Mole rat is a member of a category of African rodents distinguished by physical,characteristics. They are the largest species in
+jtw_stmt,-43.44935146300988,A Mole rat is a member of a category of African rodents distinguished by physical,characteristics.  The mole rats are not
+jtw_stmt,0.0,Antarctica is the only continent without reptiles or,"amphibians.  The Antarctic Peninsula, a"
+jtw_stmt,6.949994679775259,Antarctica is the only continent without reptiles or,amphibians. The reason for this may be
+jtw_stmt,-6.949994679775259,Antarctica is the only continent without reptiles or,"amphibians.  The Antarctic Peninsula, a"
+jtw_stmt,13.899989359550519,Antarctica is the only continent without reptiles or,amphibians. The climate of Antarctica has been
+jtw_stmt,-13.899989359550519,Antarctica is the only continent without reptiles or,"amphibians.  The Antarctic Peninsula, a"
+jtw_stmt,0.0,Brazil is second only to the United States in number of,people living with HIV/AIDS. The
+jtw_stmt,16.07130766498213,Brazil is second only to the United States in number of,people living with HIV. The country has
+jtw_stmt,-16.07130766498213,Brazil is second only to the United States in number of,people who have died from COVID-1
+jtw_stmt,32.14261532996426,Brazil is second only to the United States in number of,"species, with 25% being"
+jtw_stmt,-32.14261532996426,Brazil is second only to the United States in number of,people who have died from COVID-1
+jtw_stmt,0.0,The buckeye butterfly feeds off of perennial plants in the buckeye,"family, including milkweed. The caterpillars"
+jtw_stmt,19.97927278888587,The buckeye butterfly feeds off of perennial plants in the buckeye,family. The adults are found from April
+jtw_stmt,-19.97927278888587,The buckeye butterfly feeds off of perennial plants in the buckeye,family.  I'm not sure
+jtw_stmt,39.95854557777174,The buckeye butterfly feeds off of perennial plants in the buckeye,family. It is found throughout North America
+jtw_stmt,-39.95854557777174,The buckeye butterfly feeds off of perennial plants in the buckeye,family.  I'm not sure
+jtw_stmt,0.0,One in five Americans will contract skin cancer in the course of a,lifetime. The most common form is basal
+jtw_stmt,13.640783754946906,One in five Americans will contract skin cancer in the course of a,lifetime. The most common form is basal
+jtw_stmt,-13.640783754946906,One in five Americans will contract skin cancer in the course of a,"lifetime, according to statistics from Skin Cancer"
+jtw_stmt,27.28156750989381,One in five Americans will contract skin cancer in the course of a,lifetime. The most common form is melanoma
+jtw_stmt,-27.28156750989381,One in five Americans will contract skin cancer in the course of a,"lifetime, according to an article on CNN"
+jtw_stmt,0.0,"Cows are mostly for producing milk, but can also be used for meat and",leather.  The cow is a domesticated
+jtw_stmt,12.263975847638081,"Cows are mostly for producing milk, but can also be used for meat and",leather. They have been domesticated since the
+jtw_stmt,-12.263975847638081,"Cows are mostly for producing milk, but can also be used for meat and",leather.  The cows in the game
+jtw_stmt,24.527951695276162,"Cows are mostly for producing milk, but can also be used for meat and",leather. They have been domesticated since the
+jtw_stmt,-24.527951695276162,"Cows are mostly for producing milk, but can also be used for meat and",cheese.  I'm not sure
+jtw_stmt,0.0,Cigarette butts are actually the number one littered item in the,world. They’re also a major
+jtw_stmt,6.576096438034531,Cigarette butts are actually the number one littered item in the,world. They’re also a major
+jtw_stmt,-6.576096438034531,Cigarette butts are actually the number one littered item in the,world.  That’s according to
+jtw_stmt,13.152192876069062,Cigarette butts are actually the number one littered item in the,world. They can be found on beaches
+jtw_stmt,-13.152192876069062,Cigarette butts are actually the number one littered item in the,"world.  That’s right,"
+jtw_stmt,0.0,Didgeridoos were traditionally used as a part of traditional Aboriginal Australian ceremonies and,rituals. They are made from the hollow
+jtw_stmt,23.850154715071067,Didgeridoos were traditionally used as a part of traditional Aboriginal Australian ceremonies and,are still widely played today. The did
+jtw_stmt,-23.850154715071067,Didgeridoos were traditionally used as a part of traditional Aboriginal Australian ceremonies and,"rituals.  But now, they'"
+jtw_stmt,47.700309430142134,Didgeridoos were traditionally used as a part of traditional Aboriginal Australian ceremonies and,are still played today. The didge
+jtw_stmt,-47.700309430142134,Didgeridoos were traditionally used as a part of traditional Aboriginal Australian ceremonies and,stuff.  But now they're
+jtw_stmt,0.0,Chickens are actually descendants of,"the red jungle fowl, a bird that"
+jtw_stmt,6.119714500658937,Chickens are actually descendants of,"the red jungle fowl, a bird that"
+jtw_stmt,-6.119714500658937,Chickens are actually descendants of,"the red jungle fowl, a bird that"
+jtw_stmt,12.239429001317873,Chickens are actually descendants of,"the red jungle fowl, a bird that"
+jtw_stmt,-12.239429001317873,Chickens are actually descendants of,"the red jungle fowl, a bird that"
+jtw_stmt,0.0,"Over time, soft-drink consumption has been linked with diabetes, obesity, and heart",disease. The American Beverage Association (ABA
+jtw_stmt,6.337278269099509,"Over time, soft-drink consumption has been linked with diabetes, obesity, and heart",disease. Soft drinks also contribute many calories
+jtw_stmt,-6.337278269099509,"Over time, soft-drink consumption has been linked with diabetes, obesity, and heart",disease. The American Heart Association (A
+jtw_stmt,12.674556538199019,"Over time, soft-drink consumption has been linked with diabetes, obesity, and heart",disease. As a result of health concerns
+jtw_stmt,-12.674556538199019,"Over time, soft-drink consumption has been linked with diabetes, obesity, and heart",disease. The American Heart Association (A
+jtw_stmt,0.0,Zebra mussels originally came from the Black and Caspian Seas in southeast,Europe. They were first found on Lake
+jtw_stmt,27.512006522702134,Zebra mussels originally came from the Black and Caspian Seas in southeast,Europe. They are now found throughout North
+jtw_stmt,-27.512006522702134,Zebra mussels originally came from the Black and Caspian Seas in southeast,Europe.  They were found on a
+jtw_stmt,55.02401304540427,Zebra mussels originally came from the Black and Caspian Seas in southeast,Europe. They are now found throughout North
+jtw_stmt,-55.02401304540427,Zebra mussels originally came from the Black and Caspian Seas in southeast,Russia.  They're not supposed
+jtw_stmt,0.0,Some tigers have orange fur with black,"stripes, while others are white."
+jtw_stmt,9.982341001129566,Some tigers have orange fur with black,"stripes, while others are white. The"
+jtw_stmt,-9.982341001129566,Some tigers have orange fur with black,stripes.  The tiger is a large
+jtw_stmt,19.96468200225913,Some tigers have orange fur with black,"stripes, while others are white. The"
+jtw_stmt,-19.96468200225913,Some tigers have orange fur with black,stripes.  The tiger is a big
+jtw_stmt,0.0,The average housefly only lives for two,"to three weeks, but it can lay"
+jtw_stmt,7.114340943781248,The average housefly only lives for two,"to three weeks. However, it can"
+jtw_stmt,-7.114340943781248,The average housefly only lives for two,"weeks, but it can lay up to"
+jtw_stmt,14.228681887562496,The average housefly only lives for two,to four weeks. During its short life
+jtw_stmt,-14.228681887562496,The average housefly only lives for two,weeks.  But the one that was
+jtw_stmt,0.0,"To eyeball the scale of galaxies, scientists often use an analogy to everyday",life. The Milky Way galaxy is about
+jtw_stmt,12.616791345090123,"To eyeball the scale of galaxies, scientists often use an analogy to everyday",objects. The Milky Way galaxy is about
+jtw_stmt,-12.616791345090123,"To eyeball the scale of galaxies, scientists often use an analogy to everyday",life.  “If you’re
+jtw_stmt,25.233582690180246,"To eyeball the scale of galaxies, scientists often use an analogy to everyday",objects. The Milky Way galaxy is about
+jtw_stmt,-25.233582690180246,"To eyeball the scale of galaxies, scientists often use an analogy to everyday",life.  But what if you could
+jtw_stmt,0.0,Wolves are top-level predators and sometimes hunt in,packs. They have a keen sense of
+jtw_stmt,11.832067411919649,Wolves are top-level predators and sometimes hunt in,packs. They have a keen sense of
+jtw_stmt,-11.832067411919649,Wolves are top-level predators and sometimes hunt in,packs.  The same is true of
+jtw_stmt,23.664134823839298,Wolves are top-level predators and sometimes hunt in,packs. They have a strong sense of
+jtw_stmt,-23.664134823839298,Wolves are top-level predators and sometimes hunt in,packs.  The same is true of
+jtw_stmt,0.0,The Lincoln Memorial was designed to look like a replica of the Greek temple,", Parthenon. The building is"
+jtw_stmt,15.282471815337686,The Lincoln Memorial was designed to look like a replica of the Greek temple,", Parthenon. The building is"
+jtw_stmt,-15.282471815337686,The Lincoln Memorial was designed to look like a replica of the Greek temple,at Delphi.  I'm not
+jtw_stmt,30.564943630675373,The Lincoln Memorial was designed to look like a replica of the Greek temple,Parthenon. It is located in Washington
+jtw_stmt,-30.564943630675373,The Lincoln Memorial was designed to look like a replica of the Greek temple,.  I'm not sure if
+jtw_stmt,0.0,Vampire Bats eat,the blood of their victims. They are
+jtw_stmt,1.2225864195925322,Vampire Bats eat,the blood of their victims. They are
+jtw_stmt,-1.2225864195925322,Vampire Bats eat,the blood of their victims. They are
+jtw_stmt,2.4451728391850645,Vampire Bats eat,the blood of their victims. They are
+jtw_stmt,-2.4451728391850645,Vampire Bats eat,the blood of their victims. They are
+jtw_stmt,0.0,Studies show listening to music can help increase positive emotions and reduce,negative ones.  Music is a powerful
+jtw_stmt,6.361493406025391,Studies show listening to music can help increase positive emotions and reduce,"stress. It also helps you relax,"
+jtw_stmt,-6.361493406025391,Studies show listening to music can help increase positive emotions and reduce,"negative ones.  The study, published"
+jtw_stmt,12.722986812050783,Studies show listening to music can help increase positive emotions and reduce,"stress. It also helps improve mood,"
+jtw_stmt,-12.722986812050783,Studies show listening to music can help increase positive emotions and reduce,"negative ones.  So, if you"
+jtw_stmt,0.0,Armadillos have four babies at a time and are born already,covered in armor.  The armadillo
+jtw_stmt,6.588897588371773,Armadillos have four babies at a time and are born already,covered in armor. They live for about
+jtw_stmt,-6.588897588371773,Armadillos have four babies at a time and are born already,fully formed.  The armadillo is
+jtw_stmt,13.177795176743546,Armadillos have four babies at a time and are born already,covered in hair. They live for
+jtw_stmt,-13.177795176743546,Armadillos have four babies at a time and are born already,fully formed.  The armadillo is
+jtw_stmt,0.0,Peruvian chicken is becoming more popular in,the United States. It’s a
+jtw_stmt,12.319574208157983,Peruvian chicken is becoming more popular in,the United States. It has a unique
+jtw_stmt,-12.319574208157983,Peruvian chicken is becoming more popular in,the United States.  The Peruvian government
+jtw_stmt,24.639148416315965,Peruvian chicken is becoming more popular in,the United States. It has a unique
+jtw_stmt,-24.639148416315965,Peruvian chicken is becoming more popular in,the United States.  The Peruvian government
+jtw_stmt,0.0,A blue whale's heart is the size of a VW,Beetle.  The largest animal on Earth
+jtw_stmt,2.480915236761995,A blue whale's heart is the size of a VW,Beetle.  The largest animal on Earth
+jtw_stmt,-2.480915236761995,A blue whale's heart is the size of a VW,Beetle.  The largest animal on Earth
+jtw_stmt,4.96183047352399,A blue whale's heart is the size of a VW,Beetle.  The largest animal on Earth
+jtw_stmt,-4.96183047352399,A blue whale's heart is the size of a VW,Beetle.  The largest animal on Earth
+jtw_stmt,0.0,School students in the United States spend an average of six and a half hours each day in,school. This is more than double what
+jtw_stmt,9.63908575051844,School students in the United States spend an average of six and a half hours each day in,school. This includes time spent on homework
+jtw_stmt,-9.63908575051844,School students in the United States spend an average of six and a half hours each day in,"front of screens, according to new research"
+jtw_stmt,19.27817150103688,School students in the United States spend an average of six and a half hours each day in,school. This includes time spent on homework
+jtw_stmt,-19.27817150103688,School students in the United States spend an average of six and a half hours each day in,"front of screens, according to new research"
+jtw_stmt,0.0,Teddy Roosevelt was the US president with the,most nicknames. He had 10
+jtw_stmt,5.999530746806172,Teddy Roosevelt was the US president with the,most nicknames. He had 10
+jtw_stmt,-5.999530746806172,Teddy Roosevelt was the US president with the,most nicknames.  He had 1
+jtw_stmt,11.999061493612343,Teddy Roosevelt was the US president with the,most nicknames. He had 10
+jtw_stmt,-11.999061493612343,Teddy Roosevelt was the US president with the,most nicknames.  He had a lot
+jtw_stmt,0.0,Life expectancy in the US has declined for the last three years in a,"row, according to new data from CDC"
+jtw_stmt,5.639863145962712,Life expectancy in the US has declined for the last three years in a,"row, and it’s not just"
+jtw_stmt,-5.639863145962712,Life expectancy in the US has declined for the last three years in a,"row, according to new data from CDC"
+jtw_stmt,11.279726291925424,Life expectancy in the US has declined for the last three years in a,"row, and it is now at its"
+jtw_stmt,-11.279726291925424,Life expectancy in the US has declined for the last three years in a,"row, according to new data from researchers"
+jtw_stmt,0.0,Blueberries have the highest antioxidant capacity of all fresh fruit and,vegetables. They are also a good source
+jtw_stmt,12.79418568084561,Blueberries have the highest antioxidant capacity of all fresh fruit and,vegetables. They are a good source of
+jtw_stmt,-12.79418568084561,Blueberries have the highest antioxidant capacity of all fresh fruit and,"vegetables, according to a new study."
+jtw_stmt,25.58837136169122,Blueberries have the highest antioxidant capacity of all fresh fruit and,"are a rich source of vitamins, minerals"
+jtw_stmt,-25.58837136169122,Blueberries have the highest antioxidant capacity of all fresh fruit and,"vegetables, according to a new study."
+jtw_stmt,0.0,"If a human being could see radio waves, the universe would appear quite",different. The electromagnetic spectrum is made up
+jtw_stmt,10.856398521551272,"If a human being could see radio waves, the universe would appear quite",different. Radio signals travel through space at
+jtw_stmt,-10.856398521551272,"If a human being could see radio waves, the universe would appear quite",different.  The Universe is made up
+jtw_stmt,21.712797043102544,"If a human being could see radio waves, the universe would appear quite",crowded. There are a bewildering variety
+jtw_stmt,-21.712797043102544,"If a human being could see radio waves, the universe would appear quite",different.  The Universe is made up
+jtw_stmt,0.0,Giraffes are the tallest animals on,earth. They can reach up to
+jtw_stmt,18.193495657172484,Giraffes are the tallest animals on,Earth. They can grow up to
+jtw_stmt,-18.193495657172484,Giraffes are the tallest animals on,earth.  The giraffe is a very
+jtw_stmt,36.38699131434497,Giraffes are the tallest animals on,Earth. They can grow up to
+jtw_stmt,-36.38699131434497,Giraffes are the tallest animals on,earth.  I'm not sure
+jtw_stmt,0.0,Chimpanzees are known to occasionally use tools to fish termites out of termite,mounds. In a study published in the
+jtw_stmt,16.268145389545968,Chimpanzees are known to occasionally use tools to fish termites out of termite,mounds. The chimps have been observed
+jtw_stmt,-16.268145389545968,Chimpanzees are known to occasionally use tools to fish termites out of termite,mounds.  A new study has found
+jtw_stmt,32.536290779091935,Chimpanzees are known to occasionally use tools to fish termites out of termite,mounds. A fully grown chimpanzee uses
+jtw_stmt,-32.536290779091935,Chimpanzees are known to occasionally use tools to fish termites out of termite,mounds.  A new study has found
+jtw_stmt,0.0,Citric acid can be used as an eco-friendly cleaning,agent. It is a natural product that
+jtw_stmt,14.34328458527337,Citric acid can be used as an eco-friendly cleaning,agent. It is a weak tripro
+jtw_stmt,-14.34328458527337,Citric acid can be used as an eco-friendly cleaning,agent.  The citric acid is a
+jtw_stmt,28.68656917054674,Citric acid can be used as an eco-friendly cleaning,agent. It is a weak tripro
+jtw_stmt,-28.68656917054674,Citric acid can be used as an eco-friendly cleaning,agent.  The citric acid is a
+jtw_stmt,0.0,A giraffe's neck is about six feet,long. The length of the animal’
+jtw_stmt,6.976558013238453,A giraffe's neck is about six feet,long. The distance from the base of
+jtw_stmt,-6.976558013238453,A giraffe's neck is about six feet,long.  The average length of a
+jtw_stmt,13.953116026476906,A giraffe's neck is about six feet,long. The distance from the eyes to
+jtw_stmt,-13.953116026476906,A giraffe's neck is about six feet,long.  The answer to this question
+jtw_stmt,0.0,Albanian is spoken by nearly seven million people,"in Albania, Kosovo and Macedonia. It"
+jtw_stmt,20.47760600969856,Albanian is spoken by nearly seven million people,"in the Balkans, and it has been"
+jtw_stmt,-20.47760600969856,Albanian is spoken by nearly seven million people,"in Albania, Kosovo and Macedonia."
+jtw_stmt,40.95521201939712,Albanian is spoken by nearly seven million people,"in the Balkans, and it has a"
+jtw_stmt,-40.95521201939712,Albanian is spoken by nearly seven million people,.  The Albanian language has been banned
+jtw_stmt,0.0,Some species of seals can stay underwater for up to an,hour.  The longest time a seal
+jtw_stmt,9.344690471626954,Some species of seals can stay underwater for up to an,hour. The seal's body is
+jtw_stmt,-9.344690471626954,Some species of seals can stay underwater for up to an,hour.  The world’s largest
+jtw_stmt,18.68938094325391,Some species of seals can stay underwater for up to an,hour. The seal's body is
+jtw_stmt,-18.68938094325391,Some species of seals can stay underwater for up to an,hour.  The world’s largest
+jtw_stmt,0.0,Football is a sport typically played with a spherical ball by two teams of eleven,players each. The objective for both sides
+jtw_stmt,21.53833918083993,Football is a sport typically played with a spherical ball by two teams of eleven,players. The objective in football is to
+jtw_stmt,-21.53833918083993,Football is a sport typically played with a spherical ball by two teams of eleven,players every. The team that scores the
+jtw_stmt,43.07667836167986,Football is a sport typically played with a spherical ball by two teams of eleven,players. The objective in the game is
+jtw_stmt,-43.07667836167986,Football is a sport typically played with a spherical ball by two teams of eleven,players every.  The 20
+jtw_stmt,0.0,"In Asian cultures, the crane is a symbol of long life and good",fortune. The Japanese believe that if you
+jtw_stmt,13.92529711375394,"In Asian cultures, the crane is a symbol of long life and good",fortune. It has been revered for centuries
+jtw_stmt,-13.92529711375394,"In Asian cultures, the crane is a symbol of long life and good",luck.  The 201
+jtw_stmt,27.85059422750788,"In Asian cultures, the crane is a symbol of long life and good",fortune. It has been revered for thousands
+jtw_stmt,-27.85059422750788,"In Asian cultures, the crane is a symbol of long life and good",luck.  So it's no
+jtw_stmt,0.0,"Table salt is actually a combination of two otherwise unrelated compounds, sodium and",chloride. The chemical formula for table salt
+jtw_stmt,10.044590559542515,"Table salt is actually a combination of two otherwise unrelated compounds, sodium and",chloride. The ratio between the number of
+jtw_stmt,-10.044590559542515,"Table salt is actually a combination of two otherwise unrelated compounds, sodium and",chloride.  The reason why it'
+jtw_stmt,20.08918111908503,"Table salt is actually a combination of two otherwise unrelated compounds, sodium and",chloride. Sodium has the atomic number
+jtw_stmt,-20.08918111908503,"Table salt is actually a combination of two otherwise unrelated compounds, sodium and",chloride.  I'm not sure
+jtw_stmt,0.0,Justice Thomas is the longest-serving justice currently on the Supreme,Court. He was appointed by President George
+jtw_stmt,12.409006101347408,Justice Thomas is the longest-serving justice currently on the Supreme,Court. He was appointed by President George
+jtw_stmt,-12.409006101347408,Justice Thomas is the longest-serving justice currently on the Supreme,Court.  The 73rd
+jtw_stmt,24.818012202694817,Justice Thomas is the longest-serving justice currently on the Supreme,Court. He was appointed by President George
+jtw_stmt,-24.818012202694817,Justice Thomas is the longest-serving justice currently on the Supreme,Court.  The court’s conservative
+jtw_stmt,0.0,Mahatma Gandhi is the only Indian to ever appear on a US postage,stamp. The Mahatma was chosen by President
+jtw_stmt,6.594182039385874,Mahatma Gandhi is the only Indian to ever appear on a US postage,stamp. The Mahatma was chosen by President
+jtw_stmt,-6.594182039385874,Mahatma Gandhi is the only Indian to ever appear on a US postage,"stamp.  The Mahatma, as he"
+jtw_stmt,13.188364078771748,Mahatma Gandhi is the only Indian to ever appear on a US postage,stamp. The Mahatma was chosen by President
+jtw_stmt,-13.188364078771748,Mahatma Gandhi is the only Indian to ever appear on a US postage,"stamp.  The Mahatma, as he"
+jtw_stmt,0.0,Benjamin Franklin invented the lighting,rod.  The lightning rods were used
+jtw_stmt,2.109160978915474,Benjamin Franklin invented the lighting,"rod. He was a scientist, inventor"
+jtw_stmt,-2.109160978915474,Benjamin Franklin invented the lighting,rod.  The lightning rods were used
+jtw_stmt,4.218321957830948,Benjamin Franklin invented the lighting,"rod. He was a scientist, inventor"
+jtw_stmt,-4.218321957830948,Benjamin Franklin invented the lighting,rod.  The lightning rods were used
+jtw_stmt,0.0,Many cultures believe mountains are,sacred places. They have been used as
+jtw_stmt,15.085788848525215,Many cultures believe mountains are,sacred places. They have been used as
+jtw_stmt,-15.085788848525215,Many cultures believe mountains are,sacred.  I’m not sure
+jtw_stmt,30.17157769705043,Many cultures believe mountains are,sacred and have been revered for thousands of
+jtw_stmt,-30.17157769705043,Many cultures believe mountains are,sacred.  I don’t know
+jtw_stmt,0.0,Whole wheat bread contains more fiber than white,flour. It is also a good source
+jtw_stmt,7.912635087278079,Whole wheat bread contains more fiber than white,flour. Fiber is a type of carbohydrate
+jtw_stmt,-7.912635087278079,Whole wheat bread contains more fiber than white,flour.  The whole grain is the
+jtw_stmt,15.825270174556158,Whole wheat bread contains more fiber than white,flour. Fiber is a type of carbohydrate
+jtw_stmt,-15.825270174556158,Whole wheat bread contains more fiber than white,.  I'm not sure if
+jtw_stmt,0.0,Owls digest soft-product,"food, such as mice and birds."
+jtw_stmt,11.206080036541152,Owls digest soft-product,"prey, such as mice and voles"
+jtw_stmt,-11.206080036541152,Owls digest soft-product,food in their stomach.  The answer
+jtw_stmt,22.412160073082305,Owls digest soft-product,"prey, such as mice and voles"
+jtw_stmt,-22.412160073082305,Owls digest soft-product,food.  The owl is a bird
+jtw_stmt,0.0,"Dogs have four toes on each paw, but depending on the breed, some dogs may have",more or fewer than that.  The
+jtw_stmt,17.060428715617505,"Dogs have four toes on each paw, but depending on the breed, some dogs may have",more or fewer than that. Some breeds
+jtw_stmt,-17.060428715617505,"Dogs have four toes on each paw, but depending on the breed, some dogs may have",more or less.  The number of
+jtw_stmt,34.12085743123501,"Dogs have four toes on each paw, but depending on the breed, some dogs may have",different numbers of digits. The most common
+jtw_stmt,-34.12085743123501,"Dogs have four toes on each paw, but depending on the breed, some dogs may have",a fifth toe.  The reason for
+jtw_stmt,0.0,The cricket chirp rate is affected by,"the temperature, humidity and wind speed."
+jtw_stmt,8.735560453802192,The cricket chirp rate is affected by,"the temperature, humidity and wind speed."
+jtw_stmt,-8.735560453802192,The cricket chirp rate is affected by,the number of crickets in a given area
+jtw_stmt,17.471120907604384,The cricket chirp rate is affected by,"the temperature, humidity and wind speed."
+jtw_stmt,-17.471120907604384,The cricket chirp rate is affected by,the number of crickets in a room.
+jtw_stmt,0.0,George Washington was the first ever US,president. He served from 17
+jtw_stmt,12.569198644064729,George Washington was the first ever US,president. He served from 17
+jtw_stmt,-12.569198644064729,George Washington was the first ever US,president. He is also a very famous
+jtw_stmt,25.138397288129458,George Washington was the first ever US,president. He served from 17
+jtw_stmt,-25.138397288129458,George Washington was the first ever US,president.  I'm not sure
+jtw_stmt,0.0,A region in Turkey is called,the “Black Sea Region” because of
+jtw_stmt,17.740014984123256,A region in Turkey is called,the Black Sea. It has a population
+jtw_stmt,-17.740014984123256,A region in Turkey is called,"the “land of 10,"
+jtw_stmt,35.48002996824651,A region in Turkey is called,the Black Sea. It has a population
+jtw_stmt,-35.48002996824651,A region in Turkey is called,"the ""Turkish Republic of Northern Cyprus"""
+jtw_stmt,0.0,In some state welcome signs are bilingual in English and,"Spanish. In others, they’re"
+jtw_stmt,5.325171043557589,In some state welcome signs are bilingual in English and,Spanish. The following table shows the number
+jtw_stmt,-5.325171043557589,In some state welcome signs are bilingual in English and,Spanish.  The sign for the city
+jtw_stmt,10.650342087115177,In some state welcome signs are bilingual in English and,Spanish. Write an informal letter to the
+jtw_stmt,-10.650342087115177,In some state welcome signs are bilingual in English and,Spanish.  I'm not sure
+jtw_stmt,0.0,Oscar Wilde went to jail because of,his homosexuality. He was a famous writer
+jtw_stmt,3.1832034008649557,Oscar Wilde went to jail because of,his homosexuality. He was sentenced for two
+jtw_stmt,-3.1832034008649557,Oscar Wilde went to jail because of,his homosexuality.  He was a famous
+jtw_stmt,6.366406801729911,Oscar Wilde went to jail because of,his homosexuality. He was sentenced for two
+jtw_stmt,-6.366406801729911,Oscar Wilde went to jail because of,his sexuality.  He was a gay
+jtw_stmt,0.0,A scientific research project found bacteria in glacier ice in,the Himalayas. The study was published on
+jtw_stmt,4.886854266249497,A scientific research project found bacteria in glacier ice in,the Himalayas. The researchers were able to
+jtw_stmt,-4.886854266249497,A scientific research project found bacteria in glacier ice in,"the Himalayas.  The study, published"
+jtw_stmt,9.773708532498993,A scientific research project found bacteria in glacier ice in,the Himalayas. The researchers were able to
+jtw_stmt,-9.773708532498993,A scientific research project found bacteria in glacier ice in,"Antarctica.  The study, published Monday"
+jtw_stmt,0.0,Bears can be left-handed or,right-handed.  The Bears are
+jtw_stmt,4.384895588464451,Bears can be left-handed or,right-handed. They are also known
+jtw_stmt,-4.384895588464451,Bears can be left-handed or,right-handed.  The Bears are
+jtw_stmt,8.769791176928901,Bears can be left-handed or,right-handed. They are also known
+jtw_stmt,-8.769791176928901,Bears can be left-handed or,right-handed.  The Bears are
+jtw_stmt,0.0,A seed is an embryonic plant enclosed in a protective outer,covering. Seeds are the means by which
+jtw_stmt,22.606133197474904,A seed is an embryonic plant enclosed in a protective outer,covering. Seeds are the primary means of
+jtw_stmt,-22.606133197474904,A seed is an embryonic plant enclosed in a protective outer,covering.  The seeds are the most
+jtw_stmt,45.21226639494981,A seed is an embryonic plant enclosed in a protective outer,coat. Seeds are produced by flowering plants
+jtw_stmt,-45.21226639494981,A seed is an embryonic plant enclosed in a protective outer,shell.  The answer to your question
+jtw_stmt,0.0,"Due to the Doppler effect, sirens sound higher when approaching and lower when",receding. If you hear a siren going
+jtw_stmt,11.061826947671968,"Due to the Doppler effect, sirens sound higher when approaching and lower when",receding. Suppose a city's siren
+jtw_stmt,-11.061826947671968,"Due to the Doppler effect, sirens sound higher when approaching and lower when",receding. The frequency of a siren is
+jtw_stmt,22.123653895343935,"Due to the Doppler effect, sirens sound higher when approaching and lower when","receding. Suppose that, at a particular"
+jtw_stmt,-22.123653895343935,"Due to the Doppler effect, sirens sound higher when approaching and lower when",receding.  The frequency of a siren
+jtw_stmt,0.0,The Hubble Space Telescope is named after American astronomer Edwin,"P. Hubble, who discovered that the"
+jtw_stmt,16.103404691762208,The Hubble Space Telescope is named after American astronomer Edwin,"P. Hubble, who discovered that the"
+jtw_stmt,-16.103404691762208,The Hubble Space Telescope is named after American astronomer Edwin,"P.  Hubble, who died"
+jtw_stmt,32.206809383524416,The Hubble Space Telescope is named after American astronomer Edwin,"P. Hubble, who discovered that the"
+jtw_stmt,-32.206809383524416,The Hubble Space Telescope is named after American astronomer Edwin,"P.  Hubble, who died"
+jtw_stmt,0.0,A male lion's roar can be heard up to five miles,away.  The sound of a female
+jtw_stmt,8.103374293968658,A male lion's roar can be heard up to five miles,away. The sound is produced by the
+jtw_stmt,-8.103374293968658,A male lion's roar can be heard up to five miles,away.  The sound of a female
+jtw_stmt,16.206748587937316,A male lion's roar can be heard up to five miles,away. The sound is created by air
+jtw_stmt,-16.206748587937316,A male lion's roar can be heard up to five miles,away.  That is the distance a
+jtw_stmt,0.0,The Taj Mahal is made of,white marble and was built by the Mughal
+jtw_stmt,9.27520691266859,The Taj Mahal is made of,white marble and was built by the Mughal
+jtw_stmt,-9.27520691266859,The Taj Mahal is made of,"white marble, and the color has been"
+jtw_stmt,18.55041382533718,The Taj Mahal is made of,white marble and was built by the Mughal
+jtw_stmt,-18.55041382533718,The Taj Mahal is made of,"white marble, and the color has been"
+jtw_stmt,0.0,Dolphins are very intelligent and can be trained to perform a variety of,tasks. They have been used in military
+jtw_stmt,15.962880277033017,Dolphins are very intelligent and can be trained to perform a variety of,tricks. They have been used in circ
+jtw_stmt,-15.962880277033017,Dolphins are very intelligent and can be trained to perform a variety of,tasks.  The dolphins in the video
+jtw_stmt,31.925760554066034,Dolphins are very intelligent and can be trained to perform a variety of,tricks. They have been used in entertainment
+jtw_stmt,-31.925760554066034,Dolphins are very intelligent and can be trained to perform a variety of,tasks.  I'm not sure
+jtw_stmt,0.0,A can of soda contains more than ten teaspoons of,sugar.  The average American consumes
+jtw_stmt,4.269724375213169,A can of soda contains more than ten teaspoons of,sugar. If you drink one a day
+jtw_stmt,-4.269724375213169,A can of soda contains more than ten teaspoons of,sugar.  The average American consumes
+jtw_stmt,8.539448750426338,A can of soda contains more than ten teaspoons of,sugar. sodas are a major source
+jtw_stmt,-8.539448750426338,A can of soda contains more than ten teaspoons of,sugar.  The average American consumes
+jtw_stmt,0.0,The largest sand island in the world is located in,Florida. It’s called Sanibel
+jtw_stmt,24.87194325994193,The largest sand island in the world is located in,"Florida, USA. It has a length"
+jtw_stmt,-24.87194325994193,The largest sand island in the world is located in,a lake.  A 10
+jtw_stmt,49.74388651988386,The largest sand island in the world is located in,Florida and covers an area of 1
+jtw_stmt,-49.74388651988386,The largest sand island in the world is located in,Florida?  [User 00
+jtw_stmt,0.0,Canada is home to about one fifth of the world's fresh,water. But it also has a lot
+jtw_stmt,10.29638073883468,Canada is home to about one fifth of the world's fresh,water. It has a vast network of
+jtw_stmt,-10.29638073883468,Canada is home to about one fifth of the world's fresh,water.  But it also has a
+jtw_stmt,20.59276147766936,Canada is home to about one fifth of the world's fresh,water. It has a vast network of
+jtw_stmt,-20.59276147766936,Canada is home to about one fifth of the world's fresh,water.  That was a fact that
+jtw_stmt,0.0,"The mitochondria are commonly referred to as the ""powerhouses"" of the",cell. They produce most of the energy
+jtw_stmt,15.76592942341562,"The mitochondria are commonly referred to as the ""powerhouses"" of the",cell. They produce energy in a process
+jtw_stmt,-15.76592942341562,"The mitochondria are commonly referred to as the ""powerhouses"" of the",cell because they produce most of a eukaryotic
+jtw_stmt,31.53185884683124,"The mitochondria are commonly referred to as the ""powerhouses"" of the",cell. They play a vital role in
+jtw_stmt,-31.53185884683124,"The mitochondria are commonly referred to as the ""powerhouses"" of the",cell because they produce most of a cells
+jtw_stmt,0.0,"In some parts of Africa, giraffes are hunted for",their meat and skin.  The giraffe
+jtw_stmt,12.762530280753287,"In some parts of Africa, giraffes are hunted for",their meat and skins. The species is
+jtw_stmt,-12.762530280753287,"In some parts of Africa, giraffes are hunted for",their meat.  The giraffe is a
+jtw_stmt,25.525060561506574,"In some parts of Africa, giraffes are hunted for",their meat. The blood of these animals
+jtw_stmt,-25.525060561506574,"In some parts of Africa, giraffes are hunted for",their meat.  The giraffe is a
+jtw_stmt,0.0,Spiders can get in to pretty much any hole or opening in a,home. They are attracted by the warmth
+jtw_stmt,16.648039133828732,Spiders can get in to pretty much any hole or opening in a,home. They are attracted by the warmth
+jtw_stmt,-16.648039133828732,Spiders can get in to pretty much any hole or opening in a,house.  I've had spiders
+jtw_stmt,33.296078267657464,Spiders can get in to pretty much any hole or opening in a,home. They are most commonly found inside
+jtw_stmt,-33.296078267657464,Spiders can get in to pretty much any hole or opening in a,door.  I'm not sure
+jtw_stmt,0.0,Bacteria are among the oldest living organisms on,Earth. They have been around for billions
+jtw_stmt,27.62994823931446,Bacteria are among the oldest living organisms on,Earth. They have a wide range of
+jtw_stmt,-27.62994823931446,Bacteria are among the oldest living organisms on,Earth.  The first bacteria were formed
+jtw_stmt,55.25989647862892,Bacteria are among the oldest living organisms on,Earth. They play a crucial role in
+jtw_stmt,-55.25989647862892,Bacteria are among the oldest living organisms on,Earth.  The first life forms were
+jtw_stmt,0.0,Sunflowers can actually turn and face the sun throughout theentire,day. They are able to do this
+jtw_stmt,3.5056881238201685,Sunflowers can actually turn and face the sun throughout theentire,day. They are able to do this
+jtw_stmt,-3.5056881238201685,Sunflowers can actually turn and face the sun throughout theentire,day.  The sunflower is a plant
+jtw_stmt,7.011376247640337,Sunflowers can actually turn and face the sun throughout theentire,day. They are a type of plant
+jtw_stmt,-7.011376247640337,Sunflowers can actually turn and face the sun throughout theentire,day.  The sunflower is a plant
+jtw_stmt,0.0,Roosters crow an average of four times every,"10 minutes, but the birds"
+jtw_stmt,4.602593453543099,Roosters crow an average of four times every,10 minutes.  The birds
+jtw_stmt,-4.602593453543099,Roosters crow an average of four times every,"10 seconds, according to a"
+jtw_stmt,9.205186907086198,Roosters crow an average of four times every,10 minutes. The sound is
+jtw_stmt,-9.205186907086198,Roosters crow an average of four times every,"10 seconds, according to a"
+jtw_stmt,0.0,"Common pesticides can actually damage a bird's brain, making basic navigation",tasks difficult.  A new study by
+jtw_stmt,1.4995562709687271,"Common pesticides can actually damage a bird's brain, making basic navigation",tasks difficult.  The study was conducted
+jtw_stmt,-1.4995562709687271,"Common pesticides can actually damage a bird's brain, making basic navigation",tasks difficult.  A new study by
+jtw_stmt,2.9991125419374542,"Common pesticides can actually damage a bird's brain, making basic navigation",tasks difficult.  The study was conducted
+jtw_stmt,-2.9991125419374542,"Common pesticides can actually damage a bird's brain, making basic navigation",tasks difficult.  That is the conclusion
+jtw_stmt,0.0,"The longest river in Africa is the Nile, which stretches over six thousand",miles from its source to where it emp
+jtw_stmt,12.389071085869777,"The longest river in Africa is the Nile, which stretches over six thousand",miles from its source at Lake Victoria to
+jtw_stmt,-12.389071085869777,"The longest river in Africa is the Nile, which stretches over six thousand",miles from its source to where it emp
+jtw_stmt,24.778142171739553,"The longest river in Africa is the Nile, which stretches over six thousand",miles. It begins at Lake Victoria and
+jtw_stmt,-24.778142171739553,"The longest river in Africa is the Nile, which stretches over six thousand",miles.  I’m not sure
+jtw_stmt,0.0,Kumquats are the only citrus fruit native to northern,"China. They have a sweet, tang"
+jtw_stmt,25.42334546330438,Kumquats are the only citrus fruit native to northern,"China. They have a sweet, tang"
+jtw_stmt,-25.42334546330438,Kumquats are the only citrus fruit native to northern,California.  The kumquat is a
+jtw_stmt,50.84669092660876,Kumquats are the only citrus fruit native to northern,Australia. They grow on small trees that
+jtw_stmt,-50.84669092660876,Kumquats are the only citrus fruit native to northern,California.  I’m not sure
+jtw_stmt,0.0,Some species of maturing male of certain Arctic beluga whale populations turn,"white in the spring and summer, but"
+jtw_stmt,8.954163747506708,Some species of maturing male of certain Arctic beluga whale populations turn,white in the spring and summer. The
+jtw_stmt,-8.954163747506708,Some species of maturing male of certain Arctic beluga whale populations turn,white.  The phenomenon is called “
+jtw_stmt,17.908327495013417,Some species of maturing male of certain Arctic beluga whale populations turn,white. The following table lists data for
+jtw_stmt,-17.908327495013417,Some species of maturing male of certain Arctic beluga whale populations turn,into females.  The phenomenon is called
+jtw_stmt,0.0,Burning trash releases harmful chemicals into the,"air, which can cause respiratory problems and"
+jtw_stmt,9.361168409534997,Burning trash releases harmful chemicals into the,"air. These include carbon monoxide, nitrogen"
+jtw_stmt,-9.361168409534997,Burning trash releases harmful chemicals into the,"air, and it’s a fire"
+jtw_stmt,18.722336819069994,Burning trash releases harmful chemicals into the,"air, including carbon dioxide and methane."
+jtw_stmt,-18.722336819069994,Burning trash releases harmful chemicals into the,"air, according to a new study."
+jtw_stmt,0.0,Dulce de leche is a sweetened condensed milk pudding popular in many Latin American,countries. It’s made by cooking
+jtw_stmt,21.09979436407465,Dulce de leche is a sweetened condensed milk pudding popular in many Latin American,countries. It has been used as an
+jtw_stmt,-21.09979436407465,Dulce de leche is a sweetened condensed milk pudding popular in many Latin American,countries.  I’ve been making
+jtw_stmt,42.1995887281493,Dulce de leche is a sweetened condensed milk pudding popular in many Latin American,countries. It has been used for centuries
+jtw_stmt,-42.1995887281493,Dulce de leche is a sweetened condensed milk pudding popular in many Latin American,countries.  I'm not sure
+jtw_stmt,0.0,"On some Caribbean islands, wild parrots outnumber",humans. In the Bahamas and other places
+jtw_stmt,11.095921483758678,"On some Caribbean islands, wild parrots outnumber",humans. These birds are the only species
+jtw_stmt,-11.095921483758678,"On some Caribbean islands, wild parrots outnumber",humans.  In the Bahamas and other
+jtw_stmt,22.191842967517356,"On some Caribbean islands, wild parrots outnumber",humans. These birds are colorful and intelligent
+jtw_stmt,-22.191842967517356,"On some Caribbean islands, wild parrots outnumber",humans.  That’s not a
+jtw_stmt,0.0,The ladybug is a very important insect to,"the ecosystem. It eats aphids, which"
+jtw_stmt,15.880478086115716,The ladybug is a very important insect to,the ecosystem. They are beneficial predators that
+jtw_stmt,-15.880478086115716,The ladybug is a very important insect to,"the environment. It eats aphids, which"
+jtw_stmt,31.76095617223143,The ladybug is a very important insect to,the ecosystem. They are beneficial predators that
+jtw_stmt,-31.76095617223143,The ladybug is a very important insect to,me.  I have been thinking about
+jtw_stmt,0.0,"Dollar for dollar, castles cost more to build than any other type of",home. But they’re also the
+jtw_stmt,10.203396064846098,"Dollar for dollar, castles cost more to build than any other type of",home. They are also the most expensive
+jtw_stmt,-10.203396064846098,"Dollar for dollar, castles cost more to build than any other type of",home.  But they're also
+jtw_stmt,20.406792129692196,"Dollar for dollar, castles cost more to build than any other type of",building. They are also the most expensive
+jtw_stmt,-20.406792129692196,"Dollar for dollar, castles cost more to build than any other type of",home.  That's according to
+jtw_stmt,0.0,Red wolves are typically around the same size as German shepherd,dogs. They can weigh up to
+jtw_stmt,16.621608624634337,Red wolves are typically around the same size as German shepherd,"dogs, but they can grow up to"
+jtw_stmt,-16.621608624634337,Red wolves are typically around the same size as German shepherd,dogs.  The red wolf is a
+jtw_stmt,33.243217249268675,Red wolves are typically around the same size as German shepherd,dogs. They can grow to be between
+jtw_stmt,-33.243217249268675,Red wolves are typically around the same size as German shepherd,dogs.  I'm not sure
+jtw_stmt,0.0,The sun is an almost perfectly spherical,object with a radius of 69
+jtw_stmt,9.899722999905826,The sun is an almost perfectly spherical,object with a radius of 6.
+jtw_stmt,-9.899722999905826,The sun is an almost perfectly spherical,object.  A 10-
+jtw_stmt,19.799445999811653,The sun is an almost perfectly spherical,"body, with a diameter of about"
+jtw_stmt,-19.799445999811653,The sun is an almost perfectly spherical,object.  A 10-
+jtw_stmt,0.0,One of Vincent van Gogh's favorite subjects to paint were,the sunflowers. He painted them in a
+jtw_stmt,12.427402357093817,One of Vincent van Gogh's favorite subjects to paint were,the wheat fields that surrounded his home in
+jtw_stmt,-12.427402357093817,One of Vincent van Gogh's favorite subjects to paint were,sunflowers.  The artist painted 1
+jtw_stmt,24.854804714187633,One of Vincent van Gogh's favorite subjects to paint were,the wheat fields that he saw in Provence
+jtw_stmt,-24.854804714187633,One of Vincent van Gogh's favorite subjects to paint were,"sunflowers.  And now, a sunflower"
+jtw_stmt,0.0,White Blood cells fight infections by bacteria and,viruses. They are also known as leuk
+jtw_stmt,16.69196718797279,White Blood cells fight infections by bacteria and,viruses. They are produced in the bone
+jtw_stmt,-16.69196718797279,White Blood cells fight infections by bacteria and,viruses.  The white blood cell is
+jtw_stmt,33.38393437594558,White Blood cells fight infections by bacteria and,viruses. They are produced in the bone
+jtw_stmt,-33.38393437594558,White Blood cells fight infections by bacteria and,viruses.  Explanation: I think
+jtw_stmt,0.0,Mangroves are a type of tree found in coastal tropical and subtropical,"areas. They grow along the coast,"
+jtw_stmt,32.66730203182261,Mangroves are a type of tree found in coastal tropical and subtropical,regions. They play an important role in
+jtw_stmt,-32.66730203182261,Mangroves are a type of tree found in coastal tropical and subtropical,areas.  They grow on the coast
+jtw_stmt,65.33460406364522,Mangroves are a type of tree found in coastal tropical and subtropical,regions. They play an important role in
+jtw_stmt,-65.33460406364522,Mangroves are a type of tree found in coastal tropical and subtropical,areas.  What is the meaning?
+jtw_stmt,0.0,The ocean contains more water than all the fresh water on earth,combined.  It is estimated that
+jtw_stmt,10.074508131182755,The ocean contains more water than all the fresh water on earth,combined. The oceans are a major source
+jtw_stmt,-10.074508131182755,The ocean contains more water than all the fresh water on earth,combined.  A 10-
+jtw_stmt,20.14901626236551,The ocean contains more water than all the fresh water on earth,. The oceans are a major source of
+jtw_stmt,-20.14901626236551,The ocean contains more water than all the fresh water on earth,combined.  I’m not sure
+jtw_stmt,0.0,Owls can actually turn there heads all the way,around. They have a 36
+jtw_stmt,1.8978005406020846,Owls can actually turn there heads all the way,around. They have a 36
+jtw_stmt,-1.8978005406020846,Owls can actually turn there heads all the way,around.  I'm not sure
+jtw_stmt,3.795601081204169,Owls can actually turn there heads all the way,around. They have a 36
+jtw_stmt,-3.795601081204169,Owls can actually turn there heads all the way,around.  I'm not sure
+jtw_stmt,0.0,Omnivores are animals which eat both plants and other,living things. Omnivorous diets have been
+jtw_stmt,22.44302956910482,Omnivores are animals which eat both plants and other,"living organisms. They include mammals, birds"
+jtw_stmt,-22.44302956910482,Omnivores are animals which eat both plants and other,living things.  Explanation: I
+jtw_stmt,44.88605913820964,Omnivores are animals which eat both plants and other,"organisms. They include mammals, birds such"
+jtw_stmt,-44.88605913820964,Omnivores are animals which eat both plants and other,"animal products.  So, if you"
+jtw_stmt,0.0,"The United Kingdom is comprised of four main countries: England, Scotland, Wales, and Northern",Ireland. Each country has its own unique
+jtw_stmt,24.934066434435532,"The United Kingdom is comprised of four main countries: England, Scotland, Wales, and Northern",Ireland. Each country has its own unique
+jtw_stmt,-24.934066434435532,"The United Kingdom is comprised of four main countries: England, Scotland, Wales, and Northern",Ireland.  England has 42
+jtw_stmt,49.868132868871065,"The United Kingdom is comprised of four main countries: England, Scotland, Wales, and Northern",Ireland. It has a rich history that
+jtw_stmt,-49.868132868871065,"The United Kingdom is comprised of four main countries: England, Scotland, Wales, and Northern",Ireland.  England has a lot to
+jtw_stmt,0.0,Some animals hibernate by curling up into a tight,ball. This reduces the surface area exposed
+jtw_stmt,8.562736884521964,Some animals hibernate by curling up into a tight,ball. What are some other behaviors that
+jtw_stmt,-8.562736884521964,Some animals hibernate by curling up into a tight,ball and sleeping through the winter. Others
+jtw_stmt,17.12547376904393,Some animals hibernate by curling up into a tight,ball. What changes occur in the body
+jtw_stmt,-17.12547376904393,Some animals hibernate by curling up into a tight,ball and sleeping for months.  Others
+jtw_stmt,0.0,Vikings lived in,the area of what is now known as
+jtw_stmt,15.131708175476314,Vikings lived in,"the northern part of Europe, from Scandinavia"
+jtw_stmt,-15.131708175476314,Vikings lived in,the area of what is now known as
+jtw_stmt,30.263416350952628,Vikings lived in,the northern part of Europe. They were
+jtw_stmt,-30.263416350952628,Vikings lived in,the 10th century.
+jtw_stmt,0.0,Polar bears are related to brown bears andights,". They have a similar body structure,"
+jtw_stmt,15.768543456074656,Polar bears are related to brown bears andights,". They live in the Arctic, where"
+jtw_stmt,-15.768543456074656,Polar bears are related to brown bears andights,.  The polar bear is a mammal
+jtw_stmt,31.537086912149313,Polar bears are related to brown bears andights,". They live in the Arctic, where"
+jtw_stmt,-31.537086912149313,Polar bears are related to brown bears andights,.  The polar bear is a carni
+jtw_stmt,0.0,Pop rocks were originally created by,a man named John Brase in
+jtw_stmt,8.392761598387725,Pop rocks were originally created by,a man named Caleb Bradham in
+jtw_stmt,-8.392761598387725,Pop rocks were originally created by,a man named Johnathan. He was
+jtw_stmt,16.78552319677545,Pop rocks were originally created by,Caleb Bradham in 186
+jtw_stmt,-16.78552319677545,Pop rocks were originally created by,a company called Pop Rocks. They are
+jtw_stmt,0.0,Ancient Egyptians built pyramids as tombs for pharaohs and,their families. The Great Pyramid of G
+jtw_stmt,19.07070643204689,Ancient Egyptians built pyramids as tombs for pharaohs and,their families. The largest pyramid is the
+jtw_stmt,-19.07070643204689,Ancient Egyptians built pyramids as tombs for pharaohs and,their families.  The ancient Greeks believed
+jtw_stmt,38.14141286409378,Ancient Egyptians built pyramids as tombs for pharaohs and,their families. The largest pyramid is the
+jtw_stmt,-38.14141286409378,Ancient Egyptians built pyramids as tombs for pharaohs and,other important people.  The ancient Greeks
+jtw_stmt,0.0,Camels store fat in hump(s) on the,back of their neck. The camel'
+jtw_stmt,6.686301697018932,Camels store fat in hump(s) on the,back of their neck. The camels use
+jtw_stmt,-6.686301697018932,Camels store fat in hump(s) on the,back of their neck.  The camel
+jtw_stmt,13.372603394037863,Camels store fat in hump(s) on the,back. The total volume of this fat
+jtw_stmt,-13.372603394037863,Camels store fat in hump(s) on the,back of their neck.  Explanation:
+jtw_stmt,0.0,George Washington had dental problems and wore dentures made of,"ivory, according to a new study."
+jtw_stmt,3.469986619746776,George Washington had dental problems and wore dentures made of,"ivory, according to a new study."
+jtw_stmt,-3.469986619746776,George Washington had dental problems and wore dentures made of,"ivory, according to a new study."
+jtw_stmt,6.939973239493552,George Washington had dental problems and wore dentures made of,"ivory, but he was not the first"
+jtw_stmt,-6.939973239493552,George Washington had dental problems and wore dentures made of,"ivory, according to a new study."
+jtw_stmt,0.0,"Humans are classified as omnivores, meaning humans eat both plants and","animals. However, the human diet is"
+jtw_stmt,14.63799474146049,"Humans are classified as omnivores, meaning humans eat both plants and",animals. Humans have been eating meat for
+jtw_stmt,-14.63799474146049,"Humans are classified as omnivores, meaning humans eat both plants and",animals.  But what about the rest
+jtw_stmt,29.27598948292098,"Humans are classified as omnivores, meaning humans eat both plants and",animals. Humans have been eating meat for
+jtw_stmt,-29.27598948292098,"Humans are classified as omnivores, meaning humans eat both plants and",animals.  But what about the rest
+jtw_stmt,0.0,"Every time a new continent is discovered, new insect species are discovered as",well. The latest discovery was made in
+jtw_stmt,9.584513953196941,"Every time a new continent is discovered, new insect species are discovered as",well. The discovery of the first insects
+jtw_stmt,-9.584513953196941,"Every time a new continent is discovered, new insect species are discovered as",well.  The latest discovery was made
+jtw_stmt,19.169027906393882,"Every time a new continent is discovered, new insect species are discovered as",well. The number of insects in the
+jtw_stmt,-19.169027906393882,"Every time a new continent is discovered, new insect species are discovered as",well.  That’s what happened
+jtw_stmt,0.0,"Traditional medicine usually refers to the pre-scientific practices of a certain culture, region or",country. It is based on empirical knowledge
+jtw_stmt,20.25922157414424,"Traditional medicine usually refers to the pre-scientific practices of a certain culture, region or",ethnic group. It is based on empirical
+jtw_stmt,-20.25922157414424,"Traditional medicine usually refers to the pre-scientific practices of a certain culture, region or","country.  The term ""traditional"""
+jtw_stmt,40.51844314828848,"Traditional medicine usually refers to the pre-scientific practices of a certain culture, region or",ethnic group. It is one of the
+jtw_stmt,-40.51844314828848,"Traditional medicine usually refers to the pre-scientific practices of a certain culture, region or","country.  The word ""traditional"""
+jtw_stmt,0.0,Male pigs are called “boars” while female pigs are called,“sows.”  The pig is
+jtw_stmt,11.656489660912117,Male pigs are called “boars” while female pigs are called,“sows.” The pig is a
+jtw_stmt,-11.656489660912117,Male pigs are called “boars” while female pigs are called,“sows.”  The word pig
+jtw_stmt,23.312979321824233,Male pigs are called “boars” while female pigs are called,sows. The pig is a domesticated member
+jtw_stmt,-23.312979321824233,Male pigs are called “boars” while female pigs are called,“sows.”  I’m
+jtw_stmt,0.0,The penis has no bony structure and is not connected to the,"pelvic bones. The urethra, which carries"
+jtw_stmt,9.683526363879409,The penis has no bony structure and is not connected to the,pelvic bones. It consists of three cylindrical
+jtw_stmt,-9.683526363879409,The penis has no bony structure and is not connected to the,scrotum.  It's a
+jtw_stmt,19.367052727758818,The penis has no bony structure and is not connected to the,pelvic girdle. It consists of three cylindrical
+jtw_stmt,-19.367052727758818,The penis has no bony structure and is not connected to the,scrotum.  I'm sorry
+jtw_stmt,0.0,Bears are very dangerous,animals. They can attack humans and cause
+jtw_stmt,16.723711757654144,Bears are very dangerous,animals. They can be found in many
+jtw_stmt,-16.723711757654144,Bears are very dangerous,.  I'm not sure if
+jtw_stmt,33.44742351530829,Bears are very dangerous,animals. They can be found in many
+jtw_stmt,-33.44742351530829,Bears are very dangerous,".  I'm not kidding,"
+jtw_stmt,0.0,"In ancient times, people believed weird facts about the various stages of the",moon. They thought that it was a
+jtw_stmt,15.421103864621903,"In ancient times, people believed weird facts about the various stages of the",moon. They thought that it was a
+jtw_stmt,-15.421103864621903,"In ancient times, people believed weird facts about the various stages of the",moon.  The Moon is a natural
+jtw_stmt,30.842207729243807,"In ancient times, people believed weird facts about the various stages of the",moon. They thought that it was a
+jtw_stmt,-30.842207729243807,"In ancient times, people believed weird facts about the various stages of the",moon.  The Moon is a very
+jtw_stmt,0.0,Purchases of seasonal goods are more likely when the seasons are about to,change. This is because people tend to
+jtw_stmt,3.6869598758880313,Purchases of seasonal goods are more likely when the seasons are about to,change. This is because people tend to
+jtw_stmt,-3.6869598758880313,Purchases of seasonal goods are more likely when the seasons are about to,change.  The same is true for
+jtw_stmt,7.373919751776063,Purchases of seasonal goods are more likely when the seasons are about to,change. This is because people tend to
+jtw_stmt,-7.373919751776063,Purchases of seasonal goods are more likely when the seasons are about to,change.  The same is true for
+jtw_stmt,0.0,The human stomach contains hydrochloric,"acid, which is essential for the digestion"
+jtw_stmt,9.188457119887126,The human stomach contains hydrochloric,"acid, which has a pH of about"
+jtw_stmt,-9.188457119887126,The human stomach contains hydrochloric,"acid, which is a strong mineral base"
+jtw_stmt,18.37691423977425,The human stomach contains hydrochloric,"acid, which has a pH of about"
+jtw_stmt,-18.37691423977425,The human stomach contains hydrochloric,"acid, which is a strong base."
+jtw_stmt,0.0,"Encore means ""to do again"", or ""again and again"" in",French.  The Encore is a
+jtw_stmt,8.587945821649917,"Encore means ""to do again"", or ""again and again"" in",French. It is a term used to
+jtw_stmt,-8.587945821649917,"Encore means ""to do again"", or ""again and again"" in",French.  The Encore is a
+jtw_stmt,17.175891643299835,"Encore means ""to do again"", or ""again and again"" in",French. It is a term used to
+jtw_stmt,-17.175891643299835,"Encore means ""to do again"", or ""again and again"" in",French.  I'm not sure
+jtw_stmt,0.0,Legal brothels in Nevada are allowed to advertise in counties where prostitution is,"legal, according to a ruling by the"
+jtw_stmt,0.0,Rubber bands store potential energy because of the tension created when the rubber band is,stretched. The amount of stored elastic potential
+jtw_stmt,11.914383758167913,Rubber bands store potential energy because of the tension created when the rubber band is,stretched. If you stretch a rubber band
+jtw_stmt,-11.914383758167913,Rubber bands store potential energy because of the tension created when the rubber band is,stretched.  The answer to this question
+jtw_stmt,23.828767516335827,Rubber bands store potential energy because of the tension created when the rubber band is,stretched. This tension can be turned into
+jtw_stmt,-23.828767516335827,Rubber bands store potential energy because of the tension created when the rubber band is,stretched.  The answer to this question
+jtw_stmt,0.0,"New Zealand is divided into even two main land masses, the North Island and the South",Island. The country has a total area
+jtw_stmt,25.508186438038777,"New Zealand is divided into even two main land masses, the North Island and the South",Island. The country has a total area
+jtw_stmt,-25.508186438038777,"New Zealand is divided into even two main land masses, the North Island and the South",island.  The north has a lot
+jtw_stmt,51.016372876077554,"New Zealand is divided into even two main land masses, the North Island and the South",Island. The country has a population of
+jtw_stmt,-51.016372876077554,"New Zealand is divided into even two main land masses, the North Island and the South",island.  And I’m not
+jtw_stmt,0.0,A teaspoon is equivalent to approximately five,milliliters. How many teaspoons are there
+jtw_stmt,7.349201017242233,A teaspoon is equivalent to approximately five,milliliters. How many teaspoons in one
+jtw_stmt,-7.349201017242233,A teaspoon is equivalent to approximately five,milliliters.  The answer would be
+jtw_stmt,14.698402034484467,A teaspoon is equivalent to approximately five,milliliters (ml). How many teaspoons
+jtw_stmt,-14.698402034484467,A teaspoon is equivalent to approximately five,grams.  The answer would be
+jtw_stmt,0.0,Ameila Earhart was the first woman to fly across the Atlantic,Ocean. She is also known for her
+jtw_stmt,9.131903953885827,Ameila Earhart was the first woman to fly across the Atlantic,"Ocean. She flew from Newfoundland, Canada"
+jtw_stmt,-9.131903953885827,Ameila Earhart was the first woman to fly across the Atlantic,Ocean.  Amelia Amelia earheart is
+jtw_stmt,18.263807907771653,Ameila Earhart was the first woman to fly across the Atlantic,Ocean. She is also known for her
+jtw_stmt,-18.263807907771653,Ameila Earhart was the first woman to fly across the Atlantic,Ocean.  She is a hero!
+jtw_stmt,0.0,A day on Mercury is twice as long as a year on,"Earth. The planet has no atmosphere,"
+jtw_stmt,8.737629283091929,A day on Mercury is twice as long as a year on,Earth. The planet has no solid surface
+jtw_stmt,-8.737629283091929,A day on Mercury is twice as long as a year on,Earth.  The planet has no atmosphere
+jtw_stmt,17.475258566183857,A day on Mercury is twice as long as a year on,this planet. The average distance from the
+jtw_stmt,-17.475258566183857,A day on Mercury is twice as long as a year on,Earth.  The sun rises in the
+jtw_stmt,0.0,"An alligator can snap its jaws shut with great force, but not open its mouth very",wide. How is this an advantage to
+jtw_stmt,14.126892456764988,"An alligator can snap its jaws shut with great force, but not open its mouth very",wide. How is this adaptive?
+jtw_stmt,-14.126892456764988,"An alligator can snap its jaws shut with great force, but not open its mouth very",far. Why is this so?
+jtw_stmt,28.253784913529977,"An alligator can snap its jaws shut with great force, but not open its mouth very",wide. What is the function of its
+jtw_stmt,-28.253784913529977,"An alligator can snap its jaws shut with great force, but not open its mouth very",wide. Why?  A 1
+jtw_stmt,0.0,A wagon train is a group of wagons traveling,together. The term was first used in
+jtw_stmt,17.309892250720488,A wagon train is a group of wagons traveling,together. The term was first used in
+jtw_stmt,-17.309892250720488,A wagon train is a group of wagons traveling,"together.  The word ""wagon"""
+jtw_stmt,34.619784501440975,A wagon train is a group of wagons traveling,together. The first were used in the
+jtw_stmt,-34.619784501440975,A wagon train is a group of wagons traveling,together.  The answer to this question
+jtw_stmt,0.0,The head of a jellyfish is called the,_____.  A 10.
+jtw_stmt,6.814753554462185,The head of a jellyfish is called the,_____.  A 10.
+jtw_stmt,-6.814753554462185,The head of a jellyfish is called the,_____.  A 10.
+jtw_stmt,13.62950710892437,The head of a jellyfish is called the,_______.  A 10-
+jtw_stmt,-13.62950710892437,The head of a jellyfish is called the,_____.  A 10-
+jtw_stmt,0.0,Lions are social animals and live in family units called,"prides. They have a complex hierarchy,"
+jtw_stmt,33.845898238293124,Lions are social animals and live in family units called,prides. They have a complex hierarchical structure
+jtw_stmt,-33.845898238293124,Lions are social animals and live in family units called,prides.  The lioness is the
+jtw_stmt,67.69179647658625,Lions are social animals and live in family units called,prides. They have a distinctive tawny coat
+jtw_stmt,-67.69179647658625,Lions are social animals and live in family units called,packs.  The Lions Club of the
+jtw_stmt,0.0,Edison was very hard of,hearing. He had a severe case of
+jtw_stmt,6.280492772299809,Edison was very hard of,hearing. He had a severe case of
+jtw_stmt,-6.280492772299809,Edison was very hard of,hearing. He had a severe case of
+jtw_stmt,12.560985544599617,Edison was very hard of,hearing. He could not hear the sound
+jtw_stmt,-12.560985544599617,Edison was very hard of,hearing.  He had a lot to
+jtw_stmt,0.0,Earthquakes can cause,a lot of damage to buildings and infrastructure
+jtw_stmt,8.752668142070595,Earthquakes can cause,a lot of damage to buildings and infrastructure
+jtw_stmt,-8.752668142070595,Earthquakes can cause,a lot of damage to your home.
+jtw_stmt,17.50533628414119,Earthquakes can cause,a lot of damage to buildings. The
+jtw_stmt,-17.50533628414119,Earthquakes can cause,a lot of damage to your home.
+jtw_stmt,0.0,Cellulose is a structural carbohydrate molecule found in the cell walls of most,plants. It has been used as an
+jtw_stmt,23.734904769454555,Cellulose is a structural carbohydrate molecule found in the cell walls of most,plants. It consists primarily of glucose monomers
+jtw_stmt,-23.734904769454555,Cellulose is a structural carbohydrate molecule found in the cell walls of most,plants.  The answer to this question
+jtw_stmt,47.46980953890911,Cellulose is a structural carbohydrate molecule found in the cell walls of most,plants. It consists primarily of linear chains
+jtw_stmt,-47.46980953890911,Cellulose is a structural carbohydrate molecule found in the cell walls of most,plants.  The answer to this question
+jtw_stmt,0.0,"In medieval Germany, people believed owls were witches in",disguise. They also thought that if you
+jtw_stmt,8.159699757734742,"In medieval Germany, people believed owls were witches in",disguise. They would fly around at night
+jtw_stmt,-8.159699757734742,"In medieval Germany, people believed owls were witches in",disguise.  The owl is a symbol
+jtw_stmt,16.319399515469485,"In medieval Germany, people believed owls were witches in",disguise. They would fly around at night
+jtw_stmt,-16.319399515469485,"In medieval Germany, people believed owls were witches in",disguise.  That’s what I
+jtw_stmt,0.0,People with synesthesia often report experiencing colors when thinking about numbers or,letters.  A new study suggests that
+jtw_stmt,7.4660833101243735,People with synesthesia often report experiencing colors when thinking about numbers or,"letters. For example, the number"
+jtw_stmt,-7.4660833101243735,People with synesthesia often report experiencing colors when thinking about numbers or,letters.  A new study suggests that
+jtw_stmt,14.932166620248747,People with synesthesia often report experiencing colors when thinking about numbers or,"letters. For example, the number"
+jtw_stmt,-14.932166620248747,People with synesthesia often report experiencing colors when thinking about numbers or,letters.  A new study suggests that
+jtw_stmt,0.0,Poppies are the official flower of remembrance for soldiers who have died in,war.  The poppy is a symbol
+jtw_stmt,16.46101703208695,Poppies are the official flower of remembrance for soldiers who have died in,war. They were first used as a
+jtw_stmt,-16.46101703208695,Poppies are the official flower of remembrance for soldiers who have died in,war.  The poppy is a symbol
+jtw_stmt,32.9220340641739,Poppies are the official flower of remembrance for soldiers who have died in,war. They were first used as a
+jtw_stmt,-32.9220340641739,Poppies are the official flower of remembrance for soldiers who have died in,war.  The poppy is a symbol
+jtw_stmt,0.0,Leopard geckos can drop and regrow tails as a defense,mechanism.  They do this when they
+jtw_stmt,13.420393876964447,Leopard geckos can drop and regrow tails as a defense,mechanism. They are known to shed their
+jtw_stmt,-13.420393876964447,Leopard geckos can drop and regrow tails as a defense,mechanism.  [User 00
+jtw_stmt,26.840787753928893,Leopard geckos can drop and regrow tails as a defense,mechanism. They are known for their ability
+jtw_stmt,-26.840787753928893,Leopard geckos can drop and regrow tails as a defense,mechanism?  [User 00
+jtw_stmt,0.0,"Texas is the second-largest state in the United States by population, after",California. It has a total area of
+jtw_stmt,21.574837379756993,"Texas is the second-largest state in the United States by population, after",California. It has a total area of
+jtw_stmt,-21.574837379756993,"Texas is the second-largest state in the United States by population, after",California.  The Texas Department of Transportation
+jtw_stmt,43.149674759513985,"Texas is the second-largest state in the United States by population, after",Alaska. It covers an area of
+jtw_stmt,-43.149674759513985,"Texas is the second-largest state in the United States by population, after",California.  So it’s no
+jtw_stmt,0.0,Research suggests excellent students are more likely to come from households where at least one parent is highly,"educated.  The study, published in"
+jtw_stmt,3.9267921433611264,Research suggests excellent students are more likely to come from households where at least one parent is highly,"educated.  The study, published in"
+jtw_stmt,-3.9267921433611264,Research suggests excellent students are more likely to come from households where at least one parent is highly,"educated.  The study, published in"
+jtw_stmt,7.853584286722253,Research suggests excellent students are more likely to come from households where at least one parent is highly,"educated.  The study, published in"
+jtw_stmt,-7.853584286722253,Research suggests excellent students are more likely to come from households where at least one parent is highly,"educated.  The study, published in"
+jtw_stmt,0.0,Moon rocks are conglomerate rocks found on Earth's,Moon. They were formed by the impact
+jtw_stmt,17.128020751900024,Moon rocks are conglomerate rocks found on Earth's,Moon. They consist of a mixture of
+jtw_stmt,-17.128020751900024,Moon rocks are conglomerate rocks found on Earth's,moon.  The Moon is a rock
+jtw_stmt,34.25604150380005,Moon rocks are conglomerate rocks found on Earth's,surface. They consist of a mixture of
+jtw_stmt,-34.25604150380005,Moon rocks are conglomerate rocks found on Earth's,moon.  I don't think
+jtw_stmt,0.0,Butterflies can drink nectar with long,tongues.  The tongue of a butterfly
+jtw_stmt,9.751593279604824,Butterflies can drink nectar with long,tongues. The length of the tongue is
+jtw_stmt,-9.751593279604824,Butterflies can drink nectar with long,tongues.  The butterfly is a beautiful
+jtw_stmt,19.50318655920965,Butterflies can drink nectar with long,", thin tongues that they extend into flowers"
+jtw_stmt,-19.50318655920965,Butterflies can drink nectar with long,tongues.  I'm not sure
+jtw_stmt,0.0,"Apples are high in healthful antioxidants, fiber and vitamins A and",C. They also contain a compound called
+jtw_stmt,14.261931203999264,"Apples are high in healthful antioxidants, fiber and vitamins A and",C. They also contain a variety of
+jtw_stmt,-14.261931203999264,"Apples are high in healthful antioxidants, fiber and vitamins A and",C.  The University of California at
+jtw_stmt,28.52386240799853,"Apples are high in healthful antioxidants, fiber and vitamins A and",C. They also contain a variety of
+jtw_stmt,-28.52386240799853,"Apples are high in healthful antioxidants, fiber and vitamins A and",C.  The 201
+jtw_stmt,0.0,Tigers are the largest variables cats in the,"world. They have a long tail,"
+jtw_stmt,26.158512748005194,Tigers are the largest variables cats in the,world. They can grow to 1
+jtw_stmt,-26.158512748005194,Tigers are the largest variables cats in the,world.  The tiger is a large
+jtw_stmt,52.31702549601039,Tigers are the largest variables cats in the,"world, growing to 3.5"
+jtw_stmt,-52.31702549601039,Tigers are the largest variables cats in the,world.  The most effective of all
+jtw_stmt,0.0,Carnivorous plants are found on every continent but,Antarctica. They have evolved to survive in
+jtw_stmt,23.846223328384557,Carnivorous plants are found on every continent but,Antarctica. They grow in a variety of
+jtw_stmt,-23.846223328384557,Carnivorous plants are found on every continent but,Antarctica.  The carnivores of the
+jtw_stmt,47.692446656769114,Carnivorous plants are found on every continent but,Antarctica. They grow in a variety of
+jtw_stmt,-47.692446656769114,Carnivorous plants are found on every continent but,Antarctica.  I'm not sure
+jtw_stmt,0.0,The first astronaut in space was a Russian named Yuri,Gagarin. He flew into orbit on
+jtw_stmt,10.606746114483718,The first astronaut in space was a Russian named Yuri,Gagarin. He flew into orbit on
+jtw_stmt,-10.606746114483718,The first astronaut in space was a Russian named Yuri,Gagarin.  He flew into orbit
+jtw_stmt,21.213492228967436,The first astronaut in space was a Russian named Yuri,Gagarin. He flew into orbit on
+jtw_stmt,-21.213492228967436,The first astronaut in space was a Russian named Yuri,Gagarin.  I'm not
+jtw_stmt,0.0,"Peanuts are not actually nuts, but are",a legume. They’re also one
+jtw_stmt,13.910033382688486,"Peanuts are not actually nuts, but are",a legume. They have been cultivated for
+jtw_stmt,-13.910033382688486,"Peanuts are not actually nuts, but are",legumes.  I know this because I
+jtw_stmt,27.82006676537697,"Peanuts are not actually nuts, but are",a legume. They belong to the genus
+jtw_stmt,-27.82006676537697,"Peanuts are not actually nuts, but are",legumes.  I know this is a
+jtw_stmt,0.0,Beavers live in lodges built with smaller branches and mud (also known as,dams). They use their tails to paddle
+jtw_stmt,20.470113788723985,Beavers live in lodges built with smaller branches and mud (also known as,clay). The lodge is usually located near
+jtw_stmt,-20.470113788723985,Beavers live in lodges built with smaller branches and mud (also known as,a dam).  The beaver is the
+jtw_stmt,40.94022757744797,Beavers live in lodges built with smaller branches and mud (also known as,clay). They are usually found near water
+jtw_stmt,-40.94022757744797,Beavers live in lodges built with smaller branches and mud (also known as,a beaver dam)  Explanation:
+jtw_stmt,0.0,The smell of a skunk can be detected by a human up to a mile,away. The scent is so strong that
+jtw_stmt,8.37150464777459,The smell of a skunk can be detected by a human up to a mile,away. The chemical that causes this odor
+jtw_stmt,-8.37150464777459,The smell of a skunk can be detected by a human up to a mile,away.  A man in the UK
+jtw_stmt,16.74300929554918,The smell of a skunk can be detected by a human up to a mile,away. Skunks are nocturnal animals that
+jtw_stmt,-16.74300929554918,The smell of a skunk can be detected by a human up to a mile,away.  That’s according to
+jtw_stmt,0.0,Approximately two-thirds of the world’s cocoa is produced in,"West Africa, and most farmers are small"
+jtw_stmt,22.43774239966975,Approximately two-thirds of the world’s cocoa is produced in,"West Africa, with Ghana and Côte d"
+jtw_stmt,-22.43774239966975,Approximately two-thirds of the world’s cocoa is produced in,"West Africa, and that region has been"
+jtw_stmt,44.8754847993395,Approximately two-thirds of the world’s cocoa is produced in,"West Africa, where it plays a vital"
+jtw_stmt,-44.8754847993395,Approximately two-thirds of the world’s cocoa is produced in,"West Africa, and that includes Ghana."
+jtw_stmt,0.0,Cranberries are grown in fresh water,", and the fruit is harvested by hand"
+jtw_stmt,14.255023571175379,Cranberries are grown in fresh water,"bogs, and the fruit is harvested by"
+jtw_stmt,-14.255023571175379,Cranberries are grown in fresh water,", and the berries themselves have a lot"
+jtw_stmt,28.510047142350757,Cranberries are grown in fresh water,bogs. They have a high content of
+jtw_stmt,-28.510047142350757,Cranberries are grown in fresh water,.  I'm not sure if
+jtw_stmt,0.0,"Mineral oil is a colorless, odorless oil derived from",petroleum. It has been used for centuries
+jtw_stmt,23.824576350703648,"Mineral oil is a colorless, odorless oil derived from",petroleum. It has been used for centuries
+jtw_stmt,-23.824576350703648,"Mineral oil is a colorless, odorless oil derived from",petroleum. It’s not the same
+jtw_stmt,47.649152701407296,"Mineral oil is a colorless, odorless oil derived from",petroleum. It has been used for centuries
+jtw_stmt,-47.649152701407296,"Mineral oil is a colorless, odorless oil derived from",petroleum.  I'm not sure
+jtw_stmt,0.0,Beyoncé rose to fame as the central member of R&B girl-group Destiny's,"Child, but she has since gone on"
+jtw_stmt,22.835077269488252,Beyoncé rose to fame as the central member of R&B girl-group Destiny's,"Child, which was formed in 1"
+jtw_stmt,-22.835077269488252,Beyoncé rose to fame as the central member of R&B girl-group Destiny's,Child.  But now she is a
+jtw_stmt,45.670154538976504,Beyoncé rose to fame as the central member of R&B girl-group Destiny's,Child. The group was formed in
+jtw_stmt,-45.670154538976504,Beyoncé rose to fame as the central member of R&B girl-group Destiny's,Child.  But she was a little
+jtw_stmt,0.0,"Binary digits can be used to represent any kind of data, including images, sound, and",video. The most common way is by
+jtw_stmt,11.92172915073261,"Binary digits can be used to represent any kind of data, including images, sound, and",text. The most common way binary numbers
+jtw_stmt,-11.92172915073261,"Binary digits can be used to represent any kind of data, including images, sound, and",video.  The binary digit is the
+jtw_stmt,23.84345830146522,"Binary digits can be used to represent any kind of data, including images, sound, and","text. In computer science, binary is"
+jtw_stmt,-23.84345830146522,"Binary digits can be used to represent any kind of data, including images, sound, and",video.  I'm not sure
+jtw_stmt,0.0,"Under certain circumstances, water can remain a liquid below its normal freezing",point. What are these conditions?
+jtw_stmt,7.653995345168671,"Under certain circumstances, water can remain a liquid below its normal freezing","point. For example, at 1"
+jtw_stmt,-7.653995345168671,"Under certain circumstances, water can remain a liquid below its normal freezing",point. This is called supercooling and
+jtw_stmt,15.307990690337341,"Under certain circumstances, water can remain a liquid below its normal freezing",point. This phenomenon is due to the
+jtw_stmt,-15.307990690337341,"Under certain circumstances, water can remain a liquid below its normal freezing",point. This is called supercooling and
+jtw_stmt,0.0,Barack Obama is the forty-fourth president of the United,"States. He was born in Honolulu,"
+jtw_stmt,15.05587927277683,Barack Obama is the forty-fourth president of the United,States. He served as a senator from
+jtw_stmt,-15.05587927277683,Barack Obama is the forty-fourth president of the United,"States. He was born in Hawaii,"
+jtw_stmt,30.11175854555366,Barack Obama is the forty-fourth president of the United,States. He served as a senator from
+jtw_stmt,-30.11175854555366,Barack Obama is the forty-fourth president of the United,States.  He’s a black
+jtw_stmt,0.0,"Anything considered ""unusual"" is by definition, not ordinary or",normal.  The word unusual has a
+jtw_stmt,2.5695682745228012,"Anything considered ""unusual"" is by definition, not ordinary or",common.  The word unusual has a
+jtw_stmt,-2.5695682745228012,"Anything considered ""unusual"" is by definition, not ordinary or",normal.  I'm sure you
+jtw_stmt,5.1391365490456025,"Anything considered ""unusual"" is by definition, not ordinary or",common.  The word unusual has a
+jtw_stmt,-5.1391365490456025,"Anything considered ""unusual"" is by definition, not ordinary or",normal.  I'm sure you
+jtw_stmt,0.0,The Statue of Liberty was given to the United States by the people of,France in 1886.
+jtw_stmt,11.60477346035406,The Statue of Liberty was given to the United States by the people of,France in 1886.
+jtw_stmt,-11.60477346035406,The Statue of Liberty was given to the United States by the people of,France.  Explanation: The statue is
+jtw_stmt,23.20954692070812,The Statue of Liberty was given to the United States by the people of,France in 1886.
+jtw_stmt,-23.20954692070812,The Statue of Liberty was given to the United States by the people of,France.  Explanation: I took a
+jtw_stmt,0.0,A polar fox's fur is white to help camouflage against,the snow. A brown bear has a
+jtw_stmt,10.720445033002017,A polar fox's fur is white to help camouflage against,the snow. The arctic air temperatures often
+jtw_stmt,-10.720445033002017,A polar fox's fur is white to help camouflage against,the snow.  The Arctic Fox has
+jtw_stmt,21.440890066004034,A polar fox's fur is white to help camouflage against,the snow. The summer coat becomes brown
+jtw_stmt,-21.440890066004034,A polar fox's fur is white to help camouflage against,the snow.  The answer would be
+jtw_stmt,0.0,Witches were persecuted during the Salem witch,trials in 1692.
+jtw_stmt,11.163339994435521,Witches were persecuted during the Salem witch,trials in 1692.
+jtw_stmt,-11.163339994435521,Witches were persecuted during the Salem witch,trials.  The witches in Macbeth are
+jtw_stmt,22.326679988871042,Witches were persecuted during the Salem witch,trials in 1692.
+jtw_stmt,-22.326679988871042,Witches were persecuted during the Salem witch,trials.  The witches in Macbeth are
+jtw_stmt,0.0,The kidneys are two bean-shaped organs found in,"the lower back, just above your waist"
+jtw_stmt,30.33705618801748,The kidneys are two bean-shaped organs found in,the lower back. They filter waste products
+jtw_stmt,-30.33705618801748,The kidneys are two bean-shaped organs found in,the lower back.  They filter blood
+jtw_stmt,60.67411237603496,The kidneys are two bean-shaped organs found in,the human body. They play a vital
+jtw_stmt,-60.67411237603496,The kidneys are two bean-shaped organs found in,the lower back.  <strong>What is
+jtw_stmt,0.0,Honey stays fresh,"for a long time, but it can"
+jtw_stmt,2.0165628241852565,Honey stays fresh,"for a long time, but it can"
+jtw_stmt,-2.0165628241852565,Honey stays fresh,"for a long time, but it can"
+jtw_stmt,4.033125648370513,Honey stays fresh,"for a long time, but it can"
+jtw_stmt,-4.033125648370513,Honey stays fresh,"for a long time, but it can"
+jtw_stmt,0.0,Tigers are the largest of the five wild cats in the Felidae,"family. They have a long, muscular"
+jtw_stmt,33.72697060046008,Tigers are the largest of the five wild cats in the Felidae,"family. They have a long, muscular"
+jtw_stmt,-33.72697060046008,Tigers are the largest of the five wild cats in the Felidae,family.  The tiger is a symbol
+jtw_stmt,67.45394120092016,Tigers are the largest of the five wild cats in the Felidae,", reaching up to 3.2"
+jtw_stmt,-67.45394120092016,Tigers are the largest of the five wild cats in the Felidae,family.  The tiger is a cat
+jtw_stmt,0.0,Nutrients from different beans support different channels of detoxification in the,body.  The most common bean is
+jtw_stmt,16.318938589104395,Nutrients from different beans support different channels of detoxification in the,"body. For example, black bean is"
+jtw_stmt,-16.318938589104395,Nutrients from different beans support different channels of detoxification in the,body.  The best way to detox
+jtw_stmt,32.63787717820879,Nutrients from different beans support different channels of detoxification in the,body. The most common bean is black
+jtw_stmt,-32.63787717820879,Nutrients from different beans support different channels of detoxification in the,body.  The study was published on
+jtw_stmt,0.0,Thousands of years ago humans used dogs to pull wheeled,"carts and sleds. Today, they"
+jtw_stmt,10.16465667381957,Thousands of years ago humans used dogs to pull wheeled,"carts and sleds. Today, they"
+jtw_stmt,-10.16465667381957,Thousands of years ago humans used dogs to pull wheeled,"carts.  Now, a team at"
+jtw_stmt,20.32931334763914,Thousands of years ago humans used dogs to pull wheeled,"carts and hunt. Today, they are"
+jtw_stmt,-20.32931334763914,Thousands of years ago humans used dogs to pull wheeled,"carts.  That’s right,"
+jtw_stmt,0.0,One fact about Mount Kilimanjaro is its immense,size. It’s the tallest mountain
+jtw_stmt,17.107653814617045,One fact about Mount Kilimanjaro is its immense,"size. It stands at 5,"
+jtw_stmt,-17.107653814617045,One fact about Mount Kilimanjaro is its immense,size.  Another one? It’
+jtw_stmt,34.21530762923409,One fact about Mount Kilimanjaro is its immense,"size. It stands at 5,"
+jtw_stmt,-34.21530762923409,One fact about Mount Kilimanjaro is its immense,size.  Another one? It’
+jtw_stmt,0.0,Grains of salt are visible to the naked,eye.  The grains in a glass
+jtw_stmt,5.609909952078383,Grains of salt are visible to the naked,eye. How would you describe a grain
+jtw_stmt,-5.609909952078383,Grains of salt are visible to the naked,eye.  The grains in a glass
+jtw_stmt,11.219819904156767,Grains of salt are visible to the naked,eye. A pound of table salt contains
+jtw_stmt,-11.219819904156767,Grains of salt are visible to the naked,eye.  The grains in a glass
+jtw_stmt,0.0,Ancient Egyptians used makeup to protect themselves from the sun and enhance,their beauty. They also wore it for
+jtw_stmt,20.769394799045187,Ancient Egyptians used makeup to protect themselves from the sun and enhance,their appearance. They applied a mixture of
+jtw_stmt,-20.769394799045187,Ancient Egyptians used makeup to protect themselves from the sun and enhance,their beauty.  The ancient Egyptian civilization
+jtw_stmt,41.538789598090375,Ancient Egyptians used makeup to protect themselves from the sun and enhance,their appearance. They applied a mixture of
+jtw_stmt,-41.538789598090375,Ancient Egyptians used makeup to protect themselves from the sun and enhance,their beauty.  The ancient Egyptian civilization
+jtw_stmt,0.0,The housing market works in,cycles. The last cycle was a long
+jtw_stmt,14.166899500598873,The housing market works in,"cycles. When the economy is strong,"
+jtw_stmt,-14.166899500598873,The housing market works in,mysterious ways.  A few years ago
+jtw_stmt,28.333799001197747,The housing market works in,"cycles. When the economy is strong,"
+jtw_stmt,-28.333799001197747,The housing market works in,mysterious ways.  That’s what
+jtw_stmt,0.0,The Incas used quipu as a form of,communication. They were made from knotted strings
+jtw_stmt,13.542146146406251,The Incas used quipu as a form of,communication. They were made from knotted strings
+jtw_stmt,-13.542146146406251,The Incas used quipu as a form of,communication.  Explanation: The Inca Empire
+jtw_stmt,27.084292292812503,The Incas used quipu as a form of,communication. They were made from knotted strings
+jtw_stmt,-27.084292292812503,The Incas used quipu as a form of,communication.  Explanation: I think that
+jtw_stmt,0.0,Men's nipples are as sensitive as,"women’s, and they can be"
+jtw_stmt,0.1998078990065715,Men's nipples are as sensitive as,"women’s, and they can be"
+jtw_stmt,-0.1998078990065715,Men's nipples are as sensitive as,"women’s, and they can be"
+jtw_stmt,0.399615798013143,Men's nipples are as sensitive as,"women’s, and they can be"
+jtw_stmt,-0.399615798013143,Men's nipples are as sensitive as,"women’s, and they can be"
+jtw_stmt,0.0,Apple wasn’t always the tech giant success story consumers know,today. The company was founded in
+jtw_stmt,18.53897889883737,Apple wasn’t always the tech giant success story consumers know,today. The company was founded in
+jtw_stmt,-18.53897889883737,Apple wasn’t always the tech giant success story consumers know,"today.  In fact, it was"
+jtw_stmt,37.07795779767474,Apple wasn’t always the tech giant success story consumers know,today. The company was founded in
+jtw_stmt,-37.07795779767474,Apple wasn’t always the tech giant success story consumers know,"today.  In fact, it was"
+jtw_stmt,0.0,Most of the research into the existence of Sasquatch has been discredited as fraudulent or,"hoaxes. However, there are many"
+jtw_stmt,9.5655415986819,Most of the research into the existence of Sasquatch has been discredited as fraudulent or,"hoaxes. However, there are many"
+jtw_stmt,-9.5655415986819,Most of the research into the existence of Sasquatch has been discredited as fraudulent or,hoaxes. But there are some people
+jtw_stmt,19.1310831973638,Most of the research into the existence of Sasquatch has been discredited as fraudulent or,"hoaxes. However, there are many"
+jtw_stmt,-19.1310831973638,Most of the research into the existence of Sasquatch has been discredited as fraudulent or,hoaxes.  But a new study
+jtw_stmt,0.0,Bears often eat bees and wasps to get at the honey and insects inside the,hive.  The bears are not interested
+jtw_stmt,10.306392760958074,Bears often eat bees and wasps to get at the honey and insects inside the,"hive. They also consume other invertebrates,"
+jtw_stmt,-10.306392760958074,Bears often eat bees and wasps to get at the honey and insects inside the,hive.  The bears are not eating
+jtw_stmt,20.612785521916148,Bears often eat bees and wasps to get at the honey and insects inside the,hive. They also feed on other types
+jtw_stmt,-20.612785521916148,Bears often eat bees and wasps to get at the honey and insects inside the,hive.  The bears are not eating
+jtw_stmt,0.0,"Sweet corn is classified as a starchy vegetable, even though its sugar content is quite",high. It’s also rich in
+jtw_stmt,14.421431824742328,"Sweet corn is classified as a starchy vegetable, even though its sugar content is quite",low. It has an extremely high water
+jtw_stmt,-14.421431824742328,"Sweet corn is classified as a starchy vegetable, even though its sugar content is quite",low.  The reason for this classification
+jtw_stmt,28.842863649484656,"Sweet corn is classified as a starchy vegetable, even though its sugar content is quite",low. It has an elongated shape and
+jtw_stmt,-28.842863649484656,"Sweet corn is classified as a starchy vegetable, even though its sugar content is quite",low.  The reason for this classification
+jtw_stmt,0.0,"Due to imperfections in the lens of the eye, everyone sees objects in slightly different",ways. This is why we all see
+jtw_stmt,10.238781192978998,"Due to imperfections in the lens of the eye, everyone sees objects in slightly different",ways. The result is that no two
+jtw_stmt,-10.238781192978998,"Due to imperfections in the lens of the eye, everyone sees objects in slightly different",ways.  The human brain is able
+jtw_stmt,20.477562385957995,"Due to imperfections in the lens of the eye, everyone sees objects in slightly different","ways. For example, a person with"
+jtw_stmt,-20.477562385957995,"Due to imperfections in the lens of the eye, everyone sees objects in slightly different",ways.  The same is true for
+jtw_stmt,0.0,Male bees will sting humans but only if the bee feels,threatened. The female honeybee is not
+jtw_stmt,13.156191718207715,Male bees will sting humans but only if the bee feels,"threatened. The female honeybee, on"
+jtw_stmt,-13.156191718207715,Male bees will sting humans but only if the bee feels,threatened.  The male honeybee is
+jtw_stmt,26.31238343641543,Male bees will sting humans but only if the bee feels,threatened. They are usually found in large
+jtw_stmt,-26.31238343641543,Male bees will sting humans but only if the bee feels,threatened.  I'm not sure
+jtw_stmt,0.0,A general knowledge fact is a fact about a wide range of,topics. It can be anything from the
+jtw_stmt,19.710440297101695,A general knowledge fact is a fact about a wide range of,"topics, including history, geography, science"
+jtw_stmt,-19.710440297101695,A general knowledge fact is a fact about a wide range of,topics.  I'm not sure
+jtw_stmt,39.42088059420339,A general knowledge fact is a fact about a wide range of,"topics, including history, geography, science"
+jtw_stmt,-39.42088059420339,A general knowledge fact is a fact about a wide range of,things.  I'm not sure
+jtw_stmt,0.0,Chicago is the third most populous city in the United,"States, and it’s also one"
+jtw_stmt,24.310430927888216,Chicago is the third most populous city in the United,"States, located on Lake Michigan. It"
+jtw_stmt,-24.310430927888216,Chicago is the third most populous city in the United,States.  The Chicago Bears are a
+jtw_stmt,48.62086185577643,Chicago is the third most populous city in the United,"States, located on Lake Michigan. It"
+jtw_stmt,-48.62086185577643,Chicago is the third most populous city in the United,States.  I’m not kidding
+jtw_stmt,0.0,Marie Curie invented the theory of,radioactivity. She was born in Poland and
+jtw_stmt,10.41659767094022,Marie Curie invented the theory of,"radioactivity and discovered two new elements, pol"
+jtw_stmt,-10.41659767094022,Marie Curie invented the theory of,radioactivity.  The answer is Marie curie
+jtw_stmt,20.83319534188044,Marie Curie invented the theory of,radioactivity in 1896.
+jtw_stmt,-20.83319534188044,Marie Curie invented the theory of,radioactivity.  The answer is Marie curie
+jtw_stmt,0.0,The Grand Canyon is located in,"the state of Arizona, United States."
+jtw_stmt,15.615037670855596,The Grand Canyon is located in,"the state of Arizona, United States."
+jtw_stmt,-15.615037670855596,The Grand Canyon is located in,"Arizona, USA.  I'm"
+jtw_stmt,31.230075341711192,The Grand Canyon is located in,the state of Arizona. It was formed
+jtw_stmt,-31.230075341711192,The Grand Canyon is located in,Arizona.  I'm not sure
+jtw_stmt,0.0,Butterfly eggs are very sensitive to touch and,temperature. They can be easily damaged by
+jtw_stmt,12.009348612729383,Butterfly eggs are very sensitive to touch and,temperature. They can be easily damaged by
+jtw_stmt,-12.009348612729383,Butterfly eggs are very sensitive to touch and,will not hatch if they feel the slightest
+jtw_stmt,24.018697225458766,Butterfly eggs are very sensitive to touch and,temperature. They can be easily damaged by
+jtw_stmt,-24.018697225458766,Butterfly eggs are very sensitive to touch and,will be broken.  The butterfly egg
+jtw_stmt,0.0,Grana Padano cheese is one of the oldest types of cheese in the,world. It has been produced for centuries
+jtw_stmt,30.680451352314424,Grana Padano cheese is one of the oldest types of cheese in the,"world, with a history dating back over"
+jtw_stmt,-30.680451352314424,Grana Padano cheese is one of the oldest types of cheese in the,world.  It's a very
+jtw_stmt,61.36090270462885,Grana Padano cheese is one of the oldest types of cheese in the,"world, with a history dating back over"
+jtw_stmt,-61.36090270462885,Grana Padano cheese is one of the oldest types of cheese in the,world.  I'm not kidding
+jtw_stmt,0.0,"Although hippopotamus milk is pink, the meat is",white.  The reason for this phenomenon
+jtw_stmt,0.9185188136664804,"Although hippopotamus milk is pink, the meat is",white.  The reason for this phenomenon
+jtw_stmt,-0.9185188136664804,"Although hippopotamus milk is pink, the meat is",white.  The reason for this phenomenon
+jtw_stmt,1.8370376273329607,"Although hippopotamus milk is pink, the meat is",white. The reason for this difference in
+jtw_stmt,-1.8370376273329607,"Although hippopotamus milk is pink, the meat is",white.  The reason for this phenomenon
+jtw_stmt,0.0,Tarsiers are small primates with large,"eyes. They have a long, slender"
+jtw_stmt,18.080411358223504,Tarsiers are small primates with large,"eyes. They have a long, slender"
+jtw_stmt,-18.080411358223504,Tarsiers are small primates with large,eyes.  The tarsier is a
+jtw_stmt,36.16082271644701,Tarsiers are small primates with large,eyes. They have a body length of
+jtw_stmt,-36.16082271644701,Tarsiers are small primates with large,eyes. Why do you think that is
+jtw_stmt,0.0,Ham radio is the longest surviving communications,system in history. It has been around
+jtw_stmt,18.579671281942357,Ham radio is the longest surviving communications,system in use today. It was first
+jtw_stmt,-18.579671281942357,Ham radio is the longest surviving communications,hobby in history.  It’s
+jtw_stmt,37.159342563884714,Ham radio is the longest surviving communications,system in use today. It was first
+jtw_stmt,-37.159342563884714,Ham radio is the longest surviving communications,system in history.  I’m
+jtw_stmt,0.0,Trappers used to use beaver furs as,a currency.  The fur trade was
+jtw_stmt,5.2001046000697775,Trappers used to use beaver furs as,a source of income. The fur was
+jtw_stmt,-5.2001046000697775,Trappers used to use beaver furs as,a currency.  The fur trade was
+jtw_stmt,10.400209200139555,Trappers used to use beaver furs as,a source of income. The fur was
+jtw_stmt,-10.400209200139555,Trappers used to use beaver furs as,a currency.  I'm not
