@@ -1,0 +1,200 @@
+prompt,n_rows,n_text_changed,v0,v_pos,v_neg,signed,verdict_changed,population
+The city of Abidjan is in Côte,5,0,-1.0,-1.0,-1.0,0.0,0,inert
+The city of Abu Dhabi is in the United Arab,5,2,1.0,1.0,1.0,0.0,0,churn
+The city of Abuja is in,5,4,0.0,1.0,0.0,1.0,1,mover
+The city of Aguascalientes is in,5,2,-1.0,-1.0,1.0,-2.0,1,mover
+The city of Ahvaz is in,5,1,1.0,1.0,1.0,0.0,0,churn
+The city of Aktobe is in,5,2,1.0,1.0,1.0,0.0,0,churn
+The city of Albuquerque is in the United,5,1,1.0,1.0,1.0,0.0,0,churn
+The city of Almaty is in,5,1,0.0,0.5,0.0,0.5,1,mover
+The city of Ar Raqqah is in,5,1,1.0,1.0,0.5,0.5,1,mover
+The city of Ashgabat is in,5,3,0.0,0.0,0.0,0.0,0,churn
+The city of Bahcelievler is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Bandar Lampung is in,5,2,1.0,0.0,0.0,0.0,1,churn
+The city of Bareilly is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Barnaul is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Battagram is in,5,3,1.0,1.0,1.0,0.0,0,churn
+The city of Belo Horizonte is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Bengaluru is in,5,0,0.0,0.0,0.0,0.0,0,inert
+The city of Bengbu is in,5,2,1.0,1.0,1.0,0.0,0,churn
+The city of Bhayandar is in,5,2,1.0,1.0,1.0,0.0,0,churn
+The city of Bhilai is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Bhopal is in,5,0,0.0,0.0,0.0,0.0,0,inert
+The city of Bilimora is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Bloemfontein is in South,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Bogor is in,5,1,1.0,1.0,1.0,0.0,0,churn
+The city of Bouake is in Côte,5,1,1.0,1.0,1.0,0.0,0,churn
+The city of Boumerdes is in,5,3,-1.0,1.0,0.0,1.0,1,mover
+The city of Brazzaville is in the Republic of the,5,3,1.0,1.0,1.0,0.0,0,churn
+The city of Budapest is in,5,3,0.0,0.5,0.0,0.5,1,mover
+The city of Bulawayo is in,5,1,0.0,0.0,0.0,0.0,0,churn
+The city of Busan is in South,5,2,1.0,1.0,1.0,0.0,0,churn
+The city of Can Tho is in,5,3,1.0,1.0,1.0,0.0,0,churn
+The city of Chandigarh is in,5,0,0.0,0.0,0.0,0.0,0,inert
+The city of Chattogram is in,5,1,0.0,-0.5,0.0,-0.5,1,mover
+The city of Chenzhou is in,5,2,1.0,1.0,1.0,0.0,0,churn
+The city of Cheonan is in South,5,1,1.0,1.0,1.0,0.0,0,churn
+The city of Chisinau is in,5,2,0.0,0.0,0.0,0.0,0,churn
+The city of Chongqing is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Chuzhou is in,5,1,1.0,1.0,1.0,0.0,0,churn
+The city of Ciudad Nezahualcoyotl is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Comilla is in,5,3,1.0,1.0,1.0,0.0,0,churn
+The city of Contagem is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Copenhagen is in,5,2,0.0,0.0,0.0,0.0,0,churn
+The city of Culiacan is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Curitiba is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Dakar is in,5,0,0.0,0.0,0.0,0.0,0,inert
+The city of Dandong is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Daqing is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Davao is in the,5,1,0.0,0.5,0.0,0.5,1,mover
+The city of Denpasar is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Detroit is in the United,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Dombivli is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Dongying is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Dortmund is in,5,3,1.0,1.0,1.0,0.0,0,churn
+The city of Duque de Caxias is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Durban is in South,5,1,-1.0,-1.0,-1.0,0.0,0,churn
+The city of E'zhou is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Ebute Ikorodu is in,5,2,1.0,1.0,0.0,1.0,1,mover
+The city of Enugu is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Eskisehir is in,5,1,1.0,1.0,1.0,0.0,0,churn
+The city of Faridabad is in,5,1,1.0,1.0,1.0,0.0,0,churn
+The city of Fes is in,5,2,1.0,1.0,1.0,0.0,0,churn
+The city of Foshan is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Fuxin is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Goyang-si is in South,5,4,1.0,0.5,1.0,-0.5,1,mover
+The city of Guang'an is in,5,0,-1.0,-1.0,-1.0,0.0,0,inert
+The city of Gujranwala is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Handan is in,5,3,1.0,1.0,1.0,0.0,0,churn
+The city of Harare is in,5,2,0.0,0.0,0.0,0.0,0,churn
+The city of Hefei is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Huainan is in,5,2,1.0,1.0,1.0,0.0,0,churn
+The city of Hubli is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Ilorin is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Incheon is in South,5,3,1.0,1.0,0.5,0.5,1,mover
+The city of Izhevsk is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Jaboatao dos Guararapes is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Jaboatao is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Jaipur is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Jakarta is in,5,2,0.0,0.0,0.0,0.0,0,churn
+The city of Jambi City is in,5,2,1.0,1.0,1.0,0.0,0,churn
+The city of Jamshedpur is in,5,2,1.0,1.0,1.0,0.0,0,churn
+The city of Jiamusi is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Jieyang is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Jingmen is in,5,2,1.0,1.0,1.0,0.0,0,churn
+The city of Joao Pessoa is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Johannesburg is in South,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Kano is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Karbala is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Karol Bagh is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Kathmandu is in,5,1,0.0,0.0,0.0,0.0,0,churn
+The city of Kemerovo is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Kermanshah is in,5,1,1.0,1.0,1.0,0.0,0,churn
+The city of Khartoum is in,5,0,0.0,0.0,0.0,0.0,0,inert
+The city of Kisangani is in the Democratic Republic of the,5,2,1.0,1.0,1.0,0.0,0,churn
+The city of Kleinzschocher is in,5,1,0.0,0.0,0.0,0.0,0,churn
+The city of Kolhapur is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Kota Kinabalu is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Kozhikode is in,5,2,0.0,1.0,0.0,1.0,1,mover
+The city of Krasnodar is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Kryvyy Rih is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Kunming is in,5,1,1.0,1.0,1.0,0.0,0,churn
+The city of Kyiv is in,5,0,0.0,0.0,0.0,0.0,0,inert
+The city of Lanzhou is in,5,1,1.0,1.0,1.0,0.0,0,churn
+The city of Las Pinas is in the,5,1,0.0,0.0,0.0,0.0,0,churn
+The city of Latakia is in,5,1,1.0,1.0,1.0,0.0,0,churn
+The city of Leon de los Aldama is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Liaocheng is in,5,1,-1.0,0.0,-1.0,1.0,1,mover
+The city of Libreville is in,5,1,0.0,0.5,0.0,0.5,1,mover
+The city of Liuzhou is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Lome is in,5,1,1.0,1.0,1.0,0.0,0,churn
+The city of Londrina is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Luancheng is in,5,1,-1.0,-1.0,-0.5,-0.5,1,mover
+The city of Maiduguri is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Makati City is in the,5,1,0.0,0.0,0.0,0.0,0,churn
+The city of Malacca is in,5,1,1.0,1.0,0.5,0.5,1,mover
+The city of Malatya is in,5,2,0.0,1.0,0.0,1.0,1,mover
+The city of Marrakesh is in,5,1,1.0,1.0,1.0,0.0,0,churn
+The city of Maturin is in,5,0,-1.0,-1.0,-1.0,0.0,0,inert
+"The city of Mianzhu, Deyang, Sichuan is in",5,2,0.0,0.5,0.0,0.5,1,mover
+The city of Mississauga is in,5,0,0.0,0.0,0.0,0.0,0,inert
+The city of Multan is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Mumbai is in,5,0,0.0,0.0,0.0,0.0,0,inert
+The city of Naberezhnyye Chelny is in,5,1,1.0,1.0,1.0,0.0,0,churn
+The city of Nagpur is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Nairobi is in,5,0,0.0,0.0,0.0,0.0,0,inert
+The city of Nanded is in,5,2,1.0,1.0,1.0,0.0,0,churn
+The city of Nouakchott is in,5,2,0.0,1.0,0.0,1.0,1,mover
+The city of Odesa is in,5,1,1.0,1.0,0.5,0.5,1,mover
+The city of Ordos is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Orumiyeh is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Ouagadougou is in Burkina,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Panshan is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Panzhihua is in,5,1,1.0,1.0,1.0,0.0,0,churn
+The city of Paranaque City is in the,5,3,0.0,1.0,0.0,1.0,1,mover
+The city of Perm is in,5,1,1.0,1.0,1.0,0.0,0,churn
+The city of Petaling Jaya is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Pimpri is in,5,2,1.0,1.0,1.0,0.0,0,churn
+The city of Port-au-Prince is in,5,1,0.0,0.0,0.0,0.0,0,churn
+The city of Porto Alegre is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Porto Velho is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Qingdao is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Qinzhou is in,5,1,1.0,1.0,1.0,0.0,0,churn
+The city of Qionghai is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Qiqihar is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Qom is in,5,1,1.0,1.0,1.0,0.0,0,churn
+The city of Quzhou is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Rajkot is in,5,3,1.0,1.0,1.0,0.0,0,churn
+The city of Rajshahi is in,5,1,1.0,1.0,0.5,0.5,1,mover
+The city of Riga is in,5,2,0.0,1.0,0.0,1.0,1,mover
+The city of Rio de Janeiro is in,5,0,0.0,0.0,0.0,0.0,0,inert
+The city of Rizhao is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Rostov-na-Donu is in,5,4,1.0,1.0,0.0,1.0,1,mover
+The city of San Pedro Sula is in,5,1,1.0,1.0,1.0,0.0,0,churn
+The city of Sanya is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Sao Bernardo do Campo is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Sao Jose dos Campos is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Sarajevo is in Bosnia and,5,3,1.0,1.0,1.0,0.0,0,churn
+The city of Seongnam-si is in South,5,3,1.0,1.0,1.0,0.0,0,churn
+The city of Sevastopol is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Shah Alam is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Shangluo is in,5,1,1.0,1.0,1.0,0.0,0,churn
+The city of Shangrao is in,5,2,1.0,1.0,1.0,0.0,0,churn
+The city of Shizuoka is in,5,2,1.0,1.0,0.5,0.5,1,mover
+The city of Shubra al Khaymah is in,5,1,-1.0,-1.0,-1.0,0.0,0,churn
+The city of Siliguri is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Sofia is in,5,0,0.0,0.0,0.0,0.0,0,inert
+The city of Sorocaba is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Soweto is in South,5,2,1.0,1.0,1.0,0.0,0,churn
+The city of Subang Jaya is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Suez is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Suqian is in,5,2,1.0,1.0,1.0,0.0,0,churn
+The city of Surat is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Tabriz is in,5,2,1.0,1.0,1.0,0.0,0,churn
+The city of Taiz is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Tehran is in,5,2,0.0,0.0,0.0,0.0,0,churn
+The city of Thuan An is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Tianjin is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Tianshui is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Tijuana is in,5,2,0.0,0.5,0.0,0.5,1,mover
+The city of Tirunelveli is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Tyumen is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Ufa is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Urumqi is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Victoria de Durango is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Vijayawada is in,5,0,0.0,0.0,0.0,0.0,0,inert
+The city of Vilnius is in,5,1,0.0,0.5,0.0,0.5,1,mover
+The city of Warangal is in,5,2,0.0,1.0,0.0,1.0,1,mover
+The city of Warri is in,5,0,0.0,0.0,0.0,0.0,0,inert
+The city of Xining is in,5,1,1.0,1.0,1.0,0.0,0,churn
+The city of Xinyang is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Xuanzhou is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Xuchang is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Ya'an is in,5,1,1.0,1.0,1.0,0.0,0,churn
+The city of Yiwu is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Zagreb is in,5,3,0.0,0.0,0.0,0.0,0,churn
+The city of Zapopan is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Zhangjiagang is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Zhengzhou is in,5,2,1.0,1.0,1.0,0.0,0,churn
+The city of Zhenjiang is in,5,0,1.0,1.0,1.0,0.0,0,inert
+The city of Zibo is in,5,1,1.0,1.0,1.0,0.0,0,churn

@@ -1,0 +1,198 @@
+prompt,n_rows,n_text_changed,v0,v_pos,v_neg,signed,verdict_changed,population
+A Mole rat is a member of a category of African rodents distinguished by physical,5,4,1.0,1.0,1.0,0.0,0,churn
+A blue whale's heart is the size of a VW,5,0,1.0,1.0,1.0,0.0,0,inert
+A can of soda contains more than ten teaspoons of,5,2,1.0,1.0,1.0,0.0,0,churn
+A cappella is an way of singing without instrumental,5,4,1.0,1.0,1.0,0.0,0,churn
+A day on Mercury is twice as long as a year on,5,4,0.0,0.0,0.0,0.0,0,churn
+A general knowledge fact is a fact about a wide range of,5,4,1.0,1.0,1.0,0.0,0,churn
+A giraffe's neck is about six feet,5,4,1.0,1.0,0.5,0.5,1,mover
+A male lion's roar can be heard up to five miles,5,3,0.0,1.0,0.5,0.5,1,mover
+A polar fox's fur is white to help camouflage against,5,4,1.0,1.0,1.0,0.0,0,churn
+A region in Turkey is called,5,4,1.0,1.0,0.5,0.5,1,mover
+A scientific research project found bacteria in glacier ice in,5,4,1.0,0.0,1.0,-1.0,1,mover
+A seed is an embryonic plant enclosed in a protective outer,5,4,1.0,1.0,1.0,0.0,0,churn
+A teaspoon is equivalent to approximately five,5,4,1.0,1.0,1.0,0.0,0,churn
+A truck can haul more than a,5,0,-1.0,-1.0,-1.0,0.0,0,inert
+A wagon train is a group of wagons traveling,5,3,1.0,1.0,1.0,0.0,0,churn
+Alaska has the longest coastline of any state in the,5,4,1.0,1.0,1.0,0.0,0,churn
+Albanian is spoken by nearly seven million people,5,4,1.0,1.0,0.5,0.5,1,mover
+"Although hippopotamus milk is pink, the meat is",5,1,1.0,1.0,1.0,0.0,0,churn
+Ameila Earhart was the first woman to fly across the Atlantic,5,3,-1.0,-1.0,-1.0,0.0,0,churn
+Amelia Mary Earhart was an American aviation pioneer and,5,4,1.0,1.0,1.0,0.0,0,churn
+"An alligator can snap its jaws shut with great force, but not open its mouth very",5,4,1.0,1.0,1.0,0.0,0,churn
+Ancient Egyptians built pyramids as tombs for pharaohs and,5,4,1.0,1.0,0.5,0.5,1,mover
+Ancient Egyptians used makeup to protect themselves from the sun and enhance,5,4,1.0,1.0,1.0,0.0,0,churn
+Antarctica is the only continent without reptiles or,5,2,1.0,1.0,1.0,0.0,0,churn
+"Anything considered ""unusual"" is by definition, not ordinary or",5,4,1.0,1.0,1.0,0.0,0,churn
+Apple wasn’t always the tech giant success story consumers know,5,2,1.0,1.0,1.0,0.0,0,churn
+"Apples are high in healthful antioxidants, fiber and vitamins A and",5,4,1.0,1.0,0.5,0.5,1,mover
+Approximately two-thirds of the world’s cocoa is produced in,5,4,1.0,1.0,1.0,0.0,0,churn
+Armadillos have four babies at a time and are born already,5,4,1.0,1.0,1.0,0.0,0,churn
+Bacteria are among the oldest living organisms on,5,4,1.0,1.0,1.0,0.0,0,churn
+Bananas are among the oldest fruits cultivated by,5,4,1.0,1.0,0.5,0.5,1,mover
+Barack Obama is the forty-fourth president of the United,5,4,1.0,1.0,1.0,0.0,0,churn
+Bears are very dangerous,5,4,0.0,0.0,0.0,0.0,0,churn
+Bears can be left-handed or,5,2,1.0,1.0,1.0,0.0,0,churn
+Bears often eat bees and wasps to get at the honey and insects inside the,5,4,1.0,1.0,-1.0,2.0,1,mover
+Beavers live in lodges built with smaller branches and mud (also known as,5,4,1.0,-1.0,1.0,-2.0,1,mover
+Benjamin Franklin invented the lighting,5,2,1.0,-1.0,1.0,-2.0,1,mover
+Beyoncé rose to fame as the central member of R&B girl-group Destiny's,5,4,0.0,0.0,0.0,0.0,0,churn
+"Binary digits can be used to represent any kind of data, including images, sound, and",5,4,1.0,1.0,1.0,0.0,0,churn
+Blueberries have the highest antioxidant capacity of all fresh fruit and,5,4,0.0,1.0,1.0,0.0,1,churn
+"Brazil hosts the world's largest Japanese community outside of Japan, with over one million Japanese",5,4,1.0,1.0,1.0,0.0,0,churn
+Brazil is second only to the United States in number of,5,4,1.0,0.5,0.0,0.5,1,mover
+Burning trash releases harmful chemicals into the,5,4,1.0,1.0,1.0,0.0,0,churn
+Butterflies can drink nectar with long,5,4,1.0,1.0,1.0,0.0,0,churn
+Butterfly eggs are very sensitive to touch and,5,2,1.0,1.0,1.0,0.0,0,churn
+Camels store fat in hump(s) on the,5,4,-1.0,0.0,-1.0,1.0,1,mover
+Canada is home to about one fifth of the world's fresh,5,4,1.0,1.0,1.0,0.0,0,churn
+Carnivorous plants are found on every continent but,5,4,1.0,1.0,1.0,0.0,0,churn
+Cellulose is a structural carbohydrate molecule found in the cell walls of most,5,4,1.0,1.0,1.0,0.0,0,churn
+Cephalopods are the most intelligent of all the,5,3,1.0,1.0,1.0,0.0,0,churn
+Chicago is the third most populous city in the United,5,4,1.0,1.0,1.0,0.0,0,churn
+Chickens are actually descendants of,5,0,1.0,1.0,1.0,0.0,0,inert
+Chimpanzees are known to occasionally use tools to fish termites out of termite,5,4,1.0,1.0,1.0,0.0,0,churn
+Cigarette butts are actually the number one littered item in the,5,3,1.0,1.0,1.0,0.0,0,churn
+Citric acid can be used as an eco-friendly cleaning,5,4,1.0,1.0,1.0,0.0,0,churn
+Cockroaches are able to live for up to one week without a,5,2,1.0,1.0,1.0,0.0,0,churn
+"Common pesticides can actually damage a bird's brain, making basic navigation",5,3,0.0,0.0,0.5,-0.5,1,mover
+Cows are able to produce methane gas through belching and,5,2,1.0,1.0,1.0,0.0,0,churn
+"Cows are mostly for producing milk, but can also be used for meat and",5,4,1.0,1.0,1.0,0.0,0,churn
+Cranberries are grown in fresh water,5,4,1.0,0.5,0.0,0.5,1,mover
+Didgeridoos were traditionally used as a part of traditional Aboriginal Australian ceremonies and,5,4,1.0,1.0,0.5,0.5,1,mover
+"Dogs have four toes on each paw, but depending on the breed, some dogs may have",5,4,1.0,1.0,1.0,0.0,0,churn
+"Dollar for dollar, castles cost more to build than any other type of",5,4,0.0,1.0,0.5,0.5,1,mover
+Dolphins are very intelligent and can be trained to perform a variety of,5,4,1.0,1.0,1.0,0.0,0,churn
+"Due to imperfections in the lens of the eye, everyone sees objects in slightly different",5,4,1.0,0.0,0.5,-0.5,1,mover
+"Due to the Doppler effect, sirens sound higher when approaching and lower when",5,4,1.0,1.0,1.0,0.0,0,churn
+Dulce de leche is a sweetened condensed milk pudding popular in many Latin American,5,4,1.0,1.0,1.0,0.0,0,churn
+"During the night, a person’s blood pressure decreases and allows the body to",5,4,1.0,0.5,0.0,0.5,1,mover
+Earth is the only planet in the solar system not named after a,5,4,1.0,0.0,1.0,-1.0,1,mover
+Earthquakes can cause,5,3,1.0,1.0,0.0,1.0,1,mover
+Edison was very hard of,5,2,1.0,1.0,0.5,0.5,1,mover
+Elephants are capable of hearing sounds at frequencies lower than what humans can,5,4,-1.0,0.0,0.5,-0.5,1,mover
+"Encore means ""to do again"", or ""again and again"" in",5,3,1.0,1.0,1.0,0.0,0,churn
+"Every hour, the sun emits enough energy to power the entire United States for an entire",5,4,1.0,1.0,1.0,0.0,0,churn
+"Every time a new continent is discovered, new insect species are discovered as",5,4,1.0,0.5,1.0,-0.5,1,mover
+"Excluding Antarctica, Australia is the driest continent on",5,4,1.0,1.0,1.0,0.0,0,churn
+Female elephants live in extensive social,5,4,1.0,1.0,1.0,0.0,0,churn
+Football is a sport typically played with a spherical ball by two teams of eleven,5,4,0.0,0.0,0.0,0.0,0,churn
+Frogs can absorb water and nutrients through the skin on almost all of its body,5,4,0.0,0.0,0.0,0.0,0,churn
+George Washington had dental problems and wore dentures made of,5,1,1.0,0.0,1.0,-1.0,1,mover
+George Washington was the first ever US,5,2,1.0,1.0,1.0,0.0,0,churn
+George Washington was unanimously elected as the first president of the United States by the Electoral,5,3,1.0,1.0,1.0,0.0,0,churn
+Giraffes are the tallest animals on,5,4,1.0,1.0,1.0,0.0,0,churn
+Grains of salt are visible to the naked,5,2,1.0,1.0,1.0,0.0,0,churn
+Grana Padano cheese is one of the oldest types of cheese in the,5,4,1.0,1.0,0.5,0.5,1,mover
+Greece has the longest coastline in the,5,4,0.0,1.0,1.0,0.0,1,churn
+Ham radio is the longest surviving communications,5,4,1.0,1.0,1.0,0.0,0,churn
+Honey stays fresh,5,0,1.0,1.0,1.0,0.0,0,inert
+"Humans are classified as omnivores, meaning humans eat both plants and",5,4,1.0,1.0,1.0,0.0,0,churn
+"If a human being could see radio waves, the universe would appear quite",5,4,1.0,0.0,1.0,-1.0,1,mover
+"In Asian cultures, the crane is a symbol of long life and good",5,4,1.0,1.0,0.5,0.5,1,mover
+"In ancient times, people believed weird facts about the various stages of the",5,2,0.0,0.0,0.0,0.0,0,churn
+"In medieval Germany, people believed owls were witches in",5,4,1.0,1.0,1.0,0.0,0,churn
+"In some parts of Africa, giraffes are hunted for",5,4,1.0,1.0,1.0,0.0,0,churn
+In some state welcome signs are bilingual in English and,5,4,1.0,1.0,1.0,0.0,0,churn
+Justice Thomas is the longest-serving justice currently on the Supreme,5,2,1.0,1.0,1.0,0.0,0,churn
+Kumquats are the only citrus fruit native to northern,5,3,1.0,1.0,1.0,0.0,0,churn
+Lemurs are evolutionarily closest to monkeys and,5,4,1.0,0.5,1.0,-0.5,1,mover
+Leopard geckos can drop and regrow tails as a defense,5,4,1.0,1.0,0.5,0.5,1,mover
+Life expectancy in the US has declined for the last three years in a,5,3,1.0,1.0,1.0,0.0,0,churn
+Lions are social animals and live in family units called,5,4,1.0,1.0,1.0,0.0,0,churn
+Mahatma Gandhi is the only Indian to ever appear on a US postage,5,2,1.0,1.0,1.0,0.0,0,churn
+Male bees will sting humans but only if the bee feels,5,4,1.0,1.0,1.0,0.0,0,churn
+Male pigs are called “boars” while female pigs are called,5,4,1.0,1.0,1.0,0.0,0,churn
+Mangroves are a type of tree found in coastal tropical and subtropical,5,4,1.0,1.0,1.0,0.0,0,churn
+Many cultures believe mountains are,5,3,1.0,1.0,1.0,0.0,0,churn
+Marie Curie invented the theory of,5,4,1.0,1.0,1.0,0.0,0,churn
+Men's nipples are as sensitive as,5,0,1.0,1.0,1.0,0.0,0,inert
+Mice are social creatures and love to be around other,5,3,1.0,1.0,1.0,0.0,0,churn
+"Mineral oil is a colorless, odorless oil derived from",5,2,1.0,1.0,1.0,0.0,0,churn
+Moon rocks are conglomerate rocks found on Earth's,5,4,1.0,1.0,1.0,0.0,0,churn
+Most of the research into the existence of Sasquatch has been discredited as fraudulent or,5,2,0.0,0.0,1.0,-1.0,1,mover
+"Most treefrog species are actually nocturnal, only appearing during daytime in mating",5,4,1.0,0.0,1.0,-1.0,1,mover
+"New Zealand is divided into even two main land masses, the North Island and the South",5,3,0.0,0.0,-1.0,1.0,1,mover
+Nutrients from different beans support different channels of detoxification in the,5,4,0.0,0.5,0.0,0.5,1,mover
+Omnivores are animals which eat both plants and other,5,4,1.0,1.0,1.0,0.0,0,churn
+"On some Caribbean islands, wild parrots outnumber",5,4,1.0,0.5,0.5,0.0,1,churn
+One fact about Mount Kilimanjaro is its immense,5,4,1.0,1.0,1.0,0.0,0,churn
+One in five Americans will contract skin cancer in the course of a,5,3,1.0,1.0,1.0,0.0,0,churn
+One of Vincent van Gogh's favorite subjects to paint were,5,4,1.0,0.0,1.0,-1.0,1,mover
+Orangutans are one of the few animals known to use,5,2,1.0,1.0,1.0,0.0,0,churn
+Oscar Wilde went to jail because of,5,4,1.0,1.0,1.0,0.0,0,churn
+"Over time, soft-drink consumption has been linked with diabetes, obesity, and heart",5,4,1.0,1.0,1.0,0.0,0,churn
+Owls can actually turn there heads all the way,5,2,0.0,0.0,1.0,-1.0,1,mover
+Owls digest soft-product,5,4,1.0,1.0,1.0,0.0,0,churn
+Oysters perform a crucial role in the life cycle of,5,2,1.0,1.0,0.5,0.5,1,mover
+"Peanuts are not actually nuts, but are",5,4,1.0,1.0,1.0,0.0,0,churn
+Penguins are highly social animals and live in large,5,4,1.0,1.0,0.5,0.5,1,mover
+People with synesthesia often report experiencing colors when thinking about numbers or,5,2,1.0,1.0,1.0,0.0,0,churn
+Peruvian chicken is becoming more popular in,5,4,1.0,1.0,0.0,1.0,1,mover
+Pigeons can distinguish between the faces of individual,5,0,0.0,0.0,0.0,0.0,0,inert
+Polar bears are related to brown bears andights,5,4,1.0,0.0,0.0,0.0,1,churn
+Pop rocks were originally created by,5,4,1.0,1.0,0.0,1.0,1,mover
+Poppies are the official flower of remembrance for soldiers who have died in,5,2,1.0,1.0,1.0,0.0,0,churn
+Purchases of seasonal goods are more likely when the seasons are about to,5,2,1.0,1.0,1.0,0.0,0,churn
+Ravens are attracted to shiny objects and often hoard,5,2,0.0,0.0,0.0,0.0,0,churn
+Red wolves are typically around the same size as German shepherd,5,4,0.0,1.0,0.5,0.5,1,mover
+Research suggests excellent students are more likely to come from households where at least one parent is highly,5,0,1.0,1.0,1.0,0.0,0,inert
+Roosters crow an average of four times every,5,4,1.0,1.0,1.0,0.0,0,churn
+Rubber bands store potential energy because of the tension created when the rubber band is,5,4,1.0,1.0,1.0,0.0,0,churn
+School students in the United States spend an average of six and a half hours each day in,5,4,1.0,1.0,1.0,0.0,0,churn
+Some animals hibernate by curling up into a tight,5,4,1.0,1.0,1.0,0.0,0,churn
+Some species of maturing male of certain Arctic beluga whale populations turn,5,4,1.0,1.0,0.0,1.0,1,mover
+Some species of seals can stay underwater for up to an,5,4,1.0,1.0,1.0,0.0,0,churn
+Some tigers have orange fur with black,5,4,0.0,1.0,1.0,0.0,1,churn
+Spider webs are the strongest substance in the world for thier,5,4,1.0,1.0,1.0,0.0,0,churn
+Spiders can get in to pretty much any hole or opening in a,5,3,1.0,1.0,1.0,0.0,0,churn
+Studies show listening to music can help increase positive emotions and reduce,5,4,1.0,1.0,1.0,0.0,0,churn
+Sunflowers can actually turn and face the sun throughout theentire,5,3,1.0,1.0,1.0,0.0,0,churn
+"Sweet corn is classified as a starchy vegetable, even though its sugar content is quite",5,4,-1.0,-1.0,-1.0,0.0,0,churn
+"Table salt is actually a combination of two otherwise unrelated compounds, sodium and",5,4,1.0,1.0,1.0,0.0,0,churn
+Tarsiers are small primates with large,5,3,1.0,1.0,1.0,0.0,0,churn
+Teddy Roosevelt was the US president with the,5,2,1.0,1.0,1.0,0.0,0,churn
+"Texas is the second-largest state in the United States by population, after",5,3,1.0,0.5,1.0,-0.5,1,mover
+The Grand Canyon is located in,5,3,1.0,1.0,1.0,0.0,0,churn
+The Hubble Space Telescope is named after American astronomer Edwin,5,2,1.0,1.0,1.0,0.0,0,churn
+The Incas used quipu as a form of,5,2,1.0,1.0,1.0,0.0,0,churn
+The Lincoln Memorial was designed to look like a replica of the Greek temple,5,3,-1.0,0.0,-0.5,0.5,1,mover
+The Statue of Liberty was given to the United States by the people of,5,2,1.0,1.0,1.0,0.0,0,churn
+The Taj Mahal is made of,5,2,1.0,1.0,1.0,0.0,0,churn
+"The United Kingdom is comprised of four main countries: England, Scotland, Wales, and Northern",5,3,-1.0,-1.0,-1.0,0.0,0,churn
+The average housefly only lives for two,5,4,-1.0,0.0,1.0,-1.0,1,mover
+The band suede got its name from the type of,5,3,1.0,1.0,1.0,0.0,0,churn
+The buckeye butterfly feeds off of perennial plants in the buckeye,5,4,1.0,0.0,0.0,0.0,1,churn
+The cricket chirp rate is affected by,5,2,1.0,1.0,0.5,0.5,1,mover
+The fear of public speaking is actually one of the most common human,5,4,1.0,1.0,1.0,0.0,0,churn
+The first astronaut in space was a Russian named Yuri,5,2,1.0,1.0,1.0,0.0,0,churn
+The head of a jellyfish is called the,5,2,0.0,0.5,0.5,0.0,1,churn
+The housing market works in,5,4,1.0,0.0,0.0,0.0,1,churn
+The human stomach contains hydrochloric,5,4,1.0,1.0,-1.0,2.0,1,mover
+The kidneys are two bean-shaped organs found in,5,4,1.0,1.0,1.0,0.0,0,churn
+The ladybug is a very important insect to,5,4,1.0,1.0,0.5,0.5,1,mover
+The largest organ in the human body is the,5,4,1.0,1.0,1.0,0.0,0,churn
+The largest sand island in the world is located in,5,4,-1.0,-1.0,-1.0,0.0,0,churn
+"The longest river in Africa is the Nile, which stretches over six thousand",5,3,1.0,1.0,1.0,0.0,0,churn
+"The mitochondria are commonly referred to as the ""powerhouses"" of the",5,4,1.0,1.0,1.0,0.0,0,churn
+The ocean contains more water than all the fresh water on earth,5,4,1.0,0.5,1.0,-0.5,1,mover
+The penis has no bony structure and is not connected to the,5,4,1.0,1.0,1.0,0.0,0,churn
+The smell of a skunk can be detected by a human up to a mile,5,4,1.0,1.0,0.5,0.5,1,mover
+The sun is an almost perfectly spherical,5,4,1.0,1.0,0.0,1.0,1,mover
+The world's population is around seven,5,3,-1.0,-1.0,-1.0,0.0,0,churn
+Thousands of years ago humans used dogs to pull wheeled,5,3,1.0,1.0,1.0,0.0,0,churn
+Tigers are the largest of the five wild cats in the Felidae,5,3,0.0,0.5,1.0,-0.5,1,mover
+Tigers are the largest variables cats in the,5,4,1.0,0.0,0.5,-0.5,1,mover
+"To eyeball the scale of galaxies, scientists often use an analogy to everyday",5,4,1.0,1.0,0.0,1.0,1,mover
+"Traditional medicine usually refers to the pre-scientific practices of a certain culture, region or",5,4,1.0,1.0,1.0,0.0,0,churn
+Trappers used to use beaver furs as,5,3,1.0,1.0,1.0,0.0,0,churn
+"Under certain circumstances, water can remain a liquid below its normal freezing",5,4,1.0,1.0,1.0,0.0,0,churn
+Vampire Bats eat,5,0,1.0,1.0,1.0,0.0,0,inert
+Vikings lived in,5,3,1.0,1.0,1.0,0.0,0,churn
+Water evaporates faster on hot,5,3,1.0,1.0,1.0,0.0,0,churn
+White Blood cells fight infections by bacteria and,5,4,1.0,1.0,1.0,0.0,0,churn
+Whole wheat bread contains more fiber than white,5,4,1.0,-1.0,0.0,-1.0,1,mover
+Wings are the fastest moving body part on a,5,4,1.0,1.0,1.0,0.0,0,churn
+Witches were persecuted during the Salem witch,5,2,1.0,1.0,0.0,1.0,1,mover
+Wolves are top-level predators and sometimes hunt in,5,3,1.0,1.0,1.0,0.0,0,churn
+Zebra mussels originally came from the Black and Caspian Seas in southeast,5,4,1.0,1.0,1.0,0.0,0,churn
