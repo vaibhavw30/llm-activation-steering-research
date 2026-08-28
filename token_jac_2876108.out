@@ -1,0 +1,43 @@
+PyTorch conda environment for use with DeltaAI (CUDA 12.9)
+
+Includes: jupyter, jupyterlab, matplotlib, pandas, scipy,
+          scikit-learn, nvitop, mpi4py, tensorboard, wandb
+
+Quick start (on compute node):
+  module load python/miniforge3_pytorch/2.10.0
+  conda activate base
+  python -c "import torch; print(torch.cuda.is_available())"
+
+For Jupyter notebook support (Open OnDemand):
+  setup-kernel
+
+Job 2876108 on gh052.hsn.cm.delta.internal.ncsa.edu
+Tue Aug  4 22:51:05 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 595.71.05              Driver Version: 595.71.05      CUDA Version: 13.2     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GH200 120GB             On  |   00000019:01:00.0 Off |                    0 |
+| N/A   21C    P0             84W /  900W |       0MiB /  97871MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+=== token_jac cities SKIPPED, token_jac_cities.npz exists Tue Aug  4 10:51:05 PM CDT 2026 ===
+=== token_jac common_claim_true_false SKIPPED, token_jac_common_claim_true_false.npz exists Tue Aug  4 10:51:05 PM CDT 2026 ===
+=== token_steer common_claim_true_false layer:8 certified, per-position Tue Aug  4 10:51:05 PM CDT 2026 ===
+row_index max 4434 exceeds reach_margins rows 2000; the two artifacts are not from the same dataset ordering
+!!!! common_claim_true_false layer:8 per-position FAILED — continuing
+=== token_steer common_claim_true_false layer:8 certified, broadcast Tue Aug  4 10:51:14 PM CDT 2026 ===
+row_index max 4434 exceeds reach_margins rows 2000; the two artifacts are not from the same dataset ordering
+!!!! common_claim_true_false layer:8 broadcast FAILED — continuing
+=== token_jac done Tue Aug  4 10:51:18 PM CDT 2026 ===

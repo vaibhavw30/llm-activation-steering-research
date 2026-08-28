@@ -1,0 +1,155 @@
+PyTorch conda environment for use with DeltaAI (CUDA 12.9)
+
+Includes: jupyter, jupyterlab, matplotlib, pandas, scipy,
+          scikit-learn, nvitop, mpi4py, tensorboard, wandb
+
+Quick start (on compute node):
+  module load python/miniforge3_pytorch/2.10.0
+  conda activate base
+  python -c "import torch; print(torch.cuda.is_available())"
+
+For Jupyter notebook support (Open OnDemand):
+  setup-kernel
+
+Job 2872770 on gh008.hsn.cm.delta.internal.ncsa.edu
+Tue Aug  4 16:00:39 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 595.71.05              Driver Version: 595.71.05      CUDA Version: 13.2     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GH200 120GB             On  |   00000009:01:00.0 Off |                    0 |
+| N/A   20C    P0             97W /  900W |       0MiB /  97871MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+=== token_geom cities (country targets) Tue Aug  4 04:00:39 PM CDT 2026 ===
+[extract] 200 stems from cities (101 label-1, 99 label-0)
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:00,  4.32it/s]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:00<00:00,  3.17it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:00<00:00,  4.66it/s]
+  batch 0-16 done
+  batch 16-32 done
+  batch 32-48 done
+  batch 48-64 done
+  batch 64-80 done
+  batch 80-96 done
+  batch 96-112 done
+  batch 112-128 done
+  batch 128-144 done
+  batch 144-160 done
+  batch 160-176 done
+  batch 176-192 done
+  batch 192-200 done
+[extract] wrote token_acts_cities.npz  z_stem(200, 2304)
+[W] E (256000, 2304)  gamma range [-0.783, 9.450]
+[geom] country target pool: 102 tokens
+[geom] candidate directions: ['md_full', 'mean_diff_tgt_asis', 'probe_grad_tgt_asis']
+  [geom] 0/200 margin=12.847 delta=6.5111 faces=3 solved=True pre/post=5.02
+  [geom] 25/200 margin=20.911 delta=8.0810 faces=2 solved=True pre/post=3.52
+  [geom] 50/200 margin=10.748 delta=5.5913 faces=3 solved=True pre/post=4.74
+  [geom] 75/200 margin=10.800 delta=5.3357 faces=3 solved=True pre/post=5.15
+  [geom] 100/200 margin=10.436 delta=4.6594 faces=2 solved=True pre/post=4.04
+  [geom] 125/200 margin=30.156 delta=13.0969 faces=3 solved=True pre/post=3.98
+  [geom] 150/200 margin=2.659 delta=1.7963 faces=1 solved=True pre/post=4.11
+  [geom] 175/200 margin=15.319 delta=7.1425 faces=2 solved=True pre/post=4.14
+
+=== token_geom cities (target=countries) ===
+statements                     200
+post-norm cone proved          200/200
+pre-norm cone first-order ok   200/200
+  margin             median    13.7587  p10     7.4925  p90    20.2340
+  delta_cone         median     6.3687  p10     3.5330  p90     9.3138
+  delta_rel_z        median     0.0339  p10     0.0192  p90     0.0466
+  delta_cone_pre     median    29.2631  p10    17.3263  p90    39.2751
+  rmsnorm_penalty    median     4.3798  p10     3.8271  p90     5.4223
+  z_norm             median   189.1737  p10   176.4775  p90   211.6690
+  h_norm             median   698.1216  p10   609.4586  p90   864.8033
+  delta_cone / delta_face  median 1.0877   (1.0 => the single binding face IS the whole constraint)
+  md_full                alpha 0.0040  radial 0.0242  eps_req   1521.284  =    238.9x optimal
+  mean_diff_tgt_asis     alpha 0.0133  radial 0.0163  eps_req    504.205  =     79.2x optimal
+  probe_grad_tgt_asis    alpha 0.0135  radial 0.0121  eps_req    471.395  =     74.0x optimal
+
+wrote token_geom_cities.csv and token_geom_cities.npz
+=== token_geom common_claim (runner-up targets) Tue Aug  4 04:10:25 PM CDT 2026 ===
+[extract] 200 stems from common_claim_true_false (92 label-1, 108 label-0)
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:00<00:00, 97.61it/s]
+  batch 0-16 done
+  batch 16-32 done
+  batch 32-48 done
+  batch 48-64 done
+  batch 64-80 done
+  batch 80-96 done
+  batch 96-112 done
+  batch 112-128 done
+  batch 128-144 done
+  batch 144-160 done
+  batch 160-176 done
+  batch 176-192 done
+  batch 192-200 done
+[extract] wrote token_acts_common_claim_true_false.npz  z_stem(200, 2304)
+[W] E (256000, 2304)  gamma range [-0.783, 9.450]
+[geom] candidate directions: ['md_full', 'mean_diff_tgt_asis', 'probe_grad_tgt_asis']
+  [geom] 0/200 margin=1.287 delta=0.6026 faces=1 solved=True pre/post=3.16
+  [geom] 25/200 margin=0.450 delta=0.1894 faces=1 solved=True pre/post=6.79
+  [geom] 50/200 margin=4.654 delta=2.5508 faces=1 solved=True pre/post=4.82
+  [geom] 75/200 margin=6.097 delta=2.7563 faces=1 solved=True pre/post=8.62
+  [geom] 100/200 margin=1.524 delta=0.6479 faces=1 solved=True pre/post=4.00
+  [geom] 125/200 margin=0.224 delta=0.0817 faces=1 solved=True pre/post=4.88
+  [geom] 150/200 margin=3.970 delta=1.7402 faces=1 solved=True pre/post=5.34
+  [geom] 175/200 margin=0.926 delta=0.4448 faces=1 solved=True pre/post=3.78
+
+=== token_geom common_claim_true_false (target=runnerup) ===
+statements                     200
+post-norm cone proved          200/200
+pre-norm cone first-order ok   200/200
+  margin             median     3.5985  p10     0.3574  p90     9.5406
+  delta_cone         median     1.7382  p10     0.1512  p90     4.7751
+  delta_rel_z        median     0.0106  p10     0.0009  p90     0.0314
+  delta_cone_pre     median     8.4412  p10     0.7264  p90    26.9498
+  rmsnorm_penalty    median     5.1772  p10     3.7332  p90     6.6037
+  z_norm             median   168.7467  p10   133.4101  p90   198.0964
+  h_norm             median   848.5784  p10   614.9314  p90  1072.7699
+  delta_cone / delta_face  median 1.0010   (1.0 => the single binding face IS the whole constraint)
+  md_full                alpha 0.0094  radial 0.1028  eps_req    167.975  =     96.6x optimal
+  mean_diff_tgt_asis     alpha 0.0156  radial 0.0309  eps_req    103.020  =     59.3x optimal
+  probe_grad_tgt_asis    alpha 0.0147  radial 0.0073  eps_req    126.079  =     72.5x optimal
+
+wrote token_geom_common_claim_true_false.csv and token_geom_common_claim_true_false.npz
+=== token_geom cities (runner-up lower bound) Tue Aug  4 04:15:57 PM CDT 2026 ===
+[W] E (256000, 2304)  gamma range [-0.783, 9.450]
+[geom] candidate directions: ['md_full', 'mean_diff_tgt_asis', 'probe_grad_tgt_asis']
+  [geom] 0/200 margin=1.101 delta=0.3311 faces=1 solved=True pre/post=5.02
+  [geom] 25/200 margin=8.791 delta=5.9381 faces=1 solved=True pre/post=3.49
+  [geom] 50/200 margin=1.491 delta=0.5239 faces=1 solved=True pre/post=4.94
+  [geom] 75/200 margin=2.092 delta=0.7348 faces=1 solved=True pre/post=5.37
+  [geom] 100/200 margin=6.352 delta=2.3569 faces=1 solved=True pre/post=4.02
+  [geom] 125/200 margin=15.487 delta=10.4607 faces=1 solved=True pre/post=3.82
+  [geom] 150/200 margin=2.659 delta=1.7963 faces=1 solved=True pre/post=4.11
+  [geom] 175/200 margin=5.121 delta=1.7070 faces=1 solved=True pre/post=4.19
+
+=== token_geom cities_runnerup (target=runnerup) ===
+statements                     200
+post-norm cone proved          200/200
+pre-norm cone first-order ok   200/200
+  margin             median     4.6514  p10     1.6834  p90     8.9533
+  delta_cone         median     1.7643  p10     0.6515  p90     4.9317
+  delta_rel_z        median     0.0091  p10     0.0035  p90     0.0253
+  delta_cone_pre     median     7.8260  p10     3.1512  p90    20.7633
+  rmsnorm_penalty    median     4.3972  p10     3.7514  p90     5.4683
+  z_norm             median   189.1737  p10   176.4775  p90   211.6690
+  h_norm             median   698.1216  p10   609.4586  p90   864.8033
+  delta_cone / delta_face  median 1.0010   (1.0 => the single binding face IS the whole constraint)
+  md_full                alpha 0.0047  radial 0.0242  eps_req    301.734  =    171.0x optimal
+  mean_diff_tgt_asis     alpha 0.0105  radial 0.0163  eps_req    166.662  =     94.5x optimal
+  probe_grad_tgt_asis    alpha 0.0238  radial 0.0121  eps_req     94.911  =     53.8x optimal
+
+wrote token_geom_cities_runnerup.csv and token_geom_cities_runnerup.npz
+=== token_geom done Tue Aug  4 04:21:24 PM CDT 2026 ===

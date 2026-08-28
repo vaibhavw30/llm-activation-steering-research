@@ -1,0 +1,634 @@
+PyTorch conda environment for use with DeltaAI (CUDA 12.9)
+
+Includes: jupyter, jupyterlab, matplotlib, pandas, scipy,
+          scikit-learn, nvitop, mpi4py, tensorboard, wandb
+
+Quick start (on compute node):
+  module load python/miniforge3_pytorch/2.10.0
+  conda activate base
+  python -c "import torch; print(torch.cuda.is_available())"
+
+For Jupyter notebook support (Open OnDemand):
+  setup-kernel
+
+Job 2876092 on gh008.hsn.cm.delta.internal.ncsa.edu
+Tue Aug  4 22:48:47 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 595.71.05              Driver Version: 595.71.05      CUDA Version: 13.2     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GH200 120GB             On  |   00000019:01:00.0 Off |                    0 |
+| N/A   21C    P0             85W /  900W |       0MiB /  97871MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+.......................................                                  [100%]
+39 passed in 6.77s
+=== token_sens cities postnorm Tue Aug  4 10:48:55 PM CDT 2026 ===
+[sens] 40 statements x 13 directions x 4 budgets = 2080 forwards
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:00<00:00, 97.64it/s]
+  stmt 0/40 done
+  stmt 5/40 done
+  stmt 10/40 done
+  stmt 15/40 done
+  stmt 20/40 done
+  stmt 25/40 done
+  stmt 30/40 done
+  stmt 35/40 done
+
+=== token_sens site=postnorm ===
+rows 2080  statements 40  directions 13  budgets [np.float64(0.01), np.float64(0.1), np.float64(1.0), np.float64(4.0)]
+
+-- gain = ||dz|| / eps, by direction (median over statements) --
+frac                      0.01       0.10       1.00       4.00
+direction                                                      
+a_unit                       1          1          1          1
+md_full                      1          1          1          1
+mean_diff_tgt_asis           1          1          1          1
+oracle                       1          1          1          1
+probe_grad_tgt_asis          1          1          1          1
+random0                      1          1          1          1
+random1                      1          1          1          1
+random2                      1          1          1          1
+random3                      1          1          1          1
+random4                      1          1          1          1
+random5                      1          1          1          1
+random6                      1          1          1          1
+random7                      1          1          1          1
+
+-- claim 4: spread of gain ACROSS directions, at fixed budget --
+  frac 0.01   p10          1  p90          1  spread p90/p10     1.00
+  frac 0.1    p10          1  p90          1  spread p90/p10     1.00
+  frac 1      p10          1  p90          1  spread p90/p10     1.00
+  frac 4      p10          1  p90          1  spread p90/p10     1.00
+
+-- chaos: same direction, gain at the largest budget / at the smallest --
+  random2                    1.0000
+  random4                    1.0000
+  random5                    1.0000
+  mean_diff_tgt_asis         1.0000
+  md_full                    1.0000
+  oracle                     1.0000
+  random3                    1.0000
+  random1                    1.0000
+  random0                    1.0000
+  probe_grad_tgt_asis        1.0000
+  random6                    1.0000
+  a_unit                     1.0000
+  random7                    1.0000
+  median scale-dependence 1.0000  (1.0 => exactly linear over a 400x budget range)
+
+-- slope = dM / eps: readout movement bought per unit budget --
+frac                      0.01       0.10       1.00       4.00
+direction                                                      
+a_unit                       1          1          1          1
+md_full               0.003979    0.00398    0.00398    0.00398
+mean_diff_tgt_asis     -0.0153    -0.0153    -0.0153    -0.0153
+oracle                  0.9348     0.9348     0.9348     0.9348
+probe_grad_tgt_asis    0.01238    0.01238    0.01238    0.01238
+random0               -0.01883   -0.01884   -0.01884   -0.01884
+random1               -0.03293   -0.03293   -0.03293   -0.03293
+random2               0.001197   0.001197   0.001197   0.001197
+random3                0.01617    0.01617    0.01617    0.01617
+random4                -0.0199    -0.0199    -0.0199    -0.0199
+random5                0.01623    0.01623    0.01623    0.01623
+random6               0.006973   0.006974   0.006974   0.006974
+random7               -0.02199   -0.02199   -0.02199   -0.02199
+
+[assert] postnorm identity: max |gain-1| 1.32e-04, max |slope - a.u| 1.10e-04 (HARNESS OK)
+
+wrote token_sens_cities_postnorm_all.csv
+=== token_sens cities prenorm Tue Aug  4 10:50:26 PM CDT 2026 ===
+[sens] 40 statements x 13 directions x 4 budgets = 2080 forwards
+[sens] post-norm directions injected at a prenorm site are raw directions, not actuators for that site; `jtw` is the actuator
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:00<00:00, 96.50it/s]
+  stmt 0/40 done
+  stmt 5/40 done
+  stmt 10/40 done
+  stmt 15/40 done
+  stmt 20/40 done
+  stmt 25/40 done
+  stmt 30/40 done
+  stmt 35/40 done
+
+=== token_sens site=prenorm ===
+rows 2080  statements 40  directions 13  budgets [np.float64(0.01), np.float64(0.1), np.float64(1.0), np.float64(4.0)]
+
+-- gain = ||dz|| / eps, by direction (median over statements) --
+frac                      0.01       0.10       1.00       4.00
+direction                                                      
+a_unit                  0.2292     0.2292     0.2292     0.2293
+md_full                 0.3005     0.3004     0.3003     0.2999
+mean_diff_tgt_asis      0.2362     0.2362     0.2362     0.2361
+oracle                   0.231      0.231      0.231     0.2311
+probe_grad_tgt_asis      0.253      0.253     0.2529     0.2527
+random0                 0.2478     0.2478     0.2477     0.2474
+random1                 0.2465     0.2465     0.2465     0.2465
+random2                 0.2439     0.2439      0.244     0.2441
+random3                 0.2438     0.2438     0.2438     0.2436
+random4                 0.2454     0.2453     0.2452     0.2447
+random5                 0.2457     0.2457     0.2457     0.2457
+random6                 0.2447     0.2447     0.2447     0.2446
+random7                 0.2456     0.2456     0.2455     0.2452
+
+-- claim 4: spread of gain ACROSS directions, at fixed budget --
+  frac 0.01   p10      0.232  p90      0.252  spread p90/p10     1.09
+  frac 0.1    p10      0.232  p90     0.2519  spread p90/p10     1.09
+  frac 1      p10      0.232  p90     0.2519  spread p90/p10     1.09
+  frac 4      p10     0.2321  p90     0.2516  spread p90/p10     1.08
+
+-- chaos: same direction, gain at the largest budget / at the smallest --
+  random4                    0.9973
+  md_full                    0.9983
+  random7                    0.9984
+  probe_grad_tgt_asis        0.9986
+  random0                    0.9986
+  random3                    0.9990
+  random6                    0.9998
+  mean_diff_tgt_asis         0.9999
+  random1                    0.9999
+  random5                    1.0000
+  oracle                     1.0005
+  a_unit                     1.0007
+  random2                    1.0008
+  median scale-dependence 0.9998  (1.0 => exactly linear over a 400x budget range)
+
+-- slope = dM / eps: readout movement bought per unit budget --
+frac                      0.01       0.10       1.00       4.00
+direction                                                      
+a_unit                  0.2209     0.2209      0.221     0.2214
+md_full              0.0006111   0.000606  0.0006153  0.0006472
+mean_diff_tgt_asis   -0.001143   -0.00114  -0.001122  -0.001063
+oracle                  0.2121     0.2121     0.2123     0.2126
+probe_grad_tgt_asis   0.003148   0.003145   0.003167   0.003236
+random0              -0.002718  -0.002714  -0.002691  -0.002575
+random1              -0.007499  -0.007503  -0.007479  -0.007396
+random2             -0.0002436 -0.0002435 -0.0002199 -0.0001511
+random3               0.003797   0.003799   0.003833    0.00403
+random4              -0.004232  -0.004227   -0.00418  -0.004123
+random5               0.002791     0.0028    0.00285   0.003013
+random6               0.001535   0.001549   0.001571   0.001642
+random7              -0.002375  -0.002374   -0.00236  -0.002314
+
+wrote token_sens_cities_prenorm_all.csv
+=== token_sens cities layer:16 Tue Aug  4 10:51:57 PM CDT 2026 ===
+[sens] 40 statements x 14 directions x 4 budgets = 2240 forwards
+[sens] post-norm directions injected at a layer:16 site are raw directions, not actuators for that site; `jtw` is the actuator
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:00<00:00, 97.49it/s]
+  stmt 0/40 done
+  stmt 5/40 done
+  stmt 10/40 done
+  stmt 15/40 done
+  stmt 20/40 done
+  stmt 25/40 done
+  stmt 30/40 done
+  stmt 35/40 done
+
+=== token_sens site=layer:16 ===
+rows 2240  statements 40  directions 14  budgets [np.float64(0.01), np.float64(0.1), np.float64(1.0), np.float64(4.0)]
+
+-- gain = ||dz|| / eps, by direction (median over statements) --
+frac                      0.01       0.10       1.00       4.00
+direction                                                      
+a_unit                  0.7704     0.7692     0.7533       0.76
+jtw                      5.657      5.674      5.177      3.715
+md_full                 0.6399     0.6393     0.6362     0.6248
+mean_diff_tgt_asis      0.6952     0.6945     0.6933     0.6889
+oracle                  0.7562     0.7564     0.7567     0.7718
+probe_grad_tgt_asis     0.8866     0.8871     0.8941       0.92
+random0                 0.5963     0.5956     0.5893      0.583
+random1                 0.6254     0.6262     0.6343     0.6633
+random2                 0.6468     0.6469     0.6465     0.6387
+random3                 0.6318     0.6314     0.6277     0.6412
+random4                 0.5715     0.5714     0.5713     0.5714
+random5                 0.5782     0.5784     0.5772     0.5728
+random6                 0.5873     0.5871     0.5874     0.5876
+random7                 0.5112     0.5114     0.5152     0.5232
+
+-- claim 4: spread of gain ACROSS directions, at fixed budget --
+  frac 0.01   p10     0.5735  p90     0.8517  spread p90/p10     1.49
+  frac 0.1    p10     0.5735  p90     0.8517  spread p90/p10     1.49
+  frac 1      p10     0.5731  p90     0.8529  spread p90/p10     1.49
+  frac 4      p10     0.5718  p90     0.8756  spread p90/p10     1.53
+
+-- chaos: same direction, gain at the largest budget / at the smallest --
+  jtw                        0.6567
+  md_full                    0.9763
+  random0                    0.9777
+  a_unit                     0.9864
+  random2                    0.9874
+  random5                    0.9905
+  mean_diff_tgt_asis         0.9910
+  random4                    0.9998
+  random6                    1.0005
+  random3                    1.0149
+  oracle                     1.0207
+  random7                    1.0235
+  probe_grad_tgt_asis        1.0377
+  random1                    1.0606
+  median scale-dependence 0.9954  (1.0 => exactly linear over a 400x budget range)
+
+-- slope = dM / eps: readout movement bought per unit budget --
+frac                      0.01       0.10       1.00       4.00
+direction                                                      
+a_unit                 0.05898    0.05887    0.05739    0.05624
+jtw                     0.5815     0.5683     0.4543     0.2512
+md_full              -0.004634  -0.004653  -0.004552  -0.003245
+mean_diff_tgt_asis   -0.005322  -0.005321  -0.004952  -0.004189
+oracle                 0.06189    0.06172    0.05986    0.05942
+probe_grad_tgt_asis  -0.009472   -0.00955   -0.01002   -0.01085
+random0              -0.008009  -0.007998  -0.008212  -0.007749
+random1               -0.01095   -0.01089   -0.01059   -0.01101
+random2              -0.003152  -0.003184  -0.003102  -0.004018
+random3              -0.001401  -0.001327  -0.001302  -0.001273
+random4                0.00443   0.004491   0.004813   0.004899
+random5               0.005698     0.0057   0.005642   0.005963
+random6               -0.00715  -0.007169  -0.006395  -0.007349
+random7               0.001358   0.001386   0.001134  0.0008627
+
+wrote token_sens_cities_layer16_all.csv
+=== token_sens common_claim_true_false postnorm Tue Aug  4 10:53:36 PM CDT 2026 ===
+[sens] 40 statements x 13 directions x 4 budgets = 2080 forwards
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:00<00:00, 105.02it/s]
+  stmt 0/40 done
+  stmt 5/40 done
+  stmt 10/40 done
+  stmt 15/40 done
+  stmt 20/40 done
+  stmt 25/40 done
+  stmt 30/40 done
+  stmt 35/40 done
+
+=== token_sens site=postnorm ===
+rows 2080  statements 40  directions 13  budgets [np.float64(0.01), np.float64(0.1), np.float64(1.0), np.float64(4.0)]
+
+-- gain = ||dz|| / eps, by direction (median over statements) --
+frac                      0.01       0.10       1.00       4.00
+direction                                                      
+a_unit                       1          1          1          1
+md_full                      1          1          1          1
+mean_diff_tgt_asis           1          1          1          1
+oracle                       1          1          1          1
+probe_grad_tgt_asis          1          1          1          1
+random0                      1          1          1          1
+random1                      1          1          1          1
+random2                      1          1          1          1
+random3                      1          1          1          1
+random4                      1          1          1          1
+random5                      1          1          1          1
+random6                      1          1          1          1
+random7                      1          1          1          1
+
+-- claim 4: spread of gain ACROSS directions, at fixed budget --
+  frac 0.01   p10          1  p90          1  spread p90/p10     1.00
+  frac 0.1    p10          1  p90          1  spread p90/p10     1.00
+  frac 1      p10          1  p90          1  spread p90/p10     1.00
+  frac 4      p10          1  p90          1  spread p90/p10     1.00
+
+-- chaos: same direction, gain at the largest budget / at the smallest --
+  mean_diff_tgt_asis         1.0000
+  random4                    1.0000
+  random6                    1.0000
+  random3                    1.0000
+  random5                    1.0000
+  a_unit                     1.0000
+  oracle                     1.0000
+  probe_grad_tgt_asis        1.0000
+  random1                    1.0000
+  random0                    1.0000
+  md_full                    1.0000
+  random2                    1.0000
+  random7                    1.0000
+  median scale-dependence 1.0000  (1.0 => exactly linear over a 400x budget range)
+
+-- slope = dM / eps: readout movement bought per unit budget --
+frac                      0.01       0.10       1.00       4.00
+direction                                                      
+a_unit                       1          1          1          1
+md_full                0.00175   0.001347   0.001345   0.001345
+mean_diff_tgt_asis   0.0003988  0.0003797   0.000376  0.0003764
+oracle                       1          1          1          1
+probe_grad_tgt_asis  0.0003936  0.0004097  0.0004109  0.0004108
+random0              -0.000181 -0.0001776 -0.0001778 -0.0001778
+random1               0.007047   0.007052    0.00705   0.007051
+random2               0.007138    0.00714    0.00714    0.00714
+random3               0.000105  0.0001073  0.0001082  0.0001083
+random4             -0.0003237 -0.0003249 -0.0003249  -0.000325
+random5              0.0003788  0.0003638  0.0003646  0.0003646
+random6               0.001874   0.001856   0.001846   0.001848
+random7              -0.007603  -0.007575  -0.007575  -0.007575
+
+[assert] postnorm identity: max |gain-1| 2.27e-02, max |slope - a.u| 6.35e-03 (HARNESS BROKEN — stop and debug)
+
+wrote token_sens_common_claim_true_false_postnorm_all.csv
+=== token_sens common_claim_true_false prenorm Tue Aug  4 10:55:06 PM CDT 2026 ===
+[sens] 40 statements x 13 directions x 4 budgets = 2080 forwards
+[sens] post-norm directions injected at a prenorm site are raw directions, not actuators for that site; `jtw` is the actuator
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:00<00:00, 93.32it/s]
+  stmt 0/40 done
+  stmt 5/40 done
+  stmt 10/40 done
+  stmt 15/40 done
+  stmt 20/40 done
+  stmt 25/40 done
+  stmt 30/40 done
+  stmt 35/40 done
+
+=== token_sens site=prenorm ===
+rows 2080  statements 40  directions 13  budgets [np.float64(0.01), np.float64(0.1), np.float64(1.0), np.float64(4.0)]
+
+-- gain = ||dz|| / eps, by direction (median over statements) --
+frac                      0.01       0.10       1.00       4.00
+direction                                                      
+a_unit                  0.1935     0.1935     0.1935     0.1936
+md_full                 0.2419     0.2392     0.2392     0.2394
+mean_diff_tgt_asis       0.195     0.1936     0.1936     0.1937
+oracle                  0.1935     0.1935     0.1935     0.1936
+probe_grad_tgt_asis     0.2087     0.2087     0.2087     0.2086
+random0                 0.2025     0.2014     0.2014     0.2014
+random1                  0.203     0.2002     0.2002     0.2001
+random2                  0.201     0.1982     0.1983     0.1983
+random3                 0.2009     0.1981     0.1981      0.198
+random4                 0.2026     0.1998     0.1997     0.1996
+random5                 0.2024     0.1996     0.1996     0.1995
+random6                 0.2015     0.1987     0.1987     0.1987
+random7                 0.2022     0.1994     0.1994     0.1993
+
+-- claim 4: spread of gain ACROSS directions, at fixed budget --
+  frac 0.01   p10     0.1938  p90     0.2075  spread p90/p10     1.07
+  frac 0.1    p10     0.1935  p90     0.2072  spread p90/p10     1.07
+  frac 1      p10     0.1936  p90     0.2072  spread p90/p10     1.07
+  frac 4      p10     0.1936  p90     0.2072  spread p90/p10     1.07
+
+-- chaos: same direction, gain at the largest budget / at the smallest --
+  random4                    0.9853
+  random3                    0.9858
+  random1                    0.9858
+  random6                    0.9859
+  random5                    0.9859
+  random7                    0.9859
+  random2                    0.9867
+  md_full                    0.9896
+  mean_diff_tgt_asis         0.9931
+  random0                    0.9948
+  probe_grad_tgt_asis        0.9998
+  a_unit                     1.0004
+  oracle                     1.0004
+  median scale-dependence 0.9867  (1.0 => exactly linear over a 400x budget range)
+
+-- slope = dM / eps: readout movement bought per unit budget --
+frac                      0.01       0.10       1.00       4.00
+direction                                                      
+a_unit                  0.1905     0.1905     0.1905     0.1906
+md_full              0.0003984  0.0004553  0.0005306  0.0005312
+mean_diff_tgt_asis  -0.0004799 -0.0004261 -0.0004745 -0.0004639
+oracle                  0.1905     0.1905     0.1905     0.1906
+probe_grad_tgt_asis -0.0001103 -0.0001263 -0.0001276 -0.0001259
+random0             -0.0006595 -0.0005088 -0.0005041 -0.0005019
+random1              0.0005973  0.0009705  0.0009485  0.0009504
+random2               0.001335    0.00134   0.001377   0.001498
+random3             -7.311e-05 -8.031e-05 -7.307e-05 -6.107e-05
+random4             -0.0005072 -0.0003856 -0.0003823 -0.0003661
+random5              0.0002836  0.0002985  0.0003335  0.0004483
+random6             -0.0005221 -1.633e-05  1.976e-05   0.000131
+random7              -0.001325  -0.001306  -0.001191  -0.001187
+
+wrote token_sens_common_claim_true_false_prenorm_all.csv
+=== token_sens common_claim_true_false layer:16 Tue Aug  4 10:56:43 PM CDT 2026 ===
+[sens] 40 statements x 14 directions x 4 budgets = 2240 forwards
+[sens] post-norm directions injected at a layer:16 site are raw directions, not actuators for that site; `jtw` is the actuator
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:00<00:00, 97.73it/s]
+  stmt 0/40 done
+  stmt 5/40 done
+  stmt 10/40 done
+  stmt 15/40 done
+  stmt 20/40 done
+  stmt 25/40 done
+  stmt 30/40 done
+  stmt 35/40 done
+
+=== token_sens site=layer:16 ===
+rows 2240  statements 40  directions 14  budgets [np.float64(0.01), np.float64(0.1), np.float64(1.0), np.float64(4.0)]
+
+-- gain = ||dz|| / eps, by direction (median over statements) --
+frac                      0.01       0.10       1.00       4.00
+direction                                                      
+a_unit                  0.7513     0.7518      0.742     0.7427
+jtw                      4.246      4.235      4.179      3.597
+md_full                 0.6918     0.6701     0.6601     0.6745
+mean_diff_tgt_asis      0.7247     0.7211      0.714     0.7081
+oracle                  0.7518     0.7519     0.7418     0.7427
+probe_grad_tgt_asis     0.6502     0.6388     0.6329     0.6386
+random0                 0.5466     0.5434     0.5384     0.5383
+random1                  0.535     0.5298     0.5284     0.5279
+random2                 0.5513     0.5429     0.5341     0.5333
+random3                 0.5431     0.5406       0.54     0.5413
+random4                 0.5328     0.5222     0.5213      0.521
+random5                 0.5623     0.5568     0.5578     0.5589
+random6                 0.5381     0.5303      0.532     0.5364
+random7                 0.5436     0.5412     0.5424     0.5555
+
+-- claim 4: spread of gain ACROSS directions, at fixed budget --
+  frac 0.01   p10      0.536  p90     0.7516  spread p90/p10     1.40
+  frac 0.1    p10       0.53  p90     0.7519  spread p90/p10     1.42
+  frac 1      p10     0.5295  p90     0.7419  spread p90/p10     1.40
+  frac 4      p10     0.5296  p90     0.7427  spread p90/p10     1.40
+
+-- chaos: same direction, gain at the largest budget / at the smallest --
+  jtw                        0.8470
+  random2                    0.9673
+  md_full                    0.9750
+  mean_diff_tgt_asis         0.9771
+  random4                    0.9779
+  probe_grad_tgt_asis        0.9822
+  random0                    0.9848
+  random1                    0.9868
+  oracle                     0.9880
+  a_unit                     0.9885
+  random5                    0.9938
+  random3                    0.9966
+  random6                    0.9968
+  random7                    1.0218
+  median scale-dependence 0.9858  (1.0 => exactly linear over a 400x budget range)
+
+-- slope = dM / eps: readout movement bought per unit budget --
+frac                      0.01       0.10       1.00       4.00
+direction                                                      
+a_unit                 0.07329    0.07356     0.0753    0.07564
+jtw                     0.5473     0.5481     0.5229     0.5135
+md_full               0.002251   0.002519   0.002628    0.00281
+mean_diff_tgt_asis    0.001011   0.003615   0.004639   0.004857
+oracle                  0.0733    0.07356    0.07529    0.07564
+probe_grad_tgt_asis  0.0008496  0.0008903   0.001084    0.00172
+random0              -0.001546  -0.001464  -0.001528  -0.001768
+random1              -0.001121 -0.0005798 -0.0003753 -0.0009343
+random2              -0.001983  -0.001979  -0.001919  -0.001951
+random3               0.001714    0.00152   0.001199  8.465e-05
+random4               0.003208   0.002846   0.002683   0.001983
+random5              7.005e-05  0.0009389  0.0004077   0.000512
+random6              -0.002116   -0.00208  -0.002068  -0.002007
+random7              0.0002539  5.946e-05 -0.0002014 -7.953e-05
+
+wrote token_sens_common_claim_true_false_layer16_all.csv
+=== token_sens positions=last ablation Tue Aug  4 10:58:20 PM CDT 2026 ===
+[sens] 40 statements x 14 directions x 4 budgets = 2240 forwards
+[sens] post-norm directions injected at a layer:16 site are raw directions, not actuators for that site; `jtw` is the actuator
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:00<00:00, 91.78it/s]
+  stmt 0/40 done
+  stmt 5/40 done
+  stmt 10/40 done
+  stmt 15/40 done
+  stmt 20/40 done
+  stmt 25/40 done
+  stmt 30/40 done
+  stmt 35/40 done
+
+=== token_sens site=layer:16 ===
+rows 2240  statements 40  directions 14  budgets [np.float64(0.01), np.float64(0.1), np.float64(1.0), np.float64(4.0)]
+
+-- gain = ||dz|| / eps, by direction (median over statements) --
+frac                      0.01       0.10       1.00       4.00
+direction                                                      
+a_unit                  0.4976     0.4963     0.5043     0.5202
+jtw                      4.193       4.17      3.869      2.898
+md_full                 0.4002     0.4005     0.4018     0.4013
+mean_diff_tgt_asis      0.4816      0.477     0.4784      0.486
+oracle                  0.4934      0.493     0.4882     0.4988
+probe_grad_tgt_asis       0.57     0.5706     0.5774     0.5963
+random0                 0.4107     0.4065     0.4043     0.4091
+random1                 0.4103     0.4105     0.4143     0.4278
+random2                 0.4176     0.4175     0.4184     0.4215
+random3                 0.4082     0.4096     0.4101      0.415
+random4                 0.3892     0.3893     0.3843     0.3724
+random5                 0.3575     0.3572     0.3583     0.3621
+random6                 0.4232     0.4216     0.4219     0.4202
+random7                  0.399     0.3989     0.3983     0.3992
+
+-- claim 4: spread of gain ACROSS directions, at fixed budget --
+  frac 0.01   p10     0.3921  p90     0.5482  spread p90/p10     1.40
+  frac 0.1    p10     0.3921  p90     0.5483  spread p90/p10     1.40
+  frac 1      p10     0.3885  p90     0.5555  spread p90/p10     1.43
+  frac 4      p10     0.3805  p90     0.5734  spread p90/p10     1.51
+
+-- chaos: same direction, gain at the largest budget / at the smallest --
+  jtw                        0.6910
+  random4                    0.9569
+  random6                    0.9931
+  random0                    0.9959
+  random7                    1.0006
+  md_full                    1.0029
+  mean_diff_tgt_asis         1.0093
+  random2                    1.0094
+  oracle                     1.0109
+  random5                    1.0128
+  random3                    1.0166
+  random1                    1.0425
+  a_unit                     1.0455
+  probe_grad_tgt_asis        1.0461
+  median scale-dependence 1.0093  (1.0 => exactly linear over a 400x budget range)
+
+-- slope = dM / eps: readout movement bought per unit budget --
+frac                      0.01       0.10       1.00       4.00
+direction                                                      
+a_unit                 0.04101     0.0409    0.04023    0.04071
+jtw                     0.3555     0.3533     0.3017     0.1986
+md_full               -0.00343  -0.003449  -0.003587  -0.003407
+mean_diff_tgt_asis   -0.004097  -0.004073  -0.003892  -0.003526
+oracle                 0.04158    0.04158    0.04136    0.04125
+probe_grad_tgt_asis  -0.001832  -0.001865   -0.00226  -0.002636
+random0             -0.0009616 -0.0009314  -0.001053  -0.001436
+random1              -0.008023  -0.008018  -0.008202  -0.008918
+random2             -0.0001475 -0.0001483 -4.182e-06  0.0001762
+random3             -0.0009922 -0.0009308 -0.0009488 -0.0006851
+random4              0.0002698   0.000262  0.0003329  0.0002076
+random5               0.004324   0.004407   0.004514   0.004661
+random6              0.0003536  0.0007319   0.000661  0.0005136
+random7               0.001666   0.001533   0.001561   0.002128
+
+wrote token_sens_cities_layer16_last.csv
+[sens] 40 statements x 14 directions x 4 budgets = 2240 forwards
+[sens] post-norm directions injected at a layer:16 site are raw directions, not actuators for that site; `jtw` is the actuator
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:00<00:00, 92.39it/s]
+  stmt 0/40 done
+  stmt 5/40 done
+  stmt 10/40 done
+  stmt 15/40 done
+  stmt 20/40 done
+  stmt 25/40 done
+  stmt 30/40 done
+  stmt 35/40 done
+
+=== token_sens site=layer:16 ===
+rows 2240  statements 40  directions 14  budgets [np.float64(0.01), np.float64(0.1), np.float64(1.0), np.float64(4.0)]
+
+-- gain = ||dz|| / eps, by direction (median over statements) --
+frac                      0.01       0.10       1.00       4.00
+direction                                                      
+a_unit                  0.5182     0.5195     0.5192     0.5191
+jtw                      2.591      2.546      2.506      2.122
+md_full                  0.415     0.3994     0.3993      0.399
+mean_diff_tgt_asis      0.4421     0.4342     0.4212     0.4201
+oracle                  0.5182     0.5195     0.5192     0.5191
+probe_grad_tgt_asis     0.4205     0.4104     0.4083     0.4093
+random0                 0.3548     0.3481     0.3515     0.3533
+random1                 0.3469     0.3435     0.3403     0.3396
+random2                 0.3679     0.3581      0.348     0.3481
+random3                 0.3567     0.3454     0.3464     0.3465
+random4                 0.3388      0.333     0.3326      0.332
+random5                 0.3623     0.3558     0.3563      0.357
+random6                 0.3756     0.3703     0.3697     0.3686
+random7                 0.3623     0.3489     0.3472     0.3473
+
+-- claim 4: spread of gain ACROSS directions, at fixed budget --
+  frac 0.01   p10     0.3493  p90     0.5182  spread p90/p10     1.48
+  frac 0.1    p10     0.3441  p90     0.5195  spread p90/p10     1.51
+  frac 1      p10     0.3421  p90     0.5192  spread p90/p10     1.52
+  frac 4      p10     0.3417  p90     0.5191  spread p90/p10     1.52
+
+-- chaos: same direction, gain at the largest budget / at the smallest --
+  jtw                        0.8192
+  random2                    0.9461
+  mean_diff_tgt_asis         0.9502
+  random7                    0.9587
+  md_full                    0.9613
+  random3                    0.9714
+  probe_grad_tgt_asis        0.9734
+  random1                    0.9790
+  random4                    0.9802
+  random6                    0.9815
+  random5                    0.9854
+  random0                    0.9957
+  oracle                     1.0016
+  a_unit                     1.0016
+  median scale-dependence 0.9762  (1.0 => exactly linear over a 400x budget range)
+
+-- slope = dM / eps: readout movement bought per unit budget --
+frac                      0.01       0.10       1.00       4.00
+direction                                                      
+a_unit                 0.05088    0.04332    0.04339    0.04458
+jtw                     0.3343     0.3362      0.331     0.2881
+md_full               0.000889   0.000981  0.0009801   0.001006
+mean_diff_tgt_asis    0.001768  0.0002536   0.001452   0.001315
+oracle                 0.05088    0.04331    0.04339    0.04458
+probe_grad_tgt_asis -0.0006864 -0.0001536 -4.192e-05  0.0003387
+random0              -0.002112  -0.002328  -0.002343  -0.002319
+random1              -0.002532  -0.002009  -0.002203  -0.002104
+random2              -0.001071 -0.0008528 -0.0008357 -0.0008465
+random3              0.0007831   0.001183  0.0008037  0.0003178
+random4               0.001922    0.00226    0.00177   0.001351
+random5              0.0005647  0.0005252  0.0003734  0.0009756
+random6              -0.001016 -0.0009523  -0.001043  -0.001308
+random7             -0.0004114 -0.0003429  -0.000483 -7.812e-05
+
+wrote token_sens_common_claim_true_false_layer16_last.csv
+=== token_sens done Tue Aug  4 11:01:42 PM CDT 2026 ===

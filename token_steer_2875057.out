@@ -1,0 +1,343 @@
+PyTorch conda environment for use with DeltaAI (CUDA 12.9)
+
+Includes: jupyter, jupyterlab, matplotlib, pandas, scipy,
+          scikit-learn, nvitop, mpi4py, tensorboard, wandb
+
+Quick start (on compute node):
+  module load python/miniforge3_pytorch/2.10.0
+  conda activate base
+  python -c "import torch; print(torch.cuda.is_available())"
+
+For Jupyter notebook support (Open OnDemand):
+  setup-kernel
+
+Job 2875057 on gh136.hsn.cm.delta.internal.ncsa.edu
+Tue Aug  4 21:06:34 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 595.71.05              Driver Version: 595.71.05      CUDA Version: 13.2     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GH200 120GB             On  |   00000039:01:00.0 Off |                    0 |
+| N/A   21C    P0             90W /  900W |       0MiB /  97871MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+=== token_steer cities postnorm Tue Aug  4 09:06:34 PM CDT 2026 ===
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:00,  4.47it/s]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:01<00:00,  1.08it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  1.79it/s]
+  stmt 0/200 done
+  stmt 10/200 done
+  stmt 20/200 done
+  stmt 30/200 done
+  stmt 40/200 done
+  stmt 50/200 done
+  stmt 60/200 done
+  stmt 70/200 done
+  stmt 80/200 done
+  stmt 90/200 done
+  stmt 100/200 done
+  stmt 110/200 done
+  stmt 120/200 done
+  stmt 130/200 done
+  stmt 140/200 done
+  stmt 150/200 done
+  stmt 160/200 done
+  stmt 170/200 done
+  stmt 180/200 done
+  stmt 190/200 done
+
+=== token_steer cities site=postnorm positions=all rep_penalty=1.0 ===
+                  hit_rate   frac_margin
+direction  frac                         
+jtw_legacy +0.00     0.000  0.000000e+00
+           +0.25     0.000 -4.306945e-03
+           +0.50     0.000 -8.614215e-03
+           +1.00     0.000 -1.722840e-02
+           +2.00     0.000 -3.445670e-02
+           -0.25     0.000  4.307200e-03
+           -0.50     0.000  8.614240e-03
+           -1.00     0.000  1.722850e-02
+           -2.00     0.000  3.445680e-02
+md_full    +0.00     0.000  0.000000e+00
+           +0.25     0.000  2.500000e-06
+           +0.50     0.000  1.000000e-06
+           +1.00     0.005  0.000000e+00
+           +2.00     0.005  5.000000e-06
+           -0.25     0.000 -1.000000e-06
+           -0.50     0.000 -5.000000e-07
+           -1.00     0.015 -5.000000e-06
+           -2.00     0.010  0.000000e+00
+oracle     +0.00     0.000  0.000000e+00
+           +0.25     0.000  2.502500e-01
+           +0.50     0.000  5.005000e-01
+           +1.00     1.000  1.001000e+00
+           +2.00     1.000  2.002000e+00
+           -0.25     0.000 -2.502500e-01
+           -0.50     0.000 -5.005000e-01
+           -1.00     0.000 -1.001000e+00
+           -2.00     0.000 -2.002000e+00
+
+[assert] oracle @ +1.00 hit rate 1.000 (HARNESS OK)
+wrote token_steer_cities_postnorm_all_rp1.csv
+=== token_steer cities prenorm Tue Aug  4 09:34:29 PM CDT 2026 ===
+[dirs] oracle is defined in post-norm coordinates; on a prenorm site it is used as a raw direction and its scale calibration no longer certifies a flip
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:00<00:00, 94.84it/s]
+  stmt 0/200 done
+  stmt 10/200 done
+  stmt 20/200 done
+  stmt 30/200 done
+  stmt 40/200 done
+  stmt 50/200 done
+  stmt 60/200 done
+  stmt 70/200 done
+  stmt 80/200 done
+  stmt 90/200 done
+  stmt 100/200 done
+  stmt 110/200 done
+  stmt 120/200 done
+  stmt 130/200 done
+  stmt 140/200 done
+  stmt 150/200 done
+  stmt 160/200 done
+  stmt 170/200 done
+  stmt 180/200 done
+  stmt 190/200 done
+
+=== token_steer cities site=prenorm positions=all rep_penalty=1.0 ===
+                  hit_rate  frac_margin
+direction  frac                        
+jtw_legacy +0.00       0.0     0.000000
+           +0.25       0.0    -0.000576
+           +0.50       0.0    -0.001144
+           +1.00       0.0    -0.002254
+           +2.00       0.0    -0.004372
+           -0.25       0.0     0.000587
+           -0.50       0.0     0.001192
+           -1.00       0.0     0.002440
+           -2.00       0.0     0.005045
+md_full    +0.00       0.0     0.000000
+           +0.25       0.0     0.114359
+           +0.50       0.0     0.285540
+           +1.00       0.0     0.536797
+           +2.00       0.0     0.719763
+           -0.25       0.0     0.137985
+           -0.50       0.0     0.335746
+           -1.00       0.0     0.613227
+           -2.00       0.0     0.806863
+oracle     +0.00       0.0     0.000000
+           +0.25       0.0     0.055287
+           +0.50       0.0     0.110591
+           +1.00       0.0     0.221245
+           +2.00       0.0     0.442721
+           -0.25       0.0    -0.055270
+           -0.50       0.0    -0.110518
+           -1.00       0.0    -0.220868
+           -2.00       0.0    -0.441010
+
+[assert] oracle @ +1.00 hit rate 0.000 (HARNESS BROKEN — stop and debug)
+wrote token_steer_cities_prenorm_all_rp1.csv
+=== token_steer cities postnorm last-position only Tue Aug  4 10:02:24 PM CDT 2026 ===
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:00<00:00, 98.04it/s]
+  stmt 0/200 done
+  stmt 10/200 done
+  stmt 20/200 done
+  stmt 30/200 done
+  stmt 40/200 done
+  stmt 50/200 done
+  stmt 60/200 done
+  stmt 70/200 done
+  stmt 80/200 done
+  stmt 90/200 done
+  stmt 100/200 done
+  stmt 110/200 done
+  stmt 120/200 done
+  stmt 130/200 done
+  stmt 140/200 done
+  stmt 150/200 done
+  stmt 160/200 done
+  stmt 170/200 done
+  stmt 180/200 done
+  stmt 190/200 done
+
+=== token_steer cities site=postnorm positions=last rep_penalty=1.0 ===
+                 hit_rate   frac_margin
+direction frac                         
+md_full   +0.00     0.000  0.000000e+00
+          +0.25     0.000  2.500000e-06
+          +0.50     0.000  1.000000e-06
+          +1.00     0.005  0.000000e+00
+          +2.00     0.005  5.000000e-06
+          -0.25     0.000 -1.000000e-06
+          -0.50     0.000 -5.000000e-07
+          -1.00     0.015 -5.000000e-06
+          -2.00     0.010  0.000000e+00
+oracle    +0.00     0.000  0.000000e+00
+          +0.25     0.000  2.502500e-01
+          +0.50     0.000  5.005000e-01
+          +1.00     1.000  1.001000e+00
+          +2.00     1.000  2.002000e+00
+          -0.25     0.000 -2.502500e-01
+          -0.50     0.000 -5.005000e-01
+          -1.00     0.000 -1.001000e+00
+          -2.00     0.000 -2.002000e+00
+
+[assert] oracle @ +1.00 hit rate 1.000 (HARNESS OK)
+wrote token_steer_cities_postnorm_last_rp1.csv
+=== token_steer cities decoding audit rp=1.3 Tue Aug  4 10:20:29 PM CDT 2026 ===
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:00<00:00, 101.80it/s]
+  stmt 0/200 done
+  stmt 10/200 done
+  stmt 20/200 done
+  stmt 30/200 done
+  stmt 40/200 done
+  stmt 50/200 done
+  stmt 60/200 done
+  stmt 70/200 done
+  stmt 80/200 done
+  stmt 90/200 done
+  stmt 100/200 done
+  stmt 110/200 done
+  stmt 120/200 done
+  stmt 130/200 done
+  stmt 140/200 done
+  stmt 150/200 done
+  stmt 160/200 done
+  stmt 170/200 done
+  stmt 180/200 done
+  stmt 190/200 done
+
+=== token_steer cities site=postnorm positions=all rep_penalty=1.3 ===
+                 hit_rate   frac_margin
+direction frac                         
+md_full   +0.00     0.000  0.000000e+00
+          +0.25     0.000  2.500000e-06
+          +0.50     0.000  1.000000e-06
+          +1.00     0.005  0.000000e+00
+          +2.00     0.005  5.000000e-06
+          -0.25     0.000 -1.000000e-06
+          -0.50     0.000 -5.000000e-07
+          -1.00     0.015 -5.000000e-06
+          -2.00     0.010  0.000000e+00
+oracle    +0.00     0.000  0.000000e+00
+          +0.25     0.000  2.502500e-01
+          +0.50     0.000  5.005000e-01
+          +1.00     1.000  1.001000e+00
+          +2.00     1.000  2.002000e+00
+          -0.25     0.000 -2.502500e-01
+          -0.50     0.000 -5.005000e-01
+          -1.00     0.000 -1.001000e+00
+          -2.00     0.000 -2.002000e+00
+
+[assert] oracle @ +1.00 hit rate 1.000 (HARNESS OK)
+wrote token_steer_cities_postnorm_all_rp1.3.csv
+=== token_steer common_claim_true_false postnorm Tue Aug  4 10:38:51 PM CDT 2026 ===
+row_index max 4434 exceeds reach_margins rows 2000; the two artifacts are not from the same dataset ordering
+!!!! common_claim_true_false postnorm FAILED — continuing
+=== token_steer common_claim_true_false prenorm Tue Aug  4 10:38:57 PM CDT 2026 ===
+[dirs] oracle is defined in post-norm coordinates; on a prenorm site it is used as a raw direction and its scale calibration no longer certifies a flip
+row_index max 4434 exceeds reach_margins rows 2000; the two artifacts are not from the same dataset ordering
+!!!! common_claim_true_false prenorm FAILED — continuing
+=== token_steer common_claim_true_false postnorm last-position only Tue Aug  4 10:39:01 PM CDT 2026 ===
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:00<00:00, 96.59it/s]
+  stmt 0/200 done
+  stmt 10/200 done
+  stmt 20/200 done
+  stmt 30/200 done
+  stmt 40/200 done
+  stmt 50/200 done
+  stmt 60/200 done
+  stmt 70/200 done
+  stmt 80/200 done
+  stmt 90/200 done
+  stmt 100/200 done
+  stmt 110/200 done
+  stmt 120/200 done
+  stmt 130/200 done
+  stmt 140/200 done
+  stmt 150/200 done
+  stmt 160/200 done
+  stmt 170/200 done
+  stmt 180/200 done
+  stmt 190/200 done
+
+=== token_steer common_claim_true_false site=postnorm positions=last rep_penalty=1.0 ===
+                 hit_rate  frac_margin
+direction frac                        
+md_full   +0.00     0.000     0.000000
+          +0.25     0.000     0.250239
+          +0.50     0.000     0.500457
+          +1.00     0.200     1.000915
+          +2.00     0.160     2.001850
+          -0.25     0.000    -0.250225
+          -0.50     0.000    -0.500474
+          -1.00     0.150    -1.000915
+          -2.00     0.095    -2.001850
+oracle    +0.00     0.000     0.000000
+          +0.25     0.000     0.250250
+          +0.50     0.000     0.500500
+          +1.00     1.000     1.001000
+          +2.00     1.000     2.002000
+          -0.25     0.000    -0.250250
+          -0.50     0.000    -0.500500
+          -1.00     0.000    -1.001000
+          -2.00     0.000    -2.002000
+
+[assert] oracle @ +1.00 hit rate 1.000 (HARNESS OK)
+wrote token_steer_common_claim_true_false_postnorm_last_rp1.csv
+=== token_steer common_claim_true_false decoding audit rp=1.3 Tue Aug  4 10:57:16 PM CDT 2026 ===
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:00<00:00, 98.41it/s]
+  stmt 0/200 done
+  stmt 10/200 done
+  stmt 20/200 done
+  stmt 30/200 done
+  stmt 40/200 done
+  stmt 50/200 done
+  stmt 60/200 done
+  stmt 70/200 done
+  stmt 80/200 done
+  stmt 90/200 done
+  stmt 100/200 done
+  stmt 110/200 done
+  stmt 120/200 done
+  stmt 130/200 done
+  stmt 140/200 done
+  stmt 150/200 done
+  stmt 160/200 done
+  stmt 170/200 done
+  stmt 180/200 done
+  stmt 190/200 done
+
+=== token_steer common_claim_true_false site=postnorm positions=all rep_penalty=1.3 ===
+                 hit_rate  frac_margin
+direction frac                        
+md_full   +0.00     0.000     0.000000
+          +0.25     0.000     0.250239
+          +0.50     0.000     0.500457
+          +1.00     0.200     1.000915
+          +2.00     0.160     2.001850
+          -0.25     0.000    -0.250225
+          -0.50     0.000    -0.500474
+          -1.00     0.150    -1.000915
+          -2.00     0.095    -2.001850
+oracle    +0.00     0.000     0.000000
+          +0.25     0.000     0.250250
+          +0.50     0.000     0.500500
+          +1.00     1.000     1.001000
+          +2.00     1.000     2.002000
+          -0.25     0.000    -0.250250
+          -0.50     0.000    -0.500500
+          -1.00     0.000    -1.001000
+          -2.00     0.000    -2.002000
+
+[assert] oracle @ +1.00 hit rate 1.000 (HARNESS OK)
+wrote token_steer_common_claim_true_false_postnorm_all_rp1.3.csv
+=== token_steer done Tue Aug  4 11:14:34 PM CDT 2026 ===

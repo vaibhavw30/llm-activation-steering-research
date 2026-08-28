@@ -1,0 +1,129 @@
+PyTorch conda environment for use with DeltaAI (CUDA 12.9)
+
+Includes: jupyter, jupyterlab, matplotlib, pandas, scipy,
+          scikit-learn, nvitop, mpi4py, tensorboard, wandb
+
+Quick start (on compute node):
+  module load python/miniforge3_pytorch/2.10.0
+  conda activate base
+  python -c "import torch; print(torch.cuda.is_available())"
+
+For Jupyter notebook support (Open OnDemand):
+  setup-kernel
+
+Job 2876157 on gh022.hsn.cm.delta.internal.ncsa.edu
+Tue Aug  4 23:00:21 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 595.71.05              Driver Version: 595.71.05      CUDA Version: 13.2     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GH200 120GB             On  |   00000009:01:00.0 Off |                    0 |
+| N/A   20C    P0             78W /  900W |       0MiB /  97871MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+=== token_jac cities SKIPPED, token_jac_cities.npz exists Tue Aug  4 11:00:21 PM CDT 2026 ===
+=== token_jac common_claim_true_false SKIPPED, token_jac_common_claim_true_false.npz exists Tue Aug  4 11:00:21 PM CDT 2026 ===
+=== token_steer common_claim_true_false layer:8 certified, per-position Tue Aug  4 11:00:21 PM CDT 2026 ===
+[dirs] jtw_legacy covers 90/200 statements; the rest fall outside the reach_margins subsample and are skipped for this arm only
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:00,  4.61it/s]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:00<00:00,  3.15it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:00<00:00,  4.64it/s]
+  stmt 0/200 done
+  stmt 10/200 done
+  stmt 20/200 done
+  stmt 30/200 done
+  stmt 40/200 done
+  stmt 50/200 done
+  stmt 60/200 done
+  stmt 70/200 done
+  stmt 80/200 done
+  stmt 90/200 done
+  stmt 100/200 done
+  stmt 110/200 done
+  stmt 120/200 done
+  stmt 130/200 done
+  stmt 140/200 done
+  stmt 150/200 done
+  stmt 160/200 done
+  stmt 170/200 done
+  stmt 180/200 done
+  stmt 190/200 done
+
+=== token_steer common_claim_true_false site=layer:8 positions=last rep_penalty=1.0 ===
+                  hit_rate  frac_margin
+direction  frac                        
+jtw_legacy +0.00     0.000     0.000000
+           +0.25     0.000     0.000087
+           +0.50     0.000     0.000086
+           +1.00     0.000     0.000397
+           +2.00     0.000     0.000330
+           -0.25     0.000     0.000026
+           -0.50     0.000    -0.000012
+           -1.00     0.000    -0.000011
+           -2.00     0.000     0.000321
+jtw_token  +0.00     0.000     0.000000
+           +0.25     0.005     0.530023
+           +0.50     0.510     1.017755
+           +1.00     0.815     1.829795
+           +2.00     0.875     2.882570
+           -0.25     0.000    -0.506324
+           -0.50     0.000    -0.958346
+           -1.00     0.000    -1.696480
+           -2.00     0.000    -2.606295
+wrote token_steer_common_claim_true_false_layer8_last_rp1.csv
+=== token_steer common_claim_true_false layer:8 certified, broadcast Tue Aug  4 11:15:42 PM CDT 2026 ===
+[dirs] jtw_legacy covers 90/200 statements; the rest fall outside the reach_margins subsample and are skipped for this arm only
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:00<00:00, 94.43it/s]
+  stmt 0/200 done
+  stmt 10/200 done
+  stmt 20/200 done
+  stmt 30/200 done
+  stmt 40/200 done
+  stmt 50/200 done
+  stmt 60/200 done
+  stmt 70/200 done
+  stmt 80/200 done
+  stmt 90/200 done
+  stmt 100/200 done
+  stmt 110/200 done
+  stmt 120/200 done
+  stmt 130/200 done
+  stmt 140/200 done
+  stmt 150/200 done
+  stmt 160/200 done
+  stmt 170/200 done
+  stmt 180/200 done
+  stmt 190/200 done
+
+=== token_steer common_claim_true_false site=layer:8 positions=all rep_penalty=1.0 ===
+                  hit_rate  frac_margin
+direction  frac                        
+jtw_legacy +0.00     0.000     0.000000
+           +0.25     0.000    -0.000081
+           +0.50     0.000     0.000456
+           +1.00     0.000     0.000545
+           +2.00     0.000    -0.001525
+           -0.25     0.000     0.000116
+           -0.50     0.000     0.000273
+           -1.00     0.000     0.000733
+           -2.00     0.000     0.006624
+jtw_token  +0.00     0.000     0.000000
+           +0.25     0.000     0.534647
+           +0.50     0.580     1.053010
+           +1.00     0.815     1.982680
+           +2.00     0.850     3.102970
+           -0.25     0.000    -0.513311
+           -0.50     0.000    -0.992853
+           -1.00     0.000    -1.810970
+           -2.00     0.000    -2.843950
+wrote token_steer_common_claim_true_false_layer8_all_rp1.csv
+=== token_jac done Tue Aug  4 11:30:02 PM CDT 2026 ===
