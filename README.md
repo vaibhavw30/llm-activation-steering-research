@@ -1,70 +1,188 @@
-# LLM Activation Steering Research — Truth: Geometry vs. Causality in gemma-2-2b
+# Truth in gemma-2-2b: certified reachable, behaviorally inert
 
-**One-line finding:** the "truth direction" in gemma-2-2b is **easy to read but hard to push** —
-a linear probe decodes it at ~99%, yet it is *not* one of the model's dominant causal directions
-(DCT never surfaces it, and steering it only weakly changes truthfulness). *Decodable ≠ causally
-dominant.*
+**The finding in one sentence.** A linear probe reads "is this statement true?" off the model's
+activations at 99%, and you can push the activations until that probe flips from TRUE to FALSE
+with R-squared 0.999 against push size, and the model goes right on telling the truth. We then
+proved the pushing machinery works by using the identical pipeline to induce refusal in a chat
+model, where behavior moves decisively. So the null is a fact about **truth**, not about the
+instrument.
+
+> The analogy that lands: we found the thermometer, not the thermostat. You can hold a lighter
+> under the thermometer and watch the number climb. The room stays cold.
+
+A literature search found no published work reporting a certified-reachable-but-behaviorally-inert
+dissociation with a mechanism attached. That dissociation is the contribution.
+
+---
 
 ## Start here
-- **Continuing this work (esp. on a new machine):** [`docs/PROJECT_CONTEXT_AND_ROADMAP.md`](docs/PROJECT_CONTEXT_AND_ROADMAP.md) — self-contained onboarding + exact resume state + research directions. **Read this first if you are picking the project up.**
-- **Explaining the results (to yourself or a PI):** [`docs/PI_MEETING_RESULTS.md`](docs/PI_MEETING_RESULTS.md) — concise, with an evidence table of real generated text.
-- **Full detail on the DCT-vs-truth funnel:** [`docs/FUNNEL_RESULTS.md`](docs/FUNNEL_RESULTS.md)
-- **The whole project, soup-to-nuts:** [`docs/MASTER_EXPLAINER.md`](docs/MASTER_EXPLAINER.md) *(personal, gitignored)*
-- **How DCT works + how it was set up:** [`docs/DCT_METHODOLOGY.md`](docs/DCT_METHODOLOGY.md)
 
-## Repository layout
+| If you want | Read | Length |
+|---|---|---|
+| **The whole project, cold, in plain English** | [`docs/PLAIN_ENGLISH_WALKTHROUGH.md`](docs/PLAIN_ENGLISH_WALKTHROUGH.md) | 45 min |
+| The 20-minute spoken version | [`docs/MEETING_20MIN.md`](docs/MEETING_20MIN.md) | 20 min |
+| Which doc covers what | [`docs/README.md`](docs/README.md) | 5 min |
+| How to run anything on the cluster | [`deltaai/README.md`](deltaai/README.md) | 5 min |
+| Where the open questions are | [`docs/OPEN_QUESTIONS.md`](docs/OPEN_QUESTIONS.md) | 30 min |
+
+**New to the project: read `docs/PLAIN_ENGLISH_WALKTHROUGH.md` first and nothing else.** It is
+written to be read by someone who has not seen the code, it walks the eight experiments in the
+order they happened, and every number in it is read off a named artifact in this repo.
+
+---
+
+## Where it lands
+
+The publishable object is not either result alone. It is the contrast, produced by one pipeline
+holding everything constant except the concept being steered.
+
+| Cell | Meaning | Observed in |
+|---|---|---|
+| **actuatable** | readout crosses the certified boundary and behavior follows | refusal, per-statement arm |
+| **readout-only** | readout crosses and behavior does not | truth, cities |
+| **no-crossing** | the push never reaches the boundary | refusal, held-out mean arm |
+| **inert** | neither moves | none so far |
+
+---
+
+## The chain, one line per step
+
+Each experiment exists because the one before it produced a result that could not be interpreted
+without it. Full detail for every row is in the walkthrough.
+
+| # | Question | Answer | Write-up |
+|---|---|---|---|
+| 01 | Is truth encoded linearly? | Yes on clean data (cities 0.990 linear vs 0.993 XGBoost), with real non-linear headroom on messy data (+0.082) | [`docs/EXPLAINER.md`](docs/EXPLAINER.md) |
+| 02 | Is the truth direction causally special? | No. Unsupervised DCT never surfaces it, and the non-linear headroom is not in DCT's subspace either | [`docs/DCT_VS_TRUTH_FINDINGS.md`](docs/DCT_VS_TRUTH_FINDINGS.md) |
+| 03 | Reframe as backward reachability | Certificate `eps*`: the smallest nudge at layer 11 that lands in the probe's FALSE half at layer 20 | [`docs/REACHABILITY_RUNBOOK.md`](docs/REACHABILITY_RUNBOOK.md) |
+| 04 | Does hitting the certified target change behavior? | **No.** Readout crosses inside the trust radius on cities; lie rate stays at baseline. Jacobian overlap with concept space 0.062 | [`docs/REACH_AUDIT_FINDINGS.md`](docs/REACH_AUDIT_FINDINGS.md) |
+| 05 | Was the target set the problem? | Yes. Retargeting to token space turns 0.000 flips into 200/200 at the output layer and 34% pulled back to layer 16 | [`docs/TOKEN_SPACE_FINDINGS.md`](docs/TOKEN_SPACE_FINDINGS.md) |
+| 06 | Do our own negative results survive an audit? | All four registered assumptions were refuted, most sharply S4: 200/200 token flips succeed, at most 5.5% made the claim false | [`docs/AUDIT_SUMMARY.md`](docs/AUDIT_SUMMARY.md) |
+| 07 | Did we only ever push too hard? | No. Pre-registered dose sweep, 0 clean windows out of 120 cells, on both datasets | [`docs/D1_DOSE_RESPONSE.md`](docs/D1_DOSE_RESPONSE.md) |
+| 08 | Can the pipeline move *any* behavior? | **Yes.** Refusal, `gemma-2-2b-it`, layers 5 to 14: 14 flips against 0, Mantel-Haenszel OR 24.2 for crossing | [`docs/REFUSAL_POSITIVE_CONTROL.md`](docs/REFUSAL_POSITIVE_CONTROL.md) |
+
+The audit experiments S1 to S4 each have their own doc: [`S1_ASYMMETRY.md`](docs/S1_ASYMMETRY.md),
+[`S2_LAYER_SWEEP.md`](docs/S2_LAYER_SWEEP.md), [`S3_COMMON_AXIS.md`](docs/S3_COMMON_AXIS.md),
+[`S4_TARGET_CENSUS.md`](docs/S4_TARGET_CENSUS.md).
+
+---
+
+## Repository map
 
 ```
-├── README.md                 ← you are here
-├── CLAUDE.md                 ← original Project-1 build guide (geometry of truth)
-├── src/                      ← ALL code (run scripts as `python src/<name>.py` from repo root)
-│   ├── extract.py analyze.py summary.py            (Project 1: geometry of truth)
-│   ├── dct.py dct_train.py sae_comparison.py       (the DCT paper's code — third-party)
-│   ├── run_dct_minimal.py run_dct_data.py          (DCT training)
-│   ├── apply_dct_vector.py interpret_top10.py steer_supervised.py dct_steer_utils.py  (steering)
-│   ├── funnel_utils.py compare_directions.py subspace_top_k.py cross_dataset.py       (analysis)
-│   ├── export_truth_dir.py                          (make truth dirs for the cluster)
-│   ├── viz_funnel.py viz_findings.py viz_steer.py   (figures)
-│   └── judge_results.py                             (LLM-as-a-judge scoring)
-├── docs/                     ← all writeups (see "Start here")
-├── deltaai/                  ← NCSA DeltaAI (GH200) launch scripts + runbooks
-├── got_datasets/             ← input CSVs (cities, sp_en_trans, companies, common_claim)
-├── activations/              ← extracted activations acts_<ds>.npz  (gitignored, large)
-├── results/                  ← Project-1 outputs (probe CSVs + plots, committed)
-└── (repo root)               ← DCT/funnel outputs land here, gitignored & regenerable:
-                                 dct_V/U/meta_<ds>, truth_dir_<ds>.npz, interpret_top10_<ds>.md,
-                                 steer_supervised_<ds>.{md,csv}, plot_*.png, compare_<ds>.csv
+README.md                  you are here
+CLAUDE.md                  the original Project-1 build guide, kept for provenance
+docs/                      every write-up; see docs/README.md for the index
+deltaai/                   NCSA DeltaAI (GH200) SLURM scripts + runbooks; see deltaai/README.md
+got_datasets/              input CSVs: cities, sp_en_trans, companies, common_claim
+src/                       all code; run as `.venv/bin/python src/<name>.py` from the repo root
+tests/                     pytest suite, 430 passing
+results/                   Project-1 probe CSVs and plots
+activations/               extracted activations (gitignored, large)
+(repo root)                experiment artifacts land here: *.csv, *.json, *.npz, plot_*.png
 ```
 
-> **Why outputs sit at the repo root (not in a subfolder):** they're gitignored (so the tracked
-> repo stays clean) and regenerable, and both the local scripts and the cluster `rsync` flow read/
-> write them here. Relocating them would mean re-pathing ~10 scripts + the cluster runbooks — a
-> change to a working pipeline for zero git-cleanliness gain. `git status` is already clean.
+`src/` by program:
 
-## How to run (all commands from the repo root)
+| Program | Files |
+|---|---|
+| P1 geometry of truth | `extract.py` `analyze.py` `summary.py` |
+| DCT (third-party code + our drivers) | `dct.py` `dct_train.py` `run_dct_*.py` `dct_warm*.py` `apply_dct_vector.py` |
+| MAG | `mag/` `run_mag.py` `viz_mag*.py` |
+| Backward reachability | `reach_*.py` `make_reach_meta.py` `export_target_dir.py` |
+| Token space | `token_geom.py` `token_jac.py` `token_sens.py` `token_steer.py` `token_conclusions.py` |
+| Refusal positive control | `prep_refusal.py` `refusal_screen.py` `refusal_judge.py` `refusal_analyze.py` |
+| Steering-validity audit (S1 to S4) | `audit_asymmetry.py` `audit_layer_sweep.py` `audit_common_axis.py` `audit_target_census.py` |
+| D1 dose-response | `dose_response.py` `dose_analyze.py` `calibrate_scale.py` |
+| SAE decomposition | `sae_load.py` `sae_decompose.py` `viz_sae.py` |
+| Judging | `judge_results.py` `judges/` `validate_judge.py` |
 
-**Project 1 — geometry of truth** (CPU, `.venv`):
+### Reading an artifact
+
+Artifacts are named `<program>_<what>_<dataset>.<ext>` at the repo root, where dataset is
+`cities` or `common_claim_true_false`. **Never pool the two datasets**; they behave differently
+and every finding is reported per dataset.
+
+One rule that bites: read every `token_steer_*.csv` through `token_conclusions.load_arm`, never a
+bare `pd.read_csv`. The arms have different column conventions and `load_arm` normalizes them.
+
+```python
+from token_conclusions import load_arm
+df = load_arm("cities", "postnorm_all", rp=1.0)
+```
+
+---
+
+## Running things
+
+Everything runs from the repo root. There is no bare `python` on the dev machine; use the venv
+interpreter explicitly.
+
+**Project 1, geometry of truth** (CPU, `.venv`):
+
 ```bash
-.venv/bin/python src/extract.py cities.csv     # → activations/acts_cities.npz
-.venv/bin/python src/analyze.py cities         # → results/ CSVs + plots
-.venv/bin/python src/summary.py                # cross-dataset summary
+.venv/bin/python src/extract.py cities.csv
+.venv/bin/python src/analyze.py cities
+.venv/bin/python src/summary.py
 ```
 
-**DCT + funnel** — training runs on the GH200 (see `deltaai/`), analysis runs locally:
+**The audit experiments** (CPU, seconds each, read-only over committed artifacts):
+
 ```bash
-# local analysis (needs dct_V_<ds>.pt pulled back from the cluster):
-.venv/bin/python src/compare_directions.py --dataset cities
-.venv/bin/python src/subspace_top_k.py --dataset cities
-.venv/bin/python src/cross_dataset.py
-.venv/bin/python src/viz_findings.py           # summary figures
-# optional LLM-judge (needs ANTHROPIC_API_KEY):
-.venv/bin/python src/judge_results.py --mode interpret --dataset cities
+PYTHONPATH=src .venv/bin/python src/audit_target_census.py --dataset cities
 ```
 
-**On DeltaAI (GH200):** follow `deltaai/MY_RUN_STEPS.md` (first-time) or `deltaai/FUNNEL_RUN_STEPS.md`
-(the funnel jobs). Job scripts: `deltaai/run_dct.slurm`, `run_interpret.slurm`, `run_steer.slurm`.
+**Anything involving the model** runs on DeltaAI. Start at [`deltaai/README.md`](deltaai/README.md),
+which maps each experiment to its runbook and SLURM script.
+
+**Tests:**
+
+```bash
+PYTHONPATH=src .venv/bin/python -m pytest tests/ -q
+```
+
+### Two hazards worth knowing before you run anything
+
+- **Never import `xgboost` in the same process as `torch`.** Two copies of libomp segfault on
+  macOS ARM (exit 139). `analyze.py` keeps them in separate processes for this reason.
+- **Never index into a loaded `.npz` inside a loop.** Each access re-inflates the whole array.
+  Pull the array out once, then loop.
+
+---
 
 ## Environments
-- `.venv` — CPU, geometry + local analysis (torch 2.12, transformers 5.x, scikit-learn, anthropic).
-- `.venv-dct` — local DCT (torch 2.6, **transformers 4.51.3** — required by the DCT paper's code).
-- `.venv-dct-gpu` — on DeltaAI, built on the cluster's torch module (see `deltaai/setup_env.sh`).
+
+| venv | Where | Contents |
+|---|---|---|
+| `.venv` | laptop | CPU: torch, transformers, scikit-learn, anthropic |
+| `.venv-dct` | laptop | DCT's pinned stack (transformers 4.51.3, required by the paper's code) |
+| `.venv-dct-gpu` | DeltaAI | built on the cluster torch module, see `deltaai/setup_env.sh` |
+| `.venv-judge-gpu` | DeltaAI | local OLMo judge backend, see `deltaai/setup_judge_env.sh` |
+
+Commands in the runbooks are labeled **LAPTOP** or **CLUSTER**. Check the label before running
+one; the two-machine workflow has already caused a misdirected rsync.
+
+---
+
+## Status, as of 28 August 2026
+
+**Closed.** The truth null is established and audited. The refusal positive control passed and
+opened the publication gate. Seven of the PI's ten items from the last meeting are answered
+(the mapping is section 3 of the walkthrough).
+
+**Open.**
+
+- **T1**, the token-space behavioral test with a semantically meaningful target set. S4 calibrated
+  the bar: a stoplist removes 178 of the 200 old targets, and T1 must beat 5.5%.
+- **Horizon-0 item 0.2**, refitting the truth probe on generation-stem activations. The refusal
+  control applies its chat template once at dataset-build time, so its linearization point is the
+  generation prompt's last token, while the truth run fits on full statements and reads on
+  prefixes. The 2x2 above therefore changes two variables, not one, and this is the experiment
+  that separates them.
+- **System-level synthesis**, deferred on the PI's own "might be overkill" pending D1, which is
+  now done.
+
+Related work: Julian's A-LQR paper is arXiv:2604.19018, *Local Linearity of LLMs Enables
+Activation Steering via Model-Based Linear Optimal Control*. Our per-statement fits corroborate
+its local-linearity assumption strongly (R-squared 0.999 across a nine-layer hop, 0% wrong-sign),
+and our two failure modes are exactly what a closed loop would fix.
