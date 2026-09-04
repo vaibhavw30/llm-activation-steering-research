@@ -244,7 +244,7 @@ climbing out of.
 
 ---
 
-## 4. Track M: the readable derivation (note 3)
+## 4. Track M: the readable derivation (note 3). **DONE 2026-09-04**
 
 `docs/math_map.tex` already exists, is 494 lines, and is correct. It is a paper-style document
 with full notation, twelve sections, and a diagnosis section. The note is not that it is missing;
@@ -262,20 +262,29 @@ thread and does only this:
 Keep `math_map.tex` as the reference; the new note points into it.
 **Deliverable:** `docs/DERIVATION_SHORT.md` or a `\section` reorganisation of the .tex.
 
+**Delivered:** [`DERIVATION_SHORT.md`](DERIVATION_SHORT.md), 226 lines, six sections. It does the four
+items above in order, and adds one thing the note did not ask for: it separates the two emptiness
+results that had been described with a single sentence. The probe halfspace is not semantically empty
+so much as **unlocated**, since the readout is at balanced accuracy 0.500 on the generation stems we
+steer. The token-space target set is the one S4 measured as semantically vacuous, and it is vacuous for
+two different reasons on the two datasets: minimum norm collapsing onto directional modifiers on
+`cities`, and `target_mode=runnerup` never aiming at falsity at all on `common_claim`.
+`math_map.tex` is unchanged and stays the reference.
+
 ---
 
 ## 5. Sequencing and cost
 
-| id | Experiment | Machine | Cost | Blocks |
-|---|---|---|---|---|
-| V0 | finish D2, save the numbers | LAPTOP | minutes | nothing |
-| Q1 | TQA unsteered baseline | CLUSTER | ~1 GPU-hr | the whole Q track |
-| M | the readable derivation | LAPTOP | a day of writing | nothing |
-| V1 | pipeline validation, layer sweep, two contexts | CLUSTER | a few GPU-hr | V2 |
-| Q0 | TQA dataset build | LAPTOP + 1 GPU pass | ~1 GPU-hr | Q2 |
-| Q3 | run A-LQR's code on gemma-2-2b TQA | CLUSTER | ~1 day setup | interpreting Q2 |
-| Q2 | our TQA steer and judge | CLUSTER | ~4 GPU-hr | the verdict |
-| V2 | feature construction, chosen by V1 | CLUSTER | TBD | the verdict |
+| id | Experiment | Machine | Cost | Blocks | State |
+|---|---|---|---|---|---|
+| V0 | finish D2, save the numbers | LAPTOP | minutes | nothing | **done 2026-09-04** |
+| Q0 | TQA dataset build | LAPTOP + 1 GPU pass | ~1 GPU-hr | Q2 | **done 2026-09-04** |
+| M | the readable derivation | LAPTOP | a day of writing | nothing | **done 2026-09-04** |
+| Q1 | TQA unsteered baseline | CLUSTER | ~1 GPU-hr | the whole Q track | job 3081925 ran, awaiting readback |
+| Q3 | run A-LQR's code on gemma-2-2b TQA | CLUSTER | ~1 day setup | interpreting Q2 | not started |
+| Q2 | our TQA steer and judge | CLUSTER | ~4 GPU-hr | the verdict | not started, needs a TQA judge and a slurm job |
+| V1 | pipeline validation, layer sweep, two contexts | CLUSTER | a few GPU-hr | V2 | not started |
+| V2 | feature construction, chosen by V1 | CLUSTER | TBD | the verdict | blocked on V1 |
 
 **Do V0 and Q1 first.** Both are cheap and either can kill a track. V0 tells us whether a
 generation-population direction exists at all; Q1 tells us whether TQA has the headroom the whole

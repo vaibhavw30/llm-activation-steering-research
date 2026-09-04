@@ -1,6 +1,6 @@
 # Documentation index
 
-44 documents accumulated over four months. This page says which one to open, and flags the ones
+45 documents accumulated over four months. This page says which one to open, and flags the ones
 that are point-in-time snapshots rather than current statements.
 
 **If you read one thing, read [`PLAIN_ENGLISH_WALKTHROUGH.md`](PLAIN_ENGLISH_WALKTHROUGH.md).**
@@ -17,7 +17,8 @@ It supersedes every status document below and is the only doc written to be read
 | [`PLAN_ADVISOR_NOTES_2026-09.md`](PLAN_ADVISOR_NOTES_2026-09.md) | **The current plan.** The advisor's three September notes, mapped to what our artifacts already say, then to experiments with costs and a sequence. |
 | [`OPEN_QUESTIONS.md`](OPEN_QUESTIONS.md) | What is genuinely unresolved, each question placed against the literature. |
 | [`LITERATURE.md`](LITERATURE.md) | The literature compilation on automated feature discovery, with what each paper does and does not establish. |
-| [`math_map.tex`](math_map.tex) | Every object in the project written down formally: the certificate, the pullback, the target sets. |
+| [`DERIVATION_SHORT.md`](DERIVATION_SHORT.md) | **The two-page version of the math.** Input layer to output layer in one thread, the certificate stated once and instantiated twice, and a table saying where every measured number plugs in. Read this before the .tex. |
+| [`math_map.tex`](math_map.tex) | Every object in the project written down formally: the certificate, the pullback, the target sets. The reference behind `DERIVATION_SHORT.md`. |
 
 ---
 
