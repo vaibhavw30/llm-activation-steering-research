@@ -88,6 +88,23 @@ echo "=== stage 1: the DCT factorization, unsupervised, no labels ==="
 # dct_meta_truthfulqa.json. Same calibrator, same layers, same data, so it would land on
 # this number anyway; passing it makes the perturbation norm identical to the one Q2's
 # grid was built from, which is what makes the two arms comparable rather than adjacent.
+# Back up only what is worth backing up. If a previous attempt died between the fit and
+# the restore, dct_meta_<ds>.json is the FIT's copy, and cp would then overwrite a good
+# backup with a bad one and lose the Q2 meta for good. num_factors is the tell: the Q2
+# file has it null because no factorization ever ran.
+python3 - <<'PREBACKUP' || exit 1
+import json
+import sys
+
+m = json.load(open("dct_meta_truthfulqa.json"))
+if m.get("num_factors") is not None:
+    print(f"!!!! dct_meta_truthfulqa.json is a DCT fit's copy (num_factors="
+          f"{m['num_factors']}), not the Q2 meta. A previous run died mid-restore. "
+          "Recover the Q2 file from dct_meta_truthfulqa.q2.json.bak by hand before "
+          "rerunning; this job will not overwrite the backup with it.")
+    sys.exit(1)
+print("[stage 1] dct_meta_truthfulqa.json is the Q2 meta, backing it up")
+PREBACKUP
 cp -p dct_meta_${DS}.json dct_meta_${DS}.q2.json.bak
 SCALE=$(python3 -c "import json;print(json.load(open('dct_meta_${DS}.json'))['input_scale'])")
 echo "[stage 1] reusing input_scale=$SCALE from the Q2 meta"
@@ -95,7 +112,10 @@ echo "[stage 1] reusing input_scale=$SCALE from the Q2 meta"
 python3 src/run_dct_data.py --dataset ${DS} --device cuda \
   --source-layer 11 --target-layer 20 \
   --num-factors 512 --num-iters 30 --num-samples 64 --balanced \
-  --max-length 96 --token-idxs "-3:" --scale "$SCALE"
+  --max-length 96 --token-idxs=-3: --scale "$SCALE"
+# The equals form on --token-idxs is REQUIRED, not style. "-3:" begins with a dash, so
+# `--token-idxs "-3:"` makes argparse read it as a flag and die with "expected one
+# argument". Job 3085375 lost a submission to exactly this.
 
 # Put the Q2 meta back and keep the DCT one under its own name. Order matters: the
 # factorization has already written its version over the Q2 file by this point.
