@@ -1,8 +1,16 @@
 # TruthfulQA (track Q): the cluster run
 
-**What this covers:** getting `got_datasets/truthfulqa.csv` from the laptop onto DeltaAI and
-turning it into the activation and direction artifacts the rest of track Q needs. One job,
-`run_truthfulqa_prep.slurm`, roughly 1 GPU-hour with a 3-hour cap.
+**What this covers:** getting `got_datasets/truthfulqa.csv` from the laptop onto DeltaAI, turning
+it into the activation and direction artifacts the rest of track Q needs, and then answering Q1,
+the gate the plan puts in front of the whole track. Two independent jobs:
+
+| Job | Phases | Cost | Answers |
+|---|---|---|---|
+| `run_truthfulqa_prep.slurm` | 1 to 4 | ~1 GPU-hour, 3-hour cap | the fit side: activations, layer choice, directions |
+| `run_tqa_baseline.slurm` | 5 | well under 1 GPU-hour, 2-hour cap | **Q1**: does the model lie on TruthfulQA often enough to leave headroom? |
+
+They read different files and can queue at the same time. Q1 is the more important of the two: if
+it comes back `STOP`, the prep artifacts are not worth much.
 
 Read [`CLUSTER_OPERATIONS.md`](CLUSTER_OPERATIONS.md) Parts 1 to 4 once before your first run.
 This runbook assumes the two venvs and the model cache already exist, which they do from the
@@ -16,7 +24,7 @@ refusal and token-space runs.
 | Auth | NCSA password, then Duo: type `1`, approve on your phone. Every `ssh` and every `rsync`. |
 | Repo, both sides | `~/llm-activation-steering-research` |
 | Account | `bhhv-dtai-gh` |
-| Env used | `.venv-dct-gpu` (the script sources it; do not hand-edit) |
+| Env used | `.venv-dct-gpu` (both scripts source it; do not hand-edit) |
 
 ---
 
@@ -177,6 +185,117 @@ report.
 
 ---
 
+## Phase 5. Q1, the gate. 🖥️ CLUSTER
+
+Q1 is independent of the prep job above: it reads only `got_datasets/truthfulqa_holdout.csv`, so
+both can sit in the queue at the same time. It is also the more important of the two. The plan
+says stop the whole track if the model is already near ceiling, the way it is on cities.
+
+### 5a. Stage the two judges. 🖥️ CLUSTER, on the LOGIN node
+
+Compute nodes have no internet, and both judges are llama2-7B derivatives at roughly 13 GB each.
+Check the space before you pull 27 GB into your home directory.
+
+```bash
+du -sh $HOME/hf_cache; df -h $HOME
+```
+
+```bash
+cd ~/llm-activation-steering-research && source .venv-dct-gpu/bin/activate && HF_HOME=$HOME/hf_cache HF_HUB_DISABLE_XET=1 python3 -c "
+from huggingface_hub import snapshot_download
+for m in ('allenai/truthfulqa-truth-judge-llama2-7B', 'allenai/truthfulqa-info-judge-llama2-7B'):
+    print(m, snapshot_download(m))
+"
+```
+
+Two ways this fails, both fixable here rather than in the job:
+
+- **401 or gated repo.** These are Llama 2 derivatives. Accept the license on huggingface.co as
+  the account whose token is in `~/.cache/huggingface/token`, then rerun the command.
+- **No room for 27 GB.** Stage only the truth judge and submit with `TQA_TRUTH_ONLY=1`. That
+  halves the download and leaves Q1 half answered: a model that says "I have no comment" to
+  everything is 100% truthful and useless, which is exactly what the info judge is there to catch.
+
+Confirm both landed:
+
+```bash
+ls $HOME/hf_cache/hub | grep -i truthfulqa
+```
+
+### 5b. Fill the account and dry run. 🖥️ CLUSTER
+
+```bash
+cd ~/llm-activation-steering-research && sed -i 's/--account=ACCOUNT_NAME/--account=bhhv-dtai-gh/' deltaai/run_tqa_baseline.slurm && grep -- --account deltaai/run_tqa_baseline.slurm
+```
+
+Type the account literally, as in Phase 2. Do not lift it out of `run_dct.slurm`.
+
+```bash
+sbatch --test-only deltaai/run_tqa_baseline.slurm
+```
+
+### 5c. Smoke it on 4 questions first. 🖥️ CLUSTER
+
+The two allenai judges have never been run in this repo. Ten minutes proving they load and answer
+is cheaper than finding out after the full pass.
+
+```bash
+TQA_LIMIT=4 sbatch deltaai/run_tqa_baseline.slurm
+```
+
+The smoke's summary is not the Q1 answer, and the job says so in its own log. What you are looking
+for is that all three stages complete and that `judge gold accuracy` prints a number.
+
+### 5d. Submit the real one and watch. 🖥️ CLUSTER
+
+```bash
+sbatch deltaai/run_tqa_baseline.slurm
+```
+
+```bash
+squeue -u vwudaru
+```
+
+```bash
+grep -a -E "===|\[q1\]|GATE|WARNING|!!!!|Error|Traceback" tqa_baseline_*.out
+```
+
+| Line you should see | What it means |
+|---|---|
+| `=== Q1 stage 1: unsteered generation` | gemma is answering the holdout |
+| `[q1] wrote tqa_baseline_completions.csv  n=64` | stage 1 done, 64 answers |
+| `=== Q1 stage 2: the allenai truth and info judges` | both judges loaded |
+| `[q1] wrote tqa_baseline_judged.csv  n=64` | the model's answers are graded |
+| `[q1] wrote tqa_baseline_gold.csv` | the judge itself has been graded |
+| `judge gold accuracy 0.xxx` | **read this before the rate** |
+| `[q1] GATE (truthful_and_informative vs ceiling 0.9): PROCEED` or `STOP` | the verdict |
+
+**Read the gold accuracy first.** It is the judge scored on TruthfulQA's own correct and incorrect
+answers, whose labels are known. Below 0.85 the headline rate is not interpretable at all: a judge
+that cannot separate the dataset's own right answers from its own wrong ones cannot grade the
+model's. The two per-side numbers are there because one number hides the failure that matters, a
+judge that answers TRUE to everything and scores 1.000 on the correct side and 0.000 on the other.
+
+### 5e. Pull the results back and read them. 💻 LAPTOP
+
+Everything Q1 writes is small text.
+
+```bash
+cd ~/llm-activation-steering-research && rsync -av 'vwudaru@dtai-login.delta.ncsa.illinois.edu:~/llm-activation-steering-research/tqa_baseline_*.csv' ./
+```
+
+```bash
+./.venv/bin/python src/tqa_baseline.py --summarize
+```
+
+The summary stage is CPU only and torch free, so it reproduces the verdict on the laptop from the
+judged rows without touching a GPU. Read `tqa_baseline_judged.csv` by hand too; 64 rows is small
+enough to actually look at, and the answers tell you whether the Q:/A: format is behaving on a
+base model or whether gemma is wandering into a fabricated next question (the `truncated` column
+counts how often it did).
+
+--
+
 ## If it goes wrong
 
 | Symptom | Cause and fix |
@@ -189,20 +308,39 @@ report.
 | `[meta] layer sweep: rows READ FROM EXISTING results_truthfulqa.csv` | A leftover results CSV is deciding the source layer instead of these activations. Delete it and resubmit. |
 | Job stuck `PD` for a long time | Normal queueing. `squeue -u vwudaru --start`. |
 | Wrong env on model load | The script sources `.venv-dct-gpu`. Do not hand-edit it to the judge env. |
+| `!!!! models--allenai--truthfulqa-...-judge-llama2-7B is not in .../hub` | Phase 5a was skipped or the download 401'd. Compute nodes have no internet; stage it on the login node. |
+| Judge download 401s | Llama 2 license gate. Accept it on huggingface.co as the token's account. |
+| No room for the 27 GB of judges | Stage the truth judge only, submit with `TQA_TRUTH_ONLY=1`, and record that informativeness is unmeasured. |
+| `judge gold accuracy` below 0.85 | Do not read the rate. The judge cannot separate TruthfulQA's own correct and incorrect answers, so it cannot grade the model's. Check the per-side numbers: 1.000 / 0.000 means it answers TRUE to everything. |
+| `[q1] WARNING: N completions are empty` | The prompt format or the decoder is wrong, not the model being uninformative. Look at `tqa_baseline_completions.csv`. |
+| `truncated` is 0 on every row | Suspicious on a base model: it should usually run on into a fabricated next question. Check that `first_answer` is seeing raw newlines. |
 
 Cancel with `scancel <jobid>`. Check what a finished job actually cost with
 `sacct -j <jobid> --format=JobID,State,Elapsed`.
 
 ---
 
-## What this does and does not unlock
+## What this unlocks
 
-This produces the fit-side artifacts for track Q. It does **not** answer Q1, the unsteered
-baseline, which is the gate the plan puts before everything else: measure gemma-2-2b's truthful
-and informative rate on the 64 held-out questions with no steering at all, and **stop if it is
-near ceiling** the way it is on cities.
+Phases 1 to 4 produce the fit-side artifacts for track Q: the activations, the layer choice, the
+calibrated scale, and the two direction exports. Phase 5 answers Q1, which is the gate.
 
-Q1 needs its own script and its own job, plus the two allenai judges
-(`truthfulqa-truth-judge-llama2-7B` and `truthfulqa-info-judge-llama2-7B`, both wrapped already
-by `TruthJudge` in `src/judges/local_hf.py`) pre-downloaded on the login node. That is the next
-thing to write.
+| Verdict | What it means | What happens next |
+|---|---|---|
+| `PROCEED` | The model lies often enough on TruthfulQA that there is behavior to move. | Q2: steer along the certificate toward truthful, judge with the same two judges, and name the 2x2 cell with `reach_control.py --dataset truthfulqa`. |
+| `STOP` | The base rate is at ceiling, as it is on cities. | The plan says stop and reconsider. A steering result against a ceiling is not a result, and that is the trap D1 and S4 caught before. |
+
+Neither phase touches Q3, which is running A-LQR's own public code at
+`github.com/trustworthyrobotics/lqr-activation-steering` to establish the reference number on
+gemma-2-2b before ours. The plan recommends that before reading Q2, because a null from our
+open-loop pipeline is uninterpretable without a known-good number on the same model and dataset.
+
+Two things Q2 will need that are deliberately not fixed here:
+
+- `reach_steer.py` generates through `dct_steer_utils.generate`, which flattens newlines to spaces
+  before its caller sees them. On a base model in Q:/A: format the newline is the only marker of
+  where the answer ends, so Q2 needs the raw decode with `tqa_baseline.first_answer` applied to it,
+  or the judge grades text the model was never prompted for.
+- The judges take the bare **question**, not the generation prompt.
+  `judges/adapters.truthfulqa_prompt` prepends its own `Q: `, so handing it the prompt emits a
+  doubled `Q: Q: ...`. The holdout carries both columns; Q1 reads `question` and Q2 must too.
