@@ -105,7 +105,7 @@ behave differently even before any claim about truth.
 
 ## 2. Track V: validate the pipeline (note 2)
 
-### V0. Finish D2 and save it. Free, CPU, today
+### V0. Finish D2 and save it. **DONE 2026-09-04**
 
 The activations are cached. `reach_stemprobe.py --fit` prints its numbers and writes only four
 columns, so add the statistics to the CSV and write the results doc. Add the XGBoost arm, which
@@ -115,6 +115,16 @@ torch cannot share one.
 
 **Deliverable:** `docs/D2_PREFIX_TRANSFER.md`, plus the table in 1.2 as a committed artifact.
 **Cost:** minutes, LAPTOP.
+
+> **Result.** Written up in [`D2_PREFIX_TRANSFER.md`](D2_PREFIX_TRANSFER.md); artifacts
+> `reach_d2_summary_<ds>.csv`. Balanced accuracy 0.500 on both datasets, AUC 0.510 and 0.568,
+> the readout never changes sign, and every refit collapses to the base rate. The XGBoost arm
+> answers the pre-registered question in roadmap item 0.2: the +0.062 nonlinear gap that
+> common_claim shows on declarative statements at the target layer is **+0.000** on generation
+> stems. Recomputing reproduced `reach_stemprobe_<ds>.csv` byte for byte, so nothing was
+> disturbed. **This closes V2 candidate 1 in advance:** at n = 9 and 10 negatives no
+> stem-fitted direction is visible, so V2 goes to the contrastive verdict readout, and the
+> stem-fitted question is re-asked on TruthfulQA where the negatives are not nine.
 
 ### V1. The end-to-end validation the note actually asks for
 
@@ -155,8 +165,8 @@ not.
 The note's last clause, "change the feature vector construction to something that works," is
 downstream of V1. Three candidates, in the order the evidence supports:
 
-1. **Fit on the generation population.** The direction fit on stems rather than statements. V0
-   tells us whether that direction exists at all.
+1. ~~**Fit on the generation population.**~~ **Ruled out by V0** on this data: no stem-fitted
+   direction is visible, linear or nonlinear, at 9 and 10 negatives. Re-ask it on TruthfulQA.
 2. **The contrastive verdict readout.** A token-space object, so it cannot dissociate. Already
    implemented.
 3. **A-LQR's adaptive semantic setpoint.** Their code is public; see Q3.

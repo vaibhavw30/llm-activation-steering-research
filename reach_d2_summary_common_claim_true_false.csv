@@ -1,0 +1,2 @@
+dataset,n,n_true,n_false,base_rate_true,g_old_min,g_old_max,g_old_one_sided,acc_old_threshold,balanced_acc_old_threshold,auc_g_old,acc_recalibrated_1d,t02_stem,t02_stmt,acc_refit_lr_cv,acc_xgboost_cv,nonlinear_gap
+common_claim_true_false,178,168,10,0.9438202247191011,48.8738,118.906,True,0.9438202247191011,0.5,0.5678571428571428,0.9438202247191011,-264.15729166756455,-105.47506713867188,0.9438095238095239,0.9438095238095239,0.0

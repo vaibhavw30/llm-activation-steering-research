@@ -38,3 +38,25 @@ def test_cv_acc_separable_and_degenerate():
     assert acc > 0.95
     assert np.isnan(rsp._cv_acc(lambda: LogisticRegression(),
                                 X[:21], np.array([0] * 20 + [1])))
+
+
+def test_write_summary_is_header_plus_one_row(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    m = {"dataset": "toy", "n": 3, "auc_g_old": 0.5}
+    rsp.write_summary("toy", m)
+    with open(tmp_path / "reach_d2_summary_toy.csv", newline="") as f:
+        head, row = list(csv.reader(f))
+    assert head == ["dataset", "n", "auc_g_old"]
+    assert row == ["toy", "3", "0.5"]
+
+
+def test_summary_flag_leaves_the_rows_csv_alone(monkeypatch):
+    """--summary must not rewrite reach_stemprobe_<ds>.csv (cluster output)."""
+    seen = {}
+    monkeypatch.setattr(rsp, "fit",
+                        lambda ds, write_rows=True: seen.update(
+                            ds=ds, write_rows=write_rows))
+    monkeypatch.setattr(sys, "argv",
+                        ["reach_stemprobe.py", "--dataset", "toy", "--summary"])
+    rsp.main()
+    assert seen == {"ds": "toy", "write_rows": False}

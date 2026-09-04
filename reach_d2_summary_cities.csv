@@ -1,0 +1,2 @@
+dataset,n,n_true,n_false,base_rate_true,g_old_min,g_old_max,g_old_one_sided,acc_old_threshold,balanced_acc_old_threshold,auc_g_old,acc_recalibrated_1d,t02_stem,t02_stmt,acc_refit_lr_cv,acc_xgboost_cv,nonlinear_gap
+cities,158,149,9,0.9430379746835443,-83.5394,-43.0556,True,0.056962025316455694,0.5,0.5100671140939597,0.9430379746835443,-251.2842622081442,89.44559478759766,0.9304435483870968,0.9431451612903226,0.0127016129032258
