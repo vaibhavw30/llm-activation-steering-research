@@ -43,9 +43,26 @@ ARM_FILES = {"mean": "reach_steer_{ds}.csv",
              # comparable to the mean arm's.
              "randctrl": "reach_steer_randctrl_{ds}.csv"}
 
+# Arms whose `answer` column is a CONTINUATION of an answer already begun inside the
+# prompt, rather than a whole answer. Registered here beside ARM_FILES, never spelled
+# out at a call site, for the same reason --arm's choices are derived from ARM_FILES.
+#
+# reach_steer.arm_per_stmt prompts with `stem_of(statement)`, the statement minus its
+# final word, on 200 label-1 statements. prep_truthfulqa sets label 1 = UNTRUTHFUL, so
+# the prompt hands the model the opening of an untruthful answer and the generation is
+# how it continues. Scoring the continuation alone would ask the judge whether
+# "snow than that of NYC." is a truthful answer to the question, having discarded
+# "The winter in Paris is colder and has more" that the model was made to agree with.
+# The judged answer for these arms is head + continuation.
+ARMS_CONTINUING_THE_PROMPT = {"stmt"}
+
 # prep_truthfulqa.py builds every statement as "Q: <question>\nA: <answer>", and the
 # holdout as "Q: <question>\nA:". Checked against both files: 64/64 and 1488/1488.
 _QPAT = re.compile(r"^Q:\s*(.*?)\s*\nA:", re.S)
+# The answer text the prompt already supplied. Anchored on the SAME newline _QPAT
+# needs, so a prompt with the flattening bug fails both rather than silently
+# reconstructing nonsense.
+_APAT = re.compile(r"\nA:\s*(.*)$", re.S)
 
 
 def question_of(prompt):
@@ -62,6 +79,27 @@ def question_of(prompt):
     return m.group(1)
 
 
+def answer_head_of(prompt):
+    """The part of the answer the prompt already contains, for a continuation arm.
+
+    Empty string for a generation prompt that ends at "A:", which is the mean arm's
+    shape: nothing was supplied, so there is nothing to prepend."""
+    m = _APAT.search(str(prompt))
+    if m is None:
+        raise ValueError(f"cannot recover the answer head from prompt {prompt!r}: "
+                         "expected prep_truthfulqa's 'Q: ...\nA: ...' format")
+    return m.group(1)
+
+
+def full_answer_of(prompt, answer):
+    """head + continuation, collapsed to one space at the join.
+
+    stem_of split the statement on its final run of whitespace, so a single space is
+    what it removed. Either side may be empty and the result is then just the other."""
+    head, tail = answer_head_of(prompt).strip(), str(answer).strip()
+    return f"{head} {tail}" if head and tail else (head or tail)
+
+
 def read_rows(path):
     with open(path, newline="") as f:
         rows = list(csv.DictReader(f))
@@ -76,17 +114,22 @@ def read_rows(path):
     return rows
 
 
-def score_rows(rows, score):
+def score_rows(rows, score, continuing=False):
     """Copy each row with the judges' verdicts added, preserving order.
 
     `score(question, answer)` is tqa_baseline.load_scorer's callable. An empty answer
     is a real data point, not an error: greedy decoding can emit EOS immediately, and
     an empty answer is neither truthful nor informative. It is scored as 0/0 without
     troubling the judge, and counted for the log.
+
+    `continuing` marks an arm from ARMS_CONTINUING_THE_PROMPT: the judged text is then
+    the prompt's answer head plus the generation, and the exact string handed to the
+    judges is written back as `judged_answer` so the CSV says what was scored.
     """
     out, n_empty = [], 0
     for r in rows:
-        ans = (r.get("answer") or "").strip()
+        ans = ((full_answer_of(r["prompt"], r.get("answer") or "") if continuing
+                else (r.get("answer") or "")).strip())
         if not ans:
             n_empty += 1
             t, i = 0, 0
@@ -95,7 +138,7 @@ def score_rows(rows, score):
             t = int(bool(v["truthful"]))
             i = 1 if v["informative"] is None else int(bool(v["informative"]))
         both = int(t and i)
-        out.append(dict(r, truthful=t, informative=i,
+        out.append(dict(r, judged_answer=ans, truthful=t, informative=i,
                         truthful_and_informative=both, refused=both))
     return out, n_empty
 
@@ -106,8 +149,12 @@ def run(ds, arm, device="cuda", limit=0, truth_only=False):
     rows = read_rows(path)
     if limit:
         rows = rows[:limit]
-    print(f"[tqa-judge] {path}: {len(rows)} rows, arm={arm}", flush=True)
-    scored, n_empty = score_rows(rows, load_scorer(device, truth_only=truth_only))
+    continuing = arm in ARMS_CONTINUING_THE_PROMPT
+    print(f"[tqa-judge] {path}: {len(rows)} rows, arm={arm}"
+          + (" (judging head + continuation, see ARMS_CONTINUING_THE_PROMPT)"
+             if continuing else ""), flush=True)
+    scored, n_empty = score_rows(rows, load_scorer(device, truth_only=truth_only),
+                                 continuing=continuing)
     out = f"judge_refusal_{ds}_{arm}.csv"
     with open(out, "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(scored[0].keys()))
