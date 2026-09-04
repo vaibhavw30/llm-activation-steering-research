@@ -439,8 +439,40 @@ Three candidates, and the evidence has already eliminated one.
    implemented, and it is what V1 uses.
 3. **A-LQR's adaptive semantic setpoint.** Their code is public; see section 9.
 
-**DCT and MAG are dormant, as the note directs.** Nothing in either track needs them. Existing
-DCT results stand as recorded and no new DCT work is planned.
+**On "forget about dct", which I followed too literally.** The plan recorded the whole
+justification as one sentence: the note says forget DCT, so no new DCT work is planned. There was
+no cost argument and no methodological blocker behind that, and Q2 undermines it.
+
+Every unsupervised null this project has ([`DCT_VS_TRUTH_FINDINGS.md`](DCT_VS_TRUTH_FINDINGS.md),
+[`DCT_VS_XGBOOST_FINDINGS.md`](DCT_VS_XGBOOST_FINDINGS.md),
+[`WARM_DCT_RESULTS.md`](WARM_DCT_RESULTS.md),
+[`DCT_VS_MAG_ON_TRUTH.md`](DCT_VS_MAG_ON_TRUTH.md), the last of which replicates the null with a
+second, mechanically unrelated miner) was measured on `cities` and `common_claim`. Those are the
+datasets section 2.1 prices at a 5.7% spontaneous-false rate with the readout at balanced accuracy
+0.500 on the population we steer. **The unsupervised nulls inherit the exact confound Q2
+overturned for the supervised direction.**
+
+The two halves are not equally affected, and the distinction is the point. The **geometric** half
+stands: "DCT's 512 factors do not align with the supervised truth axis" is a cosine at the fit
+point, where that axis genuinely decodes well on cities, and dataset headroom does not enter. The
+**behavioral** half does not: warm-DCT concluded no anchor strength yields a truth lever by
+*steering* on datasets where steering toward truth had almost nothing to move, which is the
+inference Q2 just overturned.
+
+**Nothing technical was in the way either.** `reach_margins.build_battery` already adds the top-K
+DCT `U` vectors as target-layer readouts, fits their thresholds the same way, and puts them in the
+pullback set. The only gate is a file-existence check for `dct_V_truthfulqa.pt` and
+`dct_U_truthfulqa.pt`; `src/run_dct_data.py` and `deltaai/run_dct.slurm` both exist. One
+factorization job produces those files and `dct_u_0..3` flow through margins, eps\*, the steer arm
+and `reach_control` with no code change.
+
+This is now **U1** in the plan, sequenced after V1, with its likely outcome registered in advance:
+`MIN_ACC_1D = 0.6` and only 3 of 74 directions clear it on TruthfulQA, so the DCT readouts will
+probably fail the gate and yield no valid eps\*. That would be a result rather than a wasted run.
+
+**MAG stays dormant for a reason rather than by inheritance:** its self-verdict channel is dead on
+a base model, since gemma-2-2b answers "yes" to essentially every "Is this true?" question, so its
+fully unsupervised arm does not run here without an instruction-tuned model.
 
 ---
 
@@ -605,6 +637,10 @@ What is **not** established by anything above:
   `MIN_ACC_1D = 0.6`, and **3 of 74 directions clear it** on TruthfulQA. The other 71 cannot read
   TruthfulQA truth at 60% accuracy in one dimension. This is a separate finding, and it is
   unchased.
+- **That the unsupervised arm fails on truth.** Four documents close that null, and all four
+  measured it on `cities` and `common_claim`, where section 2.1 shows there was barely any
+  steerable behavior to find. The geometric half of the null survives that; the behavioral half
+  does not. See U1 in the plan.
 - **Generality.** One model, one decoder setting, 64 questions, one 48-token budget. The budget is
   part of the finding: at frac -2 answers are 18.58 words, within budget, but a longer budget
   could change what hedging costs.
@@ -620,7 +656,13 @@ once). It is the decisive version of note 2, it closes the caveat in section 7, 
 gate can invalidate a lot of existing numbers cheaply, which is a good property for a next
 experiment to have. Needs a slurm job and `docs/V1_PIPELINE_VALIDATION.md`.
 
-**2. Run A-LQR's code on gemma-2-2b TruthfulQA.** Public at
+**2. Run the unsupervised arm on TruthfulQA (U1).** One factorization job at source layer 11,
+target 20, producing `dct_V/U_truthfulqa.pt`; everything downstream picks up `dct_u_0..3` with no
+code change. This is the first fair test the unsupervised arm has ever had, because every previous
+one ran where the supervised direction also failed. After V1, for the sequencing reason in section
+3.3, and with the `MIN_ACC_1D` outcome registered in advance.
+
+**3. Run A-LQR's code on gemma-2-2b TruthfulQA.** Public at
 `github.com/trustworthyrobotics/lqr-activation-steering`, 94 commits, with task areas covering
 toxicity, truthfulness and refusal, and data-collection scripts referencing gemma2b. Roughly a
 day of setup. The reason to do it before more of ours: without a known-good number from a
@@ -631,21 +673,21 @@ uninterpretable, and that has been the recurring failure mode.
 "access to the A-LQR code" as an open ask. That ask is void, the code is public on the author's
 own GitHub, and asking for it would have been embarrassing.)*
 
-**3. Separate truth from hedging.** The one experiment that would turn section 2.4 from a
+**4. Separate truth from hedging.** The one experiment that would turn section 2.4 from a
 steering result into a *truth* steering result. The shape I would use: a task where hedging is
 penalized rather than rewarded, or a length-matched comparison where the control is forced to the
 same word count. Worth designing before running.
 
-**4. Chase the 3-of-74 readout finding.** If only three directions can read TruthfulQA truth
+**5. Chase the 3-of-74 readout finding.** If only three directions can read TruthfulQA truth
 one-dimensionally, that is either a fact about the dataset or a fact about how we build direction
 candidates, and both are interesting.
 
-**5. Extend the Q2 sweep to -3.5 eps\*** so the certificate's actual claim gets tested on the one
+**6. Extend the Q2 sweep to -3.5 eps\*** so the certificate's actual claim gets tested on the one
 dataset where behavior demonstrably moves. Cheap, and it converts "the certificate was not tested"
 into a result either way.
 
-**Not planned:** any new DCT work, and any rerun of the per-statement arm unless someone wants it
-for its own sake.
+**Not planned:** MAG (blocked on the dead self-verdict channel, section 3.3), and any rerun of
+the per-statement arm unless someone wants it for its own sake.
 
 ---
 

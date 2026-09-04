@@ -170,9 +170,64 @@ downstream of V1. Three candidates, in the order the evidence supports:
 2. **The contrastive verdict readout.** A token-space object, so it cannot dissociate. Already
    implemented.
 3. **A-LQR's adaptive semantic setpoint.** Their code is public; see Q3.
+4. **The unsupervised arm, on TruthfulQA.** Reopened; it is now U1 below.
 
-**DCT and MAG go dormant.** The note says forget DCT, and nothing in tracks V or Q needs it. The
-existing DCT results stand as recorded; no new DCT work is planned.
+### U1. The unsupervised arm, re-asked where truth is steerable
+
+**Why this is reopened.** This plan originally read "DCT and MAG go dormant. The note says forget
+DCT, and nothing in tracks V or Q needs it." That one sentence was the entire justification. There
+was no cost argument and no methodological blocker behind it, and it does not survive Q2.
+
+Every unsupervised null in this project was measured on `cities` and `common_claim`:
+[`DCT_VS_TRUTH_FINDINGS.md`](DCT_VS_TRUTH_FINDINGS.md) (512 factors at the truth-peak layer, none
+aligned with the supervised truth axis, nor any combination of them),
+[`DCT_VS_XGBOOST_FINDINGS.md`](DCT_VS_XGBOOST_FINDINGS.md) (the null extends to the non-linear
+frontier), [`WARM_DCT_RESULTS.md`](WARM_DCT_RESULTS.md) (anchoring the factor search at the
+supervised axis, lambda in {0, 0.3, 1, 3}, produces no truth lever), and
+[`DCT_VS_MAG_ON_TRUTH.md`](DCT_VS_MAG_ON_TRUTH.md) (a second, mechanically unrelated miner
+replicates the null). Those are the same two datasets section 1.3 prices at a **5.7%**
+spontaneous-false rate with the readout at **balanced accuracy 0.500** on the population we steer.
+**The unsupervised nulls inherit exactly the confound Q2 just overturned for the supervised
+direction.**
+
+Split the claim, because the two halves are not equally affected.
+
+- **The geometric half stands.** "DCT's 512 factors do not align with the supervised truth
+  direction" is a cosine measurement at the fit point, where the supervised direction genuinely
+  decodes well on cities. Dataset headroom does not enter it.
+- **The behavioural half does not.** Warm-DCT concluded that no anchor strength yields a truth
+  lever, and it concluded that by *steering* on datasets where steering toward truth had almost
+  nothing to move. That is precisely the inference Q2 overturned: four months of nulls on cities
+  did not mean truth is unsteerable, they meant cities could not show it.
+
+**Nothing technical blocks it.** `reach_margins.build_battery` already adds the top-K DCT `U`
+vectors as target-layer readouts, fits their thresholds with the same `fit_threshold`, and puts
+them in the pullback set (`store_jtw`). The only gate is `optional_artifacts(ds)["dct"]`, a
+file-existence check for `dct_V_truthfulqa.pt` and `dct_U_truthfulqa.pt`. `src/run_dct_data.py`
+and `deltaai/run_dct.slurm` both exist. Producing those two files is the whole of the work:
+margins, `eps*`, the steer arm and `reach_control` then pick up `dct_u_0..3` with no code change.
+
+**The pre-registered risk, so it cannot be reported later as a surprise.** `MIN_ACC_1D = 0.6`
+gates threshold validity and only **3 of 74** directions clear it on TruthfulQA (Q2 section 6).
+The DCT `U` readouts will most likely fail that gate and get `thresh02 = nan`, leaving no valid
+`eps*` and nothing to steer. **That is a result, not a wasted run.** It would say the unsupervised
+causal directions cannot read TruthfulQA truth one-dimensionally, which is the same finding as the
+3-of-74 one rather than a new mystery.
+
+**Sequencing: after V1, not before.** The most charitable reading of the note, and it is a
+reconstruction rather than something recorded, is that stacking a second direction-discovery
+method on top of a pipeline we cannot yet trust compounds the uncertainty instead of resolving it.
+That argument puts U1 after the pipeline is validated. It does not put it at never.
+
+**MAG stays dormant, and now for a reason rather than by inheritance.**
+`DCT_VS_MAG_ON_TRUTH.md` found MAG's self-verdict channel is dead on a base model: gemma-2-2b
+answers "yes" to essentially every "Is this true?" question, so MAG's fully unsupervised arm does
+not run on this model without an instruction-tuned one. That is a blocker U1 does not have.
+
+**Deliverable:** `dct_V_truthfulqa.pt`, `dct_U_truthfulqa.pt`, a `dct_u_*` block in the existing
+Q2 tables, `docs/U1_UNSUPERVISED_ON_TRUTHFULQA.md`.
+**Cost:** one factorization job at source layer 11, target layer 20, `num_factors=512`,
+`num_iters=30`, plus a margins rerun. CLUSTER.
 
 ---
 
@@ -317,6 +372,7 @@ two different reasons on the two datasets: minimum norm collapsing onto directio
 | Q2 | our TQA steer and judge | CLUSTER | ~4 GPU-hr | the verdict | not started, needs a TQA judge and a slurm job |
 | V1 | pipeline validation, layer sweep, two contexts | CLUSTER | a few GPU-hr | V2 | not started |
 | V2 | feature construction, chosen by V1 | CLUSTER | TBD | the verdict | blocked on V1 |
+| U1 | the unsupervised arm (DCT discovery) on TruthfulQA | CLUSTER | 1 factorization job + margins rerun | nothing | not started, reopened 2026-09-04 |
 
 **Do V0 and Q1 first.** Both are cheap and either can kill a track. V0 tells us whether a
 generation-population direction exists at all; Q1 tells us whether TQA has the headroom the whole
@@ -356,3 +412,8 @@ Nothing here retracts a result. It relocates the cause.
   "the readout is at chance on the generation population, AUC 0.510, and never changes sign." That
   is the finding we believe is unclaimed in the literature and it is now quantified.
 - **The 2x2 acquires a caveat** that we should state ourselves.
+- **The unsupervised null is half relocated, not retracted.** Its geometric half stands: DCT's
+  factors do not align with the supervised truth axis, measured at the fit point where that axis
+  decodes well. Its behavioural half was measured by steering on the two datasets section 1.3
+  shows had no behaviour to move, so it inherits the confound Q2 overturned. U1 is what settles
+  which it was.
