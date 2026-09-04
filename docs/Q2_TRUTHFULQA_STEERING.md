@@ -1,7 +1,7 @@
 # Q2. Steering gemma-2-2b along the certificate on TruthfulQA
 
 *Mean arm measured 2026-09-04 on CLUSTER, SLURM job 3082192 (steer) and the judge stage of the
-chained job. Norm-matched random control: SLURM job 3083390, PENDING at the time of writing.
+chained job. Norm-matched random control: SLURM jobs 3083390 (generation) and 3084307 (judging).
 Scripts: [`src/reach_steer.py`](../src/reach_steer.py),
 [`src/truthfulqa_judge.py`](../src/truthfulqa_judge.py),
 [`src/reach_control.py`](../src/reach_control.py),
@@ -12,10 +12,10 @@ Scripts: [`src/reach_steer.py`](../src/reach_steer.py),
 This is step Q2 of [`PLAN_ADVISOR_NOTES_2026-09.md`](PLAN_ADVISOR_NOTES_2026-09.md) section 3.
 Q1 opened the gate: [`Q1_TRUTHFULQA_BASELINE.md`](Q1_TRUTHFULQA_BASELINE.md).*
 
-> **STATUS: DRAFT. The headline is deliberately not written yet.** Sections 3 through 6 are final
-> and their numbers will not change. Section 7 is the norm-matched random control, which is the
-> experiment that decides what sections 3 through 6 mean, and it is still on the cluster. Do not
-> quote a headline out of this file until section 7 has numbers in it.
+> **STATUS: COMPLETE.** Sections 3 through 6 were written and their numbers frozen before the
+> norm-matched random control had run, together with the rule in section 7 for reading whatever it
+> came back with. The control came back flat, which is the outcome that makes section 3 a result.
+> The headline is section 8, and it carries three qualifications that are not optional.
 
 ## 1. The question, and the bar it was registered against
 
@@ -143,7 +143,8 @@ length.
 That is precisely why the adjustment cannot be the last word, and why section 7 exists. The
 question the mediator analysis leaves open is whether *any* perturbation of this norm would make
 the model discursive, or whether this particular direction does. Only a norm-matched random
-control can answer it.
+control can answer it, and section 7 does: perturbing by this norm buys about one word. The
+other thirteen belong to this direction.
 
 ## 6. What the readout says about the dataset
 
@@ -160,27 +161,89 @@ linear readout for truth that cities supports barely exists on TruthfulQA.
 
 ## 7. The norm-matched random control
 
-**PENDING: SLURM job 3083390.** Fill this section from
-`PYTHONPATH=src python3 src/tqa_q2_analyze.py --dataset truthfulqa --arms mean randctrl` and the
-job's own stage-4 comparison table. Three random directions, `rand_ctrl_0..2`, on the mean arm's
-exact scale grid.
+Three random directions, `rand_ctrl_0..2`, drawn at the same norm and swept on the mean arm's
+exact scale grid, so their rows land on the same `frac` axis after dividing by `mean_diff_tgt`'s
+eps*. SLURM job 3083390 generated them in 40 GPU-minutes and then died in the judge stage on an
+argparse bug; job 3084307 judged those same completions without regenerating them, so the arm this
+section reports is one generation, judged once.
 
-The reading was fixed before the numbers existed:
+**The oracle first, because it gates everything below.** All three scale-0 blocks are identical to
+each other and to job 3082192's unsteered answers, 64 of 64 on all three comparisons. The steering
+hook is not carrying state between directions, and the control shares a baseline with the mean arm
+rather than merely resembling one.
+
+**The reading was fixed before the numbers existed**, and is reproduced here unchanged from the
+draft of this file that predates job 3084307:
 
 | `randctrl` at frac -2 | Reading |
 |---|---|
 | rate near 0.266, ~4 mean words | The direction carries something specific. Section 3 is a result, with the length caveat of section 5 attached to it. |
 | rate near 0.500, ~18 mean words | Any perturbation of this norm makes the model discursive, and discursive scores truthful. Section 3 is a fact about perturbation magnitude, not about truth. |
 
-**Read the oracle stage before the rates.** It asserts the three scale-0 blocks are byte-identical
-to each other and to job 3082192's unsteered answers. If that fails, the steering hook is carrying
-state between directions and the whole control is void.
+**The control is flat.** Across all 27 (direction, dose) cells the rate stays inside
+[0.250, 0.3125] and mean answer length inside [3.95, 5.88] words, against a frac-0 baseline of
+0.2656 and 4.69 words. At the decisive dose:
+
+| direction at frac -2 | rate | Wilson 95% | mean words | gained | lost | McNemar p vs frac 0 |
+|---|---:|---|---:|---:|---:|---:|
+| `rand_ctrl_0` | 0.281 | [0.186, 0.401] | 4.34 | 2 | 1 | 1.000 |
+| `rand_ctrl_1` | 0.297 | [0.199, 0.418] | 5.88 | 4 | 2 | 0.688 |
+| `rand_ctrl_2` | 0.250 | [0.160, 0.368] | 5.62 | 4 | 5 | 1.000 |
+| **`jtw_mean_diff_tgt`** | **0.500** | [0.381, 0.619] | **18.58** | 16 | 1 | **2.75e-4** |
+
+Not one of the three controls moves off its own baseline by more than the two flips that paired
+noise supplies at this n.
+
+**The registered test.** Section 1's bar is not "the control is flat", it is that the direction
+beats the control at the same dose. Paired on the same 64 questions, mean arm against each control
+at frac -2:
+
+| `jtw_mean_diff_tgt` vs | mean wins | control wins | exact McNemar p |
+|---|---:|---:|---:|
+| `rand_ctrl_0` | 16 | 2 | 0.00131 |
+| `rand_ctrl_1` | 15 | 2 | 0.00235 |
+| `rand_ctrl_2` | 17 | 1 | 0.000145 |
+
+All three clear 0.05, and all three still clear it under a Bonferroni correction for three
+comparisons (0.0167). Informativeness holds on both sides at this dose: 0.9896 on the control arm
+(190 of 192), 0.9844 on the mean arm. **The registered bar is met.**
+
+**The verbosity reading, settled.** The pre-registered table above was written before the numbers
+existed, and the numbers pick its first row. Perturbing the residual stream by this norm at this
+layer buys about one word: the control's longest cell is 5.88 mean words against a 4.69 baseline,
+while the mean direction reaches 18.58. Of the 13.9-word increase, roughly 1.2 is generic to the
+perturbation size and the remaining 12.7 belongs to this direction specifically. Section 5's
+mediator argument survives as a caveat on the mechanism, which is what it was written as. It does
+not become the explanation.
 
 ## 8. Verdict
 
-**PENDING section 7.** The 2x2 cell `reach_control.py` names is `inert`, and section 4 explains why
-that is the correct cell rather than a disappointing one. What is still open is whether the
-behavioral movement in section 3 is attributable to this direction or to its norm.
+**Steering gemma-2-2b along `J^T w` from `mean_diff_tgt` at 2 eps* toward truthful raises the
+truthful-and-informative rate on 64 held-out TruthfulQA questions from 0.266 to 0.500.** The
+effect is paired (16 gained, 1 lost, exact McNemar p = 2.75e-4), monotone in dose, sign-asymmetric,
+and it beats three norm-matched random directions at the same dose on the same questions
+(p = 0.0013, 0.0024, 0.00015). Informativeness does not collapse. Q2's registered bar is met.
+
+Three qualifications travel with that sentence and none of them is optional.
+
+1. **The effect runs through answer length** (section 5). The direction makes the model discursive
+   and TruthfulQA rewards hedging. Section 7 establishes that the discursiveness is this
+   direction's doing rather than the perturbation's. It does not establish that the mechanism is a
+   representation of truth rather than a representation of "hedge, qualify, decline to assert".
+   Distinguishing those two is a separate experiment, not a reinterpretation of this one.
+2. **The certificate itself was not tested** (section 4). eps* points at `+frac`, which is the half
+   of the sweep where nothing happens, and it is roughly 3.5 times too small to reach `g = 0`
+   anyway. `reach_control.py` reports `crossed = 0` at every dose, correctly. This is a result
+   about the direction at the certified magnitude, not about the certified boundary.
+3. **The 2x2 cell is `inert`**, which by the audit's own definition means behavior moved without a
+   readout crossing. That is an off-target effect in the reachability framework's terms, whatever
+   its value as a steering result.
+
+The contrast worth carrying to the meeting is between datasets, not within this one. Same pipeline,
+same certificate machinery, three outcomes: on cities the readout crossed and behavior did not
+(`readout-only`); on TruthfulQA behavior moved and the readout did not (`inert`); only refusal has
+produced `actuatable`, where crossing the certified boundary changes behavior. Two of the three
+truth datasets fail in opposite directions, and the one non-truth concept passes.
 
 ## 9. What this does not say
 
@@ -203,18 +266,23 @@ behavioral movement in section 3 is attributable to this direction or to its nor
 
 | file | rows | what |
 |---|---:|---|
-| `reach_steer_truthfulqa.csv` | | mean arm completions, all directions and doses |
-| `reach_steer_readout_truthfulqa.csv` | | `g_read` per prompt per dose |
-| `judge_refusal_truthfulqa_mean.csv` | | the above judged, truthful and informative columns |
+| `reach_steer_truthfulqa.csv` | 1152 | mean arm completions, all directions and doses |
+| `reach_steer_readout_truthfulqa.csv` | 1152 | `g_read` per prompt per dose |
+| `judge_refusal_truthfulqa_mean.csv` | 1152 | the above judged, truthful and informative columns |
 | `reach_control_truthfulqa_mean.{csv,json}` | 9 | the per-frac table and the 2x2 verdict |
-| `reach_curve_truthfulqa.csv`, `reach_summary_truthfulqa.json` | | eps* per direction, and which have one |
-| `tqa_q2_summary_truthfulqa.csv` | | **every number in sections 3 and 5**, recomputed |
-| `reach_steer_randctrl_truthfulqa.csv` | | PENDING, control completions |
-| `judge_refusal_truthfulqa_randctrl.csv` | | PENDING, control judged |
-| `tqa_reach_3082192.out`, `tqa_rand_3083390.out` | | run logs, at the repo root like the others |
+| `reach_curve_truthfulqa.csv`, `reach_summary_truthfulqa.json` | 244 | eps* per direction, and which have one (3 of 74 non-null) |
+| `tqa_q2_summary_truthfulqa.csv` | 45 | **every number in sections 3, 5 and 7**, recomputed |
+| `reach_steer_randctrl_truthfulqa.csv` | 1728 | control completions, 3 directions x 9 doses x 64 |
+| `judge_refusal_truthfulqa_randctrl.csv` | 1728 | the control judged |
+| `reach_steer_randctrl_readout_truthfulqa.csv` | 1728 | `g_read` for the control |
+| `tqa_reach_3082192.out`, `tqa_rand_3084307.out` | | run logs, at the repo root like the others |
 
-Reproduce sections 3 and 5 on LAPTOP with:
+Reproduce sections 3, 5 and 7 on LAPTOP with:
 
-    PYTHONPATH=src ./.venv/bin/python src/tqa_q2_analyze.py --dataset truthfulqa --arms mean
+    PYTHONPATH=src ./.venv/bin/python src/tqa_q2_analyze.py --dataset truthfulqa --arms mean randctrl
 
-It imports no torch.
+It imports no torch. The per-frac tables and the mediator adjustment go to
+`tqa_q2_summary_truthfulqa.csv`; the registered contrast of section 7 (target against each control,
+paired, with its Bonferroni threshold) prints at the end and comes from
+`tqa_q2_analyze.control_contrast`, covered by `tests/test_tqa_q2_analyze.py`. Nothing in this
+document is quoted from a session transcript.

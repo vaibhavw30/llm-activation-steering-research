@@ -187,3 +187,68 @@ def test_report_writes_a_csv_whose_header_matches_the_rows(tmp_path, monkeypatch
     back = pd.read_csv("out.csv")
     assert list(back.columns) == list(rows[0].keys())
     assert len(back) == 1
+
+
+# --- control_contrast: the registered test, target against each random control ---
+
+def _arm(direction, scores, prompts, eps, words=1):
+    """One (direction, dose) block as load_arm would hand it to control_contrast."""
+    return pd.DataFrame([{"direction": direction, "arm": "x", "frac": -2.0,
+                          "scale": -2.0 * eps, "prompt": p,
+                          "answer": "word " * words, "words": words,
+                          "truthful": s, "informative": 1, q2.SCORE_COL: s}
+                         for p, s in zip(prompts, scores)])
+
+
+def test_control_contrast_pairs_the_target_against_each_control():
+    """The registered bar: beat a norm-matched control at the same dose. Two controls
+    here, so two rows, each paired on the same prompts as the target."""
+    eps = SUMM["directions"]["mean_diff_tgt"]["median_eps_star"]
+    prompts = [f"Q: q{i}\nA:" for i in range(10)]
+    frames = [_arm(q2.TARGET, [1] * 8 + [0, 0], prompts, eps, words=9),
+              _arm("rand_ctrl_0", [0] * 10, prompts, eps),
+              _arm("rand_ctrl_1", [1] + [0] * 9, prompts, eps)]
+
+    rows = q2.control_contrast(frames, frac=-2.0)
+    by = {r["control"]: r for r in rows}
+    assert set(by) == {"rand_ctrl_0", "rand_ctrl_1"}
+    assert by["rand_ctrl_0"]["target_wins"] == 8
+    assert by["rand_ctrl_0"]["control_wins"] == 0
+    assert by["rand_ctrl_1"]["target_wins"] == 7
+    assert by["rand_ctrl_1"]["control_wins"] == 0
+    assert by["rand_ctrl_0"]["n_paired"] == 10
+    assert by["rand_ctrl_0"]["target_rate"] == 0.8
+    assert by["rand_ctrl_0"]["target_words"] > by["rand_ctrl_0"]["control_words"]
+
+
+def test_control_contrast_is_paired_not_a_difference_of_rates():
+    """Two arms with the SAME rate but disjoint successes. An unpaired comparison sees
+    nothing; the paired one sees every question as discordant, which is the whole
+    reason the registered test is McNemar and not two proportions."""
+    eps = SUMM["directions"]["mean_diff_tgt"]["median_eps_star"]
+    prompts = [f"Q: q{i}\nA:" for i in range(8)]
+    frames = [_arm(q2.TARGET, [1, 1, 1, 1, 0, 0, 0, 0], prompts, eps),
+              _arm("rand_ctrl_0", [0, 0, 0, 0, 1, 1, 1, 1], prompts, eps)]
+
+    r, = q2.control_contrast(frames, frac=-2.0)
+    assert r["target_rate"] == r["control_rate"] == 0.5
+    assert r["target_wins"] == 4 and r["control_wins"] == 4
+    assert r["mcnemar_p"] == 1.0
+
+
+def test_control_contrast_is_empty_without_the_target_arm():
+    """A one-arm run must still report rather than KeyError on the missing target."""
+    eps = SUMM["directions"]["mean_diff_tgt"]["median_eps_star"]
+    prompts = [f"Q: q{i}\nA:" for i in range(4)]
+    assert q2.control_contrast([_arm("rand_ctrl_0", [1, 0, 1, 0], prompts, eps)]) == []
+
+
+def test_control_contrast_selects_the_requested_dose():
+    """frac is a knob, not a constant: asking for a dose no row carries returns
+    nothing rather than silently contrasting a different dose."""
+    eps = SUMM["directions"]["mean_diff_tgt"]["median_eps_star"]
+    prompts = [f"Q: q{i}\nA:" for i in range(4)]
+    frames = [_arm(q2.TARGET, [1, 1, 1, 0], prompts, eps),
+              _arm("rand_ctrl_0", [0, 0, 0, 0], prompts, eps)]
+    assert q2.control_contrast(frames, frac=-1.0) == []
+    assert len(q2.control_contrast(frames, frac=-2.0)) == 1

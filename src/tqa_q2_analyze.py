@@ -129,6 +129,45 @@ def length_adjusted_p(d):
     return math.erfc(math.sqrt(max(stat, 0.0) / 2.0)), stat
 
 
+TARGET = "jtw_mean_diff_tgt"
+
+
+def control_contrast(frames, frac=-2.0, target=TARGET):
+    """The REGISTERED test: does `target` beat each norm-matched control at one dose?
+
+    Everything else in this module tests an arm against its OWN frac-0 baseline, which
+    answers "did it move" and not "did it move for a reason". The bar Q2 was registered
+    against (PLAN_ADVISOR_NOTES_2026-09.md section 3) is beating a norm-matched random
+    control at the same dose, and that is this comparison: the same 64 questions steered
+    two ways, paired question by question.
+
+    Pairing matters more here than against the baseline. The control and the target share
+    an identical unsteered block (the slurm job asserts it byte for byte), so a question
+    the model gets right unsteered tends to stay right under both, and those concordant
+    pairs carry no information about which direction is better. Returns [] when the arms
+    needed are not loaded, so a one-arm run still reports.
+    """
+    d = pd.concat(frames, ignore_index=True)
+    at = d[d["frac"] == frac]
+    tgt = at[at["direction"] == target]
+    if tgt.empty:
+        return []
+    t = tgt.set_index("prompt")[SCORE_COL]
+    rows = []
+    for name, g in at[at["direction"].str.startswith(RAND_PREFIX)].groupby("direction"):
+        c = g.set_index("prompt")[SCORE_COL]
+        hit = t.index.intersection(c.index)
+        won, lost, p, n = mcnemar_exact(c.reindex(hit), t.reindex(hit))
+        rows.append({"frac": frac, "target": target, "control": name, "n_paired": n,
+                     "target_rate": round(float(t.reindex(hit).mean()), 4),
+                     "control_rate": round(float(c.reindex(hit).mean()), 4),
+                     "target_words": round(float(tgt["words"].mean()), 2),
+                     "control_words": round(float(g["words"].mean()), 2),
+                     "target_wins": won, "control_wins": lost,
+                     "mcnemar_p": float(f"{p:.3g}")})
+    return rows
+
+
 def analyze(ds, arms):
     summ = json.load(open(f"reach_summary_{ds}.json"))
     frames = [load_arm(ds, a, summ) for a in arms]
@@ -163,6 +202,26 @@ def analyze(ds, arms):
     return rows
 
 
+def report_contrast(rows):
+    """The registered comparison, printed with its own Bonferroni threshold.
+
+    The threshold is stated in the output rather than left to the reader: three controls
+    were run, so the honest bar is 0.05/3, and a result that only clears 0.05 should be
+    read as such."""
+    if not rows:
+        return
+    alpha = 0.05 / len(rows)
+    print(f"\n=== registered test: {rows[0]['target']} vs each norm-matched control "
+          f"at frac {rows[0]['frac']}, paired on the same questions ===")
+    print(pd.DataFrame(rows)[["control", "n_paired", "control_rate", "target_rate",
+                              "control_words", "target_words", "target_wins",
+                              "control_wins", "mcnemar_p"]].to_string(index=False))
+    worst = max(r["mcnemar_p"] for r in rows)
+    print(f"  Bonferroni for {len(rows)} controls: alpha = {alpha:.4f}; "
+          f"largest p = {worst:.3g} -> "
+          f"{'ALL CLEAR' if worst < alpha else 'NOT all clear'}")
+
+
 def report(rows, out):
     cols = list(rows[0].keys())
     with open(out, "w", newline="") as f:
@@ -188,13 +247,18 @@ def build_parser():
     ap.add_argument("--arms", nargs="+", default=["mean"],
                     help="judged arms to include, e.g. --arms mean randctrl")
     ap.add_argument("--out", default="")
+    ap.add_argument("--frac", type=float, default=-2.0,
+                    help="dose at which to run the registered control contrast")
     return ap
 
 
 def main():
     a = build_parser().parse_args()
     out = a.out or f"tqa_q2_summary_{a.dataset}.csv"
+    summ = json.load(open(f"reach_summary_{a.dataset}.json"))
+    frames = [load_arm(a.dataset, arm, summ) for arm in a.arms]
     report(analyze(a.dataset, a.arms), out)
+    report_contrast(control_contrast(frames, frac=a.frac))
 
 
 if __name__ == "__main__":

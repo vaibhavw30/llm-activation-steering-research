@@ -242,6 +242,23 @@ dose, which is the D1 test, with informativeness not collapsing. Steering that r
 by breaking the model is the failure mode D1 caught before and the info-judge is what catches it
 here.
 
+**DONE 2026-09-04, jobs 3082192 (steer), 3082210 (judge), 3083390 + 3084307 (control). The bar is
+met.** [`Q2_TRUTHFULQA_STEERING.md`](Q2_TRUTHFULQA_STEERING.md). Steering `jtw_mean_diff_tgt` at
+-2 eps* raises truthful and informative from **0.266 to 0.500** on the 64 held-out questions,
+paired: **16 gained, 1 lost, exact McNemar p = 2.75e-4**, monotone in dose and sign-asymmetric.
+Three norm-matched random directions at the same dose sit at 0.281, 0.297 and 0.250 with 4.3 to
+5.9 mean words, and the target beats each of them paired on the same questions at
+**p = 0.0013, 0.0024, 0.00015**, all clearing Bonferroni. Informativeness holds at 0.984.
+
+Three things travel with that and are written into the doc's verdict rather than left to memory.
+The effect runs through answer length (2.53 words at +2 eps* to 18.58 at -2), and the control
+shows about 1.2 of those 13.9 words are generic to the perturbation while the rest belong to this
+direction; so the direction is doing the work, but "hedge" and "truth" are not yet separated.
+The certificate itself was **not** tested: eps* points at `+frac` where nothing happens and is
+about 3.5x too small to reach `g = 0`, so `crossed = 0` at every dose and the 2x2 cell is
+`inert`. And the readout finding is separate and unchased: only **3 of 74** directions clear
+`MIN_ACC_1D = 0.6` on TruthfulQA.
+
 **Q3. A-LQR as the reference implementation.** The code is **public** at
 `github.com/trustworthyrobotics/lqr-activation-steering`, 94 commits, with task areas covering
 toxicity, truthfulness (TQA), concept steering, and refusal, and data-collection scripts
