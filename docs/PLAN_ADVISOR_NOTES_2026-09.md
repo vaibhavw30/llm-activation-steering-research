@@ -216,6 +216,21 @@ informative rate on TQA. This is the number that decides whether the track is vi
 it must be measured rather than assumed. **If the base rate is near ceiling as it is on cities,
 stop and reconsider.**
 
+**DONE 2026-09-04, job 3081925. The gate is open.**
+[`Q1_TRUTHFULQA_BASELINE.md`](Q1_TRUTHFULQA_BASELINE.md). Truthful **0.281** [0.186, 0.401],
+informative **0.984** [0.917, 0.997], truthful and informative **0.266** [0.173, 0.385], against a
+ceiling of 0.90 and a cities truthful rate of 0.943. The two judges validated at **1.000 on 128
+gold answers, 1.000 on each side separately**, so the rate is not a judge artifact. The combination
+that matters is untruthful on 72% while informative on 98%: the model is lying, not dodging, which
+is the one regime where a behavioral effect could be visible.
+
+Three things Q2 inherits, now measured rather than assumed. `n_truncated` was **64 of 64**, so
+`reach_steer`'s newline flattening would corrupt the judged text on **100%** of rows and Q2 must
+apply `tqa_baseline.first_answer` to the raw decode. The judges take the bare `question` column.
+And **Q2 must be registered as a paired analysis**: at n=64 an unpaired test needs the steered rate
+to reach 0.51 before it clears significance, while McNemar on the same 64 questions needs only 6
+one-directional flips for p = 0.031, which is how the refusal control was read.
+
 **Q2. Steer and judge.** Certificate, steer toward truthful, generate at T=0, judge with the
 existing `TruthJudge` in `src/judges/local_hf.py`, which already wraps
 `allenai/truthfulqa-truth-judge-llama2-7B` and `allenai/truthfulqa-info-judge-llama2-7B`. That is
@@ -280,7 +295,7 @@ two different reasons on the two datasets: minimum norm collapsing onto directio
 | V0 | finish D2, save the numbers | LAPTOP | minutes | nothing | **done 2026-09-04** |
 | Q0 | TQA dataset build | LAPTOP + 1 GPU pass | ~1 GPU-hr | Q2 | **done 2026-09-04** |
 | M | the readable derivation | LAPTOP | a day of writing | nothing | **done 2026-09-04** |
-| Q1 | TQA unsteered baseline | CLUSTER | ~1 GPU-hr | the whole Q track | job 3081925 ran, awaiting readback |
+| Q1 | TQA unsteered baseline | CLUSTER | ~1 GPU-hr | the whole Q track | **done 2026-09-04, PROCEED** |
 | Q3 | run A-LQR's code on gemma-2-2b TQA | CLUSTER | ~1 day setup | interpreting Q2 | not started |
 | Q2 | our TQA steer and judge | CLUSTER | ~4 GPU-hr | the verdict | not started, needs a TQA judge and a slurm job |
 | V1 | pipeline validation, layer sweep, two contexts | CLUSTER | a few GPU-hr | V2 | not started |
