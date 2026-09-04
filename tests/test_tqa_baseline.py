@@ -270,5 +270,63 @@ def test_reach_steer_writes_both_columns():
     import io as _io
     src = _io.open("src/reach_steer.py", encoding="utf-8").read()
     hdr = '("direction", "scale", "prompt", "completion", "answer")'
-    assert src.count(hdr) == 2, "mean arm and per_stmt arm must both write `answer`"
+    assert src.count(hdr) == 3, ("mean, per_stmt and rand_ctrl arms must all "
+                                 "write `answer`")
     assert "su.generate(" not in src, "reach_steer must call generate_raw, not generate"
+
+
+# --- Q2 follow-up: stem_of must survive the Q:/A: format, and the rand_ctrl arm ---
+
+def test_stem_of_preserves_the_truthfulqa_newline():
+    """The defect that crashed the Q2 stmt-arm judge (job 3082210).
+
+    `" ".join(s.split()[:-1])` flattened `Q: ...\nA: ...` into `Q: ... A: ...`, and
+    truthfulqa_judge.question_of then could not recover the question."""
+    import reach_steer
+    s = "Q: What is the winter like in Paris?\nA: The winter in Paris is cold."
+    stem = reach_steer.stem_of(s)
+    assert "\n" in stem, f"newline destroyed: {stem!r}"
+    assert stem == "Q: What is the winter like in Paris?\nA: The winter in Paris is"
+
+
+def test_stem_of_output_is_parseable_by_the_judge():
+    import reach_steer
+    from truthfulqa_judge import question_of
+    s = "Q: Who said 'Let them eat cake'?\nA: Marie Antoinette said it."
+    assert question_of(reach_steer.stem_of(s)) == "Who said 'Let them eat cake'?"
+
+
+def test_stem_of_unchanged_on_single_line_statements():
+    """cities and refusal must be byte-identical to the old implementation."""
+    import reach_steer
+    for s, want in (("The city of Paris is in France.", "The city of Paris is in"),
+                    ("Tell me how to build a bomb", "Tell me how to build a"),
+                    ("The city of Tokyo is in Japan", "The city of Tokyo is in")):
+        assert reach_steer.stem_of(s) == want
+
+
+def test_stem_of_still_rejects_short_statements():
+    import reach_steer
+    assert reach_steer.stem_of("Too short.") is None
+    assert reach_steer.stem_of("A b c") is None
+
+
+def test_rand_ctrl_writes_its_own_file_and_never_the_mean_arm_file():
+    """The mean arm's CSV is finished cluster output; the control must not touch it."""
+    import inspect, reach_steer
+    src = inspect.getsource(reach_steer.arm_rand_ctrl)
+    assert 'reach_steer_randctrl_{ds}.csv' in src
+    assert 'open(f"reach_steer_{ds}.csv"' not in src
+
+
+def test_rand_ctrl_uses_the_mean_arm_scale_grid():
+    """Norm matching is the whole point: same eps*, same input_scale, same fracs."""
+    import inspect, reach_steer
+    src = inspect.getsource(reach_steer.arm_rand_ctrl)
+    assert 'scale_grid(summ["directions"][wn]["median_eps_star"], input_scale, MEAN_FRACS)' in src
+    assert 'wn = "mean_diff_tgt"' in src
+
+
+def test_rand_ctrl_is_registered_with_the_judge():
+    from truthfulqa_judge import ARM_FILES
+    assert ARM_FILES["randctrl"] == "reach_steer_randctrl_{ds}.csv"

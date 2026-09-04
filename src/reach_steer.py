@@ -18,6 +18,7 @@ still won't lie" is a first-class outcome (LiSeCo activation->behavior gap).
 import argparse
 import csv
 import json
+import re
 
 import numpy as np
 import torch
@@ -33,6 +34,12 @@ from tqa_baseline import first_answer
 MEAN_FRACS = [0.5, 1.0, 1.5, 2.0]
 STMT_FRACS = [1.0, 2.0]
 N_PER_STMT, SEED = 200, 42
+# arm_rand_ctrl. Its own seed, so drawing the control directions cannot perturb the
+# per-statement sampler that SEED drives and change which statements arm_per_stmt picks.
+RAND_CTRL_SEED, RAND_CTRL_N = 7, 3
+# Everything up to, but not including, the final whitespace-separated word.
+# re.S so the leading group may span the newline in truthfulqa's Q:/A: format.
+_LAST_WORD = re.compile(r"^(.*)\s+\S+$", re.S)
 MIN_STEM_WORDS = 4
 MAX_NEW_TOKENS = 8
 
@@ -46,10 +53,21 @@ def scale_grid(eps_star, input_scale, fracs):
 
 
 def stem_of(statement):
-    words = str(statement).rstrip(" .").split()
-    if len(words) < MIN_STEM_WORDS:
+    """The statement minus its final word, with every other byte of whitespace kept.
+
+    The naive `" ".join(s.split()[:-1])` flattens newlines, which is invisible on
+    cities and refusal (single-line statements) and fatal on truthfulqa, whose
+    statements are `Q: ...\\nA: ...`: it yields the prompt `Q: ... A: ...`, and the
+    newline is the only marker of where the answer ends. That is what crashed the Q2
+    stmt-arm judge (job 3082210): truthfulqa_judge.question_of refused to parse the
+    flattened prompt rather than hand the judges a malformed question. Splitting on
+    the final run of whitespace instead preserves the format for every dataset.
+    """
+    s = str(statement).rstrip(" .")
+    if len(s.split()) < MIN_STEM_WORDS:
         return None
-    return " ".join(words[:-1])
+    m = _LAST_WORD.match(s)
+    return m.group(1) if m else None
 
 
 PROMPT_MODES = ("stem", "full")
@@ -167,6 +185,74 @@ def arm_mean(ds, device, limit=0, prompts="factual", max_new_tokens=MAX_NEW_TOKE
     print(f"[steer] wrote reach_steer_{ds}.csv and reach_steer_readout_{ds}.csv")
 
 
+def arm_rand_ctrl(ds, device, limit=0, prompts="factual",
+                  max_new_tokens=MAX_NEW_TOKENS, n_rand=RAND_CTRL_N):
+    """Norm-matched random directions: the control arm_mean has no way to run.
+
+    Q2 on truthfulqa (job 3082192) measured a real paired effect at -2 eps* on
+    jtw_mean_diff_tgt: truthful+informative 0.266 -> 0.500, 16 gained against 1 lost,
+    exact McNemar p = 2.8e-4. It is also entirely tracked by answer length, which runs
+    2.53 -> 18.58 mean words monotonically across the same sweep; conditioning on word
+    count leaves frac contributing nothing (LR chi2 = 0.146, p = 0.70). Two hypotheses
+    survive that: the direction carries truth, or ANY perturbation of this norm at this
+    layer makes the model discursive and TruthfulQA rewards hedging. A direction with
+    the same norm and no truth content is the only thing that separates them, so this
+    steers random unit vectors along the SAME scale grid arm_mean built for
+    mean_diff_tgt, on the same prompts, judged by the same judges.
+
+    g_read is logged against mean_diff_tgt's own w and t02, so the readout column is
+    directly comparable to reach_steer_readout_<ds>.csv rather than being a reading
+    along the random direction itself, which would be uninterpretable.
+
+    The scale-0 block is regenerated once per random direction. That is 2 of every
+    n_rand*len(grid) blocks nominally wasted, and it buys a determinism check for free:
+    every scale-0 answer must be byte-identical across all n_rand directions and to the
+    unsteered arm, or the steering hook is leaking state between directions.
+
+    Writes reach_steer_randctrl_<ds>.csv. It never opens reach_steer_<ds>.csv, which is
+    finished output.
+    """
+    (src, tgt, input_scale, model_name, summ, dirs, mz, acts, names,
+     store_names) = _load_common(ds)
+    y = np.asarray(acts["labels"]).astype(int)[:mz["margins"].shape[0]]
+    lab1 = y == 1
+    wn = "mean_diff_tgt"
+    k, ks = names.index(wn), store_names.index(wn)
+    # Only for its dimension: the control vectors are random, not derived from jtw.
+    d_src = np.asarray(mz["jtw"], np.float64)[lab1, ks, :].shape[1]
+    w_vec = torch.tensor(np.asarray(dirs["W"][k], np.float32))
+    t02 = float(dirs["thresh02"][k])
+    grid = scale_grid(summ["directions"][wn]["median_eps_star"], input_scale, MEAN_FRACS)
+
+    pset = load_prompt_set(prompts)
+    pset = pset[:limit] if limit else pset
+    tok, model, dev = su.load_model(device, model_name=model_name)
+    rng = np.random.default_rng(RAND_CTRL_SEED)
+    rows = [("direction", "scale", "prompt", "completion", "answer")]
+    readout = [("direction", "scale", "prompt", "g_read")]
+    for i in range(n_rand):
+        vec64 = unit(rng.standard_normal(d_src))
+        dname = f"rand_ctrl_{i}"
+        with su.Steerer(model, src) as st:
+            for s in grid:
+                st.set(None if s == 0.0 else torch.tensor(
+                    s * vec64, dtype=torch.float32))
+                for p in pset:
+                    raw = su.generate_raw(model, tok, p, max_new_tokens)
+                    rows.append((dname, s, p, raw.replace("\n", " ").strip(),
+                                 first_answer(raw)))
+                    g = read_g(model, tok, p, tgt, w_vec.to(dev), t02, dev)
+                    readout.append((dname, s, p, f"{g:.6g}"))
+                print(f"  {dname} scale={s:+.3g} done", flush=True)
+    with open(f"reach_steer_randctrl_{ds}.csv", "w", newline="") as f:
+        csv.writer(f).writerows(rows)
+    with open(f"reach_steer_randctrl_readout_{ds}.csv", "w", newline="") as f:
+        csv.writer(f).writerows(readout)
+    print(f"[steer] wrote reach_steer_randctrl_{ds}.csv and "
+          f"reach_steer_randctrl_readout_{ds}.csv  "
+          f"({n_rand} directions x {len(grid)} scales x {len(pset)} prompts)")
+
+
 def arm_per_stmt(ds, device, limit=0, prompt_mode="stem", max_new_tokens=MAX_NEW_TOKENS):
     (src, tgt, input_scale, model_name, summ, dirs, mz, acts, names,
      store_names) = _load_common(ds)
@@ -214,7 +300,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dataset", required=True)
     ap.add_argument("--device", default="cuda")
-    ap.add_argument("--arm", required=True, choices=["mean", "per_stmt"])
+    ap.add_argument("--arm", required=True,
+                    choices=["mean", "per_stmt", "rand_ctrl"])
     ap.add_argument("--limit", type=int, default=0, help="cap prompts/statements (smoke)")
     ap.add_argument("--prompt-mode", default="stem", choices=PROMPT_MODES,
                     help="per_stmt arm: 'stem' drops the final word (truth), "
@@ -223,9 +310,14 @@ def main():
                     choices=["factual", "refusal_holdout", "truthfulqa_holdout"],
                     help="mean arm: which prompt set to generate from")
     ap.add_argument("--max-new-tokens", type=int, default=MAX_NEW_TOKENS)
+    ap.add_argument("--n-rand", type=int, default=RAND_CTRL_N,
+                    help="rand_ctrl arm: how many norm-matched random directions")
     a = ap.parse_args()
     if a.arm == "mean":
         arm_mean(a.dataset, a.device, a.limit, a.prompts, a.max_new_tokens)
+    elif a.arm == "rand_ctrl":
+        arm_rand_ctrl(a.dataset, a.device, a.limit, a.prompts, a.max_new_tokens,
+                      a.n_rand)
     else:
         arm_per_stmt(a.dataset, a.device, a.limit, a.prompt_mode, a.max_new_tokens)
 

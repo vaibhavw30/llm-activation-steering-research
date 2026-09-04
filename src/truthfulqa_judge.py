@@ -36,7 +36,12 @@ import argparse
 import csv
 import re
 
-ARM_FILES = {"mean": "reach_steer_{ds}.csv", "stmt": "reach_steer_stmt_{ds}.csv"}
+ARM_FILES = {"mean": "reach_steer_{ds}.csv",
+             "stmt": "reach_steer_stmt_{ds}.csv",
+             # The norm-matched random-direction control (reach_steer.arm_rand_ctrl).
+             # Judged by the same judges on the same prompts, so its rate is directly
+             # comparable to the mean arm's.
+             "randctrl": "reach_steer_randctrl_{ds}.csv"}
 
 # prep_truthfulqa.py builds every statement as "Q: <question>\nA: <answer>", and the
 # holdout as "Q: <question>\nA:". Checked against both files: 64/64 and 1488/1488.
