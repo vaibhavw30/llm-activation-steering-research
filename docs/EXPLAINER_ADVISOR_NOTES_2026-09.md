@@ -656,9 +656,12 @@ once). It is the decisive version of note 2, it closes the caveat in section 7, 
 gate can invalidate a lot of existing numbers cheaply, which is a good property for a next
 experiment to have. Needs a slurm job and `docs/V1_PIPELINE_VALIDATION.md`.
 
-**2. Run the unsupervised arm on TruthfulQA (U1).** One factorization job at source layer 11,
-target 20, producing `dct_V/U_truthfulqa.pt`; everything downstream picks up `dct_u_0..3` with no
-code change. This is the first fair test the unsupervised arm has ever had, because every previous
+**2. Run the unsupervised arm on TruthfulQA (U1).** The job is written and ready to submit:
+`deltaai/run_truthfulqa_dct.slurm`. One factorization at source layer 11, target 20, producing
+`dct_V/U_truthfulqa.pt`; everything downstream picks up `dct_u_0..3` with no code change, taking
+the battery from 74 directions to 78. It restores the Q2 `dct_meta` that `run_dct_data.py` would
+otherwise overwrite, and runs the margins rerun in its own directory so the Q2 artifacts are not
+regenerated. This is the first fair test the unsupervised arm has ever had, because every previous
 one ran where the supervised direction also failed. After V1, for the sequencing reason in section
 3.3, and with the `MIN_ACC_1D` outcome registered in advance.
 

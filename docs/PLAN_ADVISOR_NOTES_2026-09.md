@@ -224,10 +224,21 @@ That argument puts U1 after the pipeline is validated. It does not put it at nev
 answers "yes" to essentially every "Is this true?" question, so MAG's fully unsupervised arm does
 not run on this model without an instruction-tuned one. That is a blocker U1 does not have.
 
+**The job is written:** [`deltaai/run_truthfulqa_dct.slurm`](../deltaai/run_truthfulqa_dct.slurm).
+Four stages: factorize, rebuild the battery, recompute `eps*`, then answer the registered question
+in stage 4 and say which way it went. It protects the two Q2 artifacts the naive version would
+destroy. `run_dct_data.py` rewrites `dct_meta_truthfulqa.json` unconditionally, and that file
+carries the `source_layer` / `target_layer` / `input_scale` Q2 ran against and that
+`reach_steer.load_meta` reads, so stage 1 restores it and archives the DCT fit's copy as
+`dct_meta_truthfulqa.dctfit.json`. `reach_margins` hardcodes its output names with no suffix flag,
+so stages 2 and 3 run in `u1_truthfulqa/` with the inputs symlinked in, and nothing at the repo
+root is written.
+
 **Deliverable:** `dct_V_truthfulqa.pt`, `dct_U_truthfulqa.pt`, a `dct_u_*` block in the existing
 Q2 tables, `docs/U1_UNSUPERVISED_ON_TRUTHFULQA.md`.
-**Cost:** one factorization job at source layer 11, target layer 20, `num_factors=512`,
-`num_iters=30`, plus a margins rerun. CLUSTER.
+**Cost:** one factorization at source layer 11, target layer 20, `num_factors=512`,
+`num_iters=30`, `--max-length 96` to match Q0, reusing Q2's `input_scale` rather than
+recalibrating, plus a margins rerun. CLUSTER, 6h wall clock requested.
 
 ---
 
@@ -372,7 +383,7 @@ two different reasons on the two datasets: minimum norm collapsing onto directio
 | Q2 | our TQA steer and judge | CLUSTER | ~4 GPU-hr | the verdict | not started, needs a TQA judge and a slurm job |
 | V1 | pipeline validation, layer sweep, two contexts | CLUSTER | a few GPU-hr | V2 | not started |
 | V2 | feature construction, chosen by V1 | CLUSTER | TBD | the verdict | blocked on V1 |
-| U1 | the unsupervised arm (DCT discovery) on TruthfulQA | CLUSTER | 1 factorization job + margins rerun | nothing | not started, reopened 2026-09-04 |
+| U1 | the unsupervised arm (DCT discovery) on TruthfulQA | CLUSTER | 1 factorization + margins rerun | nothing | **job written 2026-09-04**, not submitted |
 
 **Do V0 and Q1 first.** Both are cheap and either can kill a track. V0 tells us whether a
 generation-population direction exists at all; Q1 tells us whether TQA has the headroom the whole
