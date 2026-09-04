@@ -26,6 +26,9 @@ import dct_steer_utils as su
 from funnel_utils import unit
 from steer_supervised import FACTUAL_PROMPTS
 from reach_hop import load_meta, last_nonpad_index
+# The answer to THIS question, with any fabricated next turn cut off. Q1 measured
+# that every TruthfulQA generation needs this (n_truncated 64 of 64, job 3081925).
+from tqa_baseline import first_answer
 
 MEAN_FRACS = [0.5, 1.0, 1.5, 2.0]
 STMT_FRACS = [1.0, 2.0]
@@ -134,7 +137,7 @@ def arm_mean(ds, device, limit=0, prompts="factual", max_new_tokens=MAX_NEW_TOKE
     pset = load_prompt_set(prompts)
     pset = pset[:limit] if limit else pset
     tok, model, dev = su.load_model(device, model_name=model_name)
-    rows = [("direction", "scale", "prompt", "completion")]
+    rows = [("direction", "scale", "prompt", "completion", "answer")]
     readout = [("direction", "scale", "prompt", "g_read")]
     for wn in w_names:
         k = names.index(wn)
@@ -151,8 +154,9 @@ def arm_mean(ds, device, limit=0, prompts="factual", max_new_tokens=MAX_NEW_TOKE
                 st.set(None if s == 0.0 else torch.tensor(
                     s * vec64, dtype=torch.float32))
                 for p in pset:
-                    c = su.generate(model, tok, p, max_new_tokens)
-                    rows.append((dname, s, p, c))
+                    raw = su.generate_raw(model, tok, p, max_new_tokens)
+                    rows.append((dname, s, p, raw.replace("\n", " ").strip(),
+                                 first_answer(raw)))
                     g = read_g(model, tok, p, tgt, w_vec.to(dev), t02, dev)
                     readout.append((dname, s, p, f"{g:.6g}"))
                 print(f"  {dname} scale={s:+.3g} done", flush=True)
@@ -181,7 +185,7 @@ def arm_per_stmt(ds, device, limit=0, prompt_mode="stem", max_new_tokens=MAX_NEW
     if limit:
         picks = picks[:limit]
     tok, model, dev = su.load_model(device, model_name=model_name)
-    rows = [("direction", "scale", "prompt", "completion")]
+    rows = [("direction", "scale", "prompt", "completion", "answer")]
     meta_rows = [("stmt_index", "label", "eps_star", "scale", "g_read")]
     with su.Steerer(model, src) as st:
         for i in picks:
@@ -193,9 +197,10 @@ def arm_per_stmt(ds, device, limit=0, prompt_mode="stem", max_new_tokens=MAX_NEW
             for s in scale_grid(eps_i, input_scale, STMT_FRACS):
                 st.set(None if s == 0.0 else torch.tensor(
                     s * jtw_i, dtype=torch.float32))
-                c = su.generate(model, tok, stem, max_new_tokens)
+                raw = su.generate_raw(model, tok, stem, max_new_tokens)
                 g = read_g(model, tok, stem, tgt, w_vec.to(dev), t02, dev)
-                rows.append(("jtw_stmt", s, stem, c))
+                rows.append(("jtw_stmt", s, stem, raw.replace("\n", " ").strip(),
+                             first_answer(raw)))
                 meta_rows.append((int(i), int(y[i]), f"{eps_i:.6g}", s, f"{g:.6g}"))
             print(f"  stmt {int(i)} done", flush=True)
     with open(f"reach_steer_stmt_{ds}.csv", "w", newline="") as f:

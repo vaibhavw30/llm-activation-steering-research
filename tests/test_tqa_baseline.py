@@ -215,3 +215,60 @@ def test_module_does_not_import_torch():
     segfault macOS ARM (see reach_stemprobe.py)."""
     assert "torch" not in sys.modules or "torch" not in dir(q1)
     assert not hasattr(q1, "torch")
+
+
+# ---------------------------------------------------------------------------
+# Q2 wiring: reach_steer must not hand the judge a flattened next turn.
+# Q1 measured n_truncated = 64/64, so this affects 100% of TruthfulQA rows.
+# ---------------------------------------------------------------------------
+
+def test_dct_steer_utils_generate_raw_keeps_newlines(monkeypatch):
+    """generate_raw returns the decode untouched; generate still flattens it."""
+    import dct_steer_utils as su
+
+    class _Tok:
+        pad_token_id = 0
+        def __call__(self, prompt, return_tensors=None):
+            return _Inp()
+        def decode(self, ids, skip_special_tokens=True):
+            return " Paris.\nQ: And Spain?\nA: Madrid"
+
+    class _Inp(dict):
+        def __init__(self):
+            super().__init__(input_ids=_Ids())
+        def to(self, dev):
+            return self
+
+    class _Ids:
+        shape = (1, 3)
+        def __getitem__(self, i):
+            return self
+
+    class _Model:
+        device = "cpu"
+        def generate(self, **kw):
+            return [_Ids()]
+
+    raw = su.generate_raw(_Model(), _Tok(), "Q: Capital of France?\nA:", 8)
+    assert "\n" in raw, "generate_raw must preserve the newline"
+    flat = su.generate(_Model(), _Tok(), "Q: Capital of France?\nA:", 8)
+    assert "\n" not in flat, "generate must keep flattening, artifacts depend on it"
+    assert flat == "Paris. Q: And Spain? A: Madrid"
+
+
+def test_reach_steer_answer_column_cuts_the_fabricated_turn():
+    """The new `answer` column is first_answer applied to the raw decode."""
+    from reach_steer import first_answer as fa
+    raw = " Paris.\nQ: And Spain?\nA: Madrid"
+    assert fa(raw) == "Paris."
+    # and the old `completion` column keeps the whole flattened string
+    assert raw.replace("\n", " ").strip() == "Paris. Q: And Spain? A: Madrid"
+
+
+def test_reach_steer_writes_both_columns():
+    """Both arms' headers carry completion and answer, in that order."""
+    import io as _io
+    src = _io.open("src/reach_steer.py", encoding="utf-8").read()
+    hdr = '("direction", "scale", "prompt", "completion", "answer")'
+    assert src.count(hdr) == 2, "mean arm and per_stmt arm must both write `answer`"
+    assert "su.generate(" not in src, "reach_steer must call generate_raw, not generate"

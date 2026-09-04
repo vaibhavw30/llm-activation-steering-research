@@ -60,13 +60,25 @@ class Steerer:
         self.vec = vec
 
 
-def generate(model, tokenizer, prompt, max_new_tokens=40):
+def generate_raw(model, tokenizer, prompt, max_new_tokens=40):
+    """The decode with its newlines intact.
+
+    On a base model in Q:/A: format the newline is the ONLY marker of where this
+    answer ends and a fabricated next turn begins. Q1 measured that on TruthfulQA
+    (job 3081925): n_truncated was 64 of 64, so every generation ran past its own
+    answer. Anything that judges the text must cut at that newline first, which is
+    why this returns the raw string and generate() below does not.
+    """
     inp = tokenizer(prompt, return_tensors="pt").to(model.device)
     with torch.no_grad():
         out = model.generate(**inp, max_new_tokens=max_new_tokens, do_sample=False,
                              repetition_penalty=1.3, pad_token_id=tokenizer.pad_token_id)
-    txt = tokenizer.decode(out[0][inp["input_ids"].shape[1]:], skip_special_tokens=True)
-    return txt.replace("\n", " ").strip()
+    return tokenizer.decode(out[0][inp["input_ids"].shape[1]:], skip_special_tokens=True)
+
+
+def generate(model, tokenizer, prompt, max_new_tokens=40):
+    """Flattened to one line. Unchanged behaviour: every existing artifact used this."""
+    return generate_raw(model, tokenizer, prompt, max_new_tokens).replace("\n", " ").strip()
 
 
 # Probe prompts: a few open-ended (to reveal general behavior) + a few factual-completion
