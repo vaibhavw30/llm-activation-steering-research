@@ -193,11 +193,23 @@ was a positive control on the **instrument**. TruthfulQA would be a positive con
 
 ### The experiments
 
-**Q0. Dataset build.** `src/prep_truthfulqa.py`, modeled directly on `prep_refusal.py`. Load
-`truthful_qa`, apply the chat template once at build time, write `got_datasets/truthfulqa.csv`
-plus a holdout that never enters direction fitting. The contrastive pair for the direction is
-(question + correct answer) against (question + incorrect answer), so the direction is fit in the
-generation format.
+**Q0. Dataset build. DONE 2026-09-04.** `src/prep_truthfulqa.py`, modeled directly on
+`prep_refusal.py`. Load `truthful_qa`, apply the chat template once at build time, write
+`got_datasets/truthfulqa.csv` plus a holdout that never enters direction fitting. The contrastive
+pair for the direction is (question + correct answer) against (question + incorrect answer), so
+the direction is fit in the generation format.
+
+> **Result.** Written up in [`Q0_TRUTHFULQA_DATASET.md`](Q0_TRUTHFULQA_DATASET.md).
+> 1488 rows from 744 questions, exactly balanced, plus 64 held-out generation prompts;
+> 9 questions dropped for having no informative correct answer. **Polarity is inverted**
+> relative to cities: label 1 = untruthful, so the certificate describes steering toward
+> truthful. All 1488 rows verified to begin with their own question's generation prompt, so
+> the classes differ only in the answer. "I have no comment" answers are excluded, because a
+> truth direction carrying a decline-to-answer component would invalidate the 2x2 against the
+> refusal control. The GPU pass still has to run on CLUSTER, with `--max-length 96`.
+> **The fit point is still not the steer point:** extraction reads the answer's last token and
+> generation happens at the prompt's last token, so Q1 must measure that base rate rather than
+> assume the D2 failure is fixed.
 
 **Q1. Baseline, before any steering.** Measure gemma-2-2b's unsteered truthful rate and
 informative rate on TQA. This is the number that decides whether the track is viable at all, and

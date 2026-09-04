@@ -41,6 +41,16 @@ def test_load_prompt_set_refusal_holdout_reads_harmless_only(tmp_path, monkeypat
     assert load_prompt_set("refusal_holdout") == ["bake bread", "walk a dog"]
 
 
+def test_load_prompt_set_truthfulqa_holdout_reads_the_prompt_column(tmp_path,
+                                                                    monkeypatch):
+    """prep_truthfulqa writes `statement` as the generation prompt, answer omitted."""
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "got_datasets").mkdir()
+    (tmp_path / "got_datasets" / "truthfulqa_holdout.csv").write_text(
+        'statement,question\n"Q: a?\nA:",a?\n"Q: b?\nA:",b?\n')
+    assert load_prompt_set("truthfulqa_holdout") == ["Q: a?\nA:", "Q: b?\nA:"]
+
+
 def test_scale_grid_is_unchanged():
     # regression guard: the truth runs' grid must not move
     g = scale_grid(2.0, 10.0, [1.0, 2.0])

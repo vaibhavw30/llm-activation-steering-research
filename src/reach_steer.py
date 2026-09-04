@@ -77,13 +77,19 @@ def prompt_of(statement, mode):
 def load_prompt_set(name):
     """Mean-arm prompts. "factual" is the 32-prompt truth set; "refusal_holdout" is
     the harmless half of got_datasets/refusal_holdout.csv — held out of direction
-    fitting, so behavioral evaluation is leakage-free."""
+    fitting, so behavioral evaluation is leakage-free. "truthfulqa_holdout" is the
+    held-out question set prep_truthfulqa.py writes, whose `statement` column is
+    already the generation prompt and carries no answer."""
     if name == "factual":
         return list(FACTUAL_PROMPTS)
     if name == "refusal_holdout":
         import pandas as pd
         df = pd.read_csv("got_datasets/refusal_holdout.csv")
         return df[df["kind"] == "harmless"]["statement"].astype(str).tolist()
+    if name == "truthfulqa_holdout":
+        import pandas as pd
+        df = pd.read_csv("got_datasets/truthfulqa_holdout.csv")
+        return df["statement"].astype(str).tolist()
     raise ValueError(f"unknown prompt set {name!r}")
 
 
@@ -209,7 +215,7 @@ def main():
                     help="per_stmt arm: 'stem' drops the final word (truth), "
                          "'full' keeps the whole instruction (refusal)")
     ap.add_argument("--prompts", default="factual",
-                    choices=["factual", "refusal_holdout"],
+                    choices=["factual", "refusal_holdout", "truthfulqa_holdout"],
                     help="mean arm: which prompt set to generate from")
     ap.add_argument("--max-new-tokens", type=int, default=MAX_NEW_TOKENS)
     a = ap.parse_args()

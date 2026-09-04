@@ -37,3 +37,15 @@ def test_no_args_exits_2_with_usage_on_stderr(capsys):
     captured = capsys.readouterr()
     assert captured.out == ""
     assert "dataset" in captured.err
+
+
+def test_max_length_flag_defaults_to_the_module_constant():
+    a = extract.build_parser().parse_args(["cities.csv"])
+    assert a.max_length == extract.MAX_LENGTH == 64
+
+
+def test_max_length_flag_overrides():
+    """truthfulqa rows are prompt plus answer and run past 64 tokens; a truncated
+    row would be read mid-answer instead of at its last token."""
+    a = extract.build_parser().parse_args(["truthfulqa.csv", "--max-length", "96"])
+    assert a.max_length == 96

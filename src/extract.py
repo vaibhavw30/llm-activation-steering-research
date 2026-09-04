@@ -44,6 +44,11 @@ def build_parser():
     p.add_argument("--model", default=MODEL_NAME,
                    help="HF model id; overrides MODEL_NAME (the refusal control uses "
                         "google/gemma-2-2b-it when the base model does not refuse)")
+    p.add_argument("--max-length", type=int, default=MAX_LENGTH,
+                   help="tokenizer truncation length. The default fits the short "
+                        "declarative datasets. A truncated row has its activation "
+                        "read at the wrong token, so raise this for datasets whose "
+                        "rows are prompt plus answer (truthfulqa runs at 96).")
     return p
 
 
@@ -96,7 +101,7 @@ def load_model_or_explain(model_name=MODEL_NAME):
     return tokenizer, model
 
 
-def main(dataset_file, limit=None, model_name=MODEL_NAME):
+def main(dataset_file, limit=None, model_name=MODEL_NAME, max_length=MAX_LENGTH):
     torch.manual_seed(SEED)
     np.random.seed(SEED)
 
@@ -119,12 +124,13 @@ def main(dataset_file, limit=None, model_name=MODEL_NAME):
           flush=True)
 
     per_statement = []  # list of (num_layers+1, hidden_dim) arrays
+    n_truncated = 0     # a truncated row is read at the wrong token; say so loudly
     with torch.no_grad():
         for start in range(0, n, BATCH):
             batch = statements[start:start + BATCH]
             inputs = tokenizer(
                 batch, return_tensors="pt",
-                padding=True, truncation=True, max_length=MAX_LENGTH,
+                padding=True, truncation=True, max_length=max_length,
             )
             out = model(**inputs)
             # hidden_states: tuple of (num_layers+1) tensors, each (B, seq, d)
@@ -132,6 +138,7 @@ def main(dataset_file, limit=None, model_name=MODEL_NAME):
             # This is correct for BOTH left- and right-padding (robust guard on top
             # of the forced right-padding above).
             am = inputs["attention_mask"]
+            n_truncated += int((am.sum(dim=1) >= max_length).sum().item())
             last_idx = am.shape[1] - 1 - am.flip(dims=[1]).argmax(dim=1)
             for b in range(len(batch)):
                 idx = int(last_idx[b].item())
@@ -139,6 +146,12 @@ def main(dataset_file, limit=None, model_name=MODEL_NAME):
                 per_statement.append(layers.to(torch.float32).numpy())
             done = min(start + BATCH, n)
             print(f"  batch {start // BATCH + 1}: {done}/{n} statements", flush=True)
+
+    if n_truncated:
+        print(f"  WARNING: {n_truncated}/{n} statements hit --max-length "
+              f"{max_length} and may be truncated. A truncated statement's "
+              f"activation is read mid-sentence, not at its last token. "
+              f"Re-run with a larger --max-length.", flush=True)
 
     arr = np.stack(per_statement, axis=0)        # (n, L+1, d)
     acts = np.transpose(arr, (1, 0, 2)).astype(np.float32)  # (L+1, n, d)
@@ -162,4 +175,4 @@ def main(dataset_file, limit=None, model_name=MODEL_NAME):
 # inspects its exit code, so this is an intentional, harmless change.
 if __name__ == "__main__":
     a = build_parser().parse_args()
-    main(a.dataset, limit=a.limit, model_name=a.model)
+    main(a.dataset, limit=a.limit, model_name=a.model, max_length=a.max_length)

@@ -1,6 +1,6 @@
 # Documentation index
 
-43 documents accumulated over four months. This page says which one to open, and flags the ones
+44 documents accumulated over four months. This page says which one to open, and flags the ones
 that are point-in-time snapshots rather than current statements.
 
 **If you read one thing, read [`PLAIN_ENGLISH_WALKTHROUGH.md`](PLAIN_ENGLISH_WALKTHROUGH.md).**
@@ -73,6 +73,7 @@ These are the current statements of record. Each one owns its result.
 | [`S4_TARGET_CENSUS.md`](S4_TARGET_CENSUS.md) | 200/200 certified flips succeed, and at most 5.5% made the claim false. The target set was semantically empty. |
 | [`D1_DOSE_RESPONSE.md`](D1_DOSE_RESPONSE.md) | Pre-registered dose sweep. 0 clean windows out of 120 cells. Sections 1 to 3 were committed before any data existed and must not be edited. |
 | [`D2_PREFIX_TRANSFER.md`](D2_PREFIX_TRANSFER.md) | The truth readout is at chance on the population we steer: balanced accuracy 0.500, AUC 0.510 and 0.568, never changes sign, and every refit including XGBoost collapses to the base rate. |
+| [`Q0_TRUTHFULQA_DATASET.md`](Q0_TRUTHFULQA_DATASET.md) | The TruthfulQA build for track Q: 1488 contrastive rows off 744 questions plus a 64-question holdout, polarity inverted so the certificate steers toward truthful, and the fit-point caveat Q1 has to measure. |
 | [`REFUSAL_POSITIVE_CONTROL.md`](REFUSAL_POSITIVE_CONTROL.md) | **The publication gate.** The identical pipeline induces refusal: 14 flips against 0, Mantel-Haenszel OR 24.2 for crossing. Includes the judge's gold-label validation at 0.969. |
 
 ---
