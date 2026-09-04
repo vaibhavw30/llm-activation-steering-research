@@ -644,8 +644,11 @@ that a closed loop implicitly answers.
 
 ### 5.3 Two asks
 
-- Access to the A-LQR code, so the behavioral evaluation runs against a closed-loop controller
-  rather than our open-loop one.
+- **Not** access to the A-LQR code. That was an open ask in earlier drafts and it is void: the
+  code is public at `github.com/trustworthyrobotics/lqr-activation-steering`, 94 commits, with
+  task areas covering toxicity, truthfulness (TQA), concept steering and refusal, and
+  data-collection scripts referencing `gemma2b`. The real ask is which of their protocol choices
+  we should match so the comparison is like-for-like.
 - Which concept to target next. Truth is now well characterized as a negative; refusal is
   characterized as a positive. The interesting middle is something like sycophancy or toxicity,
   where nobody knows in advance which side of the 2x2 it lands on.
