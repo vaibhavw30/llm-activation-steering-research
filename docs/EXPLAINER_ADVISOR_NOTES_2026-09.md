@@ -17,6 +17,15 @@ the same artifact both times. Nothing is quoted from a session transcript.
 
 ## 0. The two-minute version
 
+**The three notes, compressed.** (1) Switch to TruthfulQA, the dataset Julian used, which has been
+steered before; misleading prompts steered toward truthful; two affiliated LLM judges plus a
+coherence measure; good to normalize on things that should be steerable. (2) Forget DCT; do the
+linear mapping from input layer to output layer with contrastive vectors to validate the Jacobian
+halfspace scoring pipeline; find where the source of the problem is; change the feature vector
+construction to something that works. (3) Write out the halfspace and the linear mapping in a form
+easier to follow than the current one. **Verbatim in section 1, and again at the head of the
+section that answers each.**
+
 **The first note worked, and it worked in the direction you predicted.** Moving to TruthfulQA
 gave the truth track behavioral headroom it never had: gemma-2-2b answers 64 held-out
 TruthfulQA questions truthfully-and-informatively **26.6%** of the time unsteered, against
@@ -57,20 +66,30 @@ thing in this window that did not land.
 
 ## 1. The three notes, and how I read them
 
-The notes as I have them:
+The notes exactly as given, so every later section can be checked against them.
 
-> **1.** Switch to the dataset Julian used in his paper, TruthfulQA, which has been able to be
-> steered before. A dataset of misleading prompts, steering them to become more truthful. Two
-> affiliated LLMs as a judge already, plus a coherence measure, slightly different from my
-> pipeline. Good to normalize on things that should be steerable.
+> **Note 1, as given.**
 >
-> **2.** Observed different feature directions at different layers, could use another sanity
-> check. Forget about DCT, do this linear mapping from input to output layer with contrastive
-> vectors to validate that the Jacobian halfspace scoring pipeline is effective. Find where the
-> source of the problem is. Change the feature vector construction to something that works.
+> Switch to the dataset that julian used in his paper, use truthful qa, been able to be steered
+> before
 >
-> **3.** Write out the formulation of the halfspace and the linear mapping easier to follow than
-> the current one.
+> - Dataset of misleading prompts, steering them to become more truthful
+> - 2 affiliated LLM's as a judge already, coherence measure, slightly different from my pipeline
+> - Good to normalize on things that should be steerable
+
+> **Note 2, as given.**
+>
+> Observed different feature directions at different layers, could use another sanity check,
+> forget about dct, do this linear mapping from input to output layer with contrastive vectors to
+> validate that jacobian halfspace scoring pipeline is effective. Find where the source of the
+> problem is
+>
+> - Change the feature vector construction to something that works
+
+> **Note 3, as given.**
+>
+> Write out the formulation of the halfspace and the linear mapping easier to follow than the
+> current one
 
 **How I read them, in one sentence each.**
 
@@ -99,6 +118,15 @@ note 1, which is where the GPU time went.
 ---
 
 ## 2. Note 1: TruthfulQA
+
+> **Note 1, as given.**
+>
+> Switch to the dataset that julian used in his paper, use truthful qa, been able to be steered
+> before
+>
+> - Dataset of misleading prompts, steering them to become more truthful
+> - 2 affiliated LLM's as a judge already, coherence measure, slightly different from my pipeline
+> - Good to normalize on things that should be steerable
 
 ### 2.1 Why the old datasets could not have shown anything
 
@@ -307,6 +335,15 @@ measurably wrong on this dataset in both sign and magnitude, and it needs the cl
 
 ## 3. Note 2: validate the pipeline, forget DCT
 
+> **Note 2, as given.**
+>
+> Observed different feature directions at different layers, could use another sanity check,
+> forget about dct, do this linear mapping from input to output layer with contrastive vectors to
+> validate that jacobian halfspace scoring pipeline is effective. Find where the source of the
+> problem is
+>
+> - Change the feature vector construction to something that works
+
 ### 3.1 The source of the problem, from artifacts we already had
 
 The note's operative clause is *find where the source of the problem is*. It is answerable
@@ -408,6 +445,11 @@ DCT results stand as recorded and no new DCT work is planned.
 ---
 
 ## 4. Note 3: the readable formulation
+
+> **Note 3, as given.**
+>
+> Write out the formulation of the halfspace and the linear mapping easier to follow than the
+> current one
 
 **Delivered: [`DERIVATION_SHORT.md`](DERIVATION_SHORT.md), 226 lines, six sections.**
 `math_map.tex` stays as the reference and is unchanged; this is the front-end that points into
