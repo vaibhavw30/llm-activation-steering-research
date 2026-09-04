@@ -222,6 +222,39 @@ Confirm both landed:
 ls $HOME/hf_cache/hub | grep -i truthfulqa
 ```
 
+Then install the two packages the judges' tokenizer needs. The allenai repos ship
+`tokenizer.model` (SentencePiece) and no `tokenizer.json`, so transformers has to convert slow to
+fast, which needs `sentencepiece` and `protobuf`. gemma never exposed this because its repo ships
+a ready-made `tokenizer.json`. Without them the job dies in stage 2 with a `tiktoken is required`
+error that names the wrong package entirely.
+
+```bash
+source ~/llm-activation-steering-research/.venv-dct-gpu/bin/activate && python3 - <<'EOF'
+import importlib.util as u, subprocess, sys
+need = [n for n, spec in (("sentencepiece", "sentencepiece"), ("protobuf", "google.protobuf"))
+        if u.find_spec(spec) is None]
+print("installing:", need or "nothing")
+if need:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "--no-deps", *need])
+EOF
+```
+
+`--no-deps` and the missing-only check are both deliberate: five finished experiments share this
+venv and pip should not be resolving its way into the torch or transformers pin. Prove the
+tokenizer loads before spending a job on it, which costs nothing (tokenizer only, no weights, no
+GPU):
+
+```bash
+source ~/llm-activation-steering-research/.venv-dct-gpu/bin/activate && HF_HOME=$HOME/hf_cache TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_XET=1 python3 -c "
+from transformers import AutoTokenizer
+t = AutoTokenizer.from_pretrained('allenai/truthfulqa-truth-judge-llama2-7B')
+print('tokenizer OK', type(t).__name__, 'vocab', len(t))
+"
+```
+
+The job checks for both packages in its own guard block and fails in the first ten seconds if they
+are absent, so this is belt and braces rather than the only defense.
+
 ### 5b. Fill the account and dry run. 🖥️ CLUSTER
 
 ```bash
@@ -309,6 +342,8 @@ counts how often it did).
 | Job stuck `PD` for a long time | Normal queueing. `squeue -u vwudaru --start`. |
 | Wrong env on model load | The script sources `.venv-dct-gpu`. Do not hand-edit it to the judge env. |
 | `!!!! models--allenai--truthfulqa-...-judge-llama2-7B is not in .../hub` | Phase 5a was skipped or the download 401'd. Compute nodes have no internet; stage it on the login node. |
+| `!!!! missing python packages: sentencepiece protobuf` | The judges' tokenizer needs them to convert slow to fast. Install on the login node as in Phase 5a. |
+| `` `tiktoken` is required to read a `tiktoken` file `` | The same thing, from a job submitted before the guard existed. The missing package is `sentencepiece`, not tiktoken. |
 | Judge download 401s | Llama 2 license gate. Accept it on huggingface.co as the token's account. |
 | No room for the 27 GB of judges | Stage the truth judge only, submit with `TQA_TRUTH_ONLY=1`, and record that informativeness is unmeasured. |
 | `judge gold accuracy` below 0.85 | Do not read the rate. The judge cannot separate TruthfulQA's own correct and incorrect answers, so it cannot grade the model's. Check the per-side numbers: 1.000 / 0.000 means it answers TRUE to everything. |

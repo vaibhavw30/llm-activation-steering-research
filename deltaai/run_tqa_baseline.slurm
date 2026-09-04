@@ -55,6 +55,27 @@ for m in $NEEDED; do
 "on the LOGIN node first (TRUTHFULQA_RUN.md Phase 5)."; exit 1; }
 done
 
+# The allenai judges ship tokenizer.model (SentencePiece) and NO tokenizer.json, so
+# transformers has to convert slow to fast and needs both of these. Without them it
+# falls through to its tiktoken branch and raises "`tiktoken` is required to read a
+# `tiktoken` file", which names the wrong package and only surfaces after the whole
+# generation stage has already run. gemma never exposes this: its repo ships a
+# ready-made tokenizer.json and skips the conversion entirely.
+python3 - <<'DEPCHECK' || exit 1
+import importlib.util as u
+import sys
+
+missing = [name for name, spec in (("sentencepiece", "sentencepiece"),
+                                   ("protobuf", "google.protobuf"))
+           if u.find_spec(spec) is None]
+if missing:
+    print("!!!! missing python packages: " + " ".join(missing))
+    print("!!!! Install on the LOGIN node, into this same venv:")
+    print("!!!!     pip install --no-deps " + " ".join(missing))
+    sys.exit(1)
+print("[guard] tokenizer conversion deps present")
+DEPCHECK
+
 # TQA_LIMIT=4 runs the whole three-stage pipeline on 4 questions. Worth doing once:
 # the two allenai judges have never been run in this repo, and a 10-minute smoke that
 # proves they load and answer is cheaper than discovering it after the full pass.
