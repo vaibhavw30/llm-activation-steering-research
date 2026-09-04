@@ -130,7 +130,10 @@ def run(ds, arm, device="cuda", limit=0, truth_only=False):
 def build_parser():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dataset", default="truthfulqa")
-    ap.add_argument("--arm", choices=["mean", "stmt"], required=True)
+    # Derived from ARM_FILES, never spelled out again. Job 3083390 spent 40 GPU-minutes
+    # generating the control arm and then died on `invalid choice: 'randctrl'`, because
+    # the arm had been registered in ARM_FILES and not here.
+    ap.add_argument("--arm", choices=sorted(ARM_FILES), required=True)
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--limit", type=int, default=0, help="cap rows (smoke)")
     ap.add_argument("--truth-only", action="store_true",

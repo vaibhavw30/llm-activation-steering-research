@@ -330,3 +330,21 @@ def test_rand_ctrl_uses_the_mean_arm_scale_grid():
 def test_rand_ctrl_is_registered_with_the_judge():
     from truthfulqa_judge import ARM_FILES
     assert ARM_FILES["randctrl"] == "reach_steer_randctrl_{ds}.csv"
+
+
+def test_every_registered_arm_is_accepted_on_the_command_line():
+    """Registering an arm in ARM_FILES is not enough: --arm has its own choices list.
+
+    Job 3083390 generated the whole control arm, passed the determinism oracle, then
+    exited 2 on `invalid choice: 'randctrl'`. The dict knew about the arm and the
+    parser did not. Assert the two cannot drift apart again."""
+    import truthfulqa_judge as tj
+    ap = tj.build_parser()
+    for arm in tj.ARM_FILES:
+        assert ap.parse_args(["--arm", arm]).arm == arm
+
+
+def test_the_parser_still_rejects_an_unknown_arm():
+    import truthfulqa_judge as tj
+    with pytest.raises(SystemExit):
+        tj.build_parser().parse_args(["--arm", "not_an_arm"])

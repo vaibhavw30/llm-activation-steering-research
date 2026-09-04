@@ -77,8 +77,19 @@ DEPCHECK
 echo "=== stage 1: norm-matched random directions, same scale grid as the mean arm ==="
 # --max-new-tokens 48 is load-bearing: the mean arm and Q1 both used 48, and the whole
 # comparison is about answer length. A different budget here would decide the result.
-python3 src/reach_steer.py --dataset truthfulqa --arm rand_ctrl --device cuda \
-  --prompts truthfulqa_holdout --max-new-tokens 48 --n-rand 3
+#
+# Skipped when the CSV is already there. Job 3083390 completed this stage (40 GPU-min,
+# 1728 rows, determinism oracle PASS) and then died in stage 3 on an argparse error, so
+# a rerun must judge the answers that exist rather than generate new ones. Regenerating
+# would also overwrite finished cluster output, which nothing in this project does.
+if [ -s reach_steer_randctrl_truthfulqa.csv ] && \
+   [ -s reach_steer_randctrl_readout_truthfulqa.csv ]; then
+  echo "[stage 1] reach_steer_randctrl_truthfulqa.csv exists, keeping it and skipping"
+  wc -l reach_steer_randctrl_truthfulqa.csv
+else
+  python3 src/reach_steer.py --dataset truthfulqa --arm rand_ctrl --device cuda \
+    --prompts truthfulqa_holdout --max-new-tokens 48 --n-rand 3
+fi
 
 echo "=== stage 2: the scale-0 determinism check ==="
 # Every random direction regenerates the unsteered block. All three must be identical
