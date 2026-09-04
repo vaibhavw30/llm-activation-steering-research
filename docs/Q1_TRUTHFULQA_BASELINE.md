@@ -133,7 +133,7 @@ should register the paired analysis before it runs.
 | `tqa_baseline_judged.csv` | 64 | the above plus the two judge verdicts |
 | `tqa_baseline_gold.csv` | 128 | gold answers with expected and observed verdicts |
 | `tqa_baseline_summary.csv` | 1 | every rate, interval, count, and the gate verdict |
-| `logs/tqa_baseline_3081925.out` | | the run log |
+| `tqa_baseline_3081925.out` | | the run log, kept at the repo root like the other SLURM logs |
 
 Reproduce the summary from the CSVs on LAPTOP with
 `PYTHONPATH=src ./.venv/bin/python src/tqa_baseline.py --summarize`, which imports no torch.
