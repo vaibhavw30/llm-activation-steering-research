@@ -171,3 +171,22 @@ def test_stem_of_drops_the_final_word_and_the_period():
 
 def test_stem_of_refuses_statements_too_short_to_have_a_stem():
     assert tg.stem_of("Cats purr.") is None
+
+
+def test_stem_for_uses_the_template_when_given_and_stem_of_otherwise():
+    t = "The city of {city} is in the country of"
+    assert tg.stem_for("The city of Ufa is in South Africa.", "Ufa", t) == \
+        "The city of Ufa is in the country of"
+    assert tg.stem_for("The city of Ufa is in South Africa.") == \
+        "The city of Ufa is in South"          # the cut mid-country the template avoids
+
+
+def test_clean_rows_keeps_the_first_row_per_city_and_drops_countries_outside_the_pool():
+    cities = ["Ufa", "Ufa", "Lima", "Pyongyang", "Oslo"]
+    correct = ["Russia", "Russia", "Peru", "North Korea", "Norway"]
+    pool = {"Russia": 1, "Peru": 2, "Norway": 3}
+    assert tg.clean_rows(cities, correct, pool) == [0, 2, 4]
+
+
+def test_clean_rows_does_not_revisit_a_city_whose_first_row_was_dropped():
+    assert tg.clean_rows(["X", "X"], ["Atlantis", "Russia"], {"Russia": 1}) == []

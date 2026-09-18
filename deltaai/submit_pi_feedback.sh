@@ -1,5 +1,5 @@
 #!/bin/bash
-# submit_pi_feedback.sh <round>: submit one round of docs/PLAN_PI_FEEDBACK_2026-09-18.md.
+# submit_pi_feedback.sh <round|tokgeom>: submit one round of docs/PLAN_PI_FEEDBACK_2026-09-18.md.
 # CLUSTER, from the repo root, after the rsync and the ACCOUNT_NAME sed.
 #
 #   bash deltaai/submit_pi_feedback.sh round1
@@ -15,7 +15,9 @@ case "${1:-}" in
   round1) files=(deltaai/run_tqa_discovery.slurm)
           [ -f deltaai/run_tqa_confirm.slurm ] && files+=(deltaai/run_tqa_confirm.slurm) ;;
   round2) files=(deltaai/run_xfer_cities.slurm deltaai/run_xfer_tqa.slurm) ;;
-  *) echo "usage: $0 round1|round2"; exit 2 ;;
+  # One short job; submit it into whichever slot frees first.
+  tokgeom) files=(deltaai/run_token_geom_country_of.slurm) ;;
+  *) echo "usage: $0 round1|round2|tokgeom"; exit 2 ;;
 esac
 
 if [ $((have + ${#files[@]})) -gt $LIMIT ]; then

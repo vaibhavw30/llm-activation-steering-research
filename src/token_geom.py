@@ -208,6 +208,28 @@ def stem_of(statement, min_words=4):
     return " ".join(words[:-1]) if len(words) >= min_words else None
 
 
+def stem_for(statement, city=None, template=None):
+    """The decision-position text for one row. With a template (cities only) the stem is
+    template.format(city=city), which fixes two faults of stem_of on cities: after "is in"
+    gemma's next token is " the" (174/200 rows in the Sep 4 run), not a country; and on a
+    multi-word country stem_of cuts mid-name ("... is in South" for South Africa)."""
+    return template.format(city=city) if template else stem_of(statement)
+
+
+def clean_rows(cities, correct, pool):
+    """Positions to keep under --target countries_clean: the first row of each distinct
+    city whose correct country is in the pool. The templated stem depends only on the city,
+    so a city's true and false rows would otherwise be the same geometry twice."""
+    seen, keep = set(), []
+    for i, (c, k) in enumerate(zip(cities, correct)):
+        if c in seen:
+            continue
+        seen.add(c)
+        if k in pool:
+            keep.append(i)
+    return keep
+
+
 def _read_positions(model, tok, texts, dev, pre_store):
     """Post-norm z and pre-norm h at the last real token of each text."""
     import torch
@@ -225,7 +247,7 @@ def _read_positions(model, tok, texts, dev, pre_store):
             pre_store["x"][ar, last].float().cpu().numpy())
 
 
-def extract(ds, device, n, model_name, max_new=0):
+def extract(ds, device, n, model_name, max_new=0, template=None, acts_suffix=""):
     """Post-final-norm z and pre-norm h at TWO positions per statement.
 
     stem  the last token of the statement minus its final word, i.e. the position
@@ -251,7 +273,10 @@ def extract(ds, device, n, model_name, max_new=0):
     df = pd.read_csv(f"got_datasets/{ds}.csv")
     rng = np.random.default_rng(SEED)
     pick = rng.permutation(len(df))[: n if n else len(df)]
-    rows = [(int(i), str(df["statement"][i]), stem_of(df["statement"][i]))
+    if template and "city" not in df.columns:
+        raise SystemExit(f"--template needs a city column; {ds} has {list(df.columns)}")
+    rows = [(int(i), str(df["statement"][i]),
+             stem_for(df["statement"][i], df["city"][i] if template else None, template))
             for i in pick]
     rows = [(i, s, st) for i, s, st in rows if st]
     lab = df["label"].values[[r[0] for r in rows]]
@@ -276,14 +301,14 @@ def extract(ds, device, n, model_name, max_new=0):
 
     cat = np.concatenate
     np.savez_compressed(
-        f"token_acts_{ds}.npz",
+        f"token_acts_{ds}{acts_suffix}.npz",
         z=cat(Zs), h=cat(Hs), z_full=cat(Zf), h_full=cat(Hf),
         labels=np.asarray(lab, int),
         row_index=np.asarray([r[0] for r in rows]),
         statements=np.asarray([r[1] for r in rows], object),
         stems=np.asarray([r[2] for r in rows], object),
-        model=model_name)
-    print(f"[extract] wrote token_acts_{ds}.npz  z_stem{cat(Zs).shape}")
+        model=model_name, template=template or "")
+    print(f"[extract] wrote token_acts_{ds}{acts_suffix}.npz  z_stem{cat(Zs).shape}")
 
 
 # ------------------------------------------------------------------- geom stage
@@ -292,13 +317,14 @@ def first_token(tok, word):
     return int(tok(" " + str(word), add_special_tokens=False)["input_ids"][0])
 
 
-def geom(ds, snapshot, target_mode, dirs_file, tag=""):
+def geom(ds, snapshot, target_mode, dirs_file, tag="", acts_suffix=""):
     suffix = f"_{tag}" if tag else ""
     from transformers import AutoTokenizer
     snap = resolve_snapshot(snapshot=snapshot)
     W, gamma = load_unembed(snap)          # W is the PLAIN tied E; see load_unembed
     tokz = AutoTokenizer.from_pretrained(snap)
-    A = np.load(f"token_acts_{ds}.npz", allow_pickle=True)
+    acts = f"token_acts_{ds}{acts_suffix}.npz"
+    A = np.load(acts, allow_pickle=True)
     Z = np.asarray(A["z"], np.float64)
     H = np.asarray(A["h"], np.float64)
     stmts, stems, ridx = A["statements"], A["stems"], A["row_index"]
@@ -314,11 +340,24 @@ def geom(ds, snapshot, target_mode, dirs_file, tag=""):
         countries = sorted(df["correct_country"].astype(str).unique())
         false_pool = {c: first_token(tokz, c) for c in countries}
         print(f"[geom] country target pool: {len(set(false_pool.values()))} tokens")
+    keep = list(range(len(Z)))
+    if target_mode == "countries_clean":
+        # The xfer_cities pool, so this run and J-D1 aim at the same targets: bare names
+        # (no leading "the"), no shared first token, no generic first word (North Korea).
+        import xfer_cities as xcit
+        first = {xcit.bare(c): first_token(tokz, xcit.bare(c))
+                 for c in df["correct_country"].astype(str).unique()}
+        false_pool = xcit.clean_pool(first)
+        true_of = [xcit.bare(df["correct_country"].iloc[int(r)]) for r in ridx]
+        keep = clean_rows([str(df["city"].iloc[int(r)]) for r in ridx], true_of,
+                          false_pool)
+        print(f"[geom] clean country pool: {len(false_pool)} countries; "
+              f"{len(keep)} distinct cities of {len(Z)} rows kept")
 
-    U = load_directions(ds, dirs_file, Z, H, d)
+    U = load_directions(ds, dirs_file, acts)
 
     rows, deltas, dirs_out = [], [], []
-    for i in range(len(Z)):
+    for i in keep:
         z = Z[i]
         logit = W @ z
         order = np.argsort(-logit)
@@ -330,6 +369,10 @@ def geom(ds, snapshot, target_mode, dirs_file, tag=""):
             bad = [t for c, t in false_pool.items() if c != true_c]
             bad = sorted(set(bad) - {j_top})
             j_tgt = int(bad[int(np.argmax(logit[bad]))])      # cheapest false country
+        elif target_mode == "countries_clean":
+            true_c = true_of[i]
+            bad = sorted({t for c, t in false_pool.items() if c != true_c} - {j_top})
+            j_tgt = int(bad[int(np.argmax(logit[bad]))])
         else:
             j_tgt = int(order[1])                             # cheapest token of any kind
 
@@ -361,6 +404,9 @@ def geom(ds, snapshot, target_mode, dirs_file, tag=""):
                  rmsnorm_penalty=float(np.linalg.norm(Dp)) / max(delta, 1e-12),
                  z_norm=float(np.linalg.norm(z)), h_norm=hn,
                  delta_rel_z=delta / float(np.linalg.norm(z)))
+        if target_mode == "countries_clean":
+            r["true_country"] = true_c
+            r["top_is_correct"] = bool(j_top == false_pool[true_c])
         for name, u in U.items():
             ui = u[i] if u.ndim == 2 else u
             r[f"alpha_{name}"] = float(abs(a @ ui) / na)
@@ -370,7 +416,7 @@ def geom(ds, snapshot, target_mode, dirs_file, tag=""):
         rows.append(r)
         deltas.append(D)
         dirs_out.append(a / na)
-        if i % 25 == 0:
+        if len(rows) % 25 == 1:
             print(f"  [geom] {i}/{len(Z)} margin={M:.3f} delta={delta:.4f} "
                   f"faces={nf} solved={solved} pre/post={r['rmsnorm_penalty']:.2f}",
                   flush=True)
@@ -382,11 +428,11 @@ def geom(ds, snapshot, target_mode, dirs_file, tag=""):
                         a_unit=np.asarray(dirs_out, np.float32),
                         j_top=out.j_top.values, j_tgt=out.j_tgt.values,
                         margin=out.margin.values, delta_cone=out.delta_cone.values,
-                        row_index=ridx, target_mode=target_mode)
+                        row_index=out.idx.values, target_mode=target_mode)
     summarize(out, ds, target_mode, suffix)
 
 
-def load_directions(ds, dirs_file, Z, H, d):
+def load_directions(ds, dirs_file, acts):
     """Candidate steering directions, all unit, all in post-norm coordinates.
 
     md_full   final-layer mean-difference truth direction, fitted at the FULL-statement
@@ -399,7 +445,7 @@ def load_directions(ds, dirs_file, Z, H, d):
               to the thing that moves the next token", which is the question we need,
               but it is not a claim that the two live in the same basis."""
     U = {}
-    A = np.load(f"token_acts_{ds}.npz", allow_pickle=True)
+    A = np.load(acts, allow_pickle=True)
     lab = np.asarray(A["labels"], int)
     if "z_full" in A.files and (lab == 1).any() and (lab == 0).any():
         Zf = np.asarray(A["z_full"], np.float64)
@@ -425,6 +471,10 @@ def summarize(out, ds, target_mode, suffix=""):
     print(f"statements                     {len(out)}")
     print(f"post-norm cone proved          {int(ok.sum())}/{len(out)}")
     print(f"pre-norm cone first-order ok   {int(out.cone_solved_pre.sum())}/{len(out)}")
+    print(f"top tokens     {out.tok_top.value_counts().head(5).to_dict()}")
+    print(f"target tokens  {out.tok_tgt.value_counts().head(5).to_dict()}")
+    if "top_is_correct" in out:
+        print(f"argmax is the correct country  {int(out.top_is_correct.sum())}/{len(out)}")
     for c in ("margin", "delta_cone", "delta_rel_z", "delta_cone_pre",
               "rmsnorm_penalty", "z_norm", "h_norm"):
         q = out.loc[ok, c]
@@ -452,16 +502,25 @@ def main():
     p.add_argument("--n", type=int, default=N_DEFAULT)
     p.add_argument("--model", default="google/gemma-2-2b")
     p.add_argument("--snapshot", default=None)
-    p.add_argument("--target", default="runnerup", choices=["runnerup", "countries"])
+    p.add_argument("--target", default="runnerup",
+                   choices=["runnerup", "countries", "countries_clean"])
+    p.add_argument("--template", default=None,
+                   help='cities: stem = template.format(city=...), e.g. '
+                        '"The city of {city} is in the country of"')
+    p.add_argument("--acts-tag", default="",
+                   help="suffix for token_acts_<ds>.npz, so a templated extract does "
+                        "not clobber the one xfer_cities.targets reads")
     p.add_argument("--dirs", default=None)
     p.add_argument("--tag", default="",
                    help="suffix for the geom outputs, so a second target "
                         "mode does not clobber the first")
     a = p.parse_args()
+    acts_suffix = f"_{a.acts_tag}" if a.acts_tag else ""
     if a.stage in ("extract", "all"):
-        extract(a.dataset, a.device, a.n, a.model)
+        extract(a.dataset, a.device, a.n, a.model, template=a.template,
+                acts_suffix=acts_suffix)
     if a.stage in ("geom", "all"):
-        geom(a.dataset, a.snapshot, a.target, a.dirs, a.tag)
+        geom(a.dataset, a.snapshot, a.target, a.dirs, a.tag, acts_suffix)
 
 
 if __name__ == "__main__":

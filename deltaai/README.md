@@ -37,6 +37,7 @@ The table below is the current one, including the experiments that postdate Part
 | PI feedback, 2026-09-18 | [`../docs/PLAN_PI_FEEDBACK_2026-09-18.md`](../docs/PLAN_PI_FEEDBACK_2026-09-18.md) section 4 | `run_pi_audit.slurm` (J-A, judge audit, round 0) |
 | PI feedback, 2026-09-18 | [`../docs/PLAN_PI_FEEDBACK_2026-09-18.md`](../docs/PLAN_PI_FEEDBACK_2026-09-18.md) section 4 | `run_tqa_discovery.slurm` (J-B) + `run_tqa_confirm.slurm` (J-C, afterok J-B), round 1, via `submit_pi_feedback.sh round1` |
 | PI feedback, round 2 | same, sections 4 and 8 | `run_xfer_cities.slurm` (J-D1) + `run_xfer_tqa.slurm` (J-D2), independent, after J-C, via `submit_pi_feedback.sh round2` |
+| Token geometry on the "country of" prompt | E0 re-run; the Sep 4 cities targets were " the"→" North/South" | `run_token_geom_country_of.slurm` (~15 min), first free ghx4 slot, via `submit_pi_feedback.sh tokgeom` |
 | Judging (local OLMo backend) | [`JUDGE_RUN_STEPS.md`](JUDGE_RUN_STEPS.md) | `run_judge.slurm` |
 
 Some runbooks contain account and login specifics and are kept out of git (`MY_RUN_STEPS.md`,
