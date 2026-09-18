@@ -128,9 +128,14 @@ def load_learned(p):
 
 
 def _save(p, rows, extra):
-    np.savez(p, vecs=np.array([r[0] for r in rows]), frac=np.array([r[1] for r in rows]),
+    """Atomic write: a job killed mid-write (e.g. at the wall-clock limit) must never leave
+    `p` half-written, or every resume's np.load(p) would crash. np.savez appends ".npz" to
+    a name that doesn't already end with it, so the temp name is spelled with it up front."""
+    tmp = p + ".tmp.npz"
+    np.savez(tmp, vecs=np.array([r[0] for r in rows]), frac=np.array([r[1] for r in rows]),
              seed=np.array([r[2] for r in rows]), val_obj=np.array([r[3] for r in rows]),
              val_acc=np.array([r[4] for r in rows]), **extra)
+    os.replace(tmp, p)
 
 
 def learned_cos(learned, dirs):

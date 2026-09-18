@@ -148,11 +148,16 @@ def test_train_one_beats_the_unsteered_objective_on_a_toy(monkeypatch):
              for i in range(8)]
     with su.Steerer(model, 11) as st:
         base, _ = tl.evaluate(model, tok, pairs)
+        st.set(tl.project(torch.randn(8, generator=torch.Generator().manual_seed(0)), 2.0))
+        start, _ = tl.evaluate(model, tok, pairs)
+        st.set(None)
         u, obj, acc = tl.train_one(model, tok, st, pairs, pairs, 2.0, seed=0,
                                    max_steps=40)
         assert st.vec is None                     # training leaves no steering behind
     assert np.linalg.norm(u) == pytest.approx(1.0, abs=1e-5)
     assert obj > base
+    assert obj > start + 1e-3                      # training must beat its own start, not
+                                                    # just an already-lucky random start
 
 
 def test_load_learned_names_each_vector_by_frac_and_seed(tmp_path):
@@ -163,3 +168,14 @@ def test_load_learned_names_each_vector_by_frac_and_seed(tmp_path):
     got = tl.load_learned(str(p))
     assert [(n, f) for n, _, f in got] == [("learned_f0.25_s0", 0.25),
                                            ("learned_f0.5_s2", 0.5)]
+
+
+def test_save_then_load_learned_round_trips_and_leaves_no_temp_file(tmp_path):
+    p = tmp_path / "mc_learned.npz"
+    rows = [(np.array([1.0, 0.0]), 0.25, 0, -0.5, 0.6),
+            (np.array([0.0, 1.0]), 0.5, 1, -0.4, 0.7)]
+    tl._save(str(p), rows, {"norm_med": 100.0, "base_val_obj": 0.0, "base_val_acc": 0.0})
+    got = tl.load_learned(str(p))
+    assert [(n, f) for n, _, f in got] == [("learned_f0.25_s0", 0.25),
+                                           ("learned_f0.5_s1", 0.5)]
+    assert list(p.parent.iterdir()) == [p]         # no leftover .tmp.npz
