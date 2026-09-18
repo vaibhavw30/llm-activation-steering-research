@@ -179,3 +179,54 @@ def test_save_then_load_learned_round_trips_and_leaves_no_temp_file(tmp_path):
     assert [(n, f) for n, _, f in got] == [("learned_f0.25_s0", 0.25),
                                            ("learned_f0.5_s1", 0.5)]
     assert list(p.parent.iterdir()) == [p]         # no leftover .tmp.npz
+
+
+# ------------------------------------------------------------------ stages
+def test_blocks_put_baseline_first_and_learned_only_at_their_own_frac():
+    grid = [("norm", 0.25, 25.0), ("norm", -0.25, -25.0)]
+    dirs = [("a", np.ones(2))]
+    learned = [("learned_f0.5_s0", np.ones(2), 0.5)]
+    bl = mc.blocks(dirs, grid, learned, norm_med=100.0)
+    assert bl[0][:4] == ("baseline", "none", 0.0, 0.0) and bl[0][4] is None
+    assert [b[:4] for b in bl[1:]] == [("a", "norm", 0.25, 25.0), ("a", "norm", -0.25, -25.0),
+                                      ("learned_f0.5_s0", "norm", 0.5, 50.0)]
+
+
+def test_smoke_dirs_keeps_three_real_and_two_random():
+    dirs = [(n, None) for n in ("x", "y", "z", "w", "rand_0", "rand_1", "rand_2")]
+    assert [d[0] for d in mc.smoke_dirs(dirs)] == ["x", "y", "z", "rand_0", "rand_1"]
+
+
+def test_score_blocks_writes_one_row_per_item_and_resumes(tmp_path):
+    import dct_steer_utils as su
+    tok, model = FakeTok(), FakeModel()
+    items = [{"question": "q", "prompt": "Q: q\nA:", "answer": a, "correct": c}
+             for a, c in (("yes", 1), ("no", 0))]
+    bl = [("baseline", "none", 0.0, 0.0, None), ("a", "norm", 0.5, 1.0, np.ones(8))]
+    out = str(tmp_path / "s.csv")
+    with su.Steerer(model, 11) as st:
+        mc.score_blocks(model, tok, st, bl, items, out)
+        mc.score_blocks(model, tok, st, bl, items, out)          # resume: nothing added
+    df = pd.read_csv(out)
+    assert len(df) == 4
+    assert set(df.columns) >= {"direction", "unit", "frac", "scale", "question",
+                               "answer", "correct", "sum_lp", "mean_lp", "n_tok"}
+    base = df[df.direction == "baseline"].sum_lp.values
+    steer = df[df.direction == "a"].sum_lp.values
+    assert not np.allclose(base, steer)                        # the vector was applied
+
+
+def test_main_rejects_limit_without_prefix():
+    with pytest.raises(SystemExit):
+        mc.main(["--stage", "mc", "--limit", "4"])
+
+
+def test_running_as_a_script_sets_the_prefix_the_importers_see(monkeypatch):
+    import runpy
+    seen = []
+    monkeypatch.setattr(mc, "PREFIX", "")
+    monkeypatch.setattr(mc, "stage_judge", lambda device: seen.append(mc.PREFIX))
+    monkeypatch.setattr(sys, "argv", ["tqa_mc.py", "--stage", "judge", "--prefix", "zz_"])
+    runpy.run_path(os.path.join(os.path.dirname(__file__), "..", "src", "tqa_mc.py"),
+                   run_name="__main__")
+    assert seen == ["zz_"]
