@@ -165,3 +165,20 @@ def test_module_imports_no_torch():
         _s.modules.pop(m, None)
     importlib.import_module("truthfulqa_judge")
     assert "torch" not in _s.modules
+
+
+def test_score_rows_carries_the_judge_probabilities_through():
+    """J1: p(yes) and the yes+no mass reach the CSV, so strictness can be measured."""
+    def score(q, a):
+        return {"truthful": True, "informative": False, "p_truthful": 0.81,
+                "p_informative": 0.3, "yesno_mass_truthful": 0.97,
+                "yesno_mass_informative": 0.95}
+    out, _ = tj.score_rows([{"prompt": "Q: q?\nA:", "answer": "yes"}], score)
+    assert out[0]["p_truthful"] == 0.81 and out[0]["p_informative"] == 0.3
+    assert out[0]["yesno_mass_truthful"] == 0.97
+
+
+def test_score_rows_leaves_probability_columns_blank_for_an_empty_answer():
+    out, n_empty = tj.score_rows([{"prompt": "Q: q?\nA:", "answer": "  "}],
+                                 lambda q, a: pytest.fail("judge called on empty"))
+    assert n_empty == 1 and out[0]["p_truthful"] == ""

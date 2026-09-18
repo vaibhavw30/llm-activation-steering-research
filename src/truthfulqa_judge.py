@@ -56,6 +56,12 @@ ARM_FILES = {"mean": "reach_steer_{ds}.csv",
 # The judged answer for these arms is head + continuation.
 ARMS_CONTINUING_THE_PROMPT = {"stmt"}
 
+# The judges' first-token confidences (judges.local_hf, plan J1). Blank for an empty
+# answer, which is scored 0/0 without calling a judge, and for a scorer that does not
+# report them.
+PROB_COLS = ("p_truthful", "p_informative", "yesno_mass_truthful",
+             "yesno_mass_informative")
+
 # prep_truthfulqa.py builds every statement as "Q: <question>\nA: <answer>", and the
 # holdout as "Q: <question>\nA:". Checked against both files: 64/64 and 1488/1488.
 _QPAT = re.compile(r"^Q:\s*(.*?)\s*\nA:", re.S)
@@ -130,6 +136,7 @@ def score_rows(rows, score, continuing=False):
     for r in rows:
         ans = ((full_answer_of(r["prompt"], r.get("answer") or "") if continuing
                 else (r.get("answer") or "")).strip())
+        probs = dict.fromkeys(PROB_COLS, "")
         if not ans:
             n_empty += 1
             t, i = 0, 0
@@ -137,9 +144,10 @@ def score_rows(rows, score, continuing=False):
             v = score(question_of(r["prompt"]), ans)
             t = int(bool(v["truthful"]))
             i = 1 if v["informative"] is None else int(bool(v["informative"]))
+            probs.update({k: v[k] for k in PROB_COLS if k in v})
         both = int(t and i)
         out.append(dict(r, judged_answer=ans, truthful=t, informative=i,
-                        truthful_and_informative=both, refused=both))
+                        truthful_and_informative=both, refused=both, **probs))
     return out, n_empty
 
 

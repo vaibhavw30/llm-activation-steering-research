@@ -252,3 +252,30 @@ def test_control_contrast_selects_the_requested_dose():
               _arm("rand_ctrl_0", [0, 0, 0, 0], prompts, eps)]
     assert q2.control_contrast(frames, frac=-1.0) == []
     assert len(q2.control_contrast(frames, frac=-2.0)) == 1
+
+
+# --- v2 judged files (plan J2): read them, and never write over the v1 summary ---
+
+def test_load_arm_reads_a_custom_pattern(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    pd.DataFrame({"direction": ["jtw_mean_diff_tgt"], "scale": [0.0],
+                  "prompt": ["Q: x\nA:"], "answer": ["Paris"],
+                  q2.SCORE_COL: [1]}).to_csv("judge_v2_truthfulqa_mean.csv", index=False)
+    d = q2.load_arm("truthfulqa", "mean", SUMM, pattern="judge_v2_{ds}_{arm}.csv")
+    assert d[q2.SCORE_COL].tolist() == [1]
+
+
+def test_default_out_is_the_v1_name_only_for_a_v1_run():
+    p = q2.build_parser()
+    assert q2.default_out(p.parse_args([])) == "tqa_q2_summary_truthfulqa.csv"
+    v2 = p.parse_args(["--judged-pattern", "judge_v2_{ds}_{arm}.csv"])
+    t_only = p.parse_args(["--judged-pattern", "judge_v2_{ds}_{arm}.csv",
+                           "--score-col", "truthful"])
+    assert q2.default_out(v2) == "tqa_q2_summary_truthfulqa_judge_v2.csv"
+    assert q2.default_out(t_only) == "tqa_q2_summary_truthfulqa_judge_v2_truthful.csv"
+    assert q2.default_out(p.parse_args(["--out", "x.csv"])) == "x.csv"
+
+
+def test_score_col_is_restricted_to_the_two_honest_columns():
+    with pytest.raises(SystemExit):
+        q2.build_parser().parse_args(["--score-col", "refused"])

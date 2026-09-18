@@ -66,10 +66,11 @@ def eps_star_of(direction, summ):
                          f"{direction!r}) in the reach summary")
 
 
-def load_arm(ds, arm, summ):
+def load_arm(ds, arm, summ, pattern=ARM_JUDGED):
     """One judged arm, with `frac` and `words` added. SystemExit on a missing file so
-    a partial run says which stage never produced its artifact."""
-    path = ARM_JUDGED.format(ds=ds, arm=arm)
+    a partial run says which stage never produced its artifact. `pattern` selects the
+    judged file: the v1 name by default, judge_v2_{ds}_{arm}.csv after the J2 re-judge."""
+    path = pattern.format(ds=ds, arm=arm)
     try:
         d = pd.read_csv(path)
     except FileNotFoundError:
@@ -168,9 +169,9 @@ def control_contrast(frames, frac=-2.0, target=TARGET):
     return rows
 
 
-def analyze(ds, arms):
+def analyze(ds, arms, pattern=ARM_JUDGED):
     summ = json.load(open(f"reach_summary_{ds}.json"))
-    frames = [load_arm(ds, a, summ) for a in arms]
+    frames = [load_arm(ds, a, summ, pattern) for a in arms]
     rows = []
     for d in frames:
         for direction, g in d.groupby("direction"):
@@ -249,15 +250,36 @@ def build_parser():
     ap.add_argument("--out", default="")
     ap.add_argument("--frac", type=float, default=-2.0,
                     help="dose at which to run the registered control contrast")
+    ap.add_argument("--judged-pattern", default=ARM_JUDGED,
+                    help="judged file name, {ds} and {arm} filled in. judge_v2_{ds}_{arm}.csv "
+                         "reads the re-judge with the corrected info prompt (plan J2)")
+    ap.add_argument("--score-col", default=SCORE_COL,
+                    choices=["truthful_and_informative", "truthful"],
+                    help="truthful alone is the restatement J2's decision rule may call for")
     return ap
 
 
+def default_out(a):
+    """The summary file name. A v1 run keeps the historical name. Anything else gets a
+    suffix, so a v2 or truthful-only run can never write over the v1 summary."""
+    if a.out:
+        return a.out
+    tag = ""
+    if a.judged_pattern != ARM_JUDGED:
+        tag += "_" + a.judged_pattern.split("_{ds}")[0]
+    if a.score_col != SCORE_COL:
+        tag += "_" + a.score_col
+    return f"tqa_q2_summary_{a.dataset}{tag}.csv"
+
+
 def main():
+    global SCORE_COL
     a = build_parser().parse_args()
-    out = a.out or f"tqa_q2_summary_{a.dataset}.csv"
+    SCORE_COL = a.score_col
+    out = default_out(a)
     summ = json.load(open(f"reach_summary_{a.dataset}.json"))
-    frames = [load_arm(a.dataset, arm, summ) for arm in a.arms]
-    report(analyze(a.dataset, a.arms), out)
+    frames = [load_arm(a.dataset, arm, summ, a.judged_pattern) for arm in a.arms]
+    report(analyze(a.dataset, a.arms, a.judged_pattern), out)
     report_contrast(control_contrast(frames, frac=a.frac))
 
 
