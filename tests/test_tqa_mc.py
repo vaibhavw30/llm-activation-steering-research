@@ -399,6 +399,57 @@ def test_summarize_mc_a_negative_dose_moves_only_toward_what_it_pushes():
     assert rows["good"]["e_margin"] == pytest.approx(1.0)       # sign(frac) x change
 
 
+def _cells_frame(cells, nq=10):
+    """Baseline plus one block per (name, unit, frac, shift); shift is a scalar or one
+    value per question, added to that question's correct answer's mean log-prob, so it
+    is exactly the per-question change in margin."""
+    rows = []
+    for name, u, f, shift in [("baseline", "none", 0.0, 0.0)] + list(cells):
+        sh = np.broadcast_to(np.asarray(shift, float), (nq,))
+        for q in range(nq):
+            for c in (1, 0):
+                lp = -2.0 + (sh[q] + 0.01 * q if c else 0.0)
+                rows.append({"direction": name, "unit": u, "frac": f, "question": f"q{q}",
+                             "correct": c, "mean_lp": lp, "sum_lp": 3 * lp})
+    return pd.DataFrame(rows)
+
+
+def test_summarize_mc_each_clause_of_moves_is_needed():
+    """Each row below fails exactly one clause of _moves; dropping that clause would call
+    it a mover. At norm 0.5 every random lowers the margin MORE than `neg` does."""
+    spiky = [5.0] + [-0.1] * 9                   # mean +0.41: beats every random...
+    rands25 = [("rand_0", "norm", 0.25, 0.1), ("rand_1", "norm", 0.25, -0.1),
+               ("rand_2", "norm", 0.25, 0.05)]
+    rands50 = [("rand_0", "norm", 0.5, -1.0), ("rand_1", "norm", 0.5, -0.8),
+               ("rand_2", "norm", 0.5, -0.9)]
+    df = _cells_frame(rands25 + rands50 + [
+        ("good", "norm", 0.25, 1.0), ("spiky", "norm", 0.25, spiky),
+        ("inside", "norm", 0.25, 0.07), ("neg", "norm", 0.5, -0.2)])
+    rows = {(r["direction"], r["frac"]): r for r in mc.summarize_mc(df)}
+    good, spk = rows[("good", 0.25)], rows[("spiky", 0.25)]
+    ins, neg = rows[("inside", 0.25)], rows[("neg", 0.5)]
+    assert good["moves"] is True
+    # ...but its Wilcoxon p is not significant
+    assert spk["p_margin"] == pytest.approx(1 / 4) and spk["wilcoxon_p"] > 0.05
+    assert spk["moves"] is False
+    # significant per question, but inside the random spread
+    assert ins["wilcoxon_p"] <= 0.05 and ins["p_margin"] == pytest.approx(2 / 4)
+    assert ins["moves"] is False
+    # significant and beats every random at its dose, but the margin went DOWN
+    assert neg["wilcoxon_p"] <= 0.05 and neg["p_margin"] == pytest.approx(1 / 4)
+    assert neg["e_margin"] == pytest.approx(-0.2)
+    assert neg["moves"] is False
+
+
+def test_add_null_keys_the_randoms_by_unit_and_frac():
+    """Randoms at norm 0.5 (all far above `good`) must not enter norm 0.25's null."""
+    df = _cells_frame([("rand_0", "norm", 0.25, 0.1), ("rand_1", "norm", 0.25, -0.1),
+                       ("rand_2", "norm", 0.25, 0.05), ("rand_0", "norm", 0.5, 9.0),
+                       ("rand_1", "norm", 0.5, 9.0), ("good", "norm", 0.25, 1.0)])
+    good = {(r["direction"], r["frac"]): r for r in mc.summarize_mc(df)}[("good", 0.25)]
+    assert good["n_null"] == 3 and good["p_margin"] == pytest.approx(1 / 4)
+
+
 def test_summarize_long_uses_mcnemar_on_gen_correct():
     rows = []
     for name, f, hits in (("baseline", 0.0, 0), ("up", 0.25, 12), ("rand_0", 0.25, 0)):
@@ -424,8 +475,8 @@ def test_summarize_train_flags_in_sample_and_splits_learned_by_validation():
     by = {(r["direction"], r["subset"]): r for r in got}
     assert by[("tqa:sup_jtw", "all")]["in_sample"] is True
     assert by[("cities:mean_diff", "all")]["in_sample"] is False
-    assert by[("learned_f0.25_s0", "val")]["n"] == 1
-    assert by[("learned_f0.25_s0", "val")]["in_sample"] is False
+    assert by[("learned_f0.25_s0", "val_selection")]["n"] == 1     # it chose the checkpoint
+    assert by[("learned_f0.25_s0", "val_selection")]["in_sample"] is False
     assert by[("learned_f0.25_s0", "train")]["in_sample"] is True
 
 
@@ -438,3 +489,138 @@ def test_summarize_judged_rates_against_the_unsteered_answers():
     r = got["learned_f0.25_s0"]
     assert r["truthful"] == 1.0 and r["base_truthful"] == 0.5
     assert r["gained_truthful"] == 2 and r["lost_truthful"] == 0
+
+
+# ------------------------------------------------------------------ readings
+def _write_summary_inputs(pre, learned_shift, val_obj=-0.5, base_val_obj=-0.69,
+                          outcomes=True):
+    """Small synthetic J-E outputs under the path prefix `pre`: three randoms at each of
+    norm +0.25 and +0.5, a truth direction moving at both, a potency-matched control
+    moving at the read dose, and one learned vector at the read frac."""
+    import json
+    rands = [(f"rand_{j}", "norm", f, s) for f in (0.25, 0.5)
+             for j, s in enumerate((0.1, -0.1, 0.05))]
+    _cells_frame(rands + [
+        ("cities:mean_diff", "norm", 0.25, 1.0), ("cities:mean_diff", "norm", 0.5, 1.0),
+        ("tqa:sup_jtw", "norm", 0.25, 0.0), ("cities:dct_ctl_7", "norm", 0.25, 1.0),
+        ("learned_f0.25_s0", "norm", 0.25, learned_shift)]).to_csv(
+        pre + "mc_tqa_scores.csv", index=False)
+    rows = []
+    for name, f, hits in (("baseline", 0.0, 0), ("tqa:sup_jtw", 0.25, 12),
+                          ("rand_0", 0.25, 0), ("rand_1", 0.25, 1)):
+        for i in range(12):
+            rows.append({"direction": name, "unit": "none" if name == "baseline" else "norm",
+                         "frac": f, "stmt": i, "gen_correct": int(i < hits),
+                         "words": 5, "incoherent": 0})
+    pd.DataFrame(rows).to_csv(pre + "mc_cities_long.csv", index=False)
+    np.savez(pre + "mc_learned.npz", vecs=np.eye(4)[:3], frac=np.array([0.25, 0.25, 0.5]),
+             seed=np.array([0, 1, 0]), val_obj=np.array([val_obj, -0.6, -0.4]),
+             val_acc=np.full(3, 0.6), norm_med=100.0, base_val_obj=base_val_obj,
+             base_val_acc=0.5)
+    if outcomes:
+        json.dump({"outcomes": {"cities:mean_diff": "c", "tqa:sup_jtw": "gen-only"}},
+                  open(pre + "xfer_cities_outcomes.json", "w"))
+        json.dump({"outcomes": {"cities:mean_diff": "none", "tqa:sup_jtw": "gain",
+                                "cities:dct_ctl_7": "gain"}},
+                  open(pre + "xfer_truthfulqa_outcomes.json", "w"))
+
+
+def _summary_lines(monkeypatch, tmp_path, capsys, **kw):
+    pre = str(tmp_path) + os.sep
+    monkeypatch.setattr(mc, "PREFIX", pre)
+    _write_summary_inputs(pre, **kw)
+    mc.stage_summary()
+    return capsys.readouterr().out.splitlines()
+
+
+def _line(lines, start):
+    got = [ln for ln in lines if ln.startswith(start)]
+    assert len(got) == 1, (start, lines)
+    return got[0]
+
+
+def test_readings_content_lists_only_read_dose_truth_directions(monkeypatch, tmp_path,
+                                                                 capsys):
+    lines = _summary_lines(monkeypatch, tmp_path, capsys, learned_shift=0.0)
+    content = _line(lines, "[reading] CONTENT")
+    assert "cities:mean_diff norm +0.25" in content
+    assert "+0.5" not in content and "dct_ctl" not in content and "learned" not in content
+    assert "cities:dct_ctl_7" in _line(lines, "[reading] controls")
+    sec = _line(lines, "[secondary]")
+    assert "not corrected for multiplicity" in sec and "cities:mean_diff norm +0.5" in sec
+    assert "tqa:sup_jtw" in _line(lines, "[reading] cities LONG FORM")
+    assert any("e > 0" in ln for ln in lines)                    # F6, said once
+    assert sum("e > 0" in ln for ln in lines) == 1
+
+
+def test_readings_method_limit_fires_when_a_trained_ceiling_stays_in_the_null(
+        monkeypatch, tmp_path, capsys):
+    lines = _summary_lines(monkeypatch, tmp_path, capsys, learned_shift=0.0)
+    assert any(ln.startswith("[reading] METHOD LIMIT") for ln in lines)
+    assert not any("TRAINING FAILED" in ln for ln in lines)
+
+
+def test_readings_no_method_limit_when_the_ceiling_moves(monkeypatch, tmp_path, capsys):
+    lines = _summary_lines(monkeypatch, tmp_path, capsys, learned_shift=1.0)
+    assert not any(ln.startswith("[reading] METHOD LIMIT") for ln in lines)
+
+
+def test_readings_a_failed_training_run_is_flagged_and_not_read_as_a_limit(
+        monkeypatch, tmp_path, capsys):
+    lines = _summary_lines(monkeypatch, tmp_path, capsys, learned_shift=0.0,
+                           val_obj=-0.7, base_val_obj=-0.69)
+    assert "learned_f0.25_s0" in _line(lines, "[reading] TRAINING FAILED")
+    assert not any(ln.startswith("[reading] METHOD LIMIT") for ln in lines)
+
+
+def test_readings_identifiability_is_per_frac_with_each_seeds_objective(
+        monkeypatch, tmp_path, capsys):
+    lines = _summary_lines(monkeypatch, tmp_path, capsys, learned_shift=0.0)
+    ident = [ln for ln in lines if ln.startswith("[reading] IDENTIFIABILITY")]
+    assert len(ident) == 2                                      # fracs 0.25 and 0.5
+    f25 = [ln for ln in ident if "norm 0.25" in ln][0]
+    assert "median 0.000" in f25 and "s0 -0.5000" in f25 and "s1 -0.6000" in f25
+
+
+def test_readings_form_vs_content_per_truth_direction(monkeypatch, tmp_path, capsys):
+    lines = _summary_lines(monkeypatch, tmp_path, capsys, learned_shift=0.0)
+    form = [ln for ln in lines if ln.startswith("[reading] FORM vs CONTENT ")
+            and "verdict" not in ln]
+    assert {ln.split()[4].rstrip(":") for ln in form} == {"cities:mean_diff",
+                                                          "tqa:sup_jtw"}
+    jtw = [ln for ln in form if "tqa:sup_jtw" in ln][0]
+    assert "J-D1 gen-only" in jtw and "J-D2 gain" in jtw
+    # cities:mean_diff moves mc at the read dose, so the verdict is CONTENT
+    assert _line(lines, "[reading] FORM vs CONTENT verdict").endswith("CONTENT")
+
+
+def test_readings_form_not_content_when_only_long_form_moves(monkeypatch, tmp_path,
+                                                             capsys):
+    pre = str(tmp_path) + os.sep
+    monkeypatch.setattr(mc, "PREFIX", pre)
+    _write_summary_inputs(pre, learned_shift=0.0)
+    df = pd.read_csv(pre + "mc_tqa_scores.csv")
+    df = df[df.direction != "cities:mean_diff"]                 # nothing moves mc now
+    df.to_csv(pre + "mc_tqa_scores.csv", index=False)
+    mc.stage_summary()
+    lines = capsys.readouterr().out.splitlines()
+    assert _line(lines, "[reading] FORM vs CONTENT verdict").endswith("FORM NOT CONTENT")
+
+
+def test_readings_form_needs_the_round2_outcomes(monkeypatch, tmp_path, capsys):
+    lines = _summary_lines(monkeypatch, tmp_path, capsys, learned_shift=0.0,
+                           outcomes=False)
+    form = _line(lines, "[reading] FORM vs CONTENT")
+    assert "xfer_cities_outcomes.json" in form and "xfer_truthfulqa_outcomes.json" in form
+
+
+def test_summary_with_no_inputs_prints_every_reading_and_writes_nothing(
+        monkeypatch, tmp_path, capsys):
+    pre = str(tmp_path) + os.sep
+    monkeypatch.setattr(mc, "PREFIX", pre)
+    mc.stage_summary()
+    out = capsys.readouterr().out
+    for key in ("CONTENT", "LONG FORM", "CEILING", "FORM vs CONTENT"):
+        assert key in out
+    assert "[reading] METHOD LIMIT" not in out
+    assert list(tmp_path.iterdir()) == []

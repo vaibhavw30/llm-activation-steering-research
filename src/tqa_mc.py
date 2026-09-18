@@ -342,7 +342,12 @@ def add_null(rows, effect_key, p_key):
 
 
 def _moves(r, p_test, p_key, e_key, alpha=xc.ALPHA):
-    return bool(r[p_key] != "" and r[p_test] <= alpha and r[e_key] > 0
+    """Round 2's rule (the per-question test at alpha AND beyond the random null at the
+    same dose) plus e > 0, on purpose: a TIGHTENING. At +0.5, where every random lowers
+    the margin, round 2's rule could call a significant DECREASE that merely beats the
+    randoms "moves". A blank p (the randoms themselves, or no null) never moves, since
+    beyond_null is False on it."""
+    return bool(r[p_test] <= alpha and r[e_key] > 0
                 and xc.beyond_null(r[p_key], r["n_null"], alpha))
 
 
@@ -416,7 +421,8 @@ def summarize_long(df):
 def summarize_train(df, val_qs):
     """Per direction: mean over pairs of the change in mean_lp(true) - mean_lp(false).
     TQA-sourced directions were fitted on these pairs; learned vectors trained on all but
-    the validation questions, so they get a separate `val` row."""
+    the validation questions, so they get a separate `val_selection` row: not trained on,
+    but it chose the checkpoint, so it is not a clean holdout either (that is stage mc)."""
     gap = (df.pivot_table(index=["direction", "question"], columns="correct",
                           values="mean_lp").reset_index())
     gap["gap"] = gap[1] - gap[0]
@@ -427,7 +433,7 @@ def summarize_train(df, val_qs):
         g = g.set_index("question")["gap"]
         learned = name.startswith("learned_")
         subsets = ([("train", [q for q in g.index if q not in val]),
-                    ("val", [q for q in g.index if q in val])] if learned
+                    ("val_selection", [q for q in g.index if q in val])] if learned
                    else [("all", list(g.index))])
         for sub, qs in subsets:
             if not qs:
@@ -489,30 +495,136 @@ def stage_summary():
         write(summarize_judged(pd.read_csv(path("mc_learned_judged.csv"))),
               "mc_learned_judged_summary.csv")
 
-    real = [r for r in mc_rows if not r["direction"].startswith(("rand_", "learned_"))]
-    moved = [f"{r['direction']} {r['unit']} {r['frac']:+g}" for r in real if r["moves"]]
-    print(f"\n[reading] CONTENT: truth directions moving the MC margin beyond null: "
-          f"{moved or 'none'}")
-    ceil = [r for r in mc_rows if r["direction"].startswith("learned_")
-            and r["frac"] == xc.READ_FRAC]
+    print("\n[summary] 'moves' = the per-question test at p <= 0.05 AND beyond the random "
+          "null at the same dose AND e > 0 toward what the dose pushes. The e > 0 clause "
+          "tightens round 2's rule, which could call a significant decrease 'moves'.")
+    read_content(mc_rows if have("mc_tqa_scores.csv") else None,
+                 long_rows if have("mc_cities_long.csv") else None)
+    read_ceiling(mc_rows)
+    read_form(mc_rows, long_rows)
+
+
+# ------------------------------------------------------------------ readings
+def _at_read(r):
+    return r["unit"] == xc.READ_UNIT and r["frac"] == xc.READ_FRAC
+
+
+def _is_ctl(name):
+    """xfer_common.dct_directions names its potency-matched controls `<src>:dct_ctl_<j>`."""
+    return ":dct_ctl_" in name
+
+
+def _is_truth(name):
+    return not (name.startswith(("rand_", "learned_", "baseline")) or _is_ctl(name))
+
+
+def _cell(r):
+    return f"{r['direction']} {r['unit']} {r['frac']:+g}"
+
+
+def read_content(mc_rows, long_rows):
+    """The primary lines read ONE cell per direction, round 2's (READ_UNIT, READ_FRAC)
+    (xfer_cities / xfer_tqa stage_summary). Scanning every dose against a 1/33 null would
+    expect chance hits, so every other cell that moves is printed apart, uncorrected."""
+    at = f"{xc.READ_UNIT} {xc.READ_FRAC:+g}"
+    for label, rows, what, f in (("CONTENT", mc_rows, "the MC margin", "mc_tqa_scores.csv"),
+                                 ("cities LONG FORM", long_rows, "gen_correct",
+                                  "mc_cities_long.csv")):
+        if rows is None:
+            print(f"[reading] {label}: not read, {path(f)} absent")
+            continue
+        moved = [_cell(r) for r in rows if _at_read(r) and _is_truth(r["direction"])
+                 and r["moves"]]
+        print(f"[reading] {label} ({at}): truth directions moving {what} beyond null: "
+              f"{moved or 'none'}")
+    ctl = {k: [_cell(r) for r in rows or [] if _at_read(r) and _is_ctl(r["direction"])
+               and r["moves"]] for k, rows in (("mc", mc_rows), ("long form", long_rows))}
+    print(f"[reading] controls ({at}), potency-matched DCT factors that move: "
+          + "; ".join(f"{k} {v or 'none'}" for k, v in ctl.items()))
+    sec = {k: [_cell(r) for r in rows or [] if r["moves"]
+               and not r["direction"].startswith("rand_")
+               and not (_at_read(r) and (_is_truth(r["direction"]) or _is_ctl(r["direction"])))]
+           for k, rows in (("mc", mc_rows), ("long form", long_rows))}
+    print("[secondary] every other cell that moves, not corrected for multiplicity: "
+          + "; ".join(f"{k} {v or 'none'}" for k, v in sec.items()))
+
+
+def read_ceiling(mc_rows):
+    """METHOD LIMIT needs a ceiling that was actually trained: a learned vector whose best
+    validation objective does not beat the unsteered one says nothing about steering, so
+    it is flagged and left out. "Beyond null" is e > 0 and beyond_null on the permutation
+    p; the Wilcoxon p is printed beside it, not required."""
+    import tqa_learned as tl
+    lp = path("mc_learned.npz")
+    if not os.path.exists(lp):
+        print(f"[reading] CEILING: not read, {lp} absent (stage train has not run); "
+              "no METHOD LIMIT reading")
+        return
+    z = np.load(lp)
+    base = float(z["base_val_obj"])
+    worked = {}
+    for f, s, o in zip(z["frac"], z["seed"], z["val_obj"]):
+        name = f"learned_f{float(f):g}_s{int(s)}"
+        worked[name] = bool(np.isfinite(o) and o > base)
+        if not worked[name]:
+            print(f"[reading] TRAINING FAILED {name}: val obj {float(o):.4f} vs unsteered "
+                  f"{base:.4f}")
+    ceil = [r for r in mc_rows if r["direction"].startswith("learned_") and _at_read(r)]
     for r in ceil:
+        r["beyond"] = bool(r["e_margin"] > 0 and xc.beyond_null(r["p_margin"], r["n_null"]))
         print(f"[reading] CEILING {r['direction']}: e_margin {r['e_margin']:+.3f}, "
               f"wilcoxon p {r['wilcoxon_p']:.2g}, perm p {r['p_margin']}, "
-              f"moves={r['moves']}")
-    if ceil and not any(r["moves"] for r in ceil):
-        print("[reading] METHOD LIMIT: no learned vector at norm "
-              f"{xc.READ_FRAC} moves beyond null. Every steering null is about "
+              f"beyond null={r['beyond']}, trained={worked.get(r['direction'], False)}")
+    judged = [r for r in ceil if worked.get(r["direction"], False)]
+    if not ceil:
+        print(f"[reading] CEILING: no learned vector scored at {xc.READ_UNIT} "
+              f"{xc.READ_FRAC:+g} in stage mc; no METHOD LIMIT reading")
+    elif not judged:
+        print("[reading] CEILING UNREADABLE: training failed for every learned vector at "
+              f"{xc.READ_UNIT} {xc.READ_FRAC:+g}; no METHOD LIMIT reading")
+    elif not any(r["beyond"] for r in judged):
+        print("[reading] METHOD LIMIT: no trained learned vector at norm "
+              f"{xc.READ_FRAC} gains margin beyond null. Every steering null is about "
               "single-vector steering at layer 11, not about truth.")
-    lmoved = [f"{r['direction']} {r['frac']:+g}" for r in long_rows
-              if r["moves"] and not r["direction"].startswith("rand_")]
-    print(f"[reading] cities LONG FORM, directions moving gen_correct beyond null: "
-          f"{lmoved or 'none'}")
-    if have("mc_learned_cos.csv"):
-        c = pd.read_csv(path("mc_learned_cos.csv"))
-        s = c[c["kind"] == "seed_vs_seed"]
-        if len(s):
-            print(f"[reading] IDENTIFIABILITY: seed-vs-seed cosine median "
-                  f"{s['cos'].median():.3f} (min {s['cos'].min():.3f})")
+    learned = tl.load_learned(lp)
+    cos = tl.learned_cos(learned, [])
+    for f in sorted({x[2] for x in learned}):
+        names = [n for n, _, g in learned if g == f]
+        cs = [c["cos"] for c in cos if c["a"] in names]
+        objs = "  ".join(f"s{n.rsplit('_s', 1)[1]} {float(o):.4f}" for n, o in
+                         zip(names, z["val_obj"][z["frac"] == f]))
+        print(f"[reading] IDENTIFIABILITY norm {f:g}: seed-vs-seed cos "
+              + (f"median {np.median(cs):.3f} (min {np.min(cs):.3f})" if cs else "n/a")
+              + f"; val obj {objs} (unsteered {base:.4f})")
+
+
+def read_form(mc_rows, long_rows):
+    """Form, not content: truth directions move only long-form cells (J-D2's judged
+    generations, stage cities_long) and not the judge-free MC margin. J-D1 / J-D2 read
+    their outcomes at the same dose (xfer_*_outcomes.json). A J-D2 cell counts as moved
+    only on xfer_tqa.classify's "gain" ("form" is words alone); J-D1's outcome is a
+    short-answer cell, printed raw beside it. The JSONs are read under this run's
+    --prefix, which is "" on the laptop, where round 2's summaries write them."""
+    import json
+    ps = [path("xfer_cities_outcomes.json"), path("xfer_truthfulqa_outcomes.json")]
+    miss = [p for p in ps if not os.path.exists(p)]
+    if miss:
+        print(f"[reading] FORM vs CONTENT: not read, needs round 2's {' and '.join(ps)} "
+              f"(missing: {', '.join(miss)})")
+        return
+    d1, d2 = (json.load(open(p))["outcomes"] for p in ps)
+    m = {r["direction"]: r["moves"] for r in mc_rows if _at_read(r)}
+    lg = {r["direction"]: r["moves"] for r in long_rows if _at_read(r)}
+    say = {True: "moves", False: "does not move", None: "not scored"}
+    names = sorted(n for n in set(d1) | set(d2) | set(m) | set(lg) if _is_truth(n))
+    for n in names:
+        print(f"[reading] FORM vs CONTENT {n}: J-D1 {d1.get(n, 'not steered')}, J-D2 "
+              f"{d2.get(n, 'not steered')}; at {xc.READ_UNIT} {xc.READ_FRAC:+g} mc "
+              f"{say[m.get(n)]}, cities_long {say[lg.get(n)]}")
+    long_moved = any(d2.get(n) == "gain" or lg.get(n) for n in names)
+    verdict = ("CONTENT" if any(m.get(n) for n in names)
+               else "FORM NOT CONTENT" if long_moved else "NEITHER")
+    print(f"[reading] FORM vs CONTENT verdict: {verdict}")
 
 
 STAGES = ("train", "mc", "cities_long", "gen", "judge", "summary")
