@@ -27,9 +27,11 @@ def verdict_from_logits(logits_row, yes_ids, no_ids):
             "conf": max(p_yes, p_no), "p_yes": p_yes, "p_no": p_no}
 
 
-def compute_verdicts(model, tokenizer, prompts, device, batch_size=16):
+def compute_verdicts(model, tokenizer, prompts, device, batch_size=16, max_length=96):
     """prompts are full strings (Q_TRUTH + statement + Q_SUFFIX). Returns arrays of y^M/margin/conf.
-    Uses right padding + attention mask so the final real-token logits are read per row."""
+    Uses right padding + attention mask so the final real-token logits are read per row.
+    max_length must fit the longest prompt: truncation is on the RIGHT, so an overlong
+    prompt loses its "Answer:" suffix and the verdict is read at the wrong token."""
     yes_ids = first_token_ids(tokenizer, YES_VARIANTS)
     no_ids = first_token_ids(tokenizer, NO_VARIANTS)
     tokenizer.padding_side = "right"
@@ -38,7 +40,7 @@ def compute_verdicts(model, tokenizer, prompts, device, batch_size=16):
         for s in range(0, len(prompts), batch_size):
             batch = prompts[s:s + batch_size]
             enc = tokenizer(batch, return_tensors="pt", padding=True,
-                            truncation=True, max_length=96).to(device)
+                            truncation=True, max_length=max_length).to(device)
             logits = model(**enc).logits                     # (B, seq, vocab)
             am = enc["attention_mask"]
             last = am.shape[1] - 1 - am.flip(dims=[1]).argmax(dim=1)
