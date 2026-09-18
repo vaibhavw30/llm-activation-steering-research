@@ -32,7 +32,8 @@ MEAN log-probability of the answer tokens given the prompt, and the answer's tok
   set with `xc.steer_vec(vec, scale)`, which adds at every position exactly as generation
   does. `vec` may be (d,) or (B, d).
 - No grad in scoring. The training path calls the same forward with grad enabled on the
-  vector only.
+  vector only. Every forward passes `use_cache=False`: transformers 4.51 otherwise builds a
+  Gemma2 HybridCache per forward, and training would backprop through its in-place writes.
 
 ## Experiment 2: the learned ceiling (stage `train`, runs first)
 
@@ -44,11 +45,17 @@ MEAN log-probability of the answer tokens given the prompt, and the answer's tok
 - **Norm.** ||v|| fixed at r = frac x median ||h_11|| (holdout prompts, as J-D2 measures
   it), frac in `xc.NORM_FRACS` = (0.125, 0.25, 0.5). Projected back to the sphere after
   every step. 3 random starts (seeds 0, 1, 2) per frac.
-- **Optimizer.** Adam, lr 1e-2 x r, batch 16 pairs, at most 4 epochs; keep the step with
-  the best validation objective, checked every 10 steps.
+- **Optimizer.** Adam on the tangent-projected gradient (its radial part removed before
+  each step), lr 3e-2 x r/sqrt(d) with d = hidden size, then projected back to the sphere;
+  batch 16 pairs, at most 4 epochs; keep the step with the best validation objective,
+  checked every 10 steps. The sqrt(d) because Adam's per-coordinate steps are sign-like,
+  so a step's length scales with sqrt(d): the earlier lr 1e-2 x r moved ~0.48 r per step
+  at d = 2304 and reached only cos 0.79 to a known optimum in the real step budget.
 - **Outputs.** `mc_learned.npz` (unit vectors, frac, seed, val objective, val accuracy of
-  mean_lp(true) > mean_lp(false)); `mc_learned_cos.csv`: cosine between the 3 seeds per
-  frac, and between each learned vector and every direction in the J-D2 list.
+  mean_lp(true) > mean_lp(false), the unsteered val objective and accuracy, norm_med, and
+  the settings LR_PER_R, MAX_EPOCHS, EVAL_EVERY, BATCH_PAIRS, n_train, n_val);
+  `mc_learned_cos.csv`: cosine between the 3 seeds per frac, and between each learned
+  vector and every direction in the J-D2 list.
 - **Directions it adds** to the lists below: `learned_f{frac}_s{seed}`, each steered at
   its own frac only (a vector trained at one norm is not claimed at another).
 
@@ -66,10 +73,13 @@ MEAN log-probability of the answer tokens given the prompt, and the answer's tok
     sum-logprob MC2; reported, not primary, because it favours short answers).
 - **Secondary set.** The 744 training pairs, `margin` = mean_lp(true) - mean_lp(false), at
   the read dose only, flagged `in_sample` for every TQA-sourced direction and every
-  learned vector (validation pairs flagged separately for the learned ones).
-- **"Moves".** Same rule as round 2: Wilcoxon on the per-question margin vs unsteered at
+  learned vector (validation pairs reported separately for the learned ones as
+  `val_selection`: not trained on, but they chose the checkpoint).
+- **"Moves".** Round 2's rule: Wilcoxon on the per-question margin vs unsteered at
   p <= 0.05, AND `xc.beyond_null` on the permutation p among the 32 randoms at the same
-  dose, effect = sign(frac) x (mean margin - baseline mean margin).
+  (unit, frac), effect e = sign(frac) x (mean margin - baseline mean margin), plus e > 0.
+  The e > 0 clause is a deliberate tightening: at +0.5, where every random lowers the
+  margin, round 2's rule could call a significant decrease that beats the randoms "moves".
 - **Output.** `mc_tqa_scores.csv` (one row per direction x dose x question x answer),
   `mc_tqa_summary.csv`.
 
@@ -80,7 +90,8 @@ MEAN log-probability of the answer tokens given the prompt, and the answer's tok
   `xfer_cities.score_gen` (first country named in the first sentence).
 - Directions: the J-D2 list with 8 randoms (seed 29, J-D1's), plus the learned vectors.
   Doses: norm +/-0.25 only (`xc.READ_FRAC`) and the baseline.
-- "Moves" on `gen_correct`: exact McNemar vs unsteered, AND beyond_null among 8 randoms.
+- "Moves" on `gen_correct`: exact McNemar vs unsteered, AND beyond_null among 8 randoms,
+  AND e > 0 (as in 1a).
   Words and incoherence reported beside it, as in J-D1.
 - Output `mc_cities_long.csv`, `mc_cities_long_summary.csv`.
 
@@ -93,21 +104,40 @@ the ceiling on the same scale as Q2 and J-D2.
 
 ## Registered readings
 
-- **Content, not form**: some truth direction moves `margin` beyond null (1a).
-- **Form, not content**: truth directions move only the long-form cells (J-D2, 1b) and not
-  1a. This is the card's hypothesis, confirmed without a judge.
-- **Method limit**: the learned ceiling's holdout margin gain at norm 0.25 is not beyond
-  the random null. Then every steering null in the project is about single-vector steering
-  at layer 11, not about truth.
-- **Identifiability**: seed cosines near 1 mean one optimal direction; low cosines with
-  equal objectives mean many, which is the non-identifiability result in miniature.
+Every primary reading uses round 2's read dose only, norm +0.25 (`xc.READ_UNIT`,
+`xc.READ_FRAC`), as J-D1 and J-D2 do. "Truth direction" excludes the randoms, the learned
+vectors and the potency-matched DCT controls (`<src>:dct_ctl_<j>`); moving controls print
+on their own line, and every other (unit, frac) cell that moves prints on a `[secondary]`
+line marked not corrected for multiplicity (~160 cells against a 1/33 null expect chance
+hits).
+
+- **Content, not form**: some truth direction moves `margin` beyond null (1a) at the read
+  dose.
+- **Form, not content**: from round 2's `xfer_cities_outcomes.json` and
+  `xfer_truthfulqa_outcomes.json`, one line per truth direction with its J-D1 and J-D2
+  outcomes and whether it moves 1a and 1b at the read dose. Verdict: CONTENT if any truth
+  direction moves 1a; else FORM NOT CONTENT if some truth direction moves a long-form cell
+  (J-D2 outcome "gain", `xfer_tqa.classify`'s moved outcome, or 1b moves); else NEITHER.
+  This is the card's hypothesis, confirmed without a judge. Not read, and said so, when
+  either JSON is missing.
+- **Method limit**: no learned vector at norm 0.25 whose training worked is beyond null
+  (e_margin > 0 and `xc.beyond_null` on the permutation p; the Wilcoxon p is printed, not
+  required). Training worked when the stored val objective is finite and above the
+  unsteered one; a vector where it did not prints TRAINING FAILED and is left out. Not
+  read without `mc_learned.npz` or without a trained vector at 0.25. Then every steering
+  null in the project is about single-vector steering at layer 11, not about truth.
+- **Identifiability**: per frac, the seed-vs-seed cosines (median, min) beside each seed's
+  val objective. Cosines near 1 mean one optimal direction; low cosines with equal
+  objectives mean many, which is the non-identifiability result in miniature.
 
 ## Job and safety
 
 - `run_tqa_mc.slurm`, 3 h wall. Preflight the same files J-D2 checks plus
   `got_datasets/truthfulqa.csv`, `token_acts_cities.npz`. Stage `smoke` first: 4
   questions, 1 training step, 2 cities, prefix `smoke_`, then removed.
-- Every stage resumes: `train` skips a (frac, seed) already in `mc_learned.npz`; scoring and
+- Every stage resumes: `train` skips a (frac, seed) already in `mc_learned.npz`, after
+  checking the file's stored settings and norm_med (1e-3 relative) against the current
+  ones and aborting on any difference or on a file without them (the old optimizer's); scoring and
   generation use `xc.done_blocks`; judging uses `judge_resumable`. Nothing is overwritten.
 - J-B outputs (TQA DCT picks, G0 MAG) are left out LOUDLY if absent, so the job can take
   any free slot; the full list needs J-B. Submitter entry `round3`.
