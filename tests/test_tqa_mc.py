@@ -216,6 +216,44 @@ def test_score_blocks_writes_one_row_per_item_and_resumes(tmp_path):
     assert not np.allclose(base, steer)                        # the vector was applied
 
 
+def test_check_padding_uses_first_answer_of_first_four_distinct_questions(monkeypatch):
+    """items[:4] would be four answers to ONE question; the check must instead span
+    prompts of different lengths, which is the case left-padding can actually break."""
+    calls = []
+
+    def spy(model, tok, prompts, answers, grad=False, batch=mc.BATCH):
+        calls.append(list(prompts))
+        z = torch.zeros(len(prompts))
+        return z, z, z
+
+    monkeypatch.setattr(mc, "answer_logprob", spy)
+    items = [{"question": f"q{q}", "prompt": f"P{q}", "answer": f"a{q}_{k}"}
+             for q in range(5) for k in range(3)]
+    mc.check_padding(None, None, items)
+    batched = max(calls, key=len)
+    assert len(batched) == 4
+    assert len(set(batched)) == 4
+
+
+def test_score_blocks_clears_steering_before_a_baseline_that_runs_second(tmp_path):
+    """Blocks ordered steered-then-baseline: a missing `st.set(None)` before scoring the
+    baseline block would leak the steering vector's effect into its sum_lp."""
+    import dct_steer_utils as su
+    tok, model = FakeTok(), FakeModel()
+    items = [{"question": "q", "prompt": "Q: q\nA:", "answer": a, "correct": c}
+             for a, c in (("yes", 1), ("no", 0))]
+    bl = [("a", "norm", 0.5, 1.0, np.ones(8)), ("baseline", "none", 0.0, 0.0, None)]
+    out = str(tmp_path / "s.csv")
+    with su.Steerer(model, 11) as st:
+        mc.score_blocks(model, tok, st, bl, items, out)
+        st.set(None)
+        want = mc.answer_logprob(model, tok, [i["prompt"] for i in items],
+                                 [i["answer"] for i in items])[0]
+    df = pd.read_csv(out)
+    got = df[df.direction == "baseline"].sum_lp.values
+    assert np.allclose(got, want.numpy(), atol=1e-5)
+
+
 def test_main_rejects_limit_without_prefix():
     with pytest.raises(SystemExit):
         mc.main(["--stage", "mc", "--limit", "4"])
@@ -230,3 +268,79 @@ def test_running_as_a_script_sets_the_prefix_the_importers_see(monkeypatch):
     runpy.run_path(os.path.join(os.path.dirname(__file__), "..", "src", "tqa_mc.py"),
                    run_name="__main__")
     assert seen == ["zz_"]
+
+
+# ------------------------------------------------------------------ summary
+def _mc_frame(shift):
+    """10 questions, one correct and one incorrect answer each; each direction adds
+    shift[name] to every correct answer's mean log-prob."""
+    rows = []
+    for name, (u, f) in (("baseline", ("none", 0.0)), ("good", ("norm", 0.25)),
+                         ("flat", ("norm", 0.25)), ("rand_0", ("norm", 0.25)),
+                         ("rand_1", ("norm", 0.25)), ("rand_2", ("norm", 0.25))):
+        for q in range(10):
+            jitter = 0.01 * q
+            for c in (1, 0):
+                lp = -2.0 - c * 0.0 + (shift.get(name, 0.0) + jitter if c else 0.0)
+                rows.append({"direction": name, "unit": u, "frac": f, "question": f"q{q}",
+                             "correct": c, "mean_lp": lp, "sum_lp": 3 * lp})
+    return pd.DataFrame(rows)
+
+
+def test_summarize_mc_moves_only_the_direction_that_beats_null_and_baseline():
+    df = _mc_frame({"good": 1.0, "rand_0": 0.1, "rand_1": -0.1, "rand_2": 0.05})
+    rows = {r["direction"]: r for r in mc.summarize_mc(df)}
+    assert rows["good"]["e_margin"] == pytest.approx(1.0)
+    assert rows["good"]["n_null"] == 3
+    assert rows["good"]["p_margin"] == pytest.approx(1 / 4)     # beats all three
+    assert rows["good"]["moves"] is True
+    assert rows["flat"]["moves"] is False
+    assert rows["rand_0"]["moves"] is False and rows["rand_0"]["p_margin"] == ""
+
+
+def test_summarize_mc_a_negative_dose_moves_only_toward_what_it_pushes():
+    df = _mc_frame({"good": -1.0})
+    df.loc[df.direction == "good", "frac"] = -0.25
+    rows = {r["direction"]: r for r in mc.summarize_mc(df)}
+    assert rows["good"]["e_margin"] == pytest.approx(1.0)       # sign(frac) x change
+
+
+def test_summarize_long_uses_mcnemar_on_gen_correct():
+    rows = []
+    for name, f, hits in (("baseline", 0.0, 0), ("up", 0.25, 12), ("rand_0", 0.25, 0)):
+        for i in range(12):
+            rows.append({"direction": name, "unit": "none" if name == "baseline" else "norm",
+                         "frac": f, "stmt": i, "gen_correct": int(i < hits),
+                         "words": 5, "incoherent": 0})
+    got = {r["direction"]: r for r in mc.summarize_long(pd.DataFrame(rows))}
+    assert got["up"]["gained"] == 12 and got["up"]["mcnemar_p"] < 0.001
+    assert got["up"]["e_gen"] == pytest.approx(1.0)
+    assert got["up"]["moves"] is True
+
+
+def test_summarize_train_flags_in_sample_and_splits_learned_by_validation():
+    rows = []
+    for name in ("baseline", "tqa:sup_jtw", "cities:mean_diff", "learned_f0.25_s0"):
+        for q in ("a", "b"):
+            for c in (1, 0):
+                rows.append({"direction": name, "unit": "norm", "frac": 0.25,
+                             "question": q, "correct": c,
+                             "mean_lp": -1.0 if (c and name != "baseline") else -2.0})
+    got = mc.summarize_train(pd.DataFrame(rows), val_qs=["b"])
+    by = {(r["direction"], r["subset"]): r for r in got}
+    assert by[("tqa:sup_jtw", "all")]["in_sample"] is True
+    assert by[("cities:mean_diff", "all")]["in_sample"] is False
+    assert by[("learned_f0.25_s0", "val")]["n"] == 1
+    assert by[("learned_f0.25_s0", "val")]["in_sample"] is False
+    assert by[("learned_f0.25_s0", "train")]["in_sample"] is True
+
+
+def test_summarize_judged_rates_against_the_unsteered_answers():
+    rows = [{"direction": d, "question": f"q{i}", "truthful": t,
+             "truthful_and_informative": t}
+            for d, ts in (("baseline", [0, 0, 1, 1]), ("learned_f0.25_s0", [1, 1, 1, 1]))
+            for i, t in enumerate(ts)]
+    got = {r["direction"]: r for r in mc.summarize_judged(pd.DataFrame(rows))}
+    r = got["learned_f0.25_s0"]
+    assert r["truthful"] == 1.0 and r["base_truthful"] == 0.5
+    assert r["gained_truthful"] == 2 and r["lost_truthful"] == 0

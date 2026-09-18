@@ -165,8 +165,18 @@ def load_model_left(device):
 
 def check_padding(model, tok, items):
     """Batched and one-at-a-time scores must agree: the left-padding and position-id
-    handling is otherwise unverified on the real model."""
-    it = items[:4]
+    handling is otherwise unverified on the real model. Uses the first item of each of
+    the first 4 distinct questions (fewer if there aren't 4), so the batched call spans
+    prompts of different lengths -- the case padding can actually break. items[:4] would
+    have been four answers to ONE question, which never exercises that."""
+    it, seen = [], set()
+    for i in items:
+        if i["question"] in seen:
+            continue
+        seen.add(i["question"])
+        it.append(i)
+        if len(it) == 4:
+            break
     s_b = answer_logprob(model, tok, [i["prompt"] for i in it], [i["answer"] for i in it])[0]
     s_1 = [float(answer_logprob(model, tok, [i["prompt"]], [i["answer"]])[0][0]) for i in it]
     diff = float(np.max(np.abs(s_b.cpu().numpy() - np.array(s_1))))
@@ -301,6 +311,206 @@ def stage_judge(device):
         print("[judge] nothing generated, skipping", flush=True)
         return
     judge_resumable(td.read_csv(p), TruthJudge(device).score, path("mc_learned_judged.csv"))
+
+
+# ------------------------------------------------------------------ summary
+def per_question(df):
+    import pandas as pd
+    rows = []
+    for k, g in df.groupby(["direction", "unit", "frac", "question"]):
+        rows.append(dict(zip(("direction", "unit", "frac", "question"), k),
+                         **mc_metrics(g["mean_lp"].values, g["sum_lp"].values,
+                                      g["correct"].values)))
+    return pd.DataFrame(rows)
+
+
+def add_null(rows, effect_key, p_key):
+    """Permutation p of each row's effect among the random directions at the same
+    (unit, frac); blank for the randoms themselves and where there is no null."""
+    rand = {}
+    for r in rows:
+        if r["direction"].startswith("rand_"):
+            rand.setdefault((r["unit"], r["frac"]), []).append(r[effect_key])
+    for r in rows:
+        rs = rand.get((r["unit"], r["frac"]), [])
+        r["n_null"] = len(rs)
+        r[p_key] = ("" if r["direction"].startswith("rand_") or not rs
+                    else xc.perm_p(r[effect_key], rs))
+    return rows
+
+
+def _moves(r, p_test, p_key, e_key, alpha=xc.ALPHA):
+    return bool(r[p_key] != "" and r[p_test] <= alpha and r[e_key] > 0
+                and xc.beyond_null(r[p_key], r["n_null"], alpha))
+
+
+def _wilcoxon_p(d):
+    """Two-sided Wilcoxon signed-rank p, or 1.0 when there is nothing to test (all zero,
+    or too few non-zero differences for scipy's exact/normal modes to run without a
+    UserWarning). `mode="approx"` is asked for explicitly so tiny samples don't trigger
+    scipy's own warn-and-fall-back path."""
+    from scipy.stats import wilcoxon
+    d = np.asarray(d, float)
+    nz = d[d != 0]
+    if len(nz) < 1:
+        return 1.0
+    try:
+        return float(wilcoxon(d, zero_method="wilcox", mode="approx").pvalue)
+    except ValueError:
+        return 1.0
+
+
+def summarize_mc(df):
+    from tqa_q2_analyze import mcnemar_exact
+    pq = per_question(df)
+    base = pq[pq["direction"] == "baseline"].set_index("question")
+    out = []
+    for (name, u, f), g in pq[pq["direction"] != "baseline"].groupby(
+            ["direction", "unit", "frac"]):
+        g = g.set_index("question")
+        b = base.loc[g.index]
+        sgn = float(np.sign(f)) or 1.0
+        dm = g["margin"] - b["margin"]
+        p_w = _wilcoxon_p(dm.values)
+        gained, lost, p_mc, _ = mcnemar_exact(b["mc1"], g["mc1"])
+        out.append({"direction": name, "unit": u, "frac": float(f), "n": len(g),
+                    "margin": float(g["margin"].mean()),
+                    "base_margin": float(b["margin"].mean()),
+                    "e_margin": sgn * float(dm.mean()), "wilcoxon_p": p_w,
+                    "mc1": float(g["mc1"].mean()), "base_mc1": float(b["mc1"].mean()),
+                    "mc1_gained": gained, "mc1_lost": lost, "mc1_mcnemar_p": p_mc,
+                    "mc2": float(g["mc2"].mean()), "base_mc2": float(b["mc2"].mean()),
+                    "e_mc2": sgn * float((g["mc2"] - b["mc2"]).mean())})
+    add_null(out, "e_margin", "p_margin")
+    for r in out:
+        r["moves"] = _moves(r, "wilcoxon_p", "p_margin", "e_margin")
+    return sorted(out, key=lambda r: (r["direction"], r["unit"], r["frac"]))
+
+
+def summarize_long(df):
+    from tqa_q2_analyze import mcnemar_exact
+    base = df[df["direction"] == "baseline"].set_index("stmt")
+    out = []
+    for (name, u, f), g in df[df["direction"] != "baseline"].groupby(
+            ["direction", "unit", "frac"]):
+        g = g.set_index("stmt")
+        b = base.loc[g.index]
+        sgn = float(np.sign(f)) or 1.0
+        gained, lost, p_mc, _ = mcnemar_exact(b["gen_correct"], g["gen_correct"])
+        out.append({"direction": name, "unit": u, "frac": float(f), "n": len(g),
+                    "gen_correct": float(g["gen_correct"].mean()),
+                    "base_gen_correct": float(b["gen_correct"].mean()),
+                    "gained": gained, "lost": lost, "mcnemar_p": p_mc,
+                    "e_gen": sgn * float(g["gen_correct"].mean() - b["gen_correct"].mean()),
+                    "words": float(g["words"].mean()), "base_words": float(b["words"].mean()),
+                    "incoherent": float(g["incoherent"].mean()),
+                    "base_incoherent": float(b["incoherent"].mean())})
+    add_null(out, "e_gen", "p_gen")
+    for r in out:
+        r["moves"] = _moves(r, "mcnemar_p", "p_gen", "e_gen")
+    return sorted(out, key=lambda r: (r["direction"], r["unit"], r["frac"]))
+
+
+def summarize_train(df, val_qs):
+    """Per direction: mean over pairs of the change in mean_lp(true) - mean_lp(false).
+    TQA-sourced directions were fitted on these pairs; learned vectors trained on all but
+    the validation questions, so they get a separate `val` row."""
+    gap = (df.pivot_table(index=["direction", "question"], columns="correct",
+                          values="mean_lp").reset_index())
+    gap["gap"] = gap[1] - gap[0]
+    base = gap[gap["direction"] == "baseline"].set_index("question")["gap"]
+    val = set(val_qs)
+    out = []
+    for name, g in gap[gap["direction"] != "baseline"].groupby("direction"):
+        g = g.set_index("question")["gap"]
+        learned = name.startswith("learned_")
+        subsets = ([("train", [q for q in g.index if q not in val]),
+                    ("val", [q for q in g.index if q in val])] if learned
+                   else [("all", list(g.index))])
+        for sub, qs in subsets:
+            if not qs:
+                continue
+            d = g.loc[qs] - base.loc[qs]
+            p = _wilcoxon_p(d.values)
+            out.append({"direction": name, "subset": sub, "n": len(qs),
+                        "d_gap": float(d.mean()), "wilcoxon_p": p,
+                        "in_sample": bool(name.startswith("tqa:") or
+                                          (learned and sub == "train"))})
+    return out
+
+
+def summarize_judged(df):
+    from tqa_baseline import wilson
+    from tqa_q2_analyze import mcnemar_exact
+    base = df[df["direction"] == "baseline"].set_index("question")
+    out = []
+    for name, g in df[df["direction"] != "baseline"].groupby("direction"):
+        g = g.set_index("question")
+        b = base.loc[g.index]
+        r = {"direction": name, "n": len(g)}
+        for col in ("truthful", "truthful_and_informative"):
+            x, y = b[col].astype(int), g[col].astype(int)
+            gained, lost, p, _ = mcnemar_exact(x, y)
+            lo, hi = wilson(int(y.sum()), len(y))
+            r.update({col: float(y.mean()), f"base_{col}": float(x.mean()),
+                      f"lo_{col}": lo, f"hi_{col}": hi, f"gained_{col}": gained,
+                      f"lost_{col}": lost, f"mcnemar_p_{col}": p})
+        out.append(r)
+    return out
+
+
+def stage_summary():
+    """LAPTOP, from pulled CSVs. Prints the registered readings of the spec."""
+    import pandas as pd
+
+    import tqa_learned as tl
+
+    def write(rows, name):
+        if rows:
+            pd.DataFrame(rows).to_csv(path(name), index=False)
+            print(f"[summary] wrote {path(name)}", flush=True)
+        return rows
+
+    have = lambda n: os.path.exists(path(n))       # noqa: E731
+    mc_rows = long_rows = []
+    if have("mc_tqa_scores.csv"):
+        mc_rows = write(summarize_mc(pd.read_csv(path("mc_tqa_scores.csv"))),
+                        "mc_tqa_summary.csv")
+    if have("mc_tqa_train_scores.csv"):
+        _, va = tl.split_questions([p["question"] for p in tl.train_pairs()])
+        write(summarize_train(pd.read_csv(path("mc_tqa_train_scores.csv")), va),
+              "mc_tqa_train_summary.csv")
+    if have("mc_cities_long.csv"):
+        long_rows = write(summarize_long(pd.read_csv(path("mc_cities_long.csv"))),
+                          "mc_cities_long_summary.csv")
+    if have("mc_learned_judged.csv"):
+        write(summarize_judged(pd.read_csv(path("mc_learned_judged.csv"))),
+              "mc_learned_judged_summary.csv")
+
+    real = [r for r in mc_rows if not r["direction"].startswith(("rand_", "learned_"))]
+    moved = [f"{r['direction']} {r['unit']} {r['frac']:+g}" for r in real if r["moves"]]
+    print(f"\n[reading] CONTENT: truth directions moving the MC margin beyond null: "
+          f"{moved or 'none'}")
+    ceil = [r for r in mc_rows if r["direction"].startswith("learned_")
+            and r["frac"] == xc.READ_FRAC]
+    for r in ceil:
+        print(f"[reading] CEILING {r['direction']}: e_margin {r['e_margin']:+.3f}, "
+              f"wilcoxon p {r['wilcoxon_p']:.2g}, perm p {r['p_margin']}, "
+              f"moves={r['moves']}")
+    if ceil and not any(r["moves"] for r in ceil):
+        print("[reading] METHOD LIMIT: no learned vector at norm "
+              f"{xc.READ_FRAC} moves beyond null. Every steering null is about "
+              "single-vector steering at layer 11, not about truth.")
+    lmoved = [f"{r['direction']} {r['frac']:+g}" for r in long_rows
+              if r["moves"] and not r["direction"].startswith("rand_")]
+    print(f"[reading] cities LONG FORM, directions moving gen_correct beyond null: "
+          f"{lmoved or 'none'}")
+    if have("mc_learned_cos.csv"):
+        c = pd.read_csv(path("mc_learned_cos.csv"))
+        s = c[c["kind"] == "seed_vs_seed"]
+        if len(s):
+            print(f"[reading] IDENTIFIABILITY: seed-vs-seed cosine median "
+                  f"{s['cos'].median():.3f} (min {s['cos'].min():.3f})")
 
 
 STAGES = ("train", "mc", "cities_long", "gen", "judge", "summary")
