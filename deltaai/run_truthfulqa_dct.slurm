@@ -8,8 +8,10 @@
 #SBATCH --gpu-bind=verbose,closest
 #SBATCH --gpus-per-node=1
 #SBATCH --mem=64g
-#SBATCH --time=06:00:00
+#SBATCH --time=02:30:00
 #SBATCH --output=tqa_dct_%j.out
+# Wall 2:30 (was 6:00, cut 2026-09-18 to fit backfill): the fit took 7 min in job 3085406
+# and the Q2 reach job did stages 2-3 plus generation in under 59 min (04:11 -> 05:09).
 
 # U1: the UNSUPERVISED arm, on the one dataset where truth demonstrably moves.
 # docs/PLAN_ADVISOR_NOTES_2026-09.md section U1.
