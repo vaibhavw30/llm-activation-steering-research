@@ -17,7 +17,8 @@ case "${1:-}" in
   round2) files=(deltaai/run_xfer_cities.slurm deltaai/run_xfer_tqa.slurm) ;;
   # One short job; submit it into whichever slot frees first.
   tokgeom) files=(deltaai/run_token_geom_country_of.slurm) ;;
-  *) echo "usage: $0 round1|round2|tokgeom"; exit 2 ;;
+  round3) files=(deltaai/run_tqa_mc.slurm) ;;
+  *) echo "usage: $0 round1|round2|round3|tokgeom"; exit 2 ;;
 esac
 
 if [ $((have + ${#files[@]})) -gt $LIMIT ]; then

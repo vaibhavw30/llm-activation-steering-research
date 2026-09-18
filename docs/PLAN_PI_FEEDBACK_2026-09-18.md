@@ -436,6 +436,14 @@ gain from it would locate the difference in the dataset rather than the directio
 **Readout transfer.** J-B stage, CPU, for every direction including the ones D2 chooses. Cosines between every pair of directions, and each dataset's
 probe applied to the other's layer-11 activations.
 
+**Added 2026-09-18: J-E, round 3** (`deltaai/run_tqa_mc.slurm`, spec
+`docs/superpowers/specs/2026-09-18-tqa-mc-learned-ceiling-design.md`). Two measurements that
+do not depend on which way X comes out. (1) TruthfulQA scored by the model's log-probability
+of its reference answers, no judge and no generation, which with a long-form cities arm
+completes the dataset x format 2x2 around J-D1 and J-D2. (2) The best single layer-11 vector
+at each norm, trained on the 744 non-holdout questions: the ceiling every steering effect
+here is a fraction of. Registered readings are in the spec.
+
 ---
 
 ## 9. Track C: the dataset card (P7)
