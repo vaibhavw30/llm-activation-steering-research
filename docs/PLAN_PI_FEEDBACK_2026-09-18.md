@@ -181,7 +181,7 @@ at most 4-5 hours, submitted in **three rounds of two**:
 |---|---|---|---|
 | **0 (now)** | U1, job 3169838, pending | **J-A `pi_audit`** (`deltaai/run_pi_audit.slurm`): J1 gold check, J2 re-judge, J3 determinism, format, threshold and Qwen judge, C3 truncation test, the Q2 tables recomputed from v2. Nothing in it needs U1. ~1-2 h, 3 h wall | written and smoke-tested 2026-09-18 |
 | **1** | **J-B `tqa_dct_s2`** (`deltaai/run_tqa_discovery.slurm`, `src/tqa_discovery.py`): second DCT fit (D-R1), D1 geometry on both fits, D2 screen, plus G0 MAG extraction and the readout-transfer and probe/XGBoost card rows (moved here from J-A so J-A could go out today). ~3-4 h, 5 h wall. Written 2026-09-18 | **J-C `tqa_confirm`** (`deltaai/run_tqa_confirm.slurm`, `src/tqa_confirm.py`), `afterok` J-B: D3 holdout confirm, G1. ~3 h, 5 h wall. Written 2026-09-18 | U1 and J-A done (J-B's screen uses the v2 judges). Submit with `bash deltaai/submit_pi_feedback.sh round1` |
-| **2** | **J-D1 `xfer_cities`**: every direction steered on cities, both readouts, oracle and random controls. ~3-4 h | **J-D2 `xfer_tqa`**: every direction steered on TQA, Q2 reproduction as positive control. ~3-4 h | J-C done |
+| **2** | **J-D1 `xfer_cities`** (`deltaai/run_xfer_cities.slurm`, `src/xfer_cities.py`): every direction steered on cities, both readouts, oracle and random controls. ~1 h, 3 h wall. Written 2026-09-18 | **J-D2 `xfer_tqa`** (`deltaai/run_xfer_tqa.slurm`, `src/xfer_tqa.py`): every direction steered on TQA, Q2 reproduction as positive control. ~2 h, 5 h wall. Written 2026-09-18 | J-C done. Submit with `bash deltaai/submit_pi_feedback.sh round2` |
 
 The two X jobs run side by side because they share no outputs. If either round-2 job is still
 pending when the other finishes, nothing is lost: they are independent.
@@ -305,6 +305,14 @@ S-geo carries the transfer test.
   `u_Q` carry the same meaning as on the GoT datasets. `mag.config.DATASETS` is left alone: the
   TruthfulQA files live in `jb_truthfulqa/`, and adding the name there would break
   `run_mag --probe transfer` for anyone without them.
+- **MAG sign, corrected before J-B ran.** `MAG_TRUTHFUL_SIGN` was -1 on the reading that
+  `u_Q = (label 0) - (label 1)` points at false. That missed the operator: `u_Q` is that class
+  difference of `InputDelta = A_Qp - A_p`, and the label signal sits in `A_p` (cities: cos
+  +0.988 to `mean_diff` through `A_p`, -0.04 through `A_Qp`), so the two minus signs cancel and
+  `u_Q` points at **true**. Caught by the round-2 sign test on cities' own activations; now +1,
+  with a unit test through `build_directions`. Without the fix, J-C's `mag_uQ` rows and J-B's
+  MAG cosines would have carried the wrong sign label (the grid is symmetric, so no data
+  would have been lost, only misread).
 
 **D3. Confirm on the holdout.** J-C. Each rule's factor(s), on the 64 holdout questions over the Q2
 dose grid, v2 judges, next to the norm-matched random control with 8 directions (up from 3).
@@ -374,6 +382,44 @@ Both grids are in the same job.
 **Sign.** TQA label 1 is untruthful, so its truthful direction is `-v`. Cities label 1 is true. DCT
 factors take D2's sign. Every direction is flipped toward truthful before the matrix is built, with a
 unit test, because the Q0 inversion already caused one misreading.
+
+**Fixed in code before round 2 ran (2026-09-18), `src/xfer_common.py`, `src/xfer_cities.py`,
+`src/xfer_tqa.py`:**
+- **Directions**, all signed toward truthful and tested for it on cities' activations:
+  `<src>:sup_jtw` (the reach pipeline's J^T w mean; on TQA it is Q2's), `<src>:mean_diff`,
+  cities DCT S-none (top 4 by potency) and S-geo, TQA DCT from J-B's selection, one
+  **potency-matched random DCT factor** per fit (the unpicked factor with the nearest ||U_i|| to
+  S-beh, else S-geo, random sign), `cities:mag_uQ`, `tqa:mag_uQ`, `tqa:mag_uyM` if G0 is alive.
+  `cities:mag_uyM` is not steered: its verdict channel is dead.
+- **Doses.** norm unit: 0.125, 0.25, 0.5 x the target's median ||h_11|| at the last prompt token,
+  measured in the job on the prompts being steered (laptop, bf16: ~115 cities, ~112 TQA). eps
+  unit: 2 x the target's eps\*. Both signs.
+- **Cities target.** The distinct cities behind `token_acts_cities.npz`, prompted as "The city of
+  X is in the country of" so the next token is a country (on the token-space stems "... is in",
+  gemma says " the" 174 times in 200). Country names without a leading "the "; a first token shared
+  by two countries, or a multi-word country whose first word is ordinary (North Korea), is dropped
+  from the pool with its cities (~177 remain). Logit readout: correct country's first token minus
+  the best other country's, post-norm z against the plain unembedding.
+  Generation: 12 greedy tokens, repetition penalty 1.0, first sentence scored for the first
+  country named, word count and an incoherence flag. **32** random directions: no judge, and 8
+  would floor a permutation p at 1/9.
+- **Cities oracle** computed in the job on these prompts, targeting the highest-logit WRONG country
+  (the layer-11 pullback of `a = W[j_tgt] - W[j_top]`, broadcast convention) at +1 and +2 of each
+  city's own budget. Laptop check on 8 cities: hit rate 0.5 at +2, answers such as "Nowrangapur
+  is in the country of Afghanistan"; the file's cities nulls are
+  readable only if its hit rate at +2 is **>= 0.2**.
+- **TQA target.** The 64 holdout questions, 8 random directions, v2 judges, J-B's score column.
+  Generation is **batched**; the job writes a batched vs one-at-a-time parity file on 16
+  questions before anything else. Positive control: `tqa:sup_jtw` at eps +2 inside Q2's v2 Wilson
+  interval.
+- **What "moves" means.** A paired test at p <= 0.05 (Wilcoxon on the margin, exact McNemar on a
+  0/1 score) **and** the effect clears the random null: permutation p <= 0.05, or, when the null
+  is too small to reach 0.05 (8 randoms), beating every random direction. Form: word count or
+  incoherence clears the null.
+- **Where the P8 cell is read.** norm unit, frac **-0.25** on cities (toward false: cities is near
+  ceiling, so that is where facts can move; 0.25 is the grid point nearest Q2's working push,
+  29.4 against a layer-11 norm near 112). On TQA the reverse cells are read at norm **+0.25**. Every
+  other dose is reported beside it.
 
 **Three outcomes for the P8 cell, registered now:**
 - **(a) Facts flip on cities** (logit and generation readouts agree, beyond the random controls). Truth

@@ -36,6 +36,7 @@ The table below is the current one, including the experiments that postdate Part
 | TruthfulQA, track Q | [`TRUTHFULQA_RUN.md`](TRUTHFULQA_RUN.md) | `run_truthfulqa_prep.slurm` `run_tqa_baseline.slurm` `run_truthfulqa_reach.slurm` `run_truthfulqa_judge.slurm` `run_truthfulqa_randctrl.slurm` `run_truthfulqa_stmt.slurm` `run_truthfulqa_dct.slurm` |
 | PI feedback, 2026-09-18 | [`../docs/PLAN_PI_FEEDBACK_2026-09-18.md`](../docs/PLAN_PI_FEEDBACK_2026-09-18.md) section 4 | `run_pi_audit.slurm` (J-A, judge audit, round 0) |
 | PI feedback, 2026-09-18 | [`../docs/PLAN_PI_FEEDBACK_2026-09-18.md`](../docs/PLAN_PI_FEEDBACK_2026-09-18.md) section 4 | `run_tqa_discovery.slurm` (J-B) + `run_tqa_confirm.slurm` (J-C, afterok J-B), round 1, via `submit_pi_feedback.sh round1` |
+| PI feedback, round 2 | same, sections 4 and 8 | `run_xfer_cities.slurm` (J-D1) + `run_xfer_tqa.slurm` (J-D2), independent, after J-C, via `submit_pi_feedback.sh round2` |
 | Judging (local OLMo backend) | [`JUDGE_RUN_STEPS.md`](JUDGE_RUN_STEPS.md) | `run_judge.slurm` |
 
 Some runbooks contain account and login specifics and are kept out of git (`MY_RUN_STEPS.md`,
