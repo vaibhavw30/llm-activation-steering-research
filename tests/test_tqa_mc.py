@@ -106,3 +106,60 @@ def test_holdout_items_cover_every_reference_answer():
     assert len(items) == n
     assert items[0]["prompt"].startswith("Q: ") and items[0]["prompt"].endswith("\nA:")
     assert {it["correct"] for it in items} == {0, 1}
+
+
+# ------------------------------------------------------------------ learned
+import tqa_learned as tl  # noqa: E402
+
+
+def test_split_questions_is_disjoint_sized_and_deterministic():
+    qs = [f"q{i}" for i in range(20)]
+    tr, va = tl.split_questions(qs + qs[:3], n_val=5, seed=1)     # duplicates collapse
+    assert len(tr) == 15 and len(va) == 5
+    assert not set(tr) & set(va)
+    assert (tr, va) == tl.split_questions(qs, n_val=5, seed=1)
+
+
+def test_train_pairs_have_one_true_and_one_false_answer_per_question():
+    pairs = tl.train_pairs()
+    assert len(pairs) == 744
+    assert len({p["question"] for p in pairs}) == 744
+    assert all(p["true"] and p["false"] and p["true"] != p["false"] for p in pairs)
+
+
+def test_train_questions_never_appear_in_the_holdout():
+    hold = set(pd.read_csv("got_datasets/truthfulqa_holdout.csv")["question"]
+               .astype(str).str.strip())
+    assert not hold & {p["question"] for p in tl.train_pairs()}
+
+
+def test_project_puts_the_vector_on_the_sphere():
+    v = torch.tensor([3.0, 4.0])
+    assert tl.project(v, 2.0).norm().item() == pytest.approx(2.0)
+    assert torch.allclose(tl.project(v, 2.0), torch.tensor([1.2, 1.6]))
+
+
+def test_train_one_beats_the_unsteered_objective_on_a_toy(monkeypatch):
+    import dct_steer_utils as su
+    monkeypatch.setattr(tl, "LR_PER_R", 0.3)
+    monkeypatch.setattr(tl, "EVAL_EVERY", 5)
+    tok, model = FakeTok(), FakeModel(seed=3)
+    pairs = [{"question": f"q{i}", "prompt": f"Q{i}", "true": "aaa", "false": "zzz"}
+             for i in range(8)]
+    with su.Steerer(model, 11) as st:
+        base, _ = tl.evaluate(model, tok, pairs)
+        u, obj, acc = tl.train_one(model, tok, st, pairs, pairs, 2.0, seed=0,
+                                   max_steps=40)
+        assert st.vec is None                     # training leaves no steering behind
+    assert np.linalg.norm(u) == pytest.approx(1.0, abs=1e-5)
+    assert obj > base
+
+
+def test_load_learned_names_each_vector_by_frac_and_seed(tmp_path):
+    p = tmp_path / "mc_learned.npz"
+    np.savez(p, vecs=np.eye(2), frac=np.array([0.25, 0.5]), seed=np.array([0, 2]),
+             val_obj=np.zeros(2), val_acc=np.zeros(2), norm_med=100.0,
+             base_val_obj=0.0, base_val_acc=0.0)
+    got = tl.load_learned(str(p))
+    assert [(n, f) for n, _, f in got] == [("learned_f0.25_s0", 0.25),
+                                           ("learned_f0.5_s2", 0.5)]
