@@ -14,7 +14,8 @@ It supersedes every status document below and is the only doc written to be read
 |---|---|
 | [`PLAIN_ENGLISH_WALKTHROUGH.md`](PLAIN_ENGLISH_WALKTHROUGH.md) | The whole project: eight experiments in the order they happened, the PI's ten items mapped to outcomes, a vocabulary section. Start here. |
 | [`MEETING_20MIN.md`](MEETING_20MIN.md) | The spoken version, timed for a 20-minute slot. |
-| [`PLAN_ADVISOR_NOTES_2026-09.md`](PLAN_ADVISOR_NOTES_2026-09.md) | **The current plan.** The advisor's three September notes, mapped to what our artifacts already say, then to experiments with costs and a sequence. |
+| [`PLAN_PI_FEEDBACK_2026-09-18.md`](PLAN_PI_FEEDBACK_2026-09-18.md) | **The current plan.** The PI's post-meeting feedback: judge audit (the info judge was mis-prompted), DCT and MAG discovery on TruthfulQA, a cities/TruthfulQA transfer matrix, and a dataset card. |
+| [`PLAN_ADVISOR_NOTES_2026-09.md`](PLAN_ADVISOR_NOTES_2026-09.md) | The previous plan, still the record of tracks V, Q and M. The advisor's three September notes, mapped to what our artifacts already say, then to experiments with costs and a sequence. |
 | [`EXPLAINER_ADVISOR_NOTES_2026-09.md`](EXPLAINER_ADVISOR_NOTES_2026-09.md) | **What came of that plan.** The three notes worked through end to end: the TruthfulQA steering result (0.266 to 0.500, p = 2.75e-4, beating three norm-matched controls), the diagnosis that the certificate did not do the work, the infra, the six cluster jobs including the one that failed, and what to run next. |
 | [`OPEN_QUESTIONS.md`](OPEN_QUESTIONS.md) | What is genuinely unresolved, each question placed against the literature. |
 | [`LITERATURE.md`](LITERATURE.md) | The literature compilation on automated feature discovery, with what each paper does and does not establish. |
