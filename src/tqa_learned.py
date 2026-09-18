@@ -3,14 +3,21 @@
 Spec: docs/superpowers/specs/2026-09-18-tqa-mc-learned-ceiling-design.md.
 
 The ceiling every steering number is a fraction of. For each norm r = frac x the median
-||h_11|| of the holdout prompts, a vector v with ||v|| = r is trained by Adam to maximize
+||h_11|| of the holdout prompts, a vector v with ||v|| = r is trained to maximize
 
     mean over pairs of logsigmoid( mean_lp(true answer) - mean_lp(false answer) )
 
 on 600 of the 744 got_datasets/truthfulqa.csv questions (one true and one false answer
-each), projected back to the sphere after every step, and the step with the best
-objective on the other 144 is kept. Per-token means, so it cannot win on length. None of
-the 744 questions is in the 64-question holdout every other stage is scored on.
+each), and the step with the best objective on the other 144 is kept. Per-token means,
+so it cannot win on length. None of the 744 questions is in the 64-question holdout every
+other stage is scored on.
+
+Optimizer: Adam on the TANGENT-projected gradient (the radial part only moves v off the
+sphere, and the projection would undo it), lr = LR_PER_R x r / sqrt(d), then v projected
+back to the sphere. The sqrt(d): Adam's early steps are sign-like, ~lr on EVERY
+coordinate, so a step's length is ~lr x sqrt(d). lr = 1e-2 x r moved ~0.48 r per step at
+d = 2304 and, on a linear objective with a known optimum, stalled at cos 0.79 to it; the
+test suite pins cos > 0.99 at the real step budget.
 
 Three random starts per frac: cosines near 1 between them mean one optimal direction;
 low cosines at equal objectives mean many (non-identifiability in miniature).
@@ -24,7 +31,11 @@ import xfer_common as xc
 
 SPLIT_SEED, N_VAL = 37, 144
 SEEDS = (0, 1, 2)
-LR_PER_R, BATCH_PAIRS, MAX_EPOCHS, EVAL_EVERY = 1e-2, 16, 4, 10
+LR_PER_R, BATCH_PAIRS, MAX_EPOCHS, EVAL_EVERY = 3e-2, 16, 4, 10
+# Stored in mc_learned.npz with norm_med, and checked on resume: a vector trained under
+# other settings must never sit beside (and be compared to) one trained under these.
+SETTINGS = ("lr_per_r", "max_epochs", "eval_every", "batch_pairs", "n_train", "n_val")
+NORM_RTOL = 1e-3
 
 
 # ------------------------------------------------------------------ pure
@@ -86,7 +97,7 @@ def train_one(model, tok, st, tr, va, r, seed, max_steps=None):
     g = torch.Generator().manual_seed(seed)
     v = project(torch.randn(model.config.hidden_size, generator=g), r).to(dev)
     v.requires_grad_(True)
-    opt = torch.optim.Adam([v], lr=LR_PER_R * r)
+    opt = torch.optim.Adam([v], lr=LR_PER_R * r / math.sqrt(model.config.hidden_size))
     rng = np.random.default_rng(seed)
     per_epoch = math.ceil(len(tr) / BATCH_PAIRS)
     total = max_steps or MAX_EPOCHS * per_epoch
@@ -99,6 +110,9 @@ def train_one(model, tok, st, tr, va, r, seed, max_steps=None):
                 loss = -pair_objective(model, tok, [tr[i] for i in idx], grad=True)[0]
                 opt.zero_grad()
                 loss.backward()
+                with torch.no_grad():                     # tangent part only (see top)
+                    u = v / v.norm()
+                    v.grad -= (v.grad @ u) * u
                 opt.step()
                 with torch.no_grad():
                     v.copy_(project(v, r))
@@ -152,6 +166,23 @@ def learned_cos(learned, dirs):
     return rows
 
 
+def _check_resume(out, z, now, norm_med):
+    """Abort, before anything is trained, if `out` was written under other settings."""
+    miss = [k for k in SETTINGS + ("norm_med",) if k not in z.files]
+    if miss:
+        raise SystemExit(f"[train] !!!! {out} has no {', '.join(miss)}: it was written before "
+                         "the settings were stored, i.e. by the old optimizer (lr 1e-2 x r, "
+                         "no tangent projection). Move it aside and rerun stage train.")
+    bad = [f"{k} stored {z[k].item()!r} vs now {now[k]!r}" for k in SETTINGS
+           if z[k].item() != now[k]]
+    stored = float(z["norm_med"])
+    if abs(stored - norm_med) > NORM_RTOL * abs(stored):
+        bad.append(f"norm_med stored {stored:.6g} vs now {norm_med:.6g}")
+    if bad:
+        raise SystemExit(f"[train] !!!! {out} was trained under other settings ("
+                         + "; ".join(bad) + "). Move it aside, or restore the settings.")
+
+
 def stage_train(device, limit=0, steps=None, jb_prefix=""):
     import pandas as pd
 
@@ -168,14 +199,23 @@ def stage_train(device, limit=0, steps=None, jb_prefix=""):
     va = [p for p in pairs if p["question"] in set(va_q)]
     if limit:
         tr, va = tr[:4 * limit], va[:limit]
+    now = {"lr_per_r": LR_PER_R, "max_epochs": MAX_EPOCHS, "eval_every": EVAL_EVERY,
+           "batch_pairs": BATCH_PAIRS, "n_train": len(tr), "n_val": len(va)}
     rows = []
     if os.path.exists(out):
         z = np.load(out)
+        _check_resume(out, z, now, norm_med)
         rows = [(v, float(f), int(s), float(o), float(a)) for v, f, s, o, a in
                 zip(z["vecs"], z["frac"], z["seed"], z["val_obj"], z["val_acc"])]
+        # The STORED norm and baseline: the finished vectors were trained and compared
+        # against them, and the new ones must be too.
+        extra = {k: z[k] for k in SETTINGS + ("norm_med", "base_val_obj", "base_val_acc")}
+        norm_med, base_o, base_a = (float(z[k]) for k in ("norm_med", "base_val_obj",
+                                                          "base_val_acc"))
+    else:
+        base_o, base_a = evaluate(model, tok, va)
+        extra = dict(now, norm_med=norm_med, base_val_obj=base_o, base_val_acc=base_a)
     done = {(r[1], r[2]) for r in rows}
-    base_o, base_a = evaluate(model, tok, va)
-    extra = {"norm_med": norm_med, "base_val_obj": base_o, "base_val_acc": base_a}
     print(f"[train] {len(tr)} train / {len(va)} val pairs; median ||h_11|| {norm_med:.4g}; "
           f"unsteered val obj {base_o:.4f} acc {base_a:.3f}", flush=True)
     with su.Steerer(model, xc.LAYER) as st:

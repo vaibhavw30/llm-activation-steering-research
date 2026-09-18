@@ -105,8 +105,10 @@ def answer_logprob(model, tok, prompts, answers, grad=False, batch=BATCH):
         ids, att, am = (t.to(dev) for t in encode_pairs(
             tok, prompts[b0:b0 + batch], answers[b0:b0 + batch]))
         with torch.set_grad_enabled(grad):
+            # use_cache=False: transformers 4.51 otherwise builds a Gemma2 HybridCache on
+            # every forward, and training would backprop through its in-place writes.
             logits = model(input_ids=ids, attention_mask=att,
-                           position_ids=position_ids(att)).logits
+                           position_ids=position_ids(att), use_cache=False).logits
             outs.append(token_logprobs(logits, ids, am))
     return tuple(torch.cat([o[i] for o in outs]) for i in range(3))
 

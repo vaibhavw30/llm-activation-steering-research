@@ -37,7 +37,7 @@ class FakeModel(torch.nn.Module):
         for p in self.parameters():
             p.requires_grad = False
 
-    def forward(self, input_ids, attention_mask=None, position_ids=None):
+    def forward(self, input_ids, attention_mask=None, position_ids=None, use_cache=None):
         h = self.emb(input_ids)
         for layer in self.model.layers:
             h = h + torch.tanh(layer(h))
@@ -160,6 +160,30 @@ def test_train_one_beats_the_unsteered_objective_on_a_toy(monkeypatch):
                                                     # just an already-lucky random start
 
 
+def _linear_objective_run(monkeypatch, d=512, r=100.0, steps=150, seed=0):
+    """train_one on an objective linear in the steering vector, (v . w) / r, whose optimum
+    on the sphere is exactly v = r w. Returns cos(learned u, w)."""
+    import dct_steer_utils as su
+    w = torch.randn(d, generator=torch.Generator().manual_seed(123))
+    w = w / w.norm()
+    model = FakeModel(d=d)
+    with su.Steerer(model, 11) as st:
+        # st.vec IS the trained tensor (Steerer keeps the reference), so the objective
+        # carries its gradient; evaluate() calls this under no_grad, which is fine too.
+        monkeypatch.setattr(tl, "pair_objective",
+                            lambda m, t, pairs, grad: ((st.vec @ w) / r, torch.tensor(0.5)))
+        pairs = [{"question": f"q{i}"} for i in range(32)]
+        u, _, _ = tl.train_one(model, None, st, pairs, pairs, r, seed=seed, max_steps=steps)
+    return float(u @ w.double().numpy())
+
+
+def test_train_one_finds_a_known_optimum_in_the_real_step_budget(monkeypatch):
+    """Adam's per-coordinate steps are sign-like, so a step's length scales with sqrt(d)
+    and a radial gradient component is wasted on moving off the sphere. At a realistic d
+    and ~150 steps (4 epochs x ceil(600/16)) the optimizer must still land on the optimum."""
+    assert _linear_objective_run(monkeypatch) > 0.99
+
+
 def test_load_learned_names_each_vector_by_frac_and_seed(tmp_path):
     p = tmp_path / "mc_learned.npz"
     np.savez(p, vecs=np.eye(2), frac=np.array([0.25, 0.5]), seed=np.array([0, 2]),
@@ -179,6 +203,76 @@ def test_save_then_load_learned_round_trips_and_leaves_no_temp_file(tmp_path):
     assert [(n, f) for n, _, f in got] == [("learned_f0.25_s0", 0.25),
                                            ("learned_f0.5_s1", 0.5)]
     assert list(p.parent.iterdir()) == [p]         # no leftover .tmp.npz
+
+
+@pytest.fixture
+def train_stage(monkeypatch, tmp_path):
+    """stage_train on fakes: 150 toy pairs (6 train / 144 val), 2 fracs x 2 seeds, and a
+    train_one that records which (r, seed) it was asked for."""
+    import dct_steer_utils as su
+    import xfer_common as xc
+    calls = []
+    monkeypatch.setattr(mc, "PREFIX", str(tmp_path) + os.sep)
+    monkeypatch.setattr(mc, "load_model_left", lambda device: (su, FakeTok(), FakeModel()))
+    monkeypatch.setattr(xc, "median_last_norm", lambda model, tok, prompts: 100.0)
+    monkeypatch.setattr(xc, "build_directions", lambda *a: ([("a", np.ones(8))], []))
+    monkeypatch.setattr(xc, "NORM_FRACS", (0.25, 0.5))
+    monkeypatch.setattr(tl, "SEEDS", (0, 1))
+    monkeypatch.setattr(tl, "train_pairs", lambda: [
+        {"question": f"q{i:03d}", "prompt": f"Q{i}", "true": "a", "false": "z"}
+        for i in range(150)])
+    monkeypatch.setattr(tl, "evaluate", lambda model, tok, pairs: (-0.7, 0.5))
+
+    def fake_train_one(model, tok, st, tr, va, r, seed, max_steps=None):
+        calls.append((r, seed))
+        return np.eye(8)[seed], -0.5, 0.6
+
+    monkeypatch.setattr(tl, "train_one", fake_train_one)
+    return SimpleNamespace(calls=calls, out=mc.path("mc_learned.npz"))
+
+
+def test_stage_train_stores_its_settings_and_resumes_only_what_is_missing(train_stage):
+    tl.stage_train("cpu")
+    z = dict(np.load(train_stage.out))
+    assert float(z["lr_per_r"]) == tl.LR_PER_R and int(z["max_epochs"]) == tl.MAX_EPOCHS
+    assert int(z["eval_every"]) == tl.EVAL_EVERY and int(z["batch_pairs"]) == tl.BATCH_PAIRS
+    assert (int(z["n_train"]), int(z["n_val"])) == (6, 144)
+    assert float(z["norm_med"]) == 100.0
+    # Drop the last (frac, seed) and resume: only it is trained again.
+    rows = [(v, f, s, o, a) for v, f, s, o, a in
+            zip(z["vecs"], z["frac"], z["seed"], z["val_obj"], z["val_acc"])][:-1]
+    tl._save(train_stage.out, rows, {k: z[k] for k in tl.SETTINGS + ("norm_med",
+                                                        "base_val_obj", "base_val_acc")})
+    train_stage.calls.clear()
+    tl.stage_train("cpu")
+    assert train_stage.calls == [(50.0, 1)]
+    assert len(tl.load_learned(train_stage.out)) == 4
+
+
+def test_stage_train_refuses_to_resume_under_a_changed_setting(train_stage, monkeypatch):
+    tl.stage_train("cpu")
+    train_stage.calls.clear()
+    monkeypatch.setattr(tl, "LR_PER_R", tl.LR_PER_R * 2)
+    with pytest.raises(SystemExit, match="lr_per_r"):
+        tl.stage_train("cpu")
+    assert train_stage.calls == []
+
+
+def test_stage_train_refuses_to_resume_under_a_changed_norm(train_stage, monkeypatch):
+    import xfer_common as xc
+    tl.stage_train("cpu")
+    monkeypatch.setattr(xc, "median_last_norm", lambda model, tok, prompts: 101.0)
+    with pytest.raises(SystemExit, match="norm_med"):
+        tl.stage_train("cpu")
+
+
+def test_stage_train_refuses_a_file_from_before_the_settings_were_stored(train_stage):
+    np.savez(train_stage.out, vecs=np.eye(8)[:1], frac=np.array([0.25]), seed=np.array([0]),
+             val_obj=np.array([-0.5]), val_acc=np.array([0.6]), norm_med=100.0,
+             base_val_obj=-0.7, base_val_acc=0.5)
+    with pytest.raises(SystemExit, match="(?i)move it aside"):
+        tl.stage_train("cpu")
+    assert train_stage.calls == []
 
 
 # ------------------------------------------------------------------ stages
