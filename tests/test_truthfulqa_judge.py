@@ -158,11 +158,14 @@ def test_arm_files_match_reach_steer_output_names():
     assert tj.ARM_FILES["stmt"].format(ds="truthfulqa") == "reach_steer_stmt_truthfulqa.csv"
 
 
-def test_module_imports_no_torch():
+def test_module_imports_no_torch(monkeypatch):
+    # monkeypatch, not a bare pop: the entries come back after the test. A popped torch
+    # left a later `import torch` loading a SECOND copy, which dies re-registering its
+    # TORCH_LIBRARY namespaces (the suite's test-order failure).
     import importlib
     import sys as _s
     for m in ("torch", "truthfulqa_judge"):
-        _s.modules.pop(m, None)
+        monkeypatch.delitem(_s.modules, m, raising=False)
     importlib.import_module("truthfulqa_judge")
     assert "torch" not in _s.modules
 

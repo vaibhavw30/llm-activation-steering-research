@@ -67,9 +67,12 @@ TRUTHFUL_SIGN = {"cities": 1, "common_claim_true_false": 1, "truthfulqa": -1}
 # The Q2 vector is J^T w for w = mean_diff_tgt, which points at label 1 (untruthful), and
 # Q2 steered it at NEGATIVE scales. Truthful is its negative.
 Q2_TRUTHFUL_SIGN = -1
-# mag.directions.class_mean_diff is (label 0 mean) - (label 1 mean), and the MAG labels are
-# 1 = true (TruthfulQA's are flipped on extraction to match), so u_Q points at FALSE.
-MAG_TRUTHFUL_SIGN = -1
+# u_Q = class_mean_diff(InputDelta) = (label 0) - (label 1) of A_Qp - A_p, with MAG labels
+# 1 = true (TruthfulQA's flipped on extraction to match). The class signal lives in A_p, the
+# bare statement (cities: cos +0.988 through A_p, -0.04 through A_Qp), so the operator's
+# minus sign flips it back: u_Q points at TRUE. This was -1 until 2026-09-18, which read
+# the operator as if it were A_p alone; tests/test_xfer.py checks it on cities' activations.
+MAG_TRUTHFUL_SIGN = 1
 
 # G0. Two phrasings, so a dead channel under one is not mistaken for a dead model.
 MAG_PHRASINGS = {

@@ -199,7 +199,7 @@ def test_mag_phrasings_end_in_the_same_suffix_and_differ():
 def test_truthful_sign_flips_truthfulqa_only():
     assert td.TRUTHFUL_SIGN["truthfulqa"] == -1
     assert td.TRUTHFUL_SIGN["cities"] == 1
-    assert td.Q2_TRUTHFUL_SIGN == -1 and td.MAG_TRUTHFUL_SIGN == -1
+    assert td.Q2_TRUTHFUL_SIGN == -1 and td.MAG_TRUTHFUL_SIGN == 1
 
 
 def test_truth_dirs_signs_truthfulqa_toward_truthful(tmp_path, monkeypatch):
@@ -211,11 +211,20 @@ def test_truth_dirs_signs_truthfulqa_toward_truthful(tmp_path, monkeypatch):
     assert np.allclose(td.truth_dirs("cities")["mean_diff"], md / 5)
 
 
-def test_mag_class_mean_diff_points_at_false():
-    """MAG_TRUTHFUL_SIGN rests on class_mean_diff being (label 0) - (label 1)."""
-    from mag.directions import class_mean_diff
-    feats = np.array([[1.0, 0.0], [0.0, 0.0]])
-    assert np.allclose(class_mean_diff(feats, np.array([1, 0])), [-1.0, 0.0])
+def test_mag_u_q_points_at_true_through_the_input_delta_operator():
+    """MAG_TRUTHFUL_SIGN rests on BOTH signs: class_mean_diff is (label 0) - (label 1), and
+    the InputDelta operator is A_Qp - A_p. With the truth signal in A_p (the bare
+    statement), the two minus signs cancel and u_Q points at label 1, true."""
+    from mag.directions import build_directions
+    n, d = 8, 3
+    y = np.array([1, 0] * (n // 2))
+    A_p = np.zeros((1, n, d))
+    A_p[0, y == 1, 0] = 1.0                           # true statements sit at +e0
+    A_Qp = np.zeros((1, n, d))                        # the verdict context carries no label
+    cache = {"A_p": A_p, "A_Qp": A_Qp, "A_Qpv": A_Qp, "A_verdict": A_Qp, "A_EQp": A_Qp,
+             "A_Q": np.zeros((1, d)), "A_empty": np.zeros((1, d))}
+    u = build_directions(cache, 0, y, y)["u_Q_gold"]
+    assert td.MAG_TRUTHFUL_SIGN * u[0] > 0
 
 
 def test_cosine_rows_every_pair_once():

@@ -41,7 +41,7 @@ def test_confirm_directions_mag_uyM_only_when_alive():
     mag["g0_alive"] = np.bool_(True)
     dirs = dict(tc.confirm_directions({"rules": {}}, V, np.ones(6), mag, n_rand=0))
     assert "mag_uyM" in dirs
-    assert np.allclose(dirs["mag_uQ"], -td.unit(mag["u_Q_gold"]))    # u_Q points at false
+    assert np.allclose(dirs["mag_uQ"], td.unit(mag["u_Q_gold"]))     # u_Q points at true
 
 
 def test_fracs_signed_are_symmetric():
