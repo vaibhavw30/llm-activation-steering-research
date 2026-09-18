@@ -64,17 +64,45 @@ done
 test -d "$HF_HOME/hub/models--google--gemma-2-2b" \
   || { echo "!!!! gemma-2-2b not in $HF_HOME/hub. Stage it on the LOGIN node."; exit 1; }
 
-# An existing factorization is finished output like any other. Refusing rather than
-# reusing, because a half-present V/U pair is the one case reach_hop.optional_artifacts
-# silently treats as absent, and a stale pair would be worse than no pair.
-for f in dct_V_${DS}.pt dct_U_${DS}.pt; do
-  if [ -e "$f" ]; then
-    echo "!!!! $f already exists. This job does not overwrite a factorization."
-    echo "!!!! Move it aside by hand if you really mean to refit."
-    exit 1
-  fi
-done
+# An existing factorization is finished output like any other: never refit over it. A
+# COMPLETE one is resumed from rather than refused. Job 3085406 finished the fit and the
+# meta restore in 7 minutes, then died in stage 2 or 3, and the fit it left is good.
+# Complete means: both V and U present, the fit's archived meta present, and that meta
+# says 512 factors at 11 -> 20. Anything less (one of V/U, no archived meta) is the
+# half-present state reach_hop.optional_artifacts silently treats as absent, and is
+# still refused.
+FIT_DONE=0
+if [ -e dct_V_${DS}.pt ] || [ -e dct_U_${DS}.pt ] || [ -e dct_meta_${DS}.dctfit.json ]; then
+  python3 - <<'RESUME' || exit 1
+import json
+import os
+import sys
 
+need = ["dct_V_truthfulqa.pt", "dct_U_truthfulqa.pt", "dct_meta_truthfulqa.dctfit.json"]
+missing = [f for f in need if not os.path.exists(f)]
+if missing:
+    print(f"!!!! a partial factorization is on disk, missing {missing}. This job does "
+          "not refit over it or resume from it. Move the pieces aside by hand.")
+    sys.exit(1)
+m = json.load(open("dct_meta_truthfulqa.dctfit.json"))
+got = (m.get("num_factors"), m.get("source_layer"), m.get("target_layer"))
+if got != (512, 11, 20):
+    print(f"!!!! the archived fit is (num_factors, source, target) = {got}, "
+          "not (512, 11, 20). Not resuming from it.")
+    sys.exit(1)
+q2 = json.load(open("dct_meta_truthfulqa.json"))
+if q2.get("num_factors") is not None:
+    print("!!!! dct_meta_truthfulqa.json is a fit's copy, not the Q2 meta. Recover it "
+          "from dct_meta_truthfulqa.q2.json.bak by hand first.")
+    sys.exit(1)
+print(f"[resume] complete factorization on disk {got}, Q2 meta intact: skipping stage 1")
+RESUME
+  FIT_DONE=1
+fi
+
+if [ "$FIT_DONE" = 1 ]; then
+  echo "=== stage 1: SKIPPED, resuming from the existing factorization ==="
+else
 echo "=== stage 1: the DCT factorization, unsupervised, no labels ==="
 # --source-layer 11 --target-layer 20 are NOT the script's defaults (6 and 18). They are
 # the layers Q0's make_reach_meta chose and Q2 ran against, and the whole point of this
@@ -128,6 +156,7 @@ assert q2["source_layer"] == 11 and q2["target_layer"] == 20, q2
 assert q2["num_factors"] is None, "the Q2 meta was not restored, it is the DCT fit's"
 print(f"[stage 1] Q2 meta restored intact: input_scale={q2['input_scale']}")
 RESTORE
+fi
 
 echo "=== stage 2: a private directory, so the margins rerun cannot touch Q2 ==="
 # reach_margins hardcodes reach_dirs_<ds>.npz and reach_margins_<ds>.npz in the cwd and
