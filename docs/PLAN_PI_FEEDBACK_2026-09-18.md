@@ -19,6 +19,11 @@ before anything built on it is trusted. The re-judge needs no new generations. A
 is: DCT and MAG discovery on TruthfulQA, a transfer matrix (every direction, from both datasets,
 steered on both datasets), and a dataset card that measures the two datasets the same way.
 
+All compute runs as four chained cluster jobs (section 4). The laptop only writes code, runs
+smoke tests and does the analysis of pulled-down CSVs. No headline rests on one instrument: each
+claim has a primary measurement and an independent backup. Section 3 maps each sentence of the
+feedback to a deliverable, and section 13 checks them off at write-up.
+
 ---
 
 ## 1. The feedback, as given
@@ -137,216 +142,275 @@ answer and no room to elaborate. Track X is the experiment that tells these read
 
 ---
 
-## 3. Track J: the judge audit (feedback point 1)
+## 3. Does the plan answer what the PI asked?
 
-**J0. Fix the prompt.** `truthfulqa_prompt` takes a `kind` argument, `True:` for truth and
-`Helpful:` for info, and `TruthJudge.score` builds one prompt per judge. A unit test pins both
-strings against the model cards. The old behaviour is not kept behind a flag.
+Each sentence of the feedback, with what we will hand back and what would count as an answer.
+Section 13 re-checks this list at write-up time.
 
-**J1. Validate the info judge, and record margins.** Two changes to `_YesNoJudge`:
+| # | The PI asked | Deliverable | It counts as answered when |
+|---|---|---|---|
+| P1 | use the two allenai judges | already in use, prompt fixed (J0) | both judges run with their model-card prompts, verified by a unit test |
+| P2 | is the judge super strict or inconsistent? | strictness and consistency report (J1, J3) | numbers for both words: **strict** = verdict rate vs two independent judges plus a threshold sweep; **inconsistent** = determinism, format-flip rate, agreement with hand labels |
+| P3 | back to DCT and MAG discovery now that the dataset changed | D1, D2, G0, G1 | each miner has run on TruthfulQA and has one geometric and one behavioural number |
+| P4 | is it dataset dependent or not? | D1 table (cities, common_claim, TQA in one table), X matrix | a yes/no per miner, with the cell that decides it |
+| P5 | each mined direction (MAG and DCT) applied to cities | X matrix, cities column | every MAG and DCT direction from TQA has been steered on cities, with controls |
+| P6 | "DCT doesn't work for cities, works for TQA" | D3 | **treated as a hypothesis, not a fact.** DCT has never been steered on TQA. D3 is where it is confirmed or refuted |
+| P7 | quantitatively assess the difference in datasets and behaviours | C, the dataset card | one table, same code on all three datasets, and a registered hypothesis it confirms or refutes |
+| P8 | the DCT truthfulness direction from TQA, applied to cities: what happens? | the TQA -> cities DCT cell of X | one of the three pre-registered outcomes (a), (b), (c) in section 8, with its control |
 
-- Return `p_yes = P(" yes") / (P(" yes") + P(" no"))` from the first-token logits, as well as the
-  hard verdict. That gives strictness a number: how many verdicts sit near 0.5, and how the
-  headline moves if the threshold moves.
-- Add an **informativeness gold set** to the gold check, reported per side as the truth gold check
-  is. Expected informative: each holdout question's `best_answer`. Expected uninformative:
-  `I have no comment.` and the question restated as its own answer. 64 x 3 = 192 rows.
-
-Pass bar, registered now: per-side accuracy >= 0.9 on both info sides with the `Helpful:` prompt.
-The `True:` prompt runs on the same set as a record of the bug.
-
-**J2. Re-judge everything already generated.** Judge only, no generation: Q1's 64 baseline
-answers, the Q2 mean arm (576), the random control (1,728), and the per-statement arm if it has been judged.
-Output goes to new files (`judge_v2_truthfulqa_<arm>.csv`, `tqa_baseline_judged_v2.csv`). No
-existing judge file is overwritten. `tqa_q2_summary` is recomputed from the v2 files with the
-existing script.
-
-**J3. Consistency.** Three cheap checks on the J2 output:
-
-1. **Determinism.** The same 200 rows judged twice agree 200/200. Greedy fp16 should, but the claim
-   has never been checked.
-2. **Format invariance.** Each answer judged with and without its trailing period, and with
-   whitespace normalised. The flip rate is the judge's noise floor for these edits.
-3. **A second opinion.** 64 answers (32 at frac 0, 32 at frac -2, shuffled, dose hidden) labeled by
-   hand for truthful and informative. Report agreement and kappa per judge. An LLM judge could
-   stand in, but it needs `ANTHROPIC_API_KEY`, which has been blocked before, so hand labels are
-   the default.
-
-**Decision rule, registered now.** If the v2 truthful-and-informative rate at frac -2 still beats
-frac 0 and the random control with exact McNemar p < 0.05, Q2 stands as written. If
-informativeness drops at frac -2 under the correct prompt, Q2 is restated as a truthful-only result
-with an informativeness cost, and `Q2_TRUTHFULQA_STEERING.md` gets a correction section. Sections
-before it are not rewritten.
-
-Cost: CLUSTER, 1 to 2 GPU-hours, all judge time. **J runs first**, because every later TruthfulQA
-behavioural number goes through this judge.
+P6 is worth raising at the meeting. The feedback states it as known, and it is the thing the plan
+is built to test.
 
 ---
 
-## 4. Track D: DCT discovery on TruthfulQA (feedback point 2)
+## 4. Where each step runs, and the redundancy rules
 
-**D0. Pull U1.** See section 8 for commands. If it failed, fix and resubmit before anything below.
+**Machine rule.** Anything that takes over 10 minutes, loads a 7B judge, runs a forward pass, or
+fits XGBoost across layers goes to the **CLUSTER**. The **LAPTOP** writes code and tests, runs CPU smoke
+tests with `--limit`, reads small outputs, and holds the hand-labelling and the writing. Every
+analysis that the cluster runs as a job stage can also be re-run on the laptop from the pulled-down
+CSVs. That is the redundancy for the analysis code itself.
 
-**D1. The geometric comparison, measured the same way as cities.** Rerun the three tests from
-`DCT_VS_TRUTH_FINDINGS.md` on TruthfulQA's 512 factors, against `mean_diff_tgt` and
-`probe_grad_tgt`: max single-factor cosine vs random, subspace fraction vs chance k/d = 0.22, and
-the orthogonality to DCT's top-potency factor. The TruthfulQA row goes straight into the existing
-cities/common_claim table. LAPTOP, once `dct_V_truthfulqa.pt` is down.
+**Four jobs, chained, never more than two in flight.**
 
-**D2. Name "the DCT direction that improves truthfulness".** The feedback's last point needs a
-single DCT direction, and DCT gives 512 unlabeled factors. Choosing one means deciding what is
-allowed to see labels. Three selection rules, all pre-registered and all reported:
+| Job | Contents | Starts | GPU time |
+|---|---|---|---|
+| **J-A `tqa_audit`** | J1 judge validation, J2 re-judge, J3 consistency and third judge, the truncation test (C3), G0 MAG extraction, D1 geometry, dataset-card representational rows | as soon as D0 confirms U1 | 3-4 h |
+| **J-B `tqa_dct_s2`** | a second DCT fit on TQA, different seed and sample draw (D-R1) | alongside J-A, independent of it | 1-2 h |
+| **J-C `tqa_select`** | D2 screen, D3 holdout confirm, G1 if G0 passed | `afterok` J-A and J-B | 5-7 h |
+| **J-D `xfer`** | the X transfer matrix, card behavioural rows | `afterok` J-C | 5-7 h |
+
+One submit script, `deltaai/submit_pi_feedback.sh`, submits all four with `--dependency=afterok`,
+the way `submit_rerun.sh` chains steer to judge. If one fails, SLURM cancels the rest, and nothing
+downstream runs on missing input.
+
+**Every job carries the guards the Q2 and U1 jobs have**, because each one has already cost a
+submission:
+- file-existence and HF-cache preflight (compute nodes are offline);
+- a `--limit 8` smoke stage that runs every later stage end to end in minutes before the full run;
+- refuses to overwrite any existing output, and writes only new names;
+- incremental CSV writes with resume, so a timeout loses one stage, not the job;
+- `--flag=value` for any value that begins with a dash;
+- `sbatch --test-only` before the real submit, and the `ACCOUNT_NAME` sed after every rsync.
+
+**Redundancy rule for claims.** No headline number rests on a single instrument. Each track below has
+a **primary** measurement, an **independent backup** that would disagree if the primary were wrong,
+and a stated **fallback** if the primary cannot run.
+
+---
+
+## 5. Track J: the judge audit (P1, P2)
+
+**J0. Fix the prompt.** LAPTOP. `truthfulqa_prompt` takes a `kind`, `True:` for truth and
+`Helpful:` for info. `TruthJudge.score` builds one prompt per judge. A unit test pins both
+strings to the model cards. The old behaviour is not kept behind a flag.
+
+**J1. Validate, with margins.** Code on LAPTOP, run in J-A.
+- `_YesNoJudge` also returns `p_yes = P(" yes") / (P(" yes") + P(" no"))` from the first-token
+  logits, next to the hard verdict.
+- An informativeness gold set, reported per side. Expected informative: each holdout question's
+  `best_answer`. Expected uninformative: `I have no comment.` and the question restated as its
+  own answer. 192 rows.
+- Both prompts run on it: `Helpful:` as the fix, `True:` as the record of the bug.
+- Pass bar, registered now: per-side accuracy >= 0.9 on both info sides with `Helpful:`.
+
+**J2. Re-judge everything already generated.** J-A, judge only. Q1's 64, the Q2 mean arm (576),
+the random control (1,728), and the per-statement arm if it has been judged. Output to
+`judge_v2_truthfulqa_<arm>.csv` and `tqa_baseline_judged_v2.csv`. Nothing existing is overwritten.
+`tqa_q2_summary` is recomputed from the v2 files by the existing script.
+
+**J3. Strict and inconsistent, each made a number.** J-A, apart from the hand labels.
+
+| Question | Primary | Independent backup |
+|---|---|---|
+| **strict?** | threshold sweep on `p_yes`: how far the headline moves from threshold 0.3 to 0.7, and the share of verdicts in [0.4, 0.6] | a **third judge**, `Qwen/Qwen2.5-7B-Instruct` with a written rubric (truthful, informative), on all Q1 and Q2 frac 0 and -2 answers. Strict = allenai says untruthful where Qwen and hand labels say truthful |
+| **inconsistent?** | determinism: the same 200 rows judged twice agree 200/200 | format flips: each answer re-judged without its trailing period and with whitespace normalised. Flip rate = the judge's noise floor |
+| **right?** | agreement with hand labels on 64 answers (32 at frac 0, 32 at frac -2, shuffled, dose hidden), kappa per judge | Qwen's agreement with the same 64. If allenai and Qwen disagree with each other more than either disagrees with the hand labels, the hand labels decide |
+
+Hand labels are LAPTOP and human, about an hour. The job writes the 64-row sheet; you fill it in.
+The Qwen judge needs staging on the login node first (section 10). **Fallback** if the disk cannot
+take it: `Qwen/Qwen2.5-3B-Instruct`, reported as the weaker backup it is.
+
+**Decision rule, registered now.** If the v2 truthful-and-informative rate at frac -2 beats both frac 0
+and the random control with exact McNemar p < 0.05, **and** the Qwen judge shows the same sign, Q2
+stands. If informativeness drops under the right prompt, Q2 is restated as truthful-only with an
+informativeness cost, and `Q2_TRUTHFULQA_STEERING.md` gets a correction section. Earlier sections are
+not rewritten. If the two judges disagree in sign, Q2 is reported as judge-dependent and the hand
+labels are shown.
+
+**J runs before any new TruthfulQA behavioural number.** D2's selection and all of X are judged by
+it. Running them first would bake the bug into new results.
+
+---
+
+## 6. Track D: DCT discovery on TruthfulQA (P3, P4, P6)
+
+**D0. Pull U1.** Section 10. If it failed, fix and resubmit before anything else in D.
+
+**D1. Geometry, measured as for cities.** A J-A stage (seconds on GPU, and the factors are already
+there), re-runnable on LAPTOP. The three tests from `DCT_VS_TRUTH_FINDINGS.md` on TQA's 512
+factors against `mean_diff_tgt` and `probe_grad_tgt`: max single-factor cosine vs random, subspace
+fraction vs chance k/d = 0.22, and cosine to the top-potency factor. The TQA row goes into the
+existing cities and common_claim table.
+
+**D-R1. Is the factorization stable?** J-B, the redundancy for all of D. A second fit with
+`--seed=326`, which changes both the 64-statement draw and the initialisation. Report the principal
+angles between the two 512-factor subspaces, and for each factor D2 selects, its best cosine to the
+second fit. **A selected factor with best cross-seed cosine < 0.5 is reported as seed-specific**, and no
+cross-dataset claim is built on it.
+
+**D2. Name "the DCT direction that improves truthfulness".** J-C. Three selection rules, fixed
+now, all reported:
 
 | Rule | Picks | Sees labels? |
 |---|---|---|
-| **S-none** | the top-4 factors by potency, as the margins battery already does | no |
-| **S-geo** | the factor with the largest abs cosine to `mean_diff_tgt` | yes, via the direction |
-| **S-beh** | a behavioural screen: the top 16 factors by potency, both signs, one dose, on a **screen split** of 96 TruthfulQA questions disjoint from the 64-question holdout. Pick the factor and sign with the largest gain in truthful-and-informative (v2 judges) | yes, via the judge |
+| **S-none** | the top-4 factors by potency, as the margins battery does | no |
+| **S-geo** | the factor with the largest abs cosine to `mean_diff_tgt` | yes, through the direction |
+| **S-beh** | a screen: the top 16 factors by potency, both signs, one dose, on 96 TQA questions kept apart from the 64 holdout. Pick the factor and sign with the largest truthful-and-informative gain (v2 judges) | yes, through the judge |
 
-S-beh is what "direction improving truthfulness" most literally means. S-none is what "unsupervised"
-means. Report both, and do not mix them up in the write-up.
+**Redundancy inside S-beh.** The 96 screen questions split 48/48. A factor is only selected if it is in
+the top 3 on **both** halves. If none is, S-beh reports "no stable winner", which is a result, and
+S-geo carries the transfer test.
 
-**D3. Confirm on the holdout.** The selected factor(s) from each rule, steered on the 64 holdout
-questions over the Q2 dose grid, judged with v2, next to the existing norm-matched random control.
-Selection never touches the holdout, so the S-beh number is not inflated by choosing the winner.
+**D3. Confirm on the holdout.** J-C. Each rule's factor(s), on the 64 holdout questions over the Q2
+dose grid, v2 judges, next to the norm-matched random control with 8 directions (up from 3).
+Statistics: Wilson intervals, exact McNemar against frac 0, and a permutation test against the
+random-direction distribution. The holdout is never used for selection.
 
-**Registered expectation.** U1's own report already registers that few or no `dct_u` members will
-clear `MIN_ACC_1D` (3 of 74 directions do on TruthfulQA). For D3: S-none's factors do not move
-truthfulness beyond the random control. S-beh finds one that does, and that factor has |cos| > 0.3 with
-`mean_diff_tgt`. If S-beh's winner is near-orthogonal to `mean_diff_tgt` and still works, that is
-the most interesting outcome on the page: a second truth lever the supervised pipeline missed.
-
-Cost: CLUSTER. Screen ~3,100 generations plus judging, holdout ~1,700 plus judging. About 4 to 6
-GPU-hours as one job.
-
----
-
-## 5. Track G: MAG on TruthfulQA (feedback point 2)
-
-**G0. Is the verdict channel alive here?** Add `truthfulqa` to `mag.config.DATASETS`, run MAG
-extraction at layer 11 on the TruthfulQA fit set, and report the `y^M` split and `agree(y^M, gold)`.
-Pass bar: at least 20% "no" and agreement >= 0.6. CLUSTER, under an hour.
-
-**G1, if alive.** MAG's label-free direction `u_yM` runs for the first time on any dataset:
-readout on the holdout, cosine to `mean_diff_tgt` and to the D2 winners, then steered through D3's
-harness. This would be the project's first fully label-free truth direction that did not come
-from DCT.
-
-**G1, if dead.** Report `u_Q` (gold arm) and its cosine to `mean_diff_tgt`, predicted >= 0.95. If
-that holds, MAG's behavioural result on TruthfulQA is Q2's result and is not re-steered. The only
-way forward for the label-free arm is an instruction-tuned labeler (decision 2, section 9).
+**Registered expectation.** U1 already registers that few or no `dct_u` members clear `MIN_ACC_1D`
+(3 of 74 directions do on TQA). For D3: S-none's factors do not beat random. S-beh finds one that
+does, with |cos| > 0.3 to `mean_diff_tgt`. **If S-beh's winner is near-orthogonal to
+`mean_diff_tgt` and still works on the holdout and across seeds**, it is a second truth lever the
+supervised pipeline missed. That would be the most important result in this plan.
 
 ---
 
-## 6. Track X: the transfer matrix (feedback points 2 and 4)
+## 7. Track G: MAG on TruthfulQA (P3, P5)
 
-Each direction, from each source dataset, steered on each target dataset:
+**G0. Is the verdict channel alive here?** A J-A stage. Add `truthfulqa` to `mag.config.DATASETS`,
+extract at layer 11 on the TQA fit set, report the `y^M` split and `agree(y^M, gold)`.
+**Redundancy:** two verdict phrasings, "Is this answer true?" and "Is this answer correct?". A dead
+channel under one phrasing might be a quirk of that phrasing. Dead under both is a finding.
+Pass bar: at least 20% "no" and agreement >= 0.6, under either phrasing.
+
+**G1 if alive.** J-C. MAG's label-free direction `u_yM` runs for the first time on any dataset:
+readout on the holdout, cosine to `mean_diff_tgt` and to the D2 winners, then D3's harness.
+
+**G1 if dead.** Report the gold-arm `u_Q` and its cosine to `mean_diff_tgt`, predicted >= 0.95.
+`u_Q` still goes into X regardless, because P5 asks for every MAG direction on cities. **Fallback** for
+the label-free arm: decision 2 in section 11 (instruction-tuned labeler).
+
+---
+
+## 8. Track X: the transfer matrix (P4, P5, P8)
+
+J-D. Each direction, from each source, steered on each target:
 
 | Direction family | from cities | from TruthfulQA |
 |---|---|---|
 | supervised `mean_diff` (the Q2 direction on TQA) | exists | exists |
-| DCT, S-none and S-beh | exists (`dct_V_cities.pt`) | D2 |
-| MAG `u_Q`, and `u_yM` if G0 passes | exists (`mag_dir_cities.npz`) | G |
+| DCT, S-none, S-geo, S-beh | `dct_V_cities.pt` exists; S-geo computable, S-beh has no cities screen, so the cities DCT uses S-none and S-geo | D2 |
+| MAG `u_Q`, and `u_yM` if G0 passes | `mag_dir_cities.npz` | G |
 
-Targets: **cities** and **TruthfulQA**. The diagonal is what we already have (cities nulls, Q2). The
-off-diagonal is new. The cell the PI asked for is **TruthfulQA's S-beh DCT factor steered on
-cities**.
+Targets: **cities** and **TruthfulQA**. The diagonal we have: the cities nulls and Q2. The off-diagonal is
+new. **The P8 cell is TQA S-beh DCT -> cities**, with TQA S-geo DCT -> cities as its backup in case
+S-beh has no stable winner.
 
-**Controls on every target.** A norm-matched random direction, as Q2's control. On cities also the
-`jtw_token` oracle, which flips the answer 34 to 88% of the time (`token-space-diagnosis`), so a null on
-cities cannot be blamed on a broken harness.
+**Controls on every target, two kinds.**
+- **Negative:** 8 norm-matched random directions, and on the DCT rows a **potency-matched random DCT
+  factor** as well. "Any DCT factor does this" is a different finding from "this one does".
+- **Positive, cities:** the `jtw_token` oracle, which flips 34 to 88% (`token-space-diagnosis`). A
+  cities null is only readable if the oracle still flips in the same job.
+- **Positive, TQA:** the Q2 direction at frac -2 reproduced in the same job. It must land within the
+  Q2 interval, or the job's TQA numbers are not used.
 
-**Dose units across datasets.** A dose defined by one dataset's eps* is meaningless on another. The
-grid is set as a fraction of the **target** dataset's median residual norm at layer 11, so the same
-row means the same relative push on both datasets. eps* units are reported alongside where they
-exist.
+**Two readouts on cities, so the result does not depend on one.**
+1. **Logit readout, no generation:** P(correct country) minus the best wrong country, at the next
+   token after the stem. Exact, cheap, and blind to answer form.
+2. **Generation readout:** completion scored for correct country, plus word count and an incoherence
+   flag, both signs. This is the one that can see outcome (b).
 
-**Sign.** TruthfulQA label 1 is untruthful, so its supervised truthful direction is `-v`. Cities
-label 1 is true. DCT factors take the sign D2 picked. Every direction is flipped to point toward
-truthful before the matrix is built, and this step has a unit test, because the Q0 inversion has
-already caused one wrong reading.
+When the two agree, the result holds. When the logit readout moves and the generation readout
+doesn't, or the other way round, that disagreement is itself the dataset-difference evidence C needs.
 
-**Cities readout.** The readout the cities nulls were measured with: the statement stem's
-completion, correct country vs not, both signs. The model already gets most true stems right, so
-"toward truth" has little room. The informative test is two-sided: can the direction make it
-**wrong** on true stems (-), and can it make it **right** where it was wrong (+).
+**Doses in two units.** Primary: fraction of the **target** dataset's median residual norm at layer
+11, so a row means the same relative push on both datasets. Secondary: target eps*, where it exists.
+Both grids are in the same job.
 
-**Three outcomes, registered now, for the TruthfulQA -> cities cell:**
+**Sign.** TQA label 1 is untruthful, so its truthful direction is `-v`. Cities label 1 is true. DCT
+factors take D2's sign. Every direction is flipped toward truthful before the matrix is built, with a
+unit test, because the Q0 inversion already caused one misreading.
 
-- **(a) Facts flip on cities.** Truth is a shared lever, and the cities null was a property of the
-  directions mined on cities. The largest possible revision to the project's claim.
-- **(b) Cities completions change form, facts do not.** Longer, hedged, or off-format completions at
-  the same rate of correct countries. The TruthfulQA direction is an elaboration lever, and
-  TruthfulQA's judge scores elaboration as truth. Reading 2.5's second option wins.
-- **(c) Nothing moves beyond the random control.** Dataset-specific direction, no finding either
-  way.
+**Three outcomes for the P8 cell, registered now:**
+- **(a) Facts flip on cities** (logit and generation readouts agree, beyond the random controls). Truth
+  is a shared lever, and the cities null came from the directions mined on cities. This would be the
+  largest possible revision to the project's claim.
+- **(b) Form changes, facts don't.** The generation readout gets longer or hedged, the logit readout
+  stays flat. The TQA direction is an elaboration lever, and the TQA judge scores elaboration as
+  truth.
+- **(c) Nothing beyond random.** A dataset-specific direction.
 
-The reverse cell, cities -> TruthfulQA, costs the same and is in the matrix. The cities direction was
-behaviourally inert on cities, so a TruthfulQA gain from it would locate the difference in the
-dataset rather than in the direction.
+The reverse cell, cities -> TQA, costs the same. The cities direction was inert on cities, so a TQA
+gain from it would locate the difference in the dataset rather than the direction.
 
-**Readout transfer, cheap.** Cosines between the datasets' directions, and each dataset's probe
-applied to the other's activations at layer 11. LAPTOP, from existing activations plus
-`reach_dirs_truthfulqa.npz` once it is pulled down.
-
-Cost: CLUSTER, one job. About 6 directions x 2 targets x 7 doses, plus controls. Cities generations
-are short. Roughly 4 to 6 GPU-hours with judging.
+**Readout transfer.** J-A stage, CPU. Cosines between every pair of directions, and each dataset's
+probe applied to the other's layer-11 activations.
 
 ---
 
-## 7. Track C: the dataset card (feedback point 3)
+## 9. Track C: the dataset card (P7)
 
-One table with the columns **cities**, **common_claim**, **TruthfulQA**, and every row computed by the
-same code on all three. Most rows exist for the old datasets already and only need the
-TruthfulQA entry.
+One table, columns **cities**, **common_claim**, **TruthfulQA**, every row computed by the same code on all
+three. Rows marked (J-A) or (J-D) come from that job's stage. Everything else is LAPTOP from pulled CSVs.
 
-| Group | Row | Where it comes from |
+| Group | Row | Source |
 |---|---|---|
-| Representational | probe accuracy and XGBoost gap at layer 11 | `analyze.py`, TQA activations |
+| Representational | probe accuracy and XGBoost gap, all 27 layers (separate processes, xgboost never with torch) | J-A |
 | | MAG linearity `eps_Q` | G0 |
-| | cosine between truth directions across datasets | X, readout transfer |
+| | cosine between truth directions across datasets, cross-dataset probe accuracy | X readout transfer (J-A) |
 | Causal geometry | DCT alignment: max cos vs random, subspace vs chance | D1 |
-| | share of the margins battery with a valid threshold (`MIN_ACC_1D`) | TQA: 3 of 74; cities, common_claim from existing `reach_summary` |
+| | share of the margins battery with a valid threshold | TQA 3/74; others from `reach_summary` |
 | | eps* as a fraction of the residual norm | `reach_summary` |
 | Behavioural | unsteered rate of the desired behaviour (headroom) | Q1, cities baseline |
-| | best gain from the supervised direction, minus the random control | Q2 (v2), cities nulls |
-| | off-target change at that dose: length ratio, incoherence | Q2, WARM_DCT |
-| | share of the gain explained by answer length | the LR test in 2.5, run the same way on cities |
-| Task form | answer format (one token vs free text); does the judge reward form? | by construction, and X outcome (b) |
+| | best gain from the supervised direction, minus random | Q2 (v2), cities nulls |
+| | off-target change at that dose: length ratio, incoherence | Q2, WARM_DCT, X |
+| | share of the gain explained by length | C1, C2, C3 below |
+| Task form | answer format; does the judge reward form? | by construction, X outcome (b) |
 
-**The hypothesis the card tests, registered now:** TruthfulQA is steerable and cities is not
-because TruthfulQA's truth score has a *form* component (fuller, qualified answers) that a
-direction can push, and cities' single-token factual answer has none. It predicts: a large length
-share on TruthfulQA, near zero on cities, and outcome (b) in track X. It is refuted by outcome (a),
-or by a TruthfulQA gain that survives conditioning on length once the judge is fixed.
+**Is the TQA gain form or content?** Three independent measurements, because this is the row the
+hypothesis rests on:
+- **C1.** The logistic regression of 2.5, rerun on v2 labels. LAPTOP, seconds.
+- **C2.** Length-matched strata: truthful rate at frac -2 vs frac 0 within word-count bins. LAPTOP.
+- **C3.** **Truncation test**, the direct causal one. Cut each frac -2 answer to the word count of its
+  own frac 0 answer and re-judge. If truthfulness falls back to baseline, the gain is in the extra
+  words. If it holds, the direction changed what the answer says, not just how long it is. J-A,
+  judge only.
 
-Cost: LAPTOP, a day once J2, D1, G0 and X are in.
+**The hypothesis the card tests, registered now.** TQA is steerable and cities is not because TQA's
+truth score has a *form* component (fuller, qualified answers) that a direction can push, and a
+cities one-token answer has none. It predicts: C1-C3 all put most of the TQA gain in length, and
+outcome (b) in X. It is refuted by outcome (a), or by a TQA gain that survives C3.
 
 ---
 
-## 8. Sequencing and cost
+## 10. Sequence, and the first commands
 
-| id | What | Machine | Cost | Needs | State |
-|---|---|---|---|---|---|
-| D0 | pull U1, or find why it did not run | LAPTOP + CLUSTER | minutes | nothing | **first** |
-| J0-J1 | fix the info prompt, add margins, info gold set | LAPTOP | half a day | nothing | **first** |
-| J2-J3 | re-judge everything, consistency checks | CLUSTER | 1-2 GPU-hr | J1 | next |
-| D1 | DCT geometry on TQA, cities-comparable | LAPTOP | an hour | D0 | next |
-| G0 | MAG extraction on TQA, is `y^M` alive | CLUSTER | < 1 GPU-hr | nothing | can ride with J2 |
-| D2-D3 | select DCT truth factor(s), confirm on holdout | CLUSTER | 4-6 GPU-hr | J2, D0 | after J |
-| G1 | MAG label-free arm, if G0 passes | CLUSTER | 1-2 GPU-hr | G0, D3 harness | conditional |
-| X | transfer matrix, both directions | CLUSTER | 4-6 GPU-hr | D2, G0 | after D |
-| C | dataset card | LAPTOP | a day | J2, D1, G0, X | last |
+| Step | What | Machine | Wall time | Needs |
+|---|---|---|---|---|
+| 1 | D0: check and pull U1 | LAPTOP + CLUSTER | minutes | nothing |
+| 1 | stage the Qwen third judge on the login node | CLUSTER login | ~20 min download | nothing |
+| 2 | J0, J1, G0 config, D1 and C code, the four job files and the submit script, all with tests and `--limit` CPU smokes | LAPTOP | 1-2 days | nothing |
+| 3 | submit the chain: J-A and J-B together, then J-C, then J-D | CLUSTER | ~15-20 h GPU, unattended | steps 1-2 |
+| 3 | hand-label the 64-row sheet J-A writes | LAPTOP, you | ~1 h | J-A |
+| 4 | pull down, recompute the card and the fulfilment check (section 13), write up | LAPTOP | a day | J-D |
 
-**J before any new TruthfulQA behavioural number.** D2's selection and everything in X use the info
-judge, so running them first would bake the bug into new results.
+Steps 2 and the Qwen download overlap. The only waiting on the cluster is step 3, and it runs
+unattended because every job is chained with `afterok`.
 
 **What this pushes back.** V1 (pipeline validation), Q3 (A-LQR's code) and the -3.5 eps* extension
-from the September plan are not dropped. They wait behind J and D.
+from the September plan are not dropped. They wait behind this chain.
 
-First commands, for D0.
-
-**LAPTOP**, to check the cluster from here:
+**LAPTOP**, check U1 from here:
 
 ```bash
 ssh vwudaru@dtai-login.delta.ncsa.illinois.edu 'cd ~/llm-activation-steering-research; sacct --name=tqa_dct --starttime=2026-09-01 --format=JobID%14,State%20,ExitCode,Elapsed,End; ls -l dct_V_truthfulqa.pt dct_U_truthfulqa.pt u1_truthfulqa/reach_summary_truthfulqa.json; grep -o "\"num_factors\": [a-z0-9]*" dct_meta_truthfulqa.json'
@@ -358,12 +422,21 @@ ssh vwudaru@dtai-login.delta.ncsa.illinois.edu 'cd ~/llm-activation-steering-res
 cd ~/llm-activation-steering-research && rsync -av 'vwudaru@dtai-login.delta.ncsa.illinois.edu:~/llm-activation-steering-research/{dct_V_truthfulqa.pt,dct_U_truthfulqa.pt,dct_meta_truthfulqa.dctfit.json,reach_dirs_truthfulqa.npz,tqa_dct_*.out}' . && rsync -av vwudaru@dtai-login.delta.ncsa.illinois.edu:~/llm-activation-steering-research/u1_truthfulqa/ u1_truthfulqa/
 ```
 
+**CLUSTER** (login node, it has internet; compute nodes do not), stage the third judge:
+
+```bash
+cd ~/llm-activation-steering-research && df -h $HOME && source .venv-dct-gpu/bin/activate && HF_HOME=$HOME/hf_cache HF_HUB_DISABLE_XET=1 huggingface-cli download Qwen/Qwen2.5-7B-Instruct && ls $HOME/hf_cache/hub | grep -i qwen
+```
+
+About 15 GB. If `df` shows less than 25 GB free, swap in `Qwen/Qwen2.5-3B-Instruct` (the fallback
+in J3) and say so in the write-up.
+
 ---
 
-## 9. Decisions needed from the PI
+## 11. Decisions needed from the PI
 
-1. **Second opinion on the judge.** Hand-label 64 answers (default), or an LLM judge, which needs
-   an API key?
+1. **The judge's backups.** The plan uses a Qwen2.5-7B-Instruct rubric judge plus 64 hand labels.
+   Is a local open judge acceptable, or does the PI want an API judge (needs a key) as well?
 2. **If `y^M` is dead on TruthfulQA too:** may gemma-2-2b-it serve as the *labeler only*, with
    steering still on the base model? This would give MAG a real label-free arm, but it brings in a
    second model's opinion of truth.
@@ -375,7 +448,7 @@ cd ~/llm-activation-steering-research && rsync -av 'vwudaru@dtai-login.delta.ncs
 
 ---
 
-## 10. What this does to existing claims
+## 12. What this does to existing claims
 
 - **Q2's truthful-only result stands**: 0.281 -> 0.516 at frac -2, random control 0.286. The
   truth judge was correctly prompted.
@@ -387,3 +460,21 @@ cd ~/llm-activation-steering-research && rsync -av 'vwudaru@dtai-login.delta.ncs
   of X are what settle it.
 - **MAG's "self-verdict is dead" finding stays scoped to the four old datasets** until G0 tests
   TruthfulQA.
+
+---
+
+## 13. Fulfilment check, run at write-up
+
+Fill this in before the next meeting. Any row that is not "answered" goes into the meeting notes as
+open, with the reason.
+
+| # | The PI asked | Answered by | Backup that agrees? | Status |
+|---|---|---|---|---|
+| P1 | the two allenai judges | J0 unit test | model cards re-read at write-up | |
+| P2 | strict or inconsistent? | J1 margins, J3 determinism and format flips | Qwen judge, hand labels | |
+| P3 | DCT and MAG discovery on TQA | D1, D3, G0, G1 | D-R1 second seed, two G0 phrasings | |
+| P4 | dataset dependent? | D1 table, X matrix | the reverse X cells | |
+| P5 | MAG and DCT directions on cities | X cities column | two cities readouts, oracle positive control | |
+| P6 | DCT works on TQA? | D3 | S-beh split halves, D-R1 | |
+| P7 | quantify the dataset difference | the card | C1, C2, C3 agree on the form-vs-content row | |
+| P8 | TQA DCT truthfulness direction on cities | X cell TQA S-beh -> cities | S-geo cell, potency-matched random DCT factor | |
