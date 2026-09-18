@@ -136,7 +136,8 @@ def train_one(model, tok, st, tr, va, r, seed, max_steps=None):
 def load_learned(p):
     if not os.path.exists(p):
         return []
-    z = np.load(p, allow_pickle=True)
+    with np.load(p, allow_pickle=True) as f:
+        z = dict(f)
     return [(f"learned_f{float(f):g}_s{int(s)}", np.asarray(v, np.float64), float(f))
             for v, f, s in zip(z["vecs"], z["frac"], z["seed"])]
 
@@ -168,7 +169,7 @@ def learned_cos(learned, dirs):
 
 def _check_resume(out, z, now, norm_med):
     """Abort, before anything is trained, if `out` was written under other settings."""
-    miss = [k for k in SETTINGS + ("norm_med",) if k not in z.files]
+    miss = [k for k in SETTINGS + ("norm_med",) if k not in z]
     if miss:
         raise SystemExit(f"[train] !!!! {out} has no {', '.join(miss)}: it was written before "
                          "the settings were stored, i.e. by the old optimizer (lr 1e-2 x r, "
@@ -203,7 +204,8 @@ def stage_train(device, limit=0, steps=None, jb_prefix=""):
            "batch_pairs": BATCH_PAIRS, "n_train": len(tr), "n_val": len(va)}
     rows = []
     if os.path.exists(out):
-        z = np.load(out)
+        with np.load(out) as f:
+            z = dict(f)
         _check_resume(out, z, now, norm_med)
         rows = [(v, float(f), int(s), float(o), float(a)) for v, f, s, o, a in
                 zip(z["vecs"], z["frac"], z["seed"], z["val_obj"], z["val_acc"])]

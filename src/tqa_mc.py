@@ -560,7 +560,8 @@ def read_ceiling(mc_rows):
         print(f"[reading] CEILING: not read, {lp} absent (stage train has not run); "
               "no METHOD LIMIT reading")
         return
-    z = np.load(lp)
+    with np.load(lp) as f:                      # closed: summary must leave no handles
+        z = dict(f)
     base = float(z["base_val_obj"])
     worked = {}
     for f, s, o in zip(z["frac"], z["seed"], z["val_obj"]):
@@ -598,6 +599,11 @@ def read_ceiling(mc_rows):
               + f"; val obj {objs} (unsteered {base:.4f})")
 
 
+def _read_json(p):
+    with open(p) as f:
+        return json.load(f)
+
+
 def read_form(mc_rows, long_rows):
     """Form, not content: truth directions move only long-form cells (J-D2's judged
     generations, stage cities_long) and not the judge-free MC margin. J-D1 / J-D2 read
@@ -605,14 +611,13 @@ def read_form(mc_rows, long_rows):
     only on xfer_tqa.classify's "gain" ("form" is words alone); J-D1's outcome is a
     short-answer cell, printed raw beside it. The JSONs are read under this run's
     --prefix, which is "" on the laptop, where round 2's summaries write them."""
-    import json
     ps = [path("xfer_cities_outcomes.json"), path("xfer_truthfulqa_outcomes.json")]
     miss = [p for p in ps if not os.path.exists(p)]
     if miss:
         print(f"[reading] FORM vs CONTENT: not read, needs round 2's {' and '.join(ps)} "
               f"(missing: {', '.join(miss)})")
         return
-    d1, d2 = (json.load(open(p))["outcomes"] for p in ps)
+    d1, d2 = (_read_json(p)["outcomes"] for p in ps)
     m = {r["direction"]: r["moves"] for r in mc_rows if _at_read(r)}
     lg = {r["direction"]: r["moves"] for r in long_rows if _at_read(r)}
     say = {True: "moves", False: "does not move", None: "not scored"}

@@ -518,11 +518,11 @@ def _write_summary_inputs(pre, learned_shift, val_obj=-0.5, base_val_obj=-0.69,
              val_acc=np.full(3, 0.6), norm_med=100.0, base_val_obj=base_val_obj,
              base_val_acc=0.5)
     if outcomes:
-        json.dump({"outcomes": {"cities:mean_diff": "c", "tqa:sup_jtw": "gen-only"}},
-                  open(pre + "xfer_cities_outcomes.json", "w"))
-        json.dump({"outcomes": {"cities:mean_diff": "none", "tqa:sup_jtw": "gain",
-                                "cities:dct_ctl_7": "gain"}},
-                  open(pre + "xfer_truthfulqa_outcomes.json", "w"))
+        for name, oc in (("cities", {"cities:mean_diff": "c", "tqa:sup_jtw": "gen-only"}),
+                         ("truthfulqa", {"cities:mean_diff": "none", "tqa:sup_jtw": "gain",
+                                         "cities:dct_ctl_7": "gain"})):
+            with open(pre + f"xfer_{name}_outcomes.json", "w") as f:
+                json.dump({"outcomes": oc}, f)
 
 
 def _summary_lines(monkeypatch, tmp_path, capsys, **kw):
