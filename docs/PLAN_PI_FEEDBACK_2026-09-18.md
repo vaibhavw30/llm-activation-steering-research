@@ -19,7 +19,7 @@ before anything built on it is trusted. The re-judge needs no new generations. A
 is: DCT and MAG discovery on TruthfulQA, a transfer matrix (every direction, from both datasets,
 steered on both datasets), and a dataset card that measures the two datasets the same way.
 
-All compute runs as four chained cluster jobs (section 4). The laptop only writes code, runs
+All compute runs as five cluster jobs in three rounds of two, the partition's limit (section 4). The laptop only writes code, runs
 smoke tests and does the analysis of pulled-down CSVs. No headline rests on one instrument: each
 claim has a primary measurement and an independent backup. Section 3 maps each sentence of the
 feedback to a deliverable, and section 13 checks them off at write-up.
@@ -171,18 +171,24 @@ tests with `--limit`, reads small outputs, and holds the hand-labelling and the 
 analysis that the cluster runs as a job stage can also be re-run on the laptop from the pulled-down
 CSVs. That is the redundancy for the analysis code itself.
 
-**Four jobs, chained, never more than two in flight.**
+**The partition allows 2 jobs per user, queued and running combined** (DeltaAI's `ghx4`
+notice). A job waiting on `--dependency=afterok` counts as queued. So a chain can be at most two
+jobs deep, and only when no other job holds a slot. Queue waits here run to days (U1's estimate on
+2026-09-18 was five days out), and shorter walls backfill sooner. So the work is cut into jobs of
+at most 4-5 hours, submitted in **three rounds of two**:
 
-| Job | Contents | Starts | GPU time |
+| Round | Slot 1 | Slot 2 | Needs |
 |---|---|---|---|
-| **J-A `tqa_audit`** | J1 judge validation, J2 re-judge, J3 consistency and third judge, the truncation test (C3), G0 MAG extraction, D1 geometry, dataset-card representational rows | as soon as D0 confirms U1 | 3-4 h |
-| **J-B `tqa_dct_s2`** | a second DCT fit on TQA, different seed and sample draw (D-R1) | alongside J-A, independent of it | 1-2 h |
-| **J-C `tqa_select`** | D2 screen, D3 holdout confirm, G1 if G0 passed | `afterok` J-A and J-B | 5-7 h |
-| **J-D `xfer`** | the X transfer matrix, card behavioural rows | `afterok` J-C | 5-7 h |
+| **0 (now)** | U1, job 3169838, pending | **J-A `tqa_audit`**: J1 judge validation, J2 re-judge, J3 consistency and third judge, C3 truncation test, G0 MAG extraction, readout transfer and the probe/XGBoost card rows. Nothing in it needs U1. ~3-4 h | J-A code written and smoke-tested |
+| **1** | **J-B `tqa_dct_s2`**: second DCT fit (D-R1), D1 geometry on both fits, D2 screen. ~4-5 h | **J-C `tqa_confirm`**, `afterok` J-B: D3 holdout confirm, G1 if G0 passed. ~3-4 h | U1 and J-A done (J-B's screen uses the v2 judges) |
+| **2** | **J-D1 `xfer_cities`**: every direction steered on cities, both readouts, oracle and random controls. ~3-4 h | **J-D2 `xfer_tqa`**: every direction steered on TQA, Q2 reproduction as positive control. ~3-4 h | J-C done |
 
-One submit script, `deltaai/submit_pi_feedback.sh`, submits all four with `--dependency=afterok`,
-the way `submit_rerun.sh` chains steer to judge. If one fails, SLURM cancels the rest, and nothing
-downstream runs on missing input.
+The two X jobs run side by side because they share no outputs. If either round-2 job is still
+pending when the other finishes, nothing is lost: they are independent.
+
+Each round is submitted by one command in its own section of `deltaai/submit_pi_feedback.sh`
+(`round0`, `round1`, `round2`). The script checks `squeue --me` first and refuses to submit if the
+round would take the user past 2 jobs, which saves a rejected `sbatch`.
 
 **Every job carries the guards the Q2 and U1 jobs have**, because each one has already cost a
 submission:
@@ -247,8 +253,8 @@ it. Running them first would bake the bug into new results.
 
 **D0. Pull U1.** Section 10. If it failed, fix and resubmit before anything else in D.
 
-**D1. Geometry, measured as for cities.** A J-A stage (seconds on GPU, and the factors are already
-there), re-runnable on LAPTOP. The three tests from `DCT_VS_TRUTH_FINDINGS.md` on TQA's 512
+**D1. Geometry, measured as for cities.** A J-B stage, run on both DCT fits, re-runnable on
+LAPTOP. The three tests from `DCT_VS_TRUTH_FINDINGS.md` on TQA's 512
 factors against `mean_diff_tgt` and `probe_grad_tgt`: max single-factor cosine vs random, subspace
 fraction vs chance k/d = 0.22, and cosine to the top-potency factor. The TQA row goes into the
 existing cities and common_claim table.
@@ -259,7 +265,7 @@ angles between the two 512-factor subspaces, and for each factor D2 selects, its
 second fit. **A selected factor with best cross-seed cosine < 0.5 is reported as seed-specific**, and no
 cross-dataset claim is built on it.
 
-**D2. Name "the DCT direction that improves truthfulness".** J-C. Three selection rules, fixed
+**D2. Name "the DCT direction that improves truthfulness".** J-B. Three selection rules, fixed
 now, all reported:
 
 | Rule | Picks | Sees labels? |
@@ -304,7 +310,7 @@ the label-free arm: decision 2 in section 11 (instruction-tuned labeler).
 
 ## 8. Track X: the transfer matrix (P4, P5, P8)
 
-J-D. Each direction, from each source, steered on each target:
+J-D1 (cities target) and J-D2 (TQA target). Each direction, from each source, steered on each target:
 
 | Direction family | from cities | from TruthfulQA |
 |---|---|---|
@@ -353,7 +359,8 @@ unit test, because the Q0 inversion already caused one misreading.
 The reverse cell, cities -> TQA, costs the same. The cities direction was inert on cities, so a TQA
 gain from it would locate the difference in the dataset rather than the direction.
 
-**Readout transfer.** J-A stage, CPU. Cosines between every pair of directions, and each dataset's
+**Readout transfer.** J-A stage, CPU, for the supervised and MAG directions. The DCT directions
+are added in J-B once D2 has chosen them. Cosines between every pair of directions, and each dataset's
 probe applied to the other's layer-11 activations.
 
 ---
@@ -361,7 +368,7 @@ probe applied to the other's layer-11 activations.
 ## 9. Track C: the dataset card (P7)
 
 One table, columns **cities**, **common_claim**, **TruthfulQA**, every row computed by the same code on all
-three. Rows marked (J-A) or (J-D) come from that job's stage. Everything else is LAPTOP from pulled CSVs.
+three. Rows marked (J-A) or (J-D1/2) come from that job's stage. Everything else is LAPTOP from pulled CSVs.
 
 | Group | Row | Source |
 |---|---|---|
@@ -399,13 +406,14 @@ outcome (b) in X. It is refuted by outcome (a), or by a TQA gain that survives C
 |---|---|---|---|---|
 | 1 | D0: check and pull U1 | LAPTOP + CLUSTER | minutes | nothing |
 | 1 | stage the Qwen third judge on the login node | CLUSTER login | ~20 min download | nothing |
-| 2 | J0, J1, G0 config, D1 and C code, the four job files and the submit script, all with tests and `--limit` CPU smokes | LAPTOP | 1-2 days | nothing |
-| 3 | submit the chain: J-A and J-B together, then J-C, then J-D | CLUSTER | ~15-20 h GPU, unattended | steps 1-2 |
+| 2 | J0, J1, G0 config, D1 and C code, the five job files and the round-by-round submit script, all with tests and `--limit` CPU smokes | LAPTOP | 1-2 days | nothing |
+| 3 | round 0: J-A into the free slot beside U1. Round 1 when both finish, round 2 after J-C | CLUSTER | ~20 h GPU over three rounds; queue wait dominates | steps 1-2 |
 | 3 | hand-label the 64-row sheet J-A writes | LAPTOP, you | ~1 h | J-A |
-| 4 | pull down, recompute the card and the fulfilment check (section 13), write up | LAPTOP | a day | J-D |
+| 4 | pull down, recompute the card and the fulfilment check (section 13), write up | LAPTOP | a day | J-D1, J-D2 |
 
-Steps 2 and the Qwen download overlap. The only waiting on the cluster is step 3, and it runs
-unattended because every job is chained with `afterok`.
+Steps 2 and the Qwen download overlap. The cluster side is three rounds, each a queue wait plus a
+few hours of running. **J-A is the priority to write**, because slot 2 is free right now and
+every round after it depends on the judge fix it carries.
 
 **What this pushes back.** V1 (pipeline validation), Q3 (A-LQR's code) and the -3.5 eps* extension
 from the September plan are not dropped. They wait behind this chain.
