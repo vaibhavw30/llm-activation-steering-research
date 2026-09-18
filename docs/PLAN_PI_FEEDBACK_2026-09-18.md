@@ -180,7 +180,7 @@ at most 4-5 hours, submitted in **three rounds of two**:
 | Round | Slot 1 | Slot 2 | Needs |
 |---|---|---|---|
 | **0 (now)** | U1, job 3169838, pending | **J-A `pi_audit`** (`deltaai/run_pi_audit.slurm`): J1 gold check, J2 re-judge, J3 determinism, format, threshold and Qwen judge, C3 truncation test, the Q2 tables recomputed from v2. Nothing in it needs U1. ~1-2 h, 3 h wall | written and smoke-tested 2026-09-18 |
-| **1** | **J-B `tqa_dct_s2`**: second DCT fit (D-R1), D1 geometry on both fits, D2 screen, plus G0 MAG extraction and the readout-transfer and probe/XGBoost card rows (moved here from J-A so J-A could go out today). ~4-5 h | **J-C `tqa_confirm`**, `afterok` J-B: D3 holdout confirm, G1 if G0 passed. ~3-4 h | U1 and J-A done (J-B's screen uses the v2 judges) |
+| **1** | **J-B `tqa_dct_s2`** (`deltaai/run_tqa_discovery.slurm`, `src/tqa_discovery.py`): second DCT fit (D-R1), D1 geometry on both fits, D2 screen, plus G0 MAG extraction and the readout-transfer and probe/XGBoost card rows (moved here from J-A so J-A could go out today). ~3-4 h, 5 h wall. Written 2026-09-18 | **J-C `tqa_confirm`** (`deltaai/run_tqa_confirm.slurm`, `src/tqa_confirm.py`), `afterok` J-B: D3 holdout confirm, G1. ~3 h, 5 h wall. Written 2026-09-18 | U1 and J-A done (J-B's screen uses the v2 judges). Submit with `bash deltaai/submit_pi_feedback.sh round1` |
 | **2** | **J-D1 `xfer_cities`**: every direction steered on cities, both readouts, oracle and random controls. ~3-4 h | **J-D2 `xfer_tqa`**: every direction steered on TQA, Q2 reproduction as positive control. ~3-4 h | J-C done |
 
 The two X jobs run side by side because they share no outputs. If either round-2 job is still
@@ -277,6 +277,34 @@ now, all reported:
 **Redundancy inside S-beh.** The 96 screen questions split 48/48. A factor is only selected if it is in
 the top 3 on **both** halves. If none is, S-beh reports "no stable winner", which is a result, and
 S-geo carries the transfer test.
+
+**Fixed in code before J-B ran (2026-09-18), `src/tqa_discovery.py` and `src/tqa_confirm.py`:**
+- **Screen dose.** One dose for every screened direction: 2 x Q2's eps\* (14.71), the norm of push
+  that moved TruthfulQA at frac -2 for the supervised direction. DCT factors have no eps\* of
+  their own, so this is the only norm-matched choice. The screen also runs the Q2 direction at
+  that dose as a **positive control**. If it does not gain on the screen questions, S-beh is
+  reported as untrustworthy.
+- **Screen questions.** 96 fit-set questions (seed 20260919), excluding the holdout and every
+  question in either DCT fit's 64-statement draw (seeds 325 and 326). Split 48/48 with the next
+  seed. The screen also runs 4 norm-matched random directions.
+- **Score column.** Truthful-and-informative if J-A's gold check passes (every informativeness
+  side >= 0.9 under `Helpful:`), otherwise truthful alone. The selection file records which.
+- **S-beh** also requires a positive gain on both halves, not only top-3 rank.
+- **D3 doses.** +/-1 and +/-2 x Q2's eps\*, not Q2's full eight-point grid. With 8 random
+  directions and up to 9 tested ones, the full grid would not fit a 5 h wall. Q2's effect was
+  monotone in dose, so +/-1 and +/-2 are enough to confirm or refute it. In D3, **positive frac
+  means toward truthful** (every vector is signed toward truthful), which is the reverse of
+  Q2's tables. D3 reads Q2's direction at frac +2 as its positive control.
+- **D3's permutation p** is one-sided: the share of the 8 random directions whose paired gain at
+  the same signed dose is at least as large, with the +1 correction.
+- **G0 phrasings**, both ending in `\nVerdict:`: "Is the answer in the following exchange true?"
+  and "... correct?". The verdict prompt runs at `max_length` 192, not MAG's 96. Truncation is
+  on the right, so 96 would cut the verdict suffix off long TruthfulQA rows. The job refuses
+  to run if any prompt is longer than 192 tokens.
+- **MAG labels on TruthfulQA are flipped on extraction** (1 = true), so `agree(y^M, gold)` and
+  `u_Q` carry the same meaning as on the GoT datasets. `mag.config.DATASETS` is left alone: the
+  TruthfulQA files live in `jb_truthfulqa/`, and adding the name there would break
+  `run_mag --probe transfer` for anyone without them.
 
 **D3. Confirm on the holdout.** J-C. Each rule's factor(s), on the 64 holdout questions over the Q2
 dose grid, v2 judges, next to the norm-matched random control with 8 directions (up from 3).
