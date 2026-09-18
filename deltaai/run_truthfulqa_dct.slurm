@@ -57,7 +57,7 @@ DS=truthfulqa
 WORK=u1_truthfulqa
 
 # Fail in ten seconds, not after the factorization.
-for f in activations/acts_${DS}.npz truth_dir_tgt_${DS}.npz reach_acts_${DS}.npz \
+for f in activations/acts_${DS}.npz truth_dir_${DS}.npz truth_dir_tgt_${DS}.npz reach_acts_${DS}.npz \
          dct_meta_${DS}.json got_datasets/${DS}.csv; do
   test -f "$f" || { echo "!!!! $f missing. It is Q0/Q2 output: rsync it up."; exit 1; }
 done
@@ -163,17 +163,27 @@ echo "=== stage 2: a private directory, so the margins rerun cannot touch Q2 ===
 # has no output-suffix flag. Rather than patch a script that produced finished artifacts,
 # give it a different cwd. Inputs are symlinked read-only; outputs land here.
 mkdir -p ${WORK}
-for f in truth_dir_tgt_${DS}.npz reach_acts_${DS}.npz dct_V_${DS}.pt dct_U_${DS}.pt \
-         dct_meta_${DS}.json got_datasets activations; do
+# truth_dir_<ds>.npz (the SOURCE-layer direction) is required by
+# reach_hop.validate_inputs, not just truth_dir_tgt. Job 3085406 left it out and died
+# in stage 3 with "missing truth_dir_truthfulqa.npz", after a good fit.
+for f in truth_dir_${DS}.npz truth_dir_tgt_${DS}.npz reach_acts_${DS}.npz \
+         dct_V_${DS}.pt dct_U_${DS}.pt dct_meta_${DS}.json got_datasets activations; do
   ln -sfn "$SLURM_SUBMIT_DIR/$f" "${WORK}/$(basename $f)"
 done
+# Optional: when present it adds the cos_vq landmark. Link it iff Q2 had it, so the
+# rerun's bookkeeping matches Q2's rather than silently dropping a column.
+if [ -e mag_dir_${DS}.npz ]; then ln -sfn "$SLURM_SUBMIT_DIR/mag_dir_${DS}.npz" "${WORK}/"; fi
 cd ${WORK}
 
 python3 - <<'GUARD' || exit 1
 import sys
 
-from reach_hop import optional_artifacts
+from reach_hop import optional_artifacts, validate_inputs
 
+# The exact check reach_margins runs first, run here so a missing input fails in
+# stage 2 with every problem listed, not one per resubmission.
+validate_inputs("truthfulqa")
+print("[guard] reach_hop.validate_inputs passed in the work directory")
 ok = optional_artifacts("truthfulqa")["dct"]
 print(f"[guard] optional_artifacts()['dct'] = {ok}")
 if not ok:
