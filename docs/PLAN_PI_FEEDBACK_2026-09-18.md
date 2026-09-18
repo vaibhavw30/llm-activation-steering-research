@@ -179,8 +179,8 @@ at most 4-5 hours, submitted in **three rounds of two**:
 
 | Round | Slot 1 | Slot 2 | Needs |
 |---|---|---|---|
-| **0 (now)** | U1, job 3169838, pending | **J-A `tqa_audit`**: J1 judge validation, J2 re-judge, J3 consistency and third judge, C3 truncation test, G0 MAG extraction, readout transfer and the probe/XGBoost card rows. Nothing in it needs U1. ~3-4 h | J-A code written and smoke-tested |
-| **1** | **J-B `tqa_dct_s2`**: second DCT fit (D-R1), D1 geometry on both fits, D2 screen. ~4-5 h | **J-C `tqa_confirm`**, `afterok` J-B: D3 holdout confirm, G1 if G0 passed. ~3-4 h | U1 and J-A done (J-B's screen uses the v2 judges) |
+| **0 (now)** | U1, job 3169838, pending | **J-A `pi_audit`** (`deltaai/run_pi_audit.slurm`): J1 gold check, J2 re-judge, J3 determinism, format, threshold and Qwen judge, C3 truncation test, the Q2 tables recomputed from v2. Nothing in it needs U1. ~1-2 h, 3 h wall | written and smoke-tested 2026-09-18 |
+| **1** | **J-B `tqa_dct_s2`**: second DCT fit (D-R1), D1 geometry on both fits, D2 screen, plus G0 MAG extraction and the readout-transfer and probe/XGBoost card rows (moved here from J-A so J-A could go out today). ~4-5 h | **J-C `tqa_confirm`**, `afterok` J-B: D3 holdout confirm, G1 if G0 passed. ~3-4 h | U1 and J-A done (J-B's screen uses the v2 judges) |
 | **2** | **J-D1 `xfer_cities`**: every direction steered on cities, both readouts, oracle and random controls. ~3-4 h | **J-D2 `xfer_tqa`**: every direction steered on TQA, Q2 reproduction as positive control. ~3-4 h | J-C done |
 
 The two X jobs run side by side because they share no outputs. If either round-2 job is still
@@ -293,7 +293,7 @@ supervised pipeline missed. That would be the most important result in this plan
 
 ## 7. Track G: MAG on TruthfulQA (P3, P5)
 
-**G0. Is the verdict channel alive here?** A J-A stage. Add `truthfulqa` to `mag.config.DATASETS`,
+**G0. Is the verdict channel alive here?** A J-B stage. Add `truthfulqa` to `mag.config.DATASETS`,
 extract at layer 11 on the TQA fit set, report the `y^M` split and `agree(y^M, gold)`.
 **Redundancy:** two verdict phrasings, "Is this answer true?" and "Is this answer correct?". A dead
 channel under one phrasing might be a quirk of that phrasing. Dead under both is a finding.
@@ -359,8 +359,7 @@ unit test, because the Q0 inversion already caused one misreading.
 The reverse cell, cities -> TQA, costs the same. The cities direction was inert on cities, so a TQA
 gain from it would locate the difference in the dataset rather than the direction.
 
-**Readout transfer.** J-A stage, CPU, for the supervised and MAG directions. The DCT directions
-are added in J-B once D2 has chosen them. Cosines between every pair of directions, and each dataset's
+**Readout transfer.** J-B stage, CPU, for every direction including the ones D2 chooses. Cosines between every pair of directions, and each dataset's
 probe applied to the other's layer-11 activations.
 
 ---
@@ -368,13 +367,13 @@ probe applied to the other's layer-11 activations.
 ## 9. Track C: the dataset card (P7)
 
 One table, columns **cities**, **common_claim**, **TruthfulQA**, every row computed by the same code on all
-three. Rows marked (J-A) or (J-D1/2) come from that job's stage. Everything else is LAPTOP from pulled CSVs.
+three. Rows marked (J-B) or (J-D1/2) come from that job's stage. Everything else is LAPTOP from pulled CSVs.
 
 | Group | Row | Source |
 |---|---|---|
-| Representational | probe accuracy and XGBoost gap, all 27 layers (separate processes, xgboost never with torch) | J-A |
+| Representational | probe accuracy and XGBoost gap, all 27 layers (separate processes, xgboost never with torch) | J-B |
 | | MAG linearity `eps_Q` | G0 |
-| | cosine between truth directions across datasets, cross-dataset probe accuracy | X readout transfer (J-A) |
+| | cosine between truth directions across datasets, cross-dataset probe accuracy | X readout transfer (J-B) |
 | Causal geometry | DCT alignment: max cos vs random, subspace vs chance | D1 |
 | | share of the margins battery with a valid threshold | TQA 3/74; others from `reach_summary` |
 | | eps* as a fraction of the residual norm | `reach_summary` |
@@ -408,7 +407,7 @@ outcome (b) in X. It is refuted by outcome (a), or by a TQA gain that survives C
 | 1 | stage the Qwen third judge on the login node | CLUSTER login | ~20 min download | nothing |
 | 2 | J0, J1, G0 config, D1 and C code, the five job files and the round-by-round submit script, all with tests and `--limit` CPU smokes | LAPTOP | 1-2 days | nothing |
 | 3 | round 0: J-A into the free slot beside U1. Round 1 when both finish, round 2 after J-C | CLUSTER | ~20 h GPU over three rounds; queue wait dominates | steps 1-2 |
-| 3 | hand-label the 64-row sheet J-A writes | LAPTOP, you | ~1 h | J-A |
+| 3 | hand-label `hand_labels_truthfulqa_sheet.csv` (already generated on the laptop, with TruthfulQA's references) | LAPTOP, you | ~1 h | nothing |
 | 4 | pull down, recompute the card and the fulfilment check (section 13), write up | LAPTOP | a day | J-D1, J-D2 |
 
 Steps 2 and the Qwen download overlap. The cluster side is three rounds, each a queue wait plus a

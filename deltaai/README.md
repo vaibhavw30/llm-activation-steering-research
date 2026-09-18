@@ -34,6 +34,7 @@ The table below is the current one, including the experiments that postdate Part
 | D1 dose-response | [`D1_DOSE_RUN.md`](D1_DOSE_RUN.md) | `run_dose.slurm` `run_dose_judge.slurm` |
 | Refusal positive control | [`REFUSAL_RUN.md`](REFUSAL_RUN.md) | `run_refusal_prep.slurm` `run_refusal_reach.slurm` `run_refusal_screen.slurm` `run_refusal_spotcheck.slurm` |
 | TruthfulQA, track Q | [`TRUTHFULQA_RUN.md`](TRUTHFULQA_RUN.md) | `run_truthfulqa_prep.slurm` `run_tqa_baseline.slurm` `run_truthfulqa_reach.slurm` `run_truthfulqa_judge.slurm` `run_truthfulqa_randctrl.slurm` `run_truthfulqa_stmt.slurm` `run_truthfulqa_dct.slurm` |
+| PI feedback, 2026-09-18 | [`../docs/PLAN_PI_FEEDBACK_2026-09-18.md`](../docs/PLAN_PI_FEEDBACK_2026-09-18.md) section 4 | `run_pi_audit.slurm` (J-A, judge audit, round 0) |
 | Judging (local OLMo backend) | [`JUDGE_RUN_STEPS.md`](JUDGE_RUN_STEPS.md) | `run_judge.slurm` |
 
 Some runbooks contain account and login specifics and are kept out of git (`MY_RUN_STEPS.md`,

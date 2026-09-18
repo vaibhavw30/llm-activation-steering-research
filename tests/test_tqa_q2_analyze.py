@@ -279,3 +279,13 @@ def test_default_out_is_the_v1_name_only_for_a_v1_run():
 def test_score_col_is_restricted_to_the_two_honest_columns():
     with pytest.raises(SystemExit):
         q2.build_parser().parse_args(["--score-col", "refused"])
+
+
+def test_default_out_still_suffixes_after_main_has_switched_the_score_column(monkeypatch):
+    """main() sets the module-level SCORE_COL before naming the output. The name must be
+    decided against the fixed default, or a truthful-only run writes over the v2 summary
+    (found in the 2026-09-18 smoke of run_pi_audit.slurm)."""
+    a = q2.build_parser().parse_args(["--judged-pattern", "judge_v2_{ds}_{arm}.csv",
+                                      "--score-col", "truthful"])
+    monkeypatch.setattr(q2, "SCORE_COL", "truthful")
+    assert q2.default_out(a) == "tqa_q2_summary_truthfulqa_judge_v2_truthful.csv"

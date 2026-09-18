@@ -43,7 +43,11 @@ import pandas as pd
 from reach_control import wilson_interval
 
 ARM_JUDGED = "judge_refusal_{ds}_{arm}.csv"
-SCORE_COL = "truthful_and_informative"
+# The registered metric. SCORE_COL is what the functions below read; main() may point
+# it at "truthful" for the restatement run. Output naming compares against the fixed
+# default, never against SCORE_COL, which main() has already changed by then.
+DEFAULT_SCORE_COL = "truthful_and_informative"
+SCORE_COL = DEFAULT_SCORE_COL
 # reach_steer.arm_rand_ctrl deliberately reuses mean_diff_tgt's scale grid, so its
 # rows must be divided by mean_diff_tgt's eps* to land on the same frac axis. Without
 # this they would get their own, and the control would not be comparable to the thing
@@ -253,7 +257,7 @@ def build_parser():
     ap.add_argument("--judged-pattern", default=ARM_JUDGED,
                     help="judged file name, {ds} and {arm} filled in. judge_v2_{ds}_{arm}.csv "
                          "reads the re-judge with the corrected info prompt (plan J2)")
-    ap.add_argument("--score-col", default=SCORE_COL,
+    ap.add_argument("--score-col", default=DEFAULT_SCORE_COL,
                     choices=["truthful_and_informative", "truthful"],
                     help="truthful alone is the restatement J2's decision rule may call for")
     return ap
@@ -267,7 +271,7 @@ def default_out(a):
     tag = ""
     if a.judged_pattern != ARM_JUDGED:
         tag += "_" + a.judged_pattern.split("_{ds}")[0]
-    if a.score_col != SCORE_COL:
+    if a.score_col != DEFAULT_SCORE_COL:
         tag += "_" + a.score_col
     return f"tqa_q2_summary_{a.dataset}{tag}.csv"
 
