@@ -24,10 +24,10 @@ judged score rewards form. Two things are missing whatever the pending jobs say:
 `answer_logprob(model, tok, prompts, answers, st, vec, scale)` returns, per row, the SUM and
 MEAN log-probability of the answer tokens given the prompt, and the answer's token count.
 
-- Text is `prompt_of(question) + " " + answer`; the answer tokens are the positions after
-  the prompt's own tokenization. Tokenizing the concatenation and the prompt separately can
-  disagree at the seam, so the mask is taken from the prompt's length in the concatenated
-  encoding and asserted to reproduce the prompt's ids.
+- The prompt is `prompt_of(question)` and the answer `" " + answer`, tokenized SEPARATELY
+  and concatenated, so the prompt's ids are exactly generation's and the answer's are what
+  the model would emit after them (no merge across the seam). Stage `mc` also checks once
+  that batched and one-at-a-time scores agree within 1e-3.
 - Left padding; the mask excludes pads. `st` is a `dct_steer_utils.Steerer` at layer 11,
   set with `xc.steer_vec(vec, scale)`, which adds at every position exactly as generation
   does. `vec` may be (d,) or (B, d).
