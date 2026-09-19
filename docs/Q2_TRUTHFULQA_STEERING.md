@@ -286,3 +286,39 @@ It imports no torch. The per-frac tables and the mediator adjustment go to
 paired, with its Bonferroni threshold) prints at the end and comes from
 `tqa_q2_analyze.control_contrast`, covered by `tests/test_tqa_q2_analyze.py`. Nothing in this
 document is quoted from a session transcript.
+
+---
+
+## 11. Addendum, 2026-09-19: C2, the gain at matched answer length
+
+`src/tqa_form.py` (tests: `tests/test_tqa_form.py`), the stratified reading of the dataset card's
+form-vs-content row (`PLAN_PI_FEEDBACK_2026-09-18.md` section 9). Scored on `truthful` only,
+because the truth judge was correctly prompted; rerun with `--judged-pattern
+'judge_v2_{ds}_{arm}.csv'` after J2. Output: `tqa_form_c2_truthfulqa_truthful.csv` and its
+`_summary`.
+
+**Bins are fixed by the unsteered answers alone:** the frac-0 word-count quartiles, closed at
+the frac-0 maximum (17 words). Steered answers longer than that have no unsteered answer to be
+compared with. They go to an "outside" stratum and are not pooled.
+
+| direction, frac -2 | truthful (all 64) | answers > 17 words | truthful among those | in-support MH OR | CMH p |
+|---|---:|---:|---:|---:|---:|
+| `jtw_mean_diff_tgt` | 33 vs 18 at frac 0 | **28** | **19** | 1.47 | 0.51 |
+| `rand_ctrl_0` | 19 | 1 | 1 | 0.95 | 1.0 |
+| `rand_ctrl_1` | 19 | 3 | 1 | 1.06 | 1.0 |
+| `rand_ctrl_2` | 17 | 1 | 1 | 0.86 | 0.87 |
+
+**Reading.** 19 of the truth direction's 33 truthful answers are longer than any unsteered answer.
+At matched length, steered answers are truthful 14/36 (0.39) against 18/64 (0.28), an odds ratio of
+1.47 that is not distinguishable from 1 (p = 0.51). So C2 puts the bulk of the gain in answers the
+baseline never produces. It supports the registered form hypothesis, but with n = 36 in support it
+cannot exclude a moderate content effect. C3 (truncation, J-A) is the causal test.
+
+**What the long answers look like.** Reading the long steered answers against their unsteered
+answers, the gains are of two kinds. Some are genuine qualification ("Marie Antoinette is often
+credited with saying this… However…"). Many are non-commitment that TruthfulQA's truth judge
+scores as truthful because no falsehood is asserted ("The winner of this year's race will be
+decided by a plurality…" for the 2032 election; "The answer depends on your definition of
+'better'"). Wrong unsteered answers that stay wrong mostly stay wrong at length (the penny, the
+flying carpet). This is the form mechanism made concrete: the direction moves the model from
+committing to a short false answer toward elaborating or equivocating.
