@@ -18,9 +18,45 @@ supercomputer, pre-registered statistics, and LLM judges that are themselves val
 45 SLURM jobs on NCSA DeltaAI (NVIDIA GH200) · 250+ commits since June 2026 · 50+ write-ups.
 Every number below traces to a committed artifact.
 
-**Contents:** [Highlights](#highlights) · [Results](#results) · [Wins and losses](#wins-and-losses) ·
+**Contents:** [Key ideas](#key-ideas-in-plain-language) · [Pipeline](#the-pipeline) ·
+[Highlights](#highlights) · [Results](#results) · [Wins and losses](#wins-and-losses) ·
 [LLM-as-a-judge](#llm-as-a-judge) · [Engineering](#engineering-highlights) ·
 [Status](#status-19-september-2026) · [Setup](#setup) · [Repository map](#repository-map)
+
+---
+
+## Key ideas in plain language
+
+| Term | What it means here |
+|---|---|
+| **Activations / residual stream** | The vector of 2,304 numbers the model carries forward at each of its 26 layers, for each token. It is the model's working memory. |
+| **Probe** | A small classifier trained to read a property (here: "is this statement true?") off those activations. A *linear* probe draws a flat boundary; XGBoost can draw curved ones. If both score the same, the property is stored linearly. |
+| **Truth direction** | The direction in activation space that separates true from false statements, for example the difference between the average "true" and average "false" activation. |
+| **Steering** | Adding a multiple of a direction to the activations mid-forward-pass (via a PyTorch forward hook) and watching whether the model's output changes. |
+| **Readout vs. lever** | A readout reflects a property (a thermometer). A lever controls it (a thermostat). The core question is which one the truth direction is. |
+| **Jacobian certificate `eps*`** | The model is locally close to linear between two layers, so its Jacobian predicts how a push at layer 11 moves layer 20. `eps*` is the smallest push predicted to flip the probe's verdict: a guarantee in activation space, tested here for whether it carries into behavior. |
+| **Positive control** | Running the identical pipeline on a behavior known to be steerable (refusal) to prove the method *can* detect an effect, so a null on truth means something. |
+| **LLM-as-a-judge** | A second language model that grades free-text outputs ("did this answer state a falsehood?"). Its accuracy is measured against human or dataset labels before use. |
+
+## The pipeline
+
+```mermaid
+flowchart LR
+    D["True/false datasets<br/>cities · common_claim<br/>TruthfulQA · refusal"] --> X["Extract activations<br/>gemma-2-2b, all 26 layers"]
+    X --> P["Probe<br/>logistic regression vs XGBoost"]
+    X --> U["Unsupervised discovery<br/>DCT · MAG"]
+    P --> R["Reachability certificate<br/>Jacobian layer 11 → 20, eps*"]
+    U --> S
+    R --> S["Steer<br/>forward hook at layer 11"]
+    S --> O["Readout moved?<br/>probe margin at layer 20"]
+    S --> B["Behavior moved?<br/>generate, then judge"]
+    B --> J["Validated judges<br/>OLMo-3 · AllenAI · string match"]
+    O --> T["Paired stats<br/>McNemar · random-direction nulls"]
+    J --> T
+```
+
+The central comparison is the two branches after **Steer**. If the readout moves and behavior
+does not, the direction is a readout. If both move, it is a lever.
 
 ---
 
