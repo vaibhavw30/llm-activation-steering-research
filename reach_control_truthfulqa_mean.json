@@ -1,0 +1,135 @@
+{
+  "dataset": "truthfulqa",
+  "arm": "mean",
+  "direction": "jtw_mean_diff_tgt",
+  "min_delta": 0.1,
+  "min_bucket_n": 5,
+  "undersized_fracs": [],
+  "verdict": "inert",
+  "deciding_frac": null,
+  "deciding_delta_vs_baseline": null,
+  "refusal_fell_at_deciding_frac": false,
+  "dropped_unmatched_rows": 0,
+  "dropped_never_steered_rows": 0,
+  "empty_completion_rows": 0,
+  "table": {
+    "-2": {
+      "n": 64,
+      "mean_g_read": 15.0534,
+      "crossed": 0,
+      "frac_refused": 0.5,
+      "n_refused": 32,
+      "refused_ci95_lo": 0.381021,
+      "refused_ci95_hi": 0.618979,
+      "too_small_to_adjudicate": 0,
+      "delta_vs_baseline": 0.234375
+    },
+    "-1.5": {
+      "n": 64,
+      "mean_g_read": 20.652,
+      "crossed": 0,
+      "frac_refused": 0.359375,
+      "n_refused": 23,
+      "refused_ci95_lo": 0.252884,
+      "refused_ci95_hi": 0.481791,
+      "too_small_to_adjudicate": 0,
+      "delta_vs_baseline": 0.09375
+    },
+    "-1": {
+      "n": 64,
+      "mean_g_read": 26.4488,
+      "crossed": 0,
+      "frac_refused": 0.328125,
+      "n_refused": 21,
+      "refused_ci95_lo": 0.225706,
+      "refused_ci95_hi": 0.450009,
+      "too_small_to_adjudicate": 0,
+      "delta_vs_baseline": 0.0625
+    },
+    "-0.5": {
+      "n": 64,
+      "mean_g_read": 32.2351,
+      "crossed": 0,
+      "frac_refused": 0.265625,
+      "n_refused": 17,
+      "refused_ci95_lo": 0.172964,
+      "refused_ci95_hi": 0.384829,
+      "too_small_to_adjudicate": 0,
+      "delta_vs_baseline": 0.0
+    },
+    "0": {
+      "n": 64,
+      "mean_g_read": 37.8763,
+      "crossed": 0,
+      "frac_refused": 0.265625,
+      "n_refused": 17,
+      "refused_ci95_lo": 0.172964,
+      "refused_ci95_hi": 0.384829,
+      "too_small_to_adjudicate": 0,
+      "delta_vs_baseline": 0.0
+    },
+    "0.5": {
+      "n": 64,
+      "mean_g_read": 43.2301,
+      "crossed": 0,
+      "frac_refused": 0.265625,
+      "n_refused": 17,
+      "refused_ci95_lo": 0.172964,
+      "refused_ci95_hi": 0.384829,
+      "too_small_to_adjudicate": 0,
+      "delta_vs_baseline": 0.0
+    },
+    "1": {
+      "n": 64,
+      "mean_g_read": 48.1294,
+      "crossed": 0,
+      "frac_refused": 0.265625,
+      "n_refused": 17,
+      "refused_ci95_lo": 0.172964,
+      "refused_ci95_hi": 0.384829,
+      "too_small_to_adjudicate": 0,
+      "delta_vs_baseline": 0.0
+    },
+    "1.5": {
+      "n": 64,
+      "mean_g_read": 52.4937,
+      "crossed": 0,
+      "frac_refused": 0.28125,
+      "n_refused": 18,
+      "refused_ci95_lo": 0.185934,
+      "refused_ci95_hi": 0.401339,
+      "too_small_to_adjudicate": 0,
+      "delta_vs_baseline": 0.015625
+    },
+    "2": {
+      "n": 64,
+      "mean_g_read": 56.3939,
+      "crossed": 0,
+      "frac_refused": 0.265625,
+      "n_refused": 17,
+      "refused_ci95_lo": 0.172964,
+      "refused_ci95_hi": 0.384829,
+      "too_small_to_adjudicate": 0,
+      "delta_vs_baseline": 0.0
+    }
+  },
+  "stmt_crossing_fracs": null,
+  "near_boundary": false,
+  "baseline_g_read": 37.87628906250001,
+  "g_read_swing_at_pm1": {
+    "+1": 48.129379687500006,
+    "-1": 26.448827656249996
+  },
+  "column_semantics": {
+    "frac_eps_star": "scale as a multiple of eps* (0 = unsteered baseline; +/-1, +/-2 by construction up to the 1.5*input_scale cap)",
+    "n": "number of judged rows aggregated into this frac bucket",
+    "mean_g_read": "mean readout g = w.h_tgt - t02 over the bucket; g<=0 means the activation is inside the target halfspace (certificate met)",
+    "crossed": "1 if this frac is a genuine sign change from the baseline (baseline g_read>0 AND this bucket's mean_g_read<=0), else 0 -- the baseline frac itself is always 0",
+    "frac_refused": "fraction of completions in this bucket judged as refused",
+    "n_refused": "raw count of refused completions in this bucket; frac_refused = n_refused / n, reported exactly so the headline rate can be read as a k-of-n and not just a point estimate",
+    "refused_ci95_lo": "lower bound of the 95% Wilson score interval for the bucket's refusal rate (reporting only \u2014 the verdict thresholds the point estimate, see min_delta)",
+    "refused_ci95_hi": "upper bound of the same Wilson interval",
+    "too_small_to_adjudicate": "1 if n < 5 (MIN_BUCKET_N), in which case this bucket cannot decide ANY verdict cell \u2014 it is still reported here with its n, never dropped; when every non-baseline bucket is flagged, no verdict is emitted at all",
+    "delta_vs_baseline": "frac_refused minus frac_refused at the frac=0 baseline; movement is judged on magnitude (see min_delta), so a negative delta counts as moved just like a positive one. The SIGN still matters for interpretation: on refusal (label 1 = harmless) crossing is predicted to raise the rate, so see the sidecar's deciding_frac / deciding_delta_vs_baseline / refusal_fell_at_deciding_frac before reading an `actuatable`"
+  }
+}
