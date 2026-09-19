@@ -65,6 +65,9 @@ sys.exit(0 if m.get('num_factors') is None and m['source_layer'] == 11 else
          '!!!! dct_meta_truthfulqa.json is not the Q2 meta')"
 
 echo "=== stage 1: smoke, 4 questions, 1 training step, smoke_ outputs ==="
+# a smoke_mc_* left by a prior attempt that died mid-smoke (different --steps/limit, or
+# an old optimizer) would trip the resume guard in stage train under set -e; clear first.
+rm -f smoke_mc_*
 python3 src/tqa_mc.py --stage all --device cuda --limit 4 --steps 1 --prefix smoke_
 rm -f smoke_mc_*
 
