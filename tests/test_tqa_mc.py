@@ -493,20 +493,25 @@ def test_summarize_judged_rates_against_the_unsteered_answers():
 
 # ------------------------------------------------------------------ readings
 def _write_summary_inputs(pre, learned_shift, val_obj=-0.5, base_val_obj=-0.69,
-                          outcomes=True):
+                          outcomes=True, mean_diff_shift=1.0, long_hits=12,
+                          control_ok=True, oracle_ok=True):
     """Small synthetic J-E outputs under the path prefix `pre`: three randoms at each of
-    norm +0.25 and +0.5, a truth direction moving at both, a potency-matched control
-    moving at the read dose, and one learned vector at the read frac."""
+    norm +0.25 and +0.5, a truth direction moving at both (mean_diff_shift), a
+    potency-matched control moving at the read dose, and one learned vector at the read
+    frac. `long_hits` sets how many of tqa:sup_jtw's 12 cities_long statements flip (12 =
+    moves, 0 = baseline-flat = does not move). `control_ok`/`oracle_ok` set round 2's
+    validity flags (positive_control_reproduced, oracle_ok)."""
     import json
     rands = [(f"rand_{j}", "norm", f, s) for f in (0.25, 0.5)
              for j, s in enumerate((0.1, -0.1, 0.05))]
     _cells_frame(rands + [
-        ("cities:mean_diff", "norm", 0.25, 1.0), ("cities:mean_diff", "norm", 0.5, 1.0),
+        ("cities:mean_diff", "norm", 0.25, mean_diff_shift),
+        ("cities:mean_diff", "norm", 0.5, mean_diff_shift),
         ("tqa:sup_jtw", "norm", 0.25, 0.0), ("cities:dct_ctl_7", "norm", 0.25, 1.0),
         ("learned_f0.25_s0", "norm", 0.25, learned_shift)]).to_csv(
         pre + "mc_tqa_scores.csv", index=False)
     rows = []
-    for name, f, hits in (("baseline", 0.0, 0), ("tqa:sup_jtw", 0.25, 12),
+    for name, f, hits in (("baseline", 0.0, 0), ("tqa:sup_jtw", 0.25, long_hits),
                           ("rand_0", 0.25, 0), ("rand_1", 0.25, 1)):
         for i in range(12):
             rows.append({"direction": name, "unit": "none" if name == "baseline" else "norm",
@@ -518,11 +523,14 @@ def _write_summary_inputs(pre, learned_shift, val_obj=-0.5, base_val_obj=-0.69,
              val_acc=np.full(3, 0.6), norm_med=100.0, base_val_obj=base_val_obj,
              base_val_acc=0.5)
     if outcomes:
-        for name, oc in (("cities", {"cities:mean_diff": "c", "tqa:sup_jtw": "gen-only"}),
-                         ("truthfulqa", {"cities:mean_diff": "none", "tqa:sup_jtw": "gain",
-                                         "cities:dct_ctl_7": "gain"})):
+        for name, oc, flag_key, flag_val in (
+                ("cities", {"cities:mean_diff": "c", "tqa:sup_jtw": "gen-only"},
+                 "oracle_ok", oracle_ok),
+                ("truthfulqa", {"cities:mean_diff": "none", "tqa:sup_jtw": "gain",
+                                "cities:dct_ctl_7": "gain"},
+                 "positive_control_reproduced", control_ok)):
             with open(pre + f"xfer_{name}_outcomes.json", "w") as f:
-                json.dump({"outcomes": oc}, f)
+                json.dump({"outcomes": oc, flag_key: flag_val}, f)
 
 
 def _summary_lines(monkeypatch, tmp_path, capsys, **kw):
@@ -596,15 +604,84 @@ def test_readings_form_vs_content_per_truth_direction(monkeypatch, tmp_path, cap
 
 def test_readings_form_not_content_when_only_long_form_moves(monkeypatch, tmp_path,
                                                              capsys):
+    # cities:mean_diff is scored but does not move mc; tqa:sup_jtw's cities_long
+    # gain (long_hits=12, the default) is the only mover, so the verdict is FORM NOT
+    # CONTENT, not CONTENT or INCOMPLETE.
+    lines = _summary_lines(monkeypatch, tmp_path, capsys, learned_shift=0.0,
+                           mean_diff_shift=0.0)
+    assert _line(lines, "[reading] FORM vs CONTENT verdict") == \
+        "[reading] FORM vs CONTENT verdict: FORM NOT CONTENT"
+
+
+def test_readings_form_incomplete_when_mc_scores_file_is_absent(monkeypatch, tmp_path,
+                                                                 capsys):
+    """R-A: mc_tqa_scores.csv absent (J-D2 still says 'gain', control reproduced) must
+    read INCOMPLETE, never FORM NOT CONTENT."""
     pre = str(tmp_path) + os.sep
     monkeypatch.setattr(mc, "PREFIX", pre)
     _write_summary_inputs(pre, learned_shift=0.0)
+    os.remove(pre + "mc_tqa_scores.csv")
+    mc.stage_summary()
+    lines = capsys.readouterr().out.splitlines()
+    verdict = _line(lines, "[reading] FORM vs CONTENT verdict")
+    assert "INCOMPLETE" in verdict and "FORM NOT CONTENT" not in verdict
+    assert "cities:mean_diff" in verdict and "tqa:sup_jtw" in verdict
+
+
+def test_readings_form_incomplete_when_one_truth_direction_is_unscored_in_mc(
+        monkeypatch, tmp_path, capsys):
+    """R-A: one truth direction scored and not moving (tqa:sup_jtw), one entirely
+    unscored (cities:mean_diff dropped from the mc CSV) must read INCOMPLETE."""
+    pre = str(tmp_path) + os.sep
+    monkeypatch.setattr(mc, "PREFIX", pre)
+    _write_summary_inputs(pre, learned_shift=0.0, mean_diff_shift=0.0)
     df = pd.read_csv(pre + "mc_tqa_scores.csv")
-    df = df[df.direction != "cities:mean_diff"]                 # nothing moves mc now
+    df = df[df.direction != "cities:mean_diff"]
     df.to_csv(pre + "mc_tqa_scores.csv", index=False)
     mc.stage_summary()
     lines = capsys.readouterr().out.splitlines()
-    assert _line(lines, "[reading] FORM vs CONTENT verdict").endswith("FORM NOT CONTENT")
+    verdict = _line(lines, "[reading] FORM vs CONTENT verdict")
+    assert "INCOMPLETE" in verdict and "FORM NOT CONTENT" not in verdict
+    assert "cities:mean_diff" in verdict and "tqa:sup_jtw" not in verdict
+
+
+def test_readings_form_content_when_a_scored_mover_outweighs_an_unscored_direction(
+        monkeypatch, tmp_path, capsys):
+    """R-A: a scored mover (cities:mean_diff) is valid evidence even while another truth
+    direction (tqa:sup_jtw) is unscored; the verdict is CONTENT, not INCOMPLETE."""
+    pre = str(tmp_path) + os.sep
+    monkeypatch.setattr(mc, "PREFIX", pre)
+    _write_summary_inputs(pre, learned_shift=0.0)                # mean_diff_shift=1.0
+    df = pd.read_csv(pre + "mc_tqa_scores.csv")
+    df = df[df.direction != "tqa:sup_jtw"]
+    df.to_csv(pre + "mc_tqa_scores.csv", index=False)
+    mc.stage_summary()
+    lines = capsys.readouterr().out.splitlines()
+    assert _line(lines, "[reading] FORM vs CONTENT verdict") == \
+        "[reading] FORM vs CONTENT verdict: CONTENT"
+
+
+def test_readings_form_neither_when_positive_control_not_reproduced(monkeypatch,
+                                                                     tmp_path, capsys):
+    """R-B: with the J-D2 positive control not reproduced, its 'gain' outcome must not
+    count toward long_moved; with mc scored-and-flat and no cities_long mover the
+    verdict is NEITHER, and the unusable line prints once."""
+    lines = _summary_lines(monkeypatch, tmp_path, capsys, learned_shift=0.0,
+                           mean_diff_shift=0.0, long_hits=0, control_ok=False)
+    assert _line(lines, "[reading] FORM vs CONTENT verdict") == \
+        "[reading] FORM vs CONTENT verdict: NEITHER"
+    unusable = [ln for ln in lines if "positive control NOT reproduced" in ln]
+    assert unusable == ["[reading] FORM vs CONTENT: (J-D2 positive control NOT "
+                        "reproduced: unusable)"]
+
+
+def test_readings_form_flags_an_unreadable_oracle(monkeypatch, tmp_path, capsys):
+    """R-B: oracle_ok False must print the UNREADABLE line; J-D1 never feeds the
+    verdict either way."""
+    lines = _summary_lines(monkeypatch, tmp_path, capsys, learned_shift=0.0,
+                           oracle_ok=False)
+    assert "[reading] FORM vs CONTENT: J-D1 oracle did not flip: its outcomes are " \
+        "UNREADABLE" in lines
 
 
 def test_readings_form_needs_the_round2_outcomes(monkeypatch, tmp_path, capsys):

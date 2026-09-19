@@ -610,14 +610,32 @@ def read_form(mc_rows, long_rows):
     their outcomes at the same dose (xfer_*_outcomes.json). A J-D2 cell counts as moved
     only on xfer_tqa.classify's "gain" ("form" is words alone); J-D1's outcome is a
     short-answer cell, printed raw beside it. The JSONs are read under this run's
-    --prefix, which is "" on the laptop, where round 2's summaries write them."""
+    --prefix, which is "" on the laptop, where round 2's summaries write them.
+
+    Verdict order: CONTENT if any truth direction moves mc at the read dose (a scored
+    mover is valid evidence even if others are unscored); else INCOMPLETE if any truth
+    direction is unscored in mc at the read dose (m.get(n) is None) -- an absent or
+    partial mc_tqa_scores.csv must never fall through to FORM NOT CONTENT; else FORM NOT
+    CONTENT if long form moved, else NEITHER. J-D2's "gain" counts toward long_moved only
+    when round 2's positive control reproduced (xfer_truthfulqa_outcomes.json's
+    positive_control_reproduced, missing counts as not True); cities_long moves (lg)
+    count regardless. J-D1's oracle_ok (xfer_cities_outcomes.json) never feeds the
+    verdict -- J-D1 outcomes don't either -- but an unflipped oracle is flagged."""
     ps = [path("xfer_cities_outcomes.json"), path("xfer_truthfulqa_outcomes.json")]
     miss = [p for p in ps if not os.path.exists(p)]
     if miss:
         print(f"[reading] FORM vs CONTENT: not read, needs round 2's {' and '.join(ps)} "
               f"(missing: {', '.join(miss)})")
         return
-    d1, d2 = (_read_json(p)["outcomes"] for p in ps)
+    j1, j2 = (_read_json(p) for p in ps)
+    d1, d2 = j1["outcomes"], j2["outcomes"]
+    if j1.get("oracle_ok") is not True:
+        print("[reading] FORM vs CONTENT: J-D1 oracle did not flip: its outcomes are "
+              "UNREADABLE")
+    ctrl_ok = j2.get("positive_control_reproduced") is True
+    if not ctrl_ok:
+        print("[reading] FORM vs CONTENT: (J-D2 positive control NOT reproduced: "
+              "unusable)")
     m = {r["direction"]: r["moves"] for r in mc_rows if _at_read(r)}
     lg = {r["direction"]: r["moves"] for r in long_rows if _at_read(r)}
     say = {True: "moves", False: "does not move", None: "not scored"}
@@ -626,9 +644,16 @@ def read_form(mc_rows, long_rows):
         print(f"[reading] FORM vs CONTENT {n}: J-D1 {d1.get(n, 'not steered')}, J-D2 "
               f"{d2.get(n, 'not steered')}; at {xc.READ_UNIT} {xc.READ_FRAC:+g} mc "
               f"{say[m.get(n)]}, cities_long {say[lg.get(n)]}")
-    long_moved = any(d2.get(n) == "gain" or lg.get(n) for n in names)
-    verdict = ("CONTENT" if any(m.get(n) for n in names)
-               else "FORM NOT CONTENT" if long_moved else "NEITHER")
+    if any(m.get(n) for n in names):
+        verdict = "CONTENT"
+    else:
+        unscored = [n for n in names if m.get(n) is None]
+        if unscored:
+            print("[reading] FORM vs CONTENT verdict: INCOMPLETE: mc not scored at the "
+                  f"read dose for {', '.join(unscored)}")
+            return
+        long_moved = any((d2.get(n) == "gain" and ctrl_ok) or lg.get(n) for n in names)
+        verdict = "FORM NOT CONTENT" if long_moved else "NEITHER"
     print(f"[reading] FORM vs CONTENT verdict: {verdict}")
 
 
