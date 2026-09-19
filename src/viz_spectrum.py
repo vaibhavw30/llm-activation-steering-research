@@ -23,9 +23,18 @@ def build_points(concepts, present_map=None):
     present_map = present_map or DEFAULT_PRESENT
     out = []
     for c in concepts:
-        rec = next(csv.DictReader(open(f"recovery_{c}.csv")))
+        with open(f"recovery_{c}.csv") as f:
+            try:
+                rec = next(csv.DictReader(f))
+            except StopIteration:
+                raise ValueError(f"recovery_{c}.csv has no data rows — "
+                                 f"run compare_directions.py (Task 9) for '{c}'")
         y = float(rec["ratio_vs_random"])
-        rows = list(csv.DictReader(open(f"judge_steer_{c}.csv")))
+        with open(f"judge_steer_{c}.csv") as f:
+            rows = list(csv.DictReader(f))
+        if not rows:
+            raise ValueError(f"judge_steer_{c}.csv has no data rows — "
+                             f"run judge_results.py --mode steer for '{c}'")
         sal = concept_salience(rows, present_verdict=present_map.get(c, "FALSE"))
         out.append({"concept": c, "x_salience": sal["x_salience"], "y_recovery": y})
     return pd.DataFrame(out)

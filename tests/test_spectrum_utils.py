@@ -1,4 +1,5 @@
 import sys, os
+import pytest
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from spectrum_utils import concept_salience
@@ -29,3 +30,9 @@ def test_scales_over_incoherence_budget_are_excluded():
     })
     res = concept_salience(rows, present_verdict="FALSE", max_incoherent=0.5)
     assert res["x_salience"] == 0.0   # only scale 0 qualifies
+
+
+def test_missing_scale0_baseline_raises():
+    rows = _rows({-120.0: ["FALSE", "FALSE"]})   # no unsteered (scale 0) row
+    with pytest.raises(ValueError):
+        concept_salience(rows, present_verdict="FALSE")

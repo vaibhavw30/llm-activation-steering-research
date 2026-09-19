@@ -107,13 +107,24 @@ Body pattern: `module load python/miniforge3_pytorch` → `source .venv-*/bin/ac
 `HF_HOME` / `HF_HUB_DISABLE_XET=1` / `TRANSFORMERS_OFFLINE=1` → `PYTHONPATH=src python3 src/….py --device cuda`.
 
 ### Filling the account (every runbook's Step 2, copy-paste)
-The account is lifted automatically from `run_dct.slurm` (which the runbooks' rsync deliberately does
-*not* overwrite):
+Substitute the account **literally**, and verify it against SLURM's own record:
 ```bash
-ACC=$(grep -o -- '--account=[^ ]*' deltaai/run_dct.slurm | head -1 | cut -d= -f2)
-sed -i "s/ACCOUNT_NAME/$ACC/" deltaai/run_<jobA>.slurm deltaai/run_<jobB>.slurm
+sed -i 's/--account=ACCOUNT_NAME/--account=bhhv-dtai-gh/' deltaai/run_<jobA>.slurm deltaai/run_<jobB>.slurm
 grep -- --account deltaai/run_<jobA>.slurm deltaai/run_<jobB>.slurm   # must print bhhv-dtai-gh, not ACCOUNT_NAME
+sacctmgr -n show assoc user=$USER format=account%20,partition%20      # bhhv-dtai-gh must appear here
 ```
+
+> **Do not lift the account out of `run_dct.slurm`.** An earlier version of this doc told you to:
+> ```bash
+> ACC=$(grep -o -- '--account=[^ ]*' deltaai/run_dct.slurm | head -1 | cut -d= -f2)   # DON'T
+> sed -i "s/ACCOUNT_NAME/$ACC/" ...
+> ```
+> Verified broken on 2026-08-04: the cluster's copy of `run_dct.slurm` still holds the unfilled
+> `ACCOUNT_NAME` placeholder, so `$ACC` comes back as the literal string `ACCOUNT_NAME` and the sed
+> replaces the placeholder with itself. The grep afterwards still shows `ACCOUNT_NAME` and it looks
+> like the sed failed to run. It ran and did nothing, which is worse: the next step submits a job
+> SLURM rejects for an invalid account. Every runbook in Part 5 that still shows the `ACC=` idiom has
+> this bug.
 
 ### Interactive node (debugging only, 2 h cap)
 ```bash
@@ -170,6 +181,8 @@ steer job → wait for its CSVs → `sbatch` the judge job → pull results → 
 | **MAG E4 steering** | [MAG_E4_RUN.md](MAG_E4_RUN.md) | `run_mag_steer.slurm` → `run_mag_judge.slurm` | `mag_dir_*.npz` (rebuilt fresh first) | `mag_steer_*.csv`, `mag_verdict_flips_*.csv`, `judge_mag_steer_*.csv` | steer ~15–40 min; judge ~25 min |
 | **Length-steering** | [LENGTH_STEER_RUN.md](LENGTH_STEER_RUN.md) | `run_length_steer.slurm` → `run_length_judge.slurm` | `mag_dir_*.npz`, `truth_dir_*.npz` | `length_steer_*.csv`, `length_prefixes_*.csv`, `judge_length_*.csv` | steer ~2 h; judge ~25 min |
 | **MAG extraction** | [MAG_EXTRACT_RUN.md](MAG_EXTRACT_RUN.md) | `run_mag_extract.slurm` (single job) | `got_datasets/*.csv` (travel with the repo) | `mag_acts_*.npz` | ~tens of min |
+| **Token-space program** (E0–E8) | [TOKEN_SPACE_CLUSTER_STEPS.md](TOKEN_SPACE_CLUSTER_STEPS.md) — mechanics; [TOKEN_SPACE_RUN.md](TOKEN_SPACE_RUN.md) — how to read the output | `run_token_geom` → (`run_token_steer` ∥ `run_token_jac` ∥ `run_token_sens`); **no judge job** | `reach_dirs_*.npz`, `reach_margins_*.npz`, `dct_meta_*.json` | `token_geom_*.{csv,npz}`, `token_jac_*.{csv,npz}`, `token_steer_*.csv`, `token_sens_*.csv` | geom ~35–45 min (CPU-bound cone solve, not GPU); steer ~2–3 h; jac ~2 h; sens ~2 h |
+| **D1 dose-response** | [D1_DOSE_RUN.md](D1_DOSE_RUN.md) for the mechanics, [../docs/D1_DOSE_RESPONSE.md](../docs/D1_DOSE_RESPONSE.md) for the experiment and its pre-registered decision rule (sections 1 to 3 are frozen) | `run_dose.slurm` → `run_dose_judge.slurm` | `mag_dir_*.npz`, `truth_dir_*.npz`, `reach_acts_*.npz`, `reach_margins_*.npz`, both datasets each | `dose_*.csv`, `dose_yesno_*.csv`, `dose_meta_*.json`, `judge_dose_*.csv` | gen ~34 min per dataset, ~1.2 h for both (measured 2026-08-26); judge ~2 h (estimate). Walls 6 h / 4 h |
 | **The original funnel** | [CLUSTER_WALKTHROUGH.md](CLUSTER_WALKTHROUGH.md) §5, [FUNNEL_RUN_STEPS.md](FUNNEL_RUN_STEPS.md), [JUDGE_RUN_STEPS.md](JUDGE_RUN_STEPS.md) | `run_dct` → (`run_interpret` ∥ `run_steer`) → `run_judge` | `truth_dir_*.npz` (for steer) | `dct_V_*.pt`, `interpret_top10_*.md`, `steer_supervised_*.csv`, `judge_steer_*`, `judge_interpret_*` | DCT ~1–2 h; rest minutes |
 
 **Ordering within a pair is a hard dependency:** the judge job reads the steer job's CSV, so only

@@ -278,3 +278,158 @@ orthogonal to truth. That closes objection #2.
    judge on messy generations, not just the clean statements the 0.970 gate used (carried over from
    Part 1 §9).
 3. **Write `DCT_VS_MAG_ON_TRUTH.md`** — the formal head-to-head findings doc that Part A here summarizes.
+
+---
+
+# PI FEEDBACK (2026-07-23 meeting) — analysis and the reachability reframe
+
+*Added after the meeting. The PI's notes, decoded against the project state, plus the literature they
+point at. This section supersedes the "What's next" ordering above where they conflict.*
+
+## F1. The feedback, item by item
+
+**1. "Make a better visualizer for the linearity cosine shift score."**
+This is E3 (§A4). The old `plot_mag_linearity.png` showed only ε_Q for v_Q and buried the actual
+finding — the cosine structure. Done: `src/viz_mag_linearity.py` → **`plot_mag_linearity_v2.png`**,
+two panels over all four datasets: (left) cos(direction, prefix shift Δ<sup>Q</sup>) for v_Q
+(0.84–0.98) vs the supervised truth axis and DCT's top lever (both inside an |cos| < 0.1
+"orthogonal band"); (right) ε_Q per direction, with the truth axis and DCT lever sitting **above**
+the ε_Q = 1 "explains nothing" line (1.28–1.40 — worse than predicting zero shift).
+
+**2–5. The control-theory reframe.** The PI's core proposal, decoded:
+
+> Stop searching for single steering **directions**. Define a **target set** in the output space —
+> specifically in **J-space** (the Jacobian-lens space of Anthropic's global-workspace paper, or
+> equivalently the space DCT's U matrix lives in at the target layer) — e.g. "activations whose
+> truth readout says FALSE, while staying in the coherent/on-distribution region." Then compute the
+> **backward-reachable set** of that target at the source layer: the set of input-layer
+> perturbations that can land in the target. The tools are from robotics safety (set propagation
+> for dynamical systems); because the map is (locally) linear, "the actual tools are just linear
+> algebra" — preimages of polytopes/ellipsoids under a linear map, Jacobian (pseudo)inverses, SVD.
+
+Why this is the right formalization for us: every result in this doc is a statement that some
+**single direction** fails to be a truth lever. The reachability frame upgrades the null to a
+statement about **sets**: *is the "assert-falsehood, stay-coherent" region of target-layer
+activation space backward-reachable at all from bounded source-layer perturbations?*
+- If the backward-reachable set is **empty or off-distribution** → the null becomes a theorem-shaped
+  claim ("no coherent lie is reachable from layer-11 perturbations of norm ≤ input_scale"), not an
+  absence of evidence.
+- If it is **non-empty but thin/curved/off-axis** → it explains *why* every single-direction probe
+  missed it, and hands us the steering vector set directly (steer *within the set*, not along an
+  axis).
+
+Our own artifacts already contain the ingredients: DCT's fits are linearized maps from source →
+target layer (cities 11→20, common_claim 13→22, d=2304, `input_scale` = the perturbation-norm
+bound we already sweep), the linear probe `w·h > c` defines the target halfspace, and the U-space
+anchored run (Arm B, built and awaiting execution) is a first-order scalar version of exactly this
+idea — it anchors the *effect* toward the truth readout; the reachability version replaces "one
+anchored effect direction" with "the full preimage of the effect set."
+
+## F2. What the four references actually are (deep-read summaries)
+
+**(a) arXiv 2509.21528 — "Preemptive Detection and Steering of LLM Misalignment via Latent
+Reachability" (Karnik & Bansal, Stanford Safe & Intelligent Autonomy Lab, Sept 2025).** The
+load-bearing citation. Treats greedy LLM generation as a discrete-time control system in
+residual-stream latent space z_t, defines a failure set as the sub-zero level set of a scalar
+margin ℓ(z) (a toxicity-classifier score), and computes a **Backward Reachable Tube**
+B = {z : V(z) ≤ 0} via a Bellman-style value recursion V(z_t) = (1−γ)ℓ(z_t) + γ·min(ℓ(z_t),
+V(z_{t+1})) learned by an MLP (DeepReach-style neural reachability — approximate, no certificates).
+Steering is a **least-restrictive filter**: intervene only when V(z) drops below a margin, choosing
+the perturbation in an L² ball that most increases V. ~98% detection, flags unsafe trajectories
+7–10 tokens early, 54–85% fewer unsafe generations across 5 LLMs. **No code released yet** (project
+page says "coming soon"). Direct mapping to us: their ℓ ↔ our probe margin; their token-step BRT ↔
+our **depth-wise** (layer-to-layer) preimage — and our case is *easier*: one linearized 9-block hop
+instead of a recurrent nonlinear rollout, so closed-form set preimages can replace their learned
+value function.
+
+**(b) arXiv 2603.00140 — "Steering Away from Memorization: Reachability-Constrained RL for
+Text-to-Image Diffusion" (Karnik, Kim, Koyejo, Lee, Bansal, Feb 2026).** Same lab, same skeleton
+applied to diffusion: failure set from a memorization margin, BRT approximated by a safety critic
+Q<sup>safe</sup> trained with the discrete-time HJ recursion, minimal perturbations chosen by
+constrained RL (SAC + Lagrange multiplier) that trade task reward against staying out of the tube.
+Two transferable lessons: (i) they compress the control space (77×768 CLIP embedding → 64-dim VAE
+latent) before doing reachability — we should likewise work in a reduced basis (top DCT factors /
+J-lens vectors / PCA), not raw d=2304; (ii) their constrained-MDP objective is the template for our
+observed trade-off: "minimal perturbation that reaches the FALSE set **subject to a coherence
+constraint**" — formalizing the coherence-vs-lying dissociation that every experiment here found.
+
+**(c) Anthropic, "A Global Workspace in Language Models" (transformer-circuits, July 2026).** This
+is where the PI's "j-space / j-lens" vocabulary comes from. The **Jacobian lens**: J_ℓ =
+E[∂h_final/∂h_ℓ] averaged over pretraining prompts — a per-layer linear map to output-vocabulary
+space that corrects for representational drift (the "output matrices" the PI said to look at).
+**J-space** = points expressible as sparse nonnegative combinations (k ≤ 25) of J-lens vectors — a
+capacity-limited **cone, not a direction**, in the middle third of the network, carrying <10% of
+activation variance. Their key functional result for us is **selective engagement**: the same
+information can sit in the residual stream, be linearly decodable, and be *causally inert* for
+automatic tasks while being decisive under explicit-report framing. That is our entire
+decodable-≠-causal null restated as workspace gating — and it independently predicts our MAG
+finding that the "being-asked-about-truth" direction is real, linear, and orthogonal to the truth
+content axis. It also motivates Arm A1/A2 (question-mode conditionality) as the behavioral test of
+exactly this gating.
+
+**(d) arXiv 1910.13272 — "Feedback Linearization for Uncertain Systems via RL" (Westenbroek,
+Fridovich-Keil, Mazumdar et al., Tomlin/Sastry lab, 2019).** ⚠️ **This ID is not a reachability
+paper.** It's model-free feedback linearization: learn the correction to a nominal linearizing
+controller u = A(x)⁻¹(v − b(x)) so a nonlinear plant tracks a linear reference model. The
+conceptual echo is real — A(x)⁻¹ is literally "map desired outputs back through the inverse of the
+local linear map," the same algebra as our Jacobian-inverse step — but it contains no target sets,
+no set propagation, no reachability tooling. **Ask the PI whether this ID was intended** (as the
+feedback-linearization formalization of "invert the output map") **or a typo** for a set-propagation
+survey (e.g. Althoff/Frehse/Girard's set-propagation review, or hybrid-zonotope backward
+reachability for neural feedback systems, arXiv 2303.10513 / 2310.06921).
+
+**(e) The tooling landscape (surveyed alongside the four references).** Three tiers, by how much
+machinery we'd import:
+- **Tier 0 — plain linear algebra (start here):** for a single linearized hop h_tgt ≈ J·h_src + b,
+  the backward-reachable set of a halfspace target is closed-form (pull w back through Jᵀ / J⁺,
+  intersect with the norm-budget ball and the data-support region). No framework needed.
+- **Tier 1 — NN preimage tools, if we want certified multi-block bounds without linearizing:**
+  **INVPROP** (Kotha et al., NeurIPS 2023, in α,β-CROWN — provably bounds preimages of
+  linearly-constrained output sets, GPU, verified at 167k neurons) and **PREMAP** (JMLR 2025, its
+  successor: under- *and* over-approximations via branch-and-bound-refined linear relaxations).
+  Nothing in this literature has been run on a multi-block transformer with attention — we would be
+  the first, which is a risk and an opportunity.
+- **Precedent at our exact scale:** **LiSeCo** (arXiv 2405.15454) already does linear-probe
+  halfspace constraints with closed-form minimal-norm projection **on gemma-2-2b** — a *forward*
+  safe-set controller, not backward reachability, but proof the probe-as-halfspace machinery works
+  at d=2304. Conceptual ancestor: "Taming AI Bots" (Soatto et al., arXiv 2305.18449) — LLM
+  controllability over meaning space via prompts. Classical background: zonotope/support-function
+  set propagation (closed under linear maps); grid-based Hamilton–Jacobi is exact but dies at ~6
+  dimensions, so it only enters via learned value functions (as in BRT-Align), never directly at
+  d=2304.
+
+## F3. The concrete next experiment (proposed)
+
+**"Backward-reachability audit of the truth set"** — entirely linear algebra on artifacts we
+already have; no cluster time needed for v0:
+
+1. **Target set** at the target layer (20 / 22): T = {h : w·h ≤ c − δ} ∩ D, where w = the linear
+   probe (or mean_diff readout) at the target layer, δ a margin ("reads FALSE with margin"), and
+   D a coherence proxy (e.g. Mahalanobis ball around the activation distribution — stay
+   on-distribution).
+2. **Map**: DCT's learned linearization of the source→target map (and/or a fresh empirical Jacobian
+   J of the 9-block map at sample points; note the exact objects DCT stores — this is the PI's
+   "look how they define their output matrices" homework on our own code).
+3. **Backward step**: compute the preimage J⁻¹(T − f(h₀)) intersected with the perturbation budget
+   ball ‖Δh‖ ≤ input_scale at the source layer. For a halfspace target under a linear map this is
+   closed-form: the preimage of {u : w·u ≤ b} under Δh ↦ JΔh is {Δh : (Jᵀw)·Δh ≤ b} — the whole
+   question becomes **how large is Jᵀw, and where does it point?** If ‖Jᵀw‖ is tiny (the map's
+   row space is near-orthogonal to the probe), the FALSE set is unreachable within budget — the
+   null, formalized. If Jᵀw is substantial but points off the truth axis — nonlinear routing,
+   found constructively.
+4. **Report**: reachable/unreachable per dataset per budget, the angle of Jᵀw to mean_diff@source,
+   and the volume/thinness of the reachable slice inside the coherence set.
+
+This subsumes Arm B: the U-anchor run asks "can a scalar bias pull DCT's effect toward w"; the
+audit computes the answer directly. Run Arm B as planned (it's built and cheap) — its result
+becomes the behavioral validation of whatever the audit predicts.
+
+## F4. Follow-ups filed
+
+- Better linearity visualizer: **done** (`plot_mag_linearity_v2.png`).
+- Deep-research prompt for the full literature pass (tool selection, scale limits at d=2304,
+  preimage algorithms): `docs/DEEP_RESEARCH_PROMPT_REACHABILITY.md` — paste into Claude deep
+  research.
+- Confirm arXiv 1910.13272 with the PI (intended vs typo).
+- Access needed: none so far — all four sources were fully readable except that neither Bansal-lab
+  paper has released code.

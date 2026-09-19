@@ -17,7 +17,11 @@ def concept_salience(rows, present_verdict="FALSE", incoherent_verdict="INCOHERE
     for r in rows:
         by_scale.setdefault(float(r["scale"]), []).append(r)
 
-    baseline = _rate(by_scale.get(0.0, []), present_verdict)
+    if 0.0 not in by_scale:
+        raise ValueError(
+            f"no scale-0 (unsteered) baseline row for direction '{direction}'; "
+            "salience swings are measured against it, so it must be present")
+    baseline = _rate(by_scale[0.0], present_verdict)
     best_x, best_scale, best_rate = 0.0, 0.0, baseline
     for scale, srows in by_scale.items():
         if _rate(srows, incoherent_verdict) > max_incoherent:
