@@ -63,3 +63,13 @@ token_geom_*.npz
 
 # Stray SLURM stdout that was never a deliverable
 ts_cc_redo_*.out
+
+# SLURM job stdout: carries cluster usernames and paths; cited by job id in docs, kept local
+*.out
+logs/
+
+# Byte-identical archive copies made by run_truthfulqa_stmt.slurm's stage 0
+*.malformed-prompts.csv
+
+# Blind hand-labelling answer key: stays out of git until the sheet is labelled
+hand_labels_*_KEY_do_not_open_before_labelling.csv
