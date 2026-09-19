@@ -14,7 +14,7 @@ supercomputer, pre-registered statistics, and LLM judges that are themselves val
 > *We found the thermometer, not the thermostat: hold a lighter under it and the number climbs,
 > but the room stays cold.*
 
-**At a glance:** ~20.6k lines of Python across 108 modules · 690 passing tests (11 s, no GPU) ·
+**At a glance:** ~20.6k lines of Python across 108 modules · 695 passing tests (12 s, no GPU) ·
 45 SLURM jobs on NCSA DeltaAI (NVIDIA GH200) · 250+ commits since June 2026 · 50+ write-ups.
 Every number below traces to a committed artifact.
 
@@ -69,7 +69,7 @@ does not, the direction is a readout. If both move, it is a lever.
 | **Key result** | Truth is **linearly readable** (99% probe accuracy on clean data) but **not linearly actuatable**. The probe flips while behavior stays at baseline, on both fact datasets. |
 | **Validation** | A positive control on refusal. The same pipeline flips 14 prompts into refusal against 0 the other way (exact McNemar p = 1.2e-4), and crossing the certified boundary predicts refusal with odds ratio 24.2. |
 | **Evaluation** | Four LLM judges and a string-matching judge, each checked against gold labels before any number rests on it. Two judge failures were caught this way (see [LLM-as-a-judge](#llm-as-a-judge)). |
-| **Engineering** | Resumable, smoke-tested GPU jobs. A 690-test pytest suite with fake models, so model code is tested on a laptop. Pre-registered decision rules. Silent bugs that would each have produced a wrong scientific conclusion were caught and fixed (see below). |
+| **Engineering** | Resumable, smoke-tested GPU jobs. A 695-test pytest suite with fake models, so model code is tested on a laptop. Pre-registered decision rules. Silent bugs that would each have produced a wrong scientific conclusion were caught and fixed (see below). |
 | **Stack** | Python 3.13, PyTorch, Hugging Face Transformers, scikit-learn, XGBoost, NumPy/SciPy/pandas, Matplotlib, pytest, SLURM. Judges: OLMo-3-7B-Instruct, AllenAI TruthfulQA judges (Llama-2-7B) |
 
 ---
@@ -134,8 +134,16 @@ The gain runs through answer length. Mean answer length goes from 4.7 to 18.6 wo
 truth direction, while random directions barely lengthen answers (4.7 to 5.3). Once word count is
 controlled for, the dose adds nothing (likelihood-ratio p = 0.70). So either the direction carries
 truth and it comes out as fuller answers, or it is an "elaborate more" direction that TruthfulQA's
-judge happens to reward. The current round of experiments is built to tell those apart (see
-[Status](#status-19-september-2026)).
+judge happens to reward.
+
+A stratified check leans toward the second reading. Answers are binned by length, with the bins
+set from unsteered answers only. **19 of the 33 truthful steered answers are longer than any
+unsteered answer**. At matched length the gain is not significant: odds ratio 1.47, Cochran-Mantel-Haenszel
+p = 0.51. Reading those long answers shows why. Some are genuine qualification ("Marie
+Antoinette is *often credited* with saying this… however…"). Many are non-answers that the judge
+scores as truthful because they assert nothing false ("it depends on your definition of
+'better'"). The queued experiments, including a truncation test and a judge-free log-probability
+score, settle it causally (see [Status](#status-19-september-2026)).
 
 A literature search found no published report of a certified-reachable but behaviorally inert
 dissociation with a mechanism attached. That dissociation is the project's main contribution. It
@@ -228,7 +236,7 @@ to several days. A wasted slot costs a day, so most of the rigor goes into catch
 submission. Work is cut into jobs of at most 4-5 hours, submitted in rounds by a script that
 checks `squeue` and refuses to exceed the limit.
 
-**Testing ML code without a GPU.** The 690-test suite runs in about 11 seconds on a laptop. Model
+**Testing ML code without a GPU.** The 695-test suite runs in about 12 seconds on a laptop. Model
 code is tested against small fake tokenizers and fake residual networks whose behavior is known by
 construction. That makes it possible to test log-probability masking, left-padding and position
 ids, the gradient path of steering hooks, and optimizer convergence to a known optimum. Tests are
@@ -417,7 +425,7 @@ docs/              every write-up; docs/README.md is the index
 deltaai/           SLURM scripts and runbooks for NCSA DeltaAI (GH200); deltaai/README.md maps them
 got_datasets/      input CSVs: cities, sp_en_trans, companies, common_claim, truthfulqa, refusal
 src/               all code, run from the repo root as `.venv/bin/python src/<name>.py`
-tests/             pytest suite, 690 passing
+tests/             pytest suite, 695 passing
 results/           probe results and plots from the first experiment
 (repo root)        experiment artifacts: <program>_<what>_<dataset>.{csv,json,npz,png}
 ```
