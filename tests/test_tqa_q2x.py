@@ -172,3 +172,88 @@ def test_q2_interval_missing_row_stops_cleanly(tmp_path):
     p.write_text("arm,direction,frac,wilson_lo,wilson_hi\nmean,other,-2.0,0.1,0.2\n")
     with pytest.raises(SystemExit, match="frac -2"):
         qx.q2_interval(str(p))
+
+
+# ------------------------------------------------------------------ stages, on fakes
+class _St:
+    vec = "unset"
+
+    def set(self, v):
+        self.vec = v
+
+
+def test_steer_rows_writes_steer_block_columns_plus_the_readout(monkeypatch):
+    import dct_steer_utils as su
+    monkeypatch.setattr(su, "generate_raw",
+                        lambda m, t, p, n: " A long answer that never stops")
+    st = _St()
+    rows = qx.steer_rows(None, None, st, "q2_mean_diff", np.array([1.0, 0.0]), 3.5, 2.0,
+                         [{"question": "Why?"}], read=lambda p: -0.5)
+    assert st.vec.tolist() == [7.0, 0.0]                         # 3.5 x eps 2.0
+    (r,) = rows
+    assert r["prompt"] == "Q: Why?\nA:" and r["answer"] == "A long answer that never stops"
+    assert (r["frac"], r["scale"], r["g"], r["crossed"]) == (3.5, 7.0, -0.5, 1)
+    assert (r["budget_hit"], r["words"]) == (1, 6)
+    base = qx.steer_rows(None, None, st, "baseline", None, 0.0, 2.0,
+                         [{"question": "Why?"}], read=lambda p: 9.0)
+    assert st.vec is None and base[0]["scale"] == 0.0 and base[0]["crossed"] == 0
+
+
+def test_blocks_todo_skips_done_and_refuses_a_partial_block():
+    blocks = [("baseline", None, 0.0), ("q2_mean_diff", "v", 2.0)]
+    assert qx.blocks_todo({("baseline", 0.0): 4}, blocks, 4) == [blocks[1]]
+    with pytest.raises(SystemExit, match="q2_mean_diff dose 2"):
+        qx.blocks_todo({("q2_mean_diff", 2.0): 3}, blocks, 4)
+
+
+def _write(path, rows):
+    with open(path, "w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=list(rows[0]))
+        w.writeheader()
+        w.writerows(rows)
+
+
+def _judged(direction, frac, q, t, words=5, g=1.0):
+    return {"direction": direction, "frac": frac, "question": f"q{q}", "prompt": f"Q: q{q}\nA:",
+            "answer": " ".join(["w"] * words), "g": g, "crossed": int(g < 0),
+            "budget_hit": 0, "words": words, "distinct_ratio": 1.0,
+            "truthful": t, "informative": 1, "truthful_and_informative": t}
+
+
+def test_stage_summary_end_to_end_derives_n_rand_from_the_data(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    n = 10
+    full, cut = [], []
+    for q in range(n):
+        full.append(_judged("baseline", 0.0, q, 0, g=10.0))
+        for f, g in ((2.0, 5.0), (4.0, -2.0)):
+            full.append(_judged("q2_mean_diff", f, q, int(q < 5), words=20, g=g))
+            cut.append(_judged("q2_mean_diff", f, q, 0, words=5, g=g))   # gain gone when cut
+            full.append(_judged("rand_0", f, q, int(q == 0), g=g + 10))
+            cut.append(_judged("rand_0", f, q, int(q == 0), g=g + 10))
+    _write("q2x_judged_truthfulqa.csv", full)
+    _write("q2x_trunc_judged_truthfulqa.csv", cut)
+    _write(qx.Q2_V2_TRUTHFUL, [{"arm": "mean", "direction": "jtw_mean_diff_tgt",
+                                "frac": "-2.0", "wilson_lo": 0.2, "wilson_hi": 0.8}])
+    qx.stage_summary()
+    out = json.load(open("q2x_outcome_truthfulqa.json"))
+    assert out["n_rand"] == 1                         # one random direction in the data
+    assert out["gate"]["passed"] is True              # anchor 0.5 inside [0.2, 0.8]
+    assert out["crossing"]["realized"] == 4.0
+    assert out["headline"] == ["b_form"]
+    rows = list(csv.DictReader(open("q2x_summary_truthfulqa.csv")))
+    assert {r["direction"] for r in rows} == {"q2_mean_diff", "rand_0"}
+    with pytest.raises(SystemExit, match="exists"):
+        qx.stage_summary()
+
+
+def test_main_refuses_limit_without_prefix():
+    with pytest.raises(SystemExit):
+        qx.main(["--stage", "steer", "--limit", "2"])
+
+
+def test_main_skips_a_finished_summary(tmp_path, monkeypatch, capsys):
+    monkeypatch.chdir(tmp_path)
+    open("q2x_summary_truthfulqa.csv", "w").write("x")
+    qx.main(["--stage", "summary"])
+    assert "exists, skipping" in capsys.readouterr().out

@@ -204,3 +204,204 @@ def q2_interval(p=Q2_V2_TRUTHFUL):
             return float(r["wilson_lo"]), float(r["wilson_hi"])
     raise SystemExit(f"[q2x] no frac -2 row for jtw_mean_diff_tgt in {p}: R0 has no "
                      "interval to check the anchor against")
+
+
+# ------------------------------------------------------------------ io
+def append_rows(p, rows):
+    new = not os.path.exists(p)
+    with open(p, "a", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
+        if new:
+            w.writeheader()
+        w.writerows(rows)
+
+
+def steer_rows(model, tok, st, name, vec, frac, eps, recs, read):
+    """One (direction, dose) block. The same primitives as tqa_discovery.steer_block
+    (prompt_of, generate_raw at Q2's 48 tokens, first_answer), in a loop of its own so
+    the raw completion's newline is seen before it is flattened. `read(prompt)` returns
+    the layer-20 readout g with the hook still set to this block's vector."""
+    import torch
+
+    import dct_steer_utils as su
+    from prep_truthfulqa import prompt_of
+    from tqa_baseline import first_answer
+
+    scale = 0.0 if vec is None else frac * eps
+    st.set(None if vec is None or scale == 0 else
+           torch.tensor(scale * np.asarray(vec), dtype=torch.float32))
+    rows = []
+    for r in recs:
+        p = prompt_of(r["question"])
+        raw = su.generate_raw(model, tok, p, td.MAX_NEW_TOKENS)
+        ans = first_answer(raw)
+        g = float(read(p))
+        rows.append({"direction": name, "scale": scale, "frac": frac,
+                     "question": r["question"], "prompt": p,
+                     "completion": raw.replace("\n", " ").strip(), "answer": ans,
+                     "g": g, "crossed": int(g < 0), "budget_hit": int(budget_hit(raw)),
+                     "words": len(ans.split()), "distinct_ratio": distinct_ratio(ans)})
+    return rows
+
+
+def blocks_todo(done, blocks, n):
+    """The (name, vec, frac) blocks still to run. A block is written in one append, so a
+    count strictly between 0 and n means a killed write: refuse rather than duplicate."""
+    todo = []
+    for name, vec, f in blocks:
+        k = done.get((name, f), 0)
+        if 0 < k < n:
+            raise SystemExit(f"[q2x] {name} dose {f:g} has {k} of {n} rows: a partial "
+                             "block. Remove its rows from the steer CSV and resume.")
+        if k < n:
+            todo.append((name, vec, f))
+    return todo
+
+
+# ------------------------------------------------------------------ stages
+def stage_steer(device, limit=0):
+    import pandas as pd
+    import torch
+
+    import dct_steer_utils as su
+    from reach_hop import load_meta
+    from reach_steer import read_g
+
+    out = path(f"q2x_steer_{DS}.csv")
+    src, tgt, input_scale, model_name = load_meta(DS)
+    eps = td.q2_eps_star()
+    check_doses(eps, input_scale)
+    dirs = q2x_directions(td.q2_vector())
+    recs = [{"question": q} for q in
+            pd.read_csv(td.HOLDOUT)["question"].astype(str).str.strip()]
+    if limit:
+        recs, dirs = recs[:limit], dirs[:2]                 # Q2's direction and rand_0
+    done = {}
+    if os.path.exists(out):
+        for r in td.read_csv(out):
+            k = (r["direction"], float(r["frac"]))
+            done[k] = done.get(k, 0) + 1
+    blocks = [("baseline", None, 0.0)] + [(n, v, f) for n, v in dirs for f in DOSES]
+    todo = blocks_todo(done, blocks, len(recs))
+    rd = np.load(f"reach_dirs_{DS}.npz", allow_pickle=True)
+    k = [str(x) for x in rd["names"]].index(READ_DIRECTION)
+    t02 = float(rd["thresh02"][k])
+    tok, model, dev = su.load_model(device, model_name=model_name)
+    w = torch.tensor(np.asarray(rd["W"][k], np.float32)).to(dev)
+
+    def read(p):
+        return read_g(model, tok, p, tgt, w, t02, dev)
+
+    print(f"[q2x] {len(todo)} of {len(blocks)} blocks to run, {len(recs)} questions, "
+          f"eps* {eps:.4g}, doses {DOSES}, readout {READ_DIRECTION} at layer {tgt}",
+          flush=True)
+    with su.Steerer(model, src) as st:
+        for name, vec, f in todo:
+            append_rows(out, steer_rows(model, tok, st, name, vec, f, eps, recs, read))
+            print(f"[q2x] {name} dose {f:g} done", flush=True)
+    del model
+    if device == "cuda":
+        torch.cuda.empty_cache()
+
+
+def _judge():
+    from judges.local_hf import TruthJudge
+    return TruthJudge
+
+
+def stage_judge(device):
+    from judge_audit import judge_resumable
+    tj = _judge()(device)
+    judge_resumable(td.read_csv(path(f"q2x_steer_{DS}.csv")), tj.score,
+                    path(f"q2x_judged_{DS}.csv"))
+
+
+def stage_truncate(device):
+    from judge_audit import judge_resumable
+    steer = td.read_csv(path(f"q2x_steer_{DS}.csv"))
+    base = {r["question"]: len(r["answer"].split()) for r in steer
+            if r["direction"] == "baseline"}
+    cut = [truncated_row(r, base[r["question"]]) for r in steer
+           if r["direction"] != "baseline"]
+    print(f"[q2x] truncate: {sum(c['cut'] for c in cut)} of {len(cut)} answers cut to "
+          "their question's baseline length", flush=True)
+    tj = _judge()(device)
+    judge_resumable(cut, tj.score, path(f"q2x_trunc_judged_{DS}.csv"))
+
+
+def stage_summary():
+    import tqa_confirm as tc
+
+    full = td.read_csv(path(f"q2x_judged_{DS}.csv"))
+    cut = td.read_csv(path(f"q2x_trunc_judged_{DS}.csv"))
+    base = [r for r in full if r["direction"] == "baseline"]
+    n_rand = len({r["direction"] for r in full if r["direction"].startswith("rand_")})
+    ftabs = {c: tc.summarize(full, c) for c in SCORE_COLS}
+    ctabs = {c: tc.summarize(cut + base, c) for c in SCORE_COLS}
+    form = form_stats(full)
+    rows = summary_rows(ftabs, ctabs, form)
+    op = path(f"q2x_outcome_{DS}.json")
+    if os.path.exists(op):
+        raise SystemExit(f"[q2x] {op} exists; move it aside to rerun the summary")
+    td.write_new(path(f"q2x_summary_{DS}.csv"), rows)
+    lo, hi = q2_interval()
+    out = read_outcome(rows, lo, hi, n_rand)
+    out.update(baseline=form.get(("baseline", 0.0), {}), score_col="truthful")
+    with open(op, "w") as f:
+        json.dump(out, f, indent=2)
+    print(f"[q2x] scored on `truthful`; doses toward truthful; {n_rand} random directions",
+          flush=True)
+    for r in rows:
+        if r["direction"] != Q2_DIR:
+            continue
+        print(f"[q2x] dose {r['frac']:>4g}  g {r['median_g']:+8.2f} crossed "
+              f"{r['crossed_share']:.2f}  words {r['mean_words']:5.1f}  budget "
+              f"{r['budget_hit_share']:.2f}  full {r['full_rate']:.3f} (+{r['full_gained']}"
+              f"/-{r['full_lost']}, perm {r['full_perm_p']:.3g})  cut {r['cut_rate']:.3f} "
+              f"(+{r['cut_gained']}/-{r['cut_lost']}, perm {r['cut_perm_p']:.3g})",
+              flush=True)
+    g = out["gate"]
+    print(f"[q2x] R0 anchor at dose {ANCHOR:g}: {g['anchor_rate']:.3f} in "
+          f"[{lo:.4f}, {hi:.4f}]? {'PASS' if g['passed'] else 'GATE FAILED'}", flush=True)
+    c = out["crossing"]
+    print(f"[q2x] R1 crossing: realized {c['realized']}, predicted {c['predicted']}",
+          flush=True)
+    for f, v in out["per_dose"].items():
+        print(f"[q2x] R2 dose {f}: {v['labels']}  (Holm p cut {v['cut_p_holm']:.3g}, "
+              f"full {v['full_p_holm']:.3g})", flush=True)
+    print(f"[q2x] HEADLINE: {out['headline']}"
+          + ("  (no crossing by dose 5: read as uncrossed)" if out["uncrossed"] else ""),
+          flush=True)
+
+
+STAGES = ("steer", "judge", "truncate", "summary")
+
+
+def main(argv=None):
+    global PREFIX
+    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    ap.add_argument("--stage", required=True, choices=STAGES + ("all",))
+    ap.add_argument("--device", default="cuda")
+    ap.add_argument("--limit", type=int, default=0, help="questions (smoke)")
+    ap.add_argument("--prefix", default="", help="prefix every output (smoke)")
+    a = ap.parse_args(argv)
+    PREFIX = a.prefix
+    if a.limit and not a.prefix:
+        raise SystemExit("--limit writes partial outputs; give it a --prefix")
+    for st in STAGES if a.stage == "all" else (a.stage,):
+        print(f"=== tqa_q2x: {st} ===", flush=True)
+        if st == "summary" and os.path.exists(path(f"q2x_summary_{DS}.csv")):
+            print("[q2x] summary exists, skipping", flush=True)
+            continue
+        if st == "steer":
+            stage_steer(a.device, a.limit)
+        elif st == "judge":
+            stage_judge(a.device)
+        elif st == "truncate":
+            stage_truncate(a.device)
+        else:
+            stage_summary()
+
+
+if __name__ == "__main__":
+    main()
