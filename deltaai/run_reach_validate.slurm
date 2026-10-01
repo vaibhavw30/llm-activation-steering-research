@@ -8,7 +8,7 @@
 #SBATCH --gpu-bind=verbose,closest
 #SBATCH --gpus-per-node=1
 #SBATCH --mem=96g
-#SBATCH --time=03:00:00
+#SBATCH --time=01:30:00
 #SBATCH --output=reach_validate_%j.out
 
 # Round 4, V1 (docs/superpowers/specs/2026-09-30-round4-q2x-v1-design.md;
