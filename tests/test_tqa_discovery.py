@@ -211,6 +211,16 @@ def test_truth_dirs_signs_truthfulqa_toward_truthful(tmp_path, monkeypatch):
     assert np.allclose(td.truth_dirs("cities")["mean_diff"], md / 5)
 
 
+def test_same_layer_truth_dirs_drops_a_direction_fit_at_another_layer(tmp_path, monkeypatch):
+    # common_claim's truth_dir is layer 13; a layer-11 cosine table must not take it.
+    monkeypatch.chdir(tmp_path)
+    md = np.array([3.0, 0.0, 4.0])
+    np.savez("truth_dir_cities.npz", mean_diff=md, grad=md, layer=11)
+    np.savez("truth_dir_common_claim_true_false.npz", mean_diff=md, grad=md, layer=13)
+    assert np.allclose(td.same_layer_truth_dirs("cities")["mean_diff"], md / 5)
+    assert td.same_layer_truth_dirs("common_claim_true_false") == {}
+
+
 def test_mag_u_q_points_at_true_through_the_input_delta_operator():
     """MAG_TRUTHFUL_SIGN rests on BOTH signs: class_mean_diff is (label 0) - (label 1), and
     the InputDelta operator is A_Qp - A_p. With the truth signal in A_p (the bare

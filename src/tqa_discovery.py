@@ -327,6 +327,17 @@ def truth_dirs(ds, tgt=False):
     return {k: s * unit(z[k]) for k in ("mean_diff", "grad")}
 
 
+def same_layer_truth_dirs(ds):
+    """truth_dirs(ds) if its npz was fit at LAYER, else {}. common_claim's is layer 13."""
+    with np.load(f"truth_dir_{ds}.npz") as z:
+        layer = int(z["layer"]) if "layer" in z.files else LAYER
+    if layer != LAYER:
+        print(f"[readout] truth_dir_{ds}.npz is layer {layer}, not {LAYER}: left out of "
+              "the cosines (its layer-11 mean_diff from the activations is used)", flush=True)
+        return {}
+    return truth_dirs(ds)
+
+
 def q2_vector():
     """The Q2 steering direction, rebuilt exactly as reach_steer.arm_mean builds it, then
     signed toward truthful."""
@@ -584,7 +595,7 @@ def stage_mag(device, limit=0):
     dpath = mag_dir_path()
     np.savez(dpath, **out)
     print(f"[G0] wrote {dpath}  cos(u_Q_gold, truthful mean_diff) = "
-          f"{float(out['cos_uGold_mean_diff']):+.3f} (u_Q points at FALSE, so about -1 "
+          f"{float(out['cos_uGold_mean_diff']):+.3f} (u_Q points at TRUE, so about +1 "
           "means it IS the supervised axis)", flush=True)
 
 
@@ -604,11 +615,11 @@ def stage_readout():
         y = z["labels"].astype(int)
         data[ds] = (z["activations"][LAYER].astype(np.float64),
                     y if TRUTHFUL_SIGN[ds] > 0 else 1 - y)        # 1 = true, everywhere
-    rows = []
+    rows, md_layer = [], {}
     for a, (Xa, ya) in data.items():
         sc = StandardScaler().fit(Xa)
         clf = LogisticRegression(max_iter=2000).fit(sc.transform(Xa), ya)
-        md = unit(Xa[ya == 1].mean(0) - Xa[ya == 0].mean(0))
+        md = md_layer[a] = unit(Xa[ya == 1].mean(0) - Xa[ya == 0].mean(0))
         for b, (Xb, yb) in data.items():
             if a == b:
                 acc = float(cross_val_score(LogisticRegression(max_iter=2000),
@@ -625,8 +636,11 @@ def stage_readout():
     dirs = {}
     for ds in TRUTHFUL_SIGN:
         if os.path.exists(f"truth_dir_{ds}.npz"):
-            for k, v in truth_dirs(ds).items():
+            same = same_layer_truth_dirs(ds)
+            for k, v in same.items():
                 dirs[f"{ds}:{k}"] = v
+            if not same and ds in md_layer:
+                dirs[f"{ds}:mean_diff_L{LAYER}"] = md_layer[ds]
     dirs[f"{DS}:q2_jtw"] = q2_vector()
     for ds, p in (("cities", "mag_dir_cities.npz"),
                   (DS, mag_dir_path())):
