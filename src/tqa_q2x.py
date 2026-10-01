@@ -79,8 +79,9 @@ def q2x_directions(q2_vec, n_rand=N_RAND, seed=Q2X_RAND_SEED):
 def budget_hit(raw):
     """True when the answer never ended. Every TruthfulQA generation runs to the budget
     by inventing a next turn (Q1, job 3081925), so only a newline marks a finished
-    answer; a raw completion with none was cut by the 48-token budget mid-answer."""
-    return "\n" not in str(raw).strip()
+    answer; a raw completion with none was cut by the 48-token budget mid-answer. Only
+    leading whitespace is dropped: a trailing newline is an answer that ended."""
+    return "\n" not in str(raw).lstrip()
 
 
 def distinct_ratio(answer):
@@ -188,12 +189,19 @@ def read_outcome(rows, q2_lo, q2_hi, n_rand=N_RAND):
     per = {str(f): {"labels": classify(q2[f], c, u, anchor, n_rand),
                     "cut_p_holm": c, "full_p_holm": u}
            for f, c, u in zip(read_at, cut_adj, full_adj)}
-    return {"gate": {"anchor_rate": anchor, "q2_interval": [q2_lo, q2_hi], "passed": gate},
-            "crossing": {"realized": dx, "predicted": PREDICTED_CROSSING,
-                         "median_g_by_dose": {str(f): med[f] for f in sorted(med)}},
-            "uncrossed": dx is None, "read_at": read_at, "per_dose": per,
-            "n_rand": n_rand,
-            "headline": per[str(read_at[0])]["labels"] if gate else ["GATE FAILED"]}
+    out = {"gate": {"anchor_rate": anchor, "q2_interval": [q2_lo, q2_hi], "passed": gate},
+           "crossing": {"realized": dx, "predicted": PREDICTED_CROSSING,
+                        "median_g_by_dose": {str(f): med[f] for f in sorted(med)}},
+           "uncrossed": dx is None, "read_at": read_at, "per_dose": per,
+           "n_rand": n_rand,
+           "headline": per[str(read_at[0])]["labels"] if gate else ["GATE FAILED"]}
+    if not gate:
+        # The spec: a failed anchor means no R1/R2 reading is made. The numbers are kept,
+        # out of the reading's keys, so a label never sits next to a failed gate.
+        out["diagnostic"] = {"crossing_realized": dx, "read_at": read_at, "per_dose": per}
+        out.update(per_dose={}, read_at=[], uncrossed="not read")
+        out["crossing"]["realized"] = "not read"
+    return out
 
 
 def q2_interval(p=Q2_V2_TRUTHFUL):
@@ -250,12 +258,57 @@ def blocks_todo(done, blocks, n):
     todo = []
     for name, vec, f in blocks:
         k = done.get((name, f), 0)
-        if 0 < k < n:
-            raise SystemExit(f"[q2x] {name} dose {f:g} has {k} of {n} rows: a partial "
-                             "block. Remove its rows from the steer CSV and resume.")
+        if 0 < k != n:
+            raise SystemExit(f"[q2x] {name} dose {f:g} has {k} of {n} rows: a partial or "
+                             "duplicated block. Remove its rows from the steer CSV and "
+                             "resume.")
         if k < n:
             todo.append((name, vec, f))
     return todo
+
+
+def steer_counts(p):
+    """{(direction, frac): rows} in the steer CSV, refusing a file whose last write was
+    killed: no final newline, or a row with missing fields."""
+    if not os.path.exists(p):
+        return {}
+    with open(p, newline="") as f:
+        text = f.read()
+    if text and not text.endswith("\n"):
+        raise SystemExit(f"[q2x] {p} does not end in a newline: its last write was killed. "
+                         "Remove the last block's rows and resume.")
+    done = {}
+    for r in td.read_csv(p):
+        if None in r or None in r.values():
+            raise SystemExit(f"[q2x] {p} has a torn row ({r}): remove the last block's rows "
+                             "and resume.")
+        k = (r["direction"], float(r["frac"]))
+        done[k] = done.get(k, 0) + 1
+    return done
+
+
+def check_judged(full, cut):
+    """Refuse to summarize an incomplete run (a partial pull, a judge still going): every
+    (direction, dose) needs the baseline's n, the truncated file one row per steered row,
+    and at least one random direction for the permutation test."""
+    n = sum(r["direction"] == "baseline" for r in full)
+    if not n:
+        raise SystemExit("[q2x] no baseline rows in the judged file")
+    counts = {}
+    for r in full:
+        k = (r["direction"], float(r["frac"]))
+        counts[k] = counts.get(k, 0) + 1
+    for (name, f), k in sorted(counts.items()):
+        if k != n:
+            raise SystemExit(f"[q2x] {name} dose {f:g} has {k} judged rows, the baseline "
+                             f"{n}: the judged file is incomplete")
+    steered = len(full) - n
+    if len(cut) != steered:
+        raise SystemExit(f"[q2x] the truncated file has {len(cut)} rows for {steered} "
+                         "steered rows: the truncate stage is incomplete")
+    if not any(name.startswith("rand_") for name, _ in counts):
+        raise SystemExit("[q2x] no random direction in the judged file: the permutation "
+                         "test has nothing to compare against")
 
 
 # ------------------------------------------------------------------ stages
@@ -276,11 +329,7 @@ def stage_steer(device, limit=0):
             pd.read_csv(td.HOLDOUT)["question"].astype(str).str.strip()]
     if limit:
         recs, dirs = recs[:limit], dirs[:2]                 # Q2's direction and rand_0
-    done = {}
-    if os.path.exists(out):
-        for r in td.read_csv(out):
-            k = (r["direction"], float(r["frac"]))
-            done[k] = done.get(k, 0) + 1
+    done = steer_counts(out)
     blocks = [("baseline", None, 0.0)] + [(n, v, f) for n, v in dirs for f in DOSES]
     todo = blocks_todo(done, blocks, len(recs))
     rd = np.load(f"reach_dirs_{DS}.npz", allow_pickle=True)
@@ -332,22 +381,26 @@ def stage_truncate(device):
 def stage_summary():
     import tqa_confirm as tc
 
+    # Everything is computed before anything is written, so a stop leaves no file behind
+    # and a rerun is never skipped on the strength of a half-written summary.
+    sp, op = path(f"q2x_summary_{DS}.csv"), path(f"q2x_outcome_{DS}.json")
+    for p in (sp, op):
+        if os.path.exists(p):
+            raise SystemExit(f"[q2x] {p} exists; move {sp} and {op} aside to rerun")
+    lo, hi = q2_interval()
     full = td.read_csv(path(f"q2x_judged_{DS}.csv"))
     cut = td.read_csv(path(f"q2x_trunc_judged_{DS}.csv"))
+    check_judged(full, cut)
     base = [r for r in full if r["direction"] == "baseline"]
     n_rand = len({r["direction"] for r in full if r["direction"].startswith("rand_")})
     ftabs = {c: tc.summarize(full, c) for c in SCORE_COLS}
     ctabs = {c: tc.summarize(cut + base, c) for c in SCORE_COLS}
     form = form_stats(full)
     rows = summary_rows(ftabs, ctabs, form)
-    op = path(f"q2x_outcome_{DS}.json")
-    if os.path.exists(op):
-        raise SystemExit(f"[q2x] {op} exists; move it aside to rerun the summary")
-    td.write_new(path(f"q2x_summary_{DS}.csv"), rows)
-    lo, hi = q2_interval()
     out = read_outcome(rows, lo, hi, n_rand)
     out.update(baseline=form.get(("baseline", 0.0), {}), score_col="truthful")
-    with open(op, "w") as f:
+    td.write_new(sp, rows)
+    with open(op, "w") as f:                  # written last: main skips on this file
         json.dump(out, f, indent=2)
     print(f"[q2x] scored on `truthful`; doses toward truthful; {n_rand} random directions",
           flush=True)
@@ -363,14 +416,19 @@ def stage_summary():
     g = out["gate"]
     print(f"[q2x] R0 anchor at dose {ANCHOR:g}: {g['anchor_rate']:.3f} in "
           f"[{lo:.4f}, {hi:.4f}]? {'PASS' if g['passed'] else 'GATE FAILED'}", flush=True)
-    c = out["crossing"]
-    print(f"[q2x] R1 crossing: realized {c['realized']}, predicted {c['predicted']}",
-          flush=True)
+    if not g["passed"]:
+        print("[q2x] R1/R2 not read: GATE FAILED (the numbers are under `diagnostic` in "
+              f"{op})", flush=True)
+    else:
+        c = out["crossing"]
+        print(f"[q2x] R1 crossing: realized {c['realized']}, predicted {c['predicted']}",
+              flush=True)
     for f, v in out["per_dose"].items():
         print(f"[q2x] R2 dose {f}: {v['labels']}  (Holm p cut {v['cut_p_holm']:.3g}, "
               f"full {v['full_p_holm']:.3g})", flush=True)
     print(f"[q2x] HEADLINE: {out['headline']}"
-          + ("  (no crossing by dose 5: read as uncrossed)" if out["uncrossed"] else ""),
+          + ("  (no crossing by dose 5: read as uncrossed)" if out["uncrossed"] is True
+             else ""),
           flush=True)
 
 
@@ -390,7 +448,7 @@ def main(argv=None):
         raise SystemExit("--limit writes partial outputs; give it a --prefix")
     for st in STAGES if a.stage == "all" else (a.stage,):
         print(f"=== tqa_q2x: {st} ===", flush=True)
-        if st == "summary" and os.path.exists(path(f"q2x_summary_{DS}.csv")):
+        if st == "summary" and os.path.exists(path(f"q2x_outcome_{DS}.json")):
             print("[q2x] summary exists, skipping", flush=True)
             continue
         if st == "steer":

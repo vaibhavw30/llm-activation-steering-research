@@ -41,7 +41,9 @@ def test_q2x_directions_unit_seeded_and_not_jcs_null():
 def test_budget_hit_is_no_newline_in_the_raw_completion():
     assert qx.budget_hit(" a long answer that never stopped") is True
     assert qx.budget_hit(" Short answer.\nQ: next?") is False
-    assert qx.budget_hit("  trailing newline only\n") is True     # stripped first
+    # a trailing newline is an answer that ended; a leading one is not
+    assert qx.budget_hit(" Answer ended.\n") is False
+    assert qx.budget_hit("\n an answer that never stopped") is True
 
 
 def test_distinct_ratio():
@@ -254,6 +256,88 @@ def test_main_refuses_limit_without_prefix():
 
 def test_main_skips_a_finished_summary(tmp_path, monkeypatch, capsys):
     monkeypatch.chdir(tmp_path)
-    open("q2x_summary_truthfulqa.csv", "w").write("x")
+    open("q2x_outcome_truthfulqa.json", "w").write("{}")      # the last file written
     qx.main(["--stage", "summary"])
     assert "exists, skipping" in capsys.readouterr().out
+
+
+# ------------------------------------------------------------------ final-review fixes
+def _fixture(tmp_path, with_interval=True, drop_cut=0):
+    """The end-to-end fixture of test_stage_summary_end_to_end..., written to tmp_path."""
+    full, cut = [], []
+    for q in range(10):
+        full.append(_judged("baseline", 0.0, q, 0, g=10.0))
+        for f, g in ((2.0, 5.0), (4.0, -2.0)):
+            full.append(_judged("q2_mean_diff", f, q, int(q < 5), words=20, g=g))
+            cut.append(_judged("q2_mean_diff", f, q, 0, words=5, g=g))
+            full.append(_judged("rand_0", f, q, int(q == 0), g=g + 10))
+            cut.append(_judged("rand_0", f, q, int(q == 0), g=g + 10))
+    _write("q2x_judged_truthfulqa.csv", full)
+    _write("q2x_trunc_judged_truthfulqa.csv", cut[:len(cut) - drop_cut])
+    row = {"arm": "mean", "direction": "jtw_mean_diff_tgt" if with_interval else "other",
+           "frac": "-2.0", "wilson_lo": 0.2, "wilson_hi": 0.8}
+    _write(qx.Q2_V2_TRUTHFUL, [row])
+    return full, cut
+
+
+def test_summary_that_stops_writes_nothing_so_a_rerun_is_not_skipped(tmp_path, monkeypatch,
+                                                                     capsys):
+    monkeypatch.chdir(tmp_path)
+    _fixture(tmp_path, with_interval=False)
+    with pytest.raises(SystemExit, match="frac -2"):
+        qx.main(["--stage", "summary"])
+    assert not os.path.exists("q2x_summary_truthfulqa.csv")
+    assert not os.path.exists("q2x_outcome_truthfulqa.json")
+    _fixture(tmp_path)                                        # the interval row restored
+    qx.main(["--stage", "summary"])
+    assert "HEADLINE" in capsys.readouterr().out
+
+
+def test_summary_refuses_an_incomplete_truncated_file(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    _fixture(tmp_path, drop_cut=3)
+    with pytest.raises(SystemExit, match="truncated"):
+        qx.stage_summary()
+    assert not os.path.exists("q2x_summary_truthfulqa.csv")
+
+
+def test_check_judged_refuses_unequal_blocks_and_no_random_direction():
+    full = [_judged("baseline", 0.0, q, 0) for q in range(4)]
+    full += [_judged("q2_mean_diff", 2.0, q, 1) for q in range(3)]
+    full += [_judged("rand_0", 2.0, q, 0) for q in range(4)]
+    cut = [r for r in full if r["direction"] != "baseline"]
+    with pytest.raises(SystemExit, match="q2_mean_diff dose 2 has 3"):
+        qx.check_judged(full, cut)
+    full = [r for r in full if not r["direction"].startswith("rand_")]
+    full += [_judged("q2_mean_diff", 2.0, 3, 1)]
+    cut = [r for r in full if r["direction"] != "baseline"]
+    with pytest.raises(SystemExit, match="no random direction"):
+        qx.check_judged(full, cut)
+
+
+def test_read_outcome_gate_failure_makes_no_r1_or_r2_reading():
+    rows = [_q2row(2.0, full_rate=0.20, median_g=15.0),
+            _q2row(4.0, median_g=-5.0, cut_gain=0.2, cut_p=0.001, cut_perm=1 / 9)]
+    out = qx.read_outcome(rows, 0.3958, 0.6337)
+    assert out["per_dose"] == {} and out["read_at"] == []
+    assert out["crossing"]["realized"] == "not read"
+    assert out["diagnostic"]["per_dose"]["4.0"]["labels"] == ["a_content"]
+
+
+def test_blocks_todo_refuses_a_duplicated_block():
+    blocks = [("baseline", None, 0.0)]
+    with pytest.raises(SystemExit, match="baseline dose 0 has 8 of 4"):
+        qx.blocks_todo({("baseline", 0.0): 8}, blocks, 4)
+
+
+def test_steer_counts_refuses_a_torn_last_row(tmp_path):
+    p = tmp_path / "steer.csv"
+    p.write_text("direction,frac,answer\nbaseline,0.0,one\nbaseline,0.0,tw")
+    with pytest.raises(SystemExit, match="does not end"):
+        qx.steer_counts(str(p))
+    p.write_text("direction,frac,answer\nbaseline,0.0,one\nbaseline\n")
+    with pytest.raises(SystemExit, match="torn"):
+        qx.steer_counts(str(p))
+    p.write_text("direction,frac,answer\nbaseline,0.0,one\nrand_0,2.0,x\nbaseline,0.0,two\n")
+    assert qx.steer_counts(str(p)) == {("baseline", 0.0): 2, ("rand_0", 2.0): 1}
+    assert qx.steer_counts(str(tmp_path / "absent.csv")) == {}
