@@ -21,7 +21,7 @@ Every number below traces to a committed artifact.
 **Contents:** [Key ideas](#key-ideas-in-plain-language) · [Pipeline](#the-pipeline) ·
 [Highlights](#highlights) · [Results](#results) · [Wins and losses](#wins-and-losses) ·
 [LLM-as-a-judge](#llm-as-a-judge) · [Engineering](#engineering-highlights) ·
-[Status](#status-19-september-2026) · [Setup](#setup) · [Repository map](#repository-map)
+[Status](#status-1-october-2026) · [Setup](#setup) · [Repository map](#repository-map)
 
 ---
 
@@ -143,7 +143,7 @@ p = 0.51. Reading those long answers shows why. Some are genuine qualification (
 Antoinette is *often credited* with saying this… however…"). Many are non-answers that the judge
 scores as truthful because they assert nothing false ("it depends on your definition of
 'better'"). The queued experiments, including a truncation test and a judge-free log-probability
-score, settle it causally (see [Status](#status-19-september-2026)).
+score, settle it causally (see [Status](#status-1-october-2026)).
 
 A literature search found no published report of a certified-reachable but behaviorally inert
 dissociation with a mechanism attached. That dissociation is the project's main contribution. It
@@ -296,7 +296,7 @@ it. The full story is in [`docs/PLAIN_ENGLISH_WALKTHROUGH.md`](docs/PLAIN_ENGLIS
 
 ---
 
-## Status (30 September 2026)
+## Status (1 October 2026)
 
 **Done and audited:**
 - the linear vs. non-linear probing study on four datasets;
@@ -312,8 +312,8 @@ two-slot partition.
   The informativeness fix changed 4 of 2,880 verdicts, and a Qwen judge agrees on the sign. The
   truncation test puts about 87% of the TruthfulQA gain in the extra words.
   See [`Q2_TRUTHFULQA_STEERING.md`](docs/Q2_TRUTHFULQA_STEERING.md) section 12.
-- **Queued:** J-B → J-C (jobs 3282837, 3282838), then J-D1 + J-D2, then J-E and the
-  token-space re-run.
+- **Queued:** J-B → J-C (jobs 3282837, 3282838), then round 4 (Q2x + V1), which a login-node
+  loop submits when the two slots free. J-D1 + J-D2, J-E and the token-space re-run follow.
 
 | Job | What it answers |
 |---|---|
@@ -321,11 +321,16 @@ two-slot partition.
 | **J-A** ✅ judge audit | Re-judge informativeness with the correct prompt; gold, determinism, format and threshold checks; a Qwen judge as a second opinion |
 | **J-B / J-C** discovery + confirm | A second DCT fit (different seed), MAG on TruthfulQA (does the model's own true/false verdict carry signal on this format?), then a held-out confirmation of whatever the screen finds |
 | **J-D1 / J-D2** transfer matrix | Every direction, from both datasets, steered on both datasets, with random-direction and oracle controls |
+| **Q2x** (round 4) | Push Q2's direction past the certificate's predicted crossing (2 to 5 × eps\*) against 8 fresh random directions, and score each answer full and truncated to the baseline length. Does crossing the boundary buy content, or only form? |
+| **V1** (round 4) | The pullback arithmetic checked layer by layer on all four datasets: a bug or honest nonlinearity? |
 | **J-E** judge-free + ceiling | TruthfulQA scored by log-probability of reference answers (no judge, no length effect), plus the **best single steering vector per norm, trained by gradient descent**. The ceiling tells "truth isn't steerable this way" apart from "nothing is". |
 
-**Waiting on the laptop:** 16 TruthfulQA answers to hand-label blind
-(`hand_labels_truthfulqa_human16.csv`). They calibrate 64 blind Claude labels, frozen in git first,
-which then arbitrate between the allenai and Qwen judges (`judge_audit.py --stage handscore`). A corrected token-space run on `cities` (prompt "… is in the country of", so the
+**Hand labels, scored with Claude's labels only.** The human calibration (16 items) was skipped by
+choice. Against Claude's 64 blind labels, frozen in git first, the allenai judge agrees on every
+unsteered answer but passes 7 steered answers that each contain a false claim, so the steering gain
+on that sample falls from +0.375 to +0.156 (n = 32 per arm, not significant). These are model
+labels, not human ones. See [`Q2_TRUTHFULQA_STEERING.md`](docs/Q2_TRUTHFULQA_STEERING.md) section 13.
+A corrected token-space run on `cities` (prompt "… is in the country of", so the
 target really is the country) is also written.
 
 **What would change the story:**
