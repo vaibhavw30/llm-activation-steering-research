@@ -2,6 +2,7 @@
 
     PYTHONPATH=src python src/judge_audit.py --stage all --device cuda      # CLUSTER, job J-A
     PYTHONPATH=src python src/judge_audit.py --stage handsheet              # LAPTOP
+    PYTHONPATH=src python src/judge_audit.py --stage handscore              # LAPTOP
 
 Written for docs/PLAN_PI_FEEDBACK_2026-09-18.md sections 5 and 9 (C3). Until 2026-09-18 the
 allenai info judge was prompted with the truth judge's "True:" suffix; judges.adapters now
@@ -26,6 +27,8 @@ STAGES, in the order `all` runs them:
   qwen         J3. A third judge (Qwen2.5-7B-Instruct, a written rubric, the reference
                answers in the prompt) on Q1, the Q2 doses 0 and -2, and the control at -2.
   handsheet    J3. 64 answers, dose hidden, for a human to label. Needs no GPU.
+  handscore    J3. The labels against allenai and Qwen: 16 human (gold), 64 Claude (blind,
+               frozen in git first), and human vs Claude as the calibration. LAPTOP, CPU.
 """
 import argparse
 import csv
@@ -149,6 +152,76 @@ def hand_sheet(rows, n_per_dose=32, seed=HAND_SEED, refs=None):
                       "reference_false": " | ".join(wrong)})
         key.append({"item": i, "prompt": p, "frac": d, "direction": r["direction"]})
     return sheet, key
+
+
+def cohen_kappa(a, b):
+    """Cohen's kappa for two binary raters. nan when chance agreement is 1."""
+    n = len(a)
+    po = sum(x == y for x, y in zip(a, b)) / n
+    pa, pb = sum(a) / n, sum(b) / n
+    pe = pa * pb + (1 - pa) * (1 - pb)
+    return float("nan") if pe == 1 else (po - pe) / (1 - pe)
+
+
+def label_map(rows, who):
+    """{item: (truthful, informative)} from a labelled sheet. Refuses a blank or
+    non-0/1 cell: a half-filled sheet must not be scored as if it were complete."""
+    out = {}
+    for r in rows:
+        try:
+            t, i = int(r["truthful"]), int(r["informative"])
+            if t not in (0, 1) or i not in (0, 1):
+                raise ValueError
+        except ValueError:
+            raise SystemExit(f"[handscore] {who}: item {r['item']} needs truthful and "
+                             "informative as 0 or 1")
+        out[int(r["item"])] = (t, i)
+    return out
+
+
+def judge_by_item(key, judged, t_col, i_col):
+    """A judge's verdicts on the labelled items, joined through the key on
+    (prompt, dose, direction)."""
+    idx = {(r["prompt"], round(float(r["frac"]), 2), r["direction"]): r for r in judged}
+    out = {}
+    for k in key:
+        r = idx.get((k["prompt"], round(float(k["frac"]), 2), k["direction"]))
+        if r is None:
+            raise SystemExit(f"[handscore] item {k['item']} has no verdict in the judge file")
+        out[int(k["item"])] = (int(r[t_col]), int(r[i_col]))
+    return out
+
+
+def agreement_rows(ref_name, ref, judges):
+    """Accuracy and kappa of each judge against a reference labelling, on the items
+    the reference has."""
+    rows = []
+    items = sorted(ref)
+    for name, got in judges.items():
+        for ax, k in (("truthful", 0), ("informative", 1)):
+            a = [ref[i][k] for i in items]
+            b = [got[i][k] for i in items]
+            agree = sum(x == y for x, y in zip(a, b))
+            rows.append({"reference": ref_name, "judge": name, "axis": ax, "n": len(a),
+                         "agree": agree, "accuracy": agree / len(a),
+                         "kappa": cohen_kappa(a, b),
+                         "ref_rate": sum(a) / len(a), "judge_rate": sum(b) / len(b)})
+    return rows
+
+
+def dose_rows(name, labels, frac_of):
+    """Each axis's rate at frac 0 and -2 under one labelling. The sheet puts different
+    questions at the two doses, so the test is unpaired (Fisher exact)."""
+    from scipy.stats import fisher_exact
+    rows = []
+    for ax, k in (("truthful", 0), ("informative", 1)):
+        by = {d: [labels[i][k] for i in labels if frac_of[i] == d] for d in DOSES}
+        n0, n2 = len(by[0.0]), len(by[-2.0])
+        k0, k2 = sum(by[0.0]), sum(by[-2.0])
+        rows.append({"labeller": name, "axis": ax, "n_frac0": n0, "rate_frac0": k0 / n0,
+                     "n_frac-2": n2, "rate_frac-2": k2 / n2,
+                     "fisher_p": float(fisher_exact([[k2, n2 - k2], [k0, n0 - k0]]).pvalue)})
+    return rows
 
 
 def question_of_prompt(prompt):
@@ -458,6 +531,46 @@ def stage_handsheet():
           "KEY until every row is labelled.", flush=True)
 
 
+HAND_KEY = f"hand_labels_{DS}_KEY_do_not_open_before_labelling.csv"
+HAND_HUMAN = f"hand_labels_{DS}_human16.csv"
+HAND_CLAUDE = f"hand_labels_{DS}_claude64.csv"
+HANDSCORE_OUT = f"judge_audit_hand_{DS}.csv"
+HANDSCORE_DOSE_OUT = f"judge_audit_hand_dose_{DS}.csv"
+
+
+def stage_handscore():
+    """J3's labels against the judges. Human gold on 16 items (seed 20260930); Claude's
+    blind labels on all 64, frozen in git before the human labelled. Human-vs-Claude on
+    the 16 is the calibration that says how far the 64-item numbers can be leaned on."""
+    human = label_map(read_csv(HAND_HUMAN), "human16")
+    claude = label_map(read_csv(HAND_CLAUDE), "claude64")
+    key = read_csv(HAND_KEY)
+    frac_of = {int(k["item"]): round(float(k["frac"]), 2) for k in key}
+    v2 = with_frac([r for r in read_csv(V2_PATTERN.format(ds=DS, arm="mean"))
+                    if r["direction"] == MEAN_DIRECTION])
+    qwen = [r for r in read_csv(STAGE_OUTPUT["qwen"]) if r["source"] == "mean"]
+    judges = {"allenai": judge_by_item(key, v2, "truthful", "informative"),
+              "qwen": judge_by_item(key, qwen, "qwen_truthful", "qwen_informative")}
+    agree = (agreement_rows("human16", human, dict(judges, claude64=claude))
+             + agreement_rows("claude64", claude, judges))
+    write_new(HANDSCORE_OUT, agree)
+    dose = []
+    for name, labels in (("human16", human), ("claude64", claude), *judges.items()):
+        dose += dose_rows(name, labels, frac_of)
+    write_new(HANDSCORE_DOSE_OUT, dose)
+    for r in agree:
+        print(f"[handscore] {r['reference']} vs {r['judge']:9s} {r['axis']:12s} "
+              f"n={r['n']:2d}  acc {r['accuracy']:.3f}  kappa {r['kappa']:+.3f}  "
+              f"rates ref {r['ref_rate']:.2f} judge {r['judge_rate']:.2f}", flush=True)
+    for r in dose:
+        print(f"[handscore] {r['labeller']:9s} {r['axis']:12s} frac0 {r['rate_frac0']:.3f} "
+              f"(n={r['n_frac0']})  frac-2 {r['rate_frac-2']:.3f} (n={r['n_frac-2']})  "
+              f"Fisher p {r['fisher_p']:.3g}", flush=True)
+    print("[handscore] human16 has about 8 items per dose: its dose rows are indicative "
+          "only. Lean on the 64-item rows as far as human16 vs claude64 kappa allows.",
+          flush=True)
+
+
 STAGES = ("gold", "rejudge", "determinism", "format", "threshold", "truncate", "qwen")
 
 # The one file each single-output stage writes. A rerun of the job skips a stage whose
@@ -469,7 +582,7 @@ STAGE_OUTPUT = {st: f"judge_audit_{st}_{DS}.csv"
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("--stage", required=True, choices=STAGES + ("handsheet", "all"))
+    ap.add_argument("--stage", required=True, choices=STAGES + ("handsheet", "handscore", "all"))
     ap.add_argument("--device", default="cuda")
     a = ap.parse_args(argv)
     J = _Judges(a.device)
@@ -500,6 +613,8 @@ def main(argv=None):
             stage_qwen(a.device)
         elif st == "handsheet":
             stage_handsheet()
+        elif st == "handscore":
+            stage_handscore()
 
 
 if __name__ == "__main__":

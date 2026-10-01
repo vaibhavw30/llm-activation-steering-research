@@ -155,3 +155,100 @@ def test_hand_sheet_shows_the_references_but_not_the_dose():
     assert sheet[0]["reference_false"] == f"wrong{i} | also wrong"
     assert set(sheet[0]) == {"item", "question", "answer", "truthful", "informative",
                              "reference_true", "reference_false"}
+
+
+# ------------------------------------------------------------------ handscore
+def test_cohen_kappa_perfect_chance_and_undefined():
+    assert ja.cohen_kappa([1, 0, 1, 0], [1, 0, 1, 0]) == pytest.approx(1.0)
+    # observed 0.5, expected 0.5 -> kappa 0
+    assert ja.cohen_kappa([1, 1, 0, 0], [1, 0, 1, 0]) == pytest.approx(0.0)
+    # 3/4 agree; p_e = 0.5*0.75 + 0.5*0.25 = 0.5 -> kappa 0.5
+    assert ja.cohen_kappa([1, 1, 0, 0], [1, 1, 1, 0]) == pytest.approx(0.5)
+    # both raters constant and equal: p_e = 1, kappa undefined
+    assert ja.cohen_kappa([1, 1], [1, 1]) != ja.cohen_kappa([1, 1], [1, 1])  # nan
+
+
+def test_label_map_refuses_a_blank_or_non_binary_row():
+    ok = [{"item": "3", "truthful": "1", "informative": "0"}]
+    assert ja.label_map(ok, "h") == {3: (1, 0)}
+    with pytest.raises(SystemExit, match="item 4"):
+        ja.label_map(ok + [{"item": "4", "truthful": "", "informative": "1"}], "h")
+    with pytest.raises(SystemExit, match="item 5"):
+        ja.label_map([{"item": "5", "truthful": "yes", "informative": "1"}], "h")
+
+
+def test_judge_by_item_joins_through_the_key_on_prompt_dose_direction():
+    key = [{"item": "1", "prompt": "Q: a\nA:", "frac": "-2.0", "direction": "d"},
+           {"item": "2", "prompt": "Q: b\nA:", "frac": "0.0", "direction": "d"}]
+    judged = [{"prompt": "Q: a\nA:", "frac": -2.0, "direction": "d",
+               "truthful": "1", "informative": "1"},
+              {"prompt": "Q: a\nA:", "frac": 0.0, "direction": "d",      # other dose
+               "truthful": "0", "informative": "0"},
+              {"prompt": "Q: b\nA:", "frac": 0.0, "direction": "d",
+               "truthful": "0", "informative": "1"}]
+    got = ja.judge_by_item(key, judged, "truthful", "informative")
+    assert got == {1: (1, 1), 2: (0, 1)}
+
+
+def test_judge_by_item_refuses_a_key_row_it_cannot_find():
+    key = [{"item": "1", "prompt": "Q: a\nA:", "frac": "-2.0", "direction": "d"}]
+    with pytest.raises(SystemExit, match="item 1"):
+        ja.judge_by_item(key, [], "truthful", "informative")
+
+
+def test_agreement_rows_only_score_items_the_reference_has():
+    ref = {1: (1, 1), 2: (0, 1)}
+    judges = {"j": {1: (1, 0), 2: (0, 1), 3: (1, 1)}}
+    rows = ja.agreement_rows("human16", ref, judges)
+    t = next(r for r in rows if r["axis"] == "truthful")
+    i = next(r for r in rows if r["axis"] == "informative")
+    assert (t["n"], t["agree"], t["accuracy"]) == (2, 2, 1.0)
+    assert (i["n"], i["agree"], i["accuracy"]) == (2, 1, 0.5)
+    assert t["reference"] == "human16" and t["judge"] == "j"
+
+
+def test_dose_rows_report_rate_per_dose_and_an_unpaired_test():
+    labels = {1: (1, 1), 2: (1, 1), 3: (0, 1), 4: (0, 1)}
+    frac = {1: -2.0, 2: -2.0, 3: 0.0, 4: 0.0}
+    (row,) = [r for r in ja.dose_rows("x", labels, frac) if r["axis"] == "truthful"]
+    assert (row["n_frac0"], row["rate_frac0"], row["n_frac-2"], row["rate_frac-2"]) == \
+        (2, 0.0, 2, 1.0)
+    assert 0 < row["fisher_p"] <= 1
+
+
+def test_stage_handscore_end_to_end_on_fakes(tmp_path, monkeypatch, capsys):
+    import csv as _csv
+    monkeypatch.chdir(tmp_path)
+
+    def w(path, rows):
+        with open(path, "w", newline="") as f:
+            d = _csv.DictWriter(f, fieldnames=list(rows[0]))
+            d.writeheader()
+            d.writerows(rows)
+
+    items = range(1, 9)
+    frac = {i: (-2.0 if i % 2 else 0.0) for i in items}
+    prompt = {i: f"Q: q{i}\nA:" for i in items}
+    w(ja.HAND_KEY, [{"item": i, "prompt": prompt[i], "frac": frac[i],
+                     "direction": ja.MEAN_DIRECTION} for i in items])
+    w(ja.HAND_CLAUDE, [{"item": i, "truthful": i % 2, "informative": 1, "note": "",
+                        "labeller": "c"} for i in items])
+    w(ja.HAND_HUMAN, [{"item": i, "question": "q", "answer": "a", "truthful": i % 2,
+                       "informative": 1, "note": ""} for i in (1, 2, 3, 4)])
+    w(ja.V2_PATTERN.format(ds=ja.DS, arm="mean"),
+      [{"direction": ja.MEAN_DIRECTION, "scale": frac[i], "prompt": prompt[i],
+        "truthful": i % 2, "informative": 1} for i in items])
+    w(ja.STAGE_OUTPUT["qwen"],
+      [{"source": "mean", "direction": ja.MEAN_DIRECTION, "frac": frac[i],
+        "prompt": prompt[i], "qwen_truthful": 1, "qwen_informative": 1} for i in items])
+    monkeypatch.setattr(ja, "with_frac",
+                        lambda rows: [dict(r, frac=float(r["scale"])) for r in rows])
+    ja.stage_handscore()
+    agree = ja.read_csv(ja.HANDSCORE_OUT)
+    h_claude = next(r for r in agree if r["reference"] == "human16"
+                    and r["judge"] == "claude64" and r["axis"] == "truthful")
+    assert (h_claude["n"], h_claude["accuracy"]) == ("4", "1.0")
+    assert {r["reference"] for r in agree} == {"human16", "claude64"}
+    dose = ja.read_csv(ja.HANDSCORE_DOSE_OUT)
+    assert {r["labeller"] for r in dose} == {"human16", "claude64", "allenai", "qwen"}
+    assert "human16 vs claude64" in capsys.readouterr().out
