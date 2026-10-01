@@ -1,0 +1,5 @@
+direction,frac,rate_steer,rate_base,n_outside,k_outside,gain_total,or_mh_in_support,cmh_p_in_support,n_strata
+jtw_mean_diff_tgt,-2.0,0.5,0.2656,28,19,15,1.404,0.61,4
+rand_ctrl_0,-2.0,0.2812,0.2656,1,1,1,0.954,1.0,4
+rand_ctrl_1,-2.0,0.2969,0.2656,3,1,2,1.164,0.894,4
+rand_ctrl_2,-2.0,0.2344,0.2656,1,1,-2,0.772,0.69,4
