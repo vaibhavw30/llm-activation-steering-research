@@ -92,7 +92,9 @@ Judging (stage `judge`) runs `judge_audit.judge_resumable` with
 Truncation (stage `truncate`) cuts each steered row's `answer` to its own question's
 **baseline** word count, using `judge_audit.truncate_words`, and re-judges it. The baseline
 comes from this job's dose-0 answer, not from Q1/Q2's files. A row already at or under that
-length is copied with `cut = 0` and is not re-judged. This is C3 per dose and per direction.
+length keeps its text with `cut = 0` and is re-judged like the rest. That is simpler than
+merging verdicts, and costs nothing in validity: J-A measured the judges 200/200
+deterministic. This is C3 per dose and per direction.
 
 ### Statistics (stage `summary`, also runnable on the LAPTOP)
 
@@ -170,7 +172,7 @@ gemma-2-2b in the HF cache.
 
 - `--prefix` (default `""`), applied to `reach_validate_{ds}.npz` and
   `reach_validate_summary_{ds}.csv`, in both compute (write) and analyze (read and write).
-  `--limit` without `--prefix` is refused.
+  `--limit` or `--layers` without `--prefix` is refused: both write partial outputs.
 - Neither stage overwrites. Compute refuses if its npz exists; analyze refuses if its summary
   exists. The refusal names the file to move aside.
 - The ratio_A gate is restated (below). It now prints which reading applies instead of a
