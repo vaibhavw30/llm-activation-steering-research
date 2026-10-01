@@ -322,3 +322,116 @@ decided by a plurality…" for the 2032 election; "The answer depends on your de
 'better'"). Wrong unsteered answers that stay wrong mostly stay wrong at length (the penny, the
 flying carpet). This is the form mechanism made concrete: the direction moves the model from
 committing to a short false answer toward elaborating or equivocating.
+
+## 12. Addendum, 2026-09-30: the judge audit (J-A) and C3, the truncation test
+
+SLURM job 3169899 (`deltaai/run_pi_audit.slurm`, `src/judge_audit.py`), completed 2026-09-19,
+pulled 2026-09-30. It generated nothing new. It re-judged every Q2 answer with the
+informativeness judge's correct `Helpful:` prompt, then measured whether the judges are strict,
+inconsistent or wrong. Plan: `PLAN_PI_FEEDBACK_2026-09-18.md` sections 5 and 9.
+
+**Verdict under the rule registered in the plan (section 5): Q2 stands.** On the v2 labels,
+truthful-and-informative at frac -2 beats frac 0 (0.266 -> 0.500, 16 gained / 1 lost, exact
+McNemar p = 2.8e-4) and each norm-matched random direction (p = 0.0013, 0.0024, 7.6e-5;
+Bonferroni alpha 0.0167). The independent Qwen judge shows the same sign. Nothing in sections
+1-11 needs correcting. But C3, below, says what the gain is made of.
+
+### 12.1 The informativeness bug changed almost nothing
+
+| arm | rows | `informative` changed | `truthful_and_informative` changed |
+|---|---:|---:|---:|
+| mean | 1,152 | 2 | 1 |
+| randctrl | 1,728 | 2 | 2 |
+
+`truthful` changed on 0 rows, as it must: the truth judge's prompt did not change.
+
+### 12.2 Gold check (J1), 256 rows
+
+| judge | correct | incorrect | "I have no comment." | question restated |
+|---|---:|---:|---:|---:|
+| truth (`True:`) | 1.000 | 1.000 | 1.000 | (no expectation) |
+| info, `Helpful:` (fixed) | 1.000 | 1.000 | **0.891** | 1.000 |
+| info, `True:` (the bug) | 1.000 | 1.000 | 0.891 | 0.953 |
+
+The info judge calls 7 of 64 "I have no comment." answers informative. That misses the
+registered bar of 0.9 per side by one row (57/64; 58 needed). Two consequences:
+- J-B and later jobs score on `truthful` alone, as the plan's fallback rule requires.
+- The info judge is slightly **lenient**, not strict. The "incorrect" side is a fourth gold
+  kind that the code added beyond the plan's three. It does not change the outcome, since the
+  miss is on a registered side.
+
+### 12.3 Strict or inconsistent? (J3)
+
+| test | result | reading |
+|---|---|---|
+| determinism, 200 rows judged twice | 200/200 identical, max \|dp\| = 0 | not inconsistent |
+| format flips, final period dropped (336 rows) | truth 3.9%, info 0.9% | the noise floor; well below the 23-point effect |
+| threshold sweep on p(yes), frac -2 vs 0 | 0.500 vs 0.281 at t = 0.3; 0.438 vs 0.250 at t = 0.7 | the gap holds at 0.19-0.22 over the whole sweep |
+| borderline verdicts, p in [0.4, 0.6] | truth 4.7% at frac -2, 1.6% at frac 0 | few verdicts sit near the threshold |
+
+So the truth judge is neither strict nor inconsistent in any way that moves the headline.
+
+### 12.4 A third judge: Qwen2.5-7B-Instruct with a written rubric
+
+Qwen saw TruthfulQA's reference answers. Its rates on the same answers:
+
+| arm, frac | allenai truthful | Qwen truthful | allenai informative | Qwen informative |
+|---|---:|---:|---:|---:|
+| truth direction, 0 | 0.281 | 0.469 | 0.984 | 0.281 |
+| truth direction, -2 | 0.516 | 0.656 | 0.984 | 0.438 |
+| random controls, -2 | 0.27-0.30 | 0.50-0.56 | 0.97-1.00 | 0.25-0.28 |
+
+Paired tests under Qwen, truth direction at -2 against each comparison:
+
+| against | Qwen truthful: wins / losses, p | Qwen truthful-and-informative: wins / losses, p |
+|---|---|---|
+| frac 0 | 15 / 3, p = 0.0075 | 13 / 1, p = 0.0018 |
+| rand_ctrl_0 | 11 / 5, p = 0.21 | 11 / 1, p = 0.0064 |
+| rand_ctrl_1 | 13 / 5, p = 0.096 | 14 / 2, p = 0.0042 |
+| rand_ctrl_2 | 15 / 5, p = 0.041 | 12 / 1, p = 0.0034 |
+
+**Reading.**
+- The two judges disagree in *level*. Qwen is more lenient on truth and far stricter on
+  informativeness. They agree on 262/384 truth verdicts and only 121/384 info verdicts.
+- They agree in *sign*: the truth direction gains under both.
+- Under Qwen, random pushes also raise "truthful" (0.47 -> 0.50-0.56). So Qwen's truthful-only
+  margin over random is weak, while its truthful-and-informative margin is clear.
+- Which judge's level is right is what the hand labels settle (`--stage handscore`, pending: 16
+  human gold labels and 64 blind Claude labels with a human calibration).
+
+### 12.5 C3: cut the steered answer to its unsteered length, and the gain is gone
+
+Each frac -2 answer was cut to the word count of the same question's frac 0 answer and
+re-judged (39 of 64 needed cutting).
+
+| | truthful-and-informative |
+|---|---:|
+| frac -2, full answer | 0.500 |
+| frac -2, cut to the frac-0 length | **0.297** |
+| frac 0 | 0.266 |
+
+The truncated answers score 0.03 above baseline, against 0.23 for the full answers. **About 87%
+of the gain lives in the extra words.** This is the direct causal test the plan registered for
+the form-vs-content row. It comes out on the form side, agreeing with C1 (the dose adds nothing
+once word count is in the model: p = 0.76 on v2 truthful-and-informative, 0.58 on truthful) and
+C2 (below).
+
+### 12.6 C2 on the v2 labels
+
+`tqa_form_c2_truthfulqa_v2_{truthful,truthful_and_informative}.csv` and their `_summary`.
+- On `truthful`, the table is identical to section 11, as it must be.
+- On truthful-and-informative, the truth direction's in-support MH odds ratio is 1.40 (CMH
+  p = 0.61), and 19 of the 32 positive answers lie outside the baseline's length range.
+- The controls sit at 0.77-1.16.
+
+### 12.7 What this does to the claim
+
+The Q2 headline is restated as follows. Steering along the supervised truth direction makes
+gemma-2-2b's TruthfulQA answers longer and more qualified, and two independent judges score
+that as more truthful. Cut back to the original length, the answers are no more truthful than
+before.
+
+This is the registered form hypothesis (`PLAN_PI_FEEDBACK_2026-09-18.md` section 9),
+supported by C1, C2 and C3 together. It predicts outcome (b) in the transfer matrix (J-D1): form
+changes on cities, facts don't. The judge-free log-probability score (J-E) is the last
+independent check.

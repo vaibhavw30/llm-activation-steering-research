@@ -180,7 +180,7 @@ wins can be trusted.
 | **All four audited assumptions behind the steering harness were refuted.** | This is why the refusal positive control exists. |
 | **0 of 120 dose cells produced a clean window.** | Rules out "wrong dose" as the explanation for the null. |
 | **A whole experimental round was built and never run.** The conditional-steering / U-anchor design (2026-07-23) was superseded by the control-theory reframe. | A pivot costs code. The design is kept in `docs/` as a record. |
-| **The TruthfulQA informativeness judge was given the wrong prompt** (`True:` instead of `Helpful:`). | The "truthful AND informative" number (0.266 → 0.500) is under review until re-judged. The truthful-only numbers stand. |
+| **The TruthfulQA informativeness judge was given the wrong prompt** (`True:` instead of `Helpful:`). | Re-judged with the right prompt (job 3169899): 4 of 2,880 rows changed, and the 0.266 → 0.500 headline stands (p = 2.8e-4). Audit before trusting a column, even when the fix turns out not to matter. |
 | **The TruthfulQA gain runs through answer length.** | The headline effect may be form, not content. Two judge-free experiments are queued to separate them. |
 | **An OLMo-3 refusal judge said "refused" 63-77% of the time regardless of input.** | Agreement scores between two judges can't tell you which one is wrong. Only gold labels can. |
 
@@ -196,7 +196,7 @@ on the same kind of text.**
 |---|---|---|---|
 | **OLMo-3-7B-Instruct** (`src/judges/olmo_judge.py`) | Did the steered completion state a falsehood? (`cities`, `common_claim`) | 97/100 gold `cities` labels (gate ≥ 0.85) | ✅ In use |
 | **`allenai/truthfulqa-truth-judge-llama2-7B`** | TruthfulQA truthfulness | 1.000 on 128 gold answers (TruthfulQA's best answer vs a known-false answer, for all 64 questions) | ✅ Stands |
-| **`allenai/truthfulqa-info-judge-llama2-7B`** | TruthfulQA informativeness | Had never been checked, and turned out to be given the truth judge's prompt | ⚠️ Being re-judged with the right prompt |
+| **`allenai/truthfulqa-info-judge-llama2-7B`** | TruthfulQA informativeness | Was given the truth judge's prompt; re-judged with `Helpful:`. Gold 1.000 on three sides, 0.891 on "I have no comment." (bar 0.9, missed by one row) | ⚠️ Usable, slightly lenient; later jobs score truthful only |
 | **String matching** (refusal phrases from Arditi et al., arXiv:2406.11717) | Did `gemma-2-2b-it` refuse? | 0.969 on 64 balanced gold rows, which is the ceiling that gold set allows | ✅ In use |
 | **OLMo-3-7B as a refusal judge** | Considered as a cross-check | 0.734 accuracy, recall 1.000, precision 0.653: it answers "refused" almost regardless of input | ❌ Rejected |
 
@@ -291,12 +291,12 @@ it. The full story is in [`docs/PLAIN_ENGLISH_WALKTHROUGH.md`](docs/PLAIN_ENGLIS
 | 06 | Do our own steering experiments survive an audit? | All four registered assumptions were refuted. Most sharply S4: at most 5.5% of the 200/200 certified flips made the claim false | [`AUDIT_SUMMARY.md`](docs/AUDIT_SUMMARY.md) |
 | 07 | Did we push too hard, or too softly? | No. 0 clean windows out of 120 dose cells | [`D1_DOSE_RESPONSE.md`](docs/D1_DOSE_RESPONSE.md) |
 | 08 | Can the pipeline move *any* behavior? | **Yes**, refusal: 14 vs 0, odds ratio 24.2 for crossing | [`REFUSAL_POSITIVE_CONTROL.md`](docs/REFUSAL_POSITIVE_CONTROL.md) |
-| 09 | Does truth steer where there is headroom? | TruthfulQA truthful 0.281 → 0.516, beats random directions, runs through answer length | [`Q2_TRUTHFULQA_STEERING.md`](docs/Q2_TRUTHFULQA_STEERING.md) |
-| 10 | Content or form? Is it dataset-specific? What is the ceiling? | Built and queued, see Status | [`PLAN_PI_FEEDBACK_2026-09-18.md`](docs/PLAN_PI_FEEDBACK_2026-09-18.md) |
+| 09 | Does truth steer where there is headroom? | TruthfulQA truthful 0.281 → 0.516, beats random directions, but cut back to the unsteered length the answers score 0.297 vs 0.266: the gain is answer *form* | [`Q2_TRUTHFULQA_STEERING.md`](docs/Q2_TRUTHFULQA_STEERING.md) |
+| 10 | Content or form? Is it dataset-specific? What is the ceiling? | Form, by C1–C3 (judge audit done). Transfer and ceiling queued, see Status | [`PLAN_PI_FEEDBACK_2026-09-18.md`](docs/PLAN_PI_FEEDBACK_2026-09-18.md) |
 
 ---
 
-## Status (19 September 2026)
+## Status (30 September 2026)
 
 **Done and audited:**
 - the linear vs. non-linear probing study on four datasets;
@@ -304,21 +304,28 @@ it. The full story is in [`docs/PLAIN_ENGLISH_WALKTHROUGH.md`](docs/PLAIN_ENGLIS
 - the refusal positive control;
 - TruthfulQA baseline and steering (truthful-only numbers).
 
-**Built, tested and queued on the cluster: answering the PI's 2026-09-18 feedback.** The PI asked
-four things: check the TruthfulQA judge, go back to unsupervised discovery on the new dataset,
-carry each discovered direction over to `cities`, and quantify why the two datasets behave
-differently. That became six jobs across the two-slot partition. Results are not on the laptop yet.
+**Answering the PI's 2026-09-18 feedback.** The PI asked four things: check the TruthfulQA
+judge, go back to unsupervised discovery on the new dataset, carry each discovered direction over
+to `cities`, and quantify why the two datasets behave differently. That became six jobs across the
+two-slot partition.
+- **Done:** U1 (job 3169838) and J-A (job 3169899). The judge is neither strict nor inconsistent.
+  The informativeness fix changed 4 of 2,880 verdicts, and a Qwen judge agrees on the sign. The
+  truncation test puts about 87% of the TruthfulQA gain in the extra words.
+  See [`Q2_TRUTHFULQA_STEERING.md`](docs/Q2_TRUTHFULQA_STEERING.md) section 12.
+- **Queued:** J-B → J-C (jobs 3282837, 3282838), then J-D1 + J-D2, then J-E and the
+  token-space re-run.
 
 | Job | What it answers |
 |---|---|
-| **U1** | DCT discovery on TruthfulQA (layers 11 → 20), with the margins battery |
-| **J-A** judge audit | Re-judge informativeness with the correct prompt; gold, determinism, format and threshold checks; a Qwen judge as a second opinion |
+| **U1** ✅ | DCT discovery on TruthfulQA (layers 11 → 20), with the margins battery. No DCT readout clears the accuracy bar, so there is nothing to certify |
+| **J-A** ✅ judge audit | Re-judge informativeness with the correct prompt; gold, determinism, format and threshold checks; a Qwen judge as a second opinion |
 | **J-B / J-C** discovery + confirm | A second DCT fit (different seed), MAG on TruthfulQA (does the model's own true/false verdict carry signal on this format?), then a held-out confirmation of whatever the screen finds |
 | **J-D1 / J-D2** transfer matrix | Every direction, from both datasets, steered on both datasets, with random-direction and oracle controls |
 | **J-E** judge-free + ceiling | TruthfulQA scored by log-probability of reference answers (no judge, no length effect), plus the **best single steering vector per norm, trained by gradient descent**. The ceiling tells "truth isn't steerable this way" apart from "nothing is". |
 
-**Waiting on the laptop:** 64 TruthfulQA answers to hand-label blind (the independent check on
-the judge). A corrected token-space run on `cities` (prompt "… is in the country of", so the
+**Waiting on the laptop:** 16 TruthfulQA answers to hand-label blind
+(`hand_labels_truthfulqa_human16.csv`). They calibrate 64 blind Claude labels, frozen in git first,
+which then arbitrate between the allenai and Qwen judges (`judge_audit.py --stage handscore`). A corrected token-space run on `cities` (prompt "… is in the country of", so the
 target really is the country) is also written.
 
 **What would change the story:**

@@ -186,8 +186,9 @@ at most 4-5 hours, submitted in **three rounds of two**:
 The two X jobs run side by side because they share no outputs. If either round-2 job is still
 pending when the other finishes, nothing is lost: they are independent.
 
-Each round is submitted by one command in its own section of `deltaai/submit_pi_feedback.sh`
-(`round0`, `round1`, `round2`). The script checks `squeue --me` first and refuses to submit if the
+Each round from 1 on is submitted by one command in its own section of `deltaai/submit_pi_feedback.sh`
+(`round1`, `round2`, `round3`, `tokgeom`). Round 0 had no submitter entry: U1 and J-A were
+submitted with `sbatch` directly (jobs 3169838 and 3169899, both completed 2026-09-19). The script checks `squeue --me` first and refuses to submit if the
 round would take the user past 2 jobs, which saves a rejected `sbatch`.
 
 **Every job carries the guards the Q2 and U1 jobs have**, because each one has already cost a
@@ -559,11 +560,11 @@ open, with the reason.
 
 | # | The PI asked | Answered by | Backup that agrees? | Status |
 |---|---|---|---|---|
-| P1 | the two allenai judges | J0 unit test | model cards re-read at write-up | |
-| P2 | strict or inconsistent? | J1 margins, J3 determinism and format flips | Qwen judge, hand labels | |
+| P1 | the two allenai judges | J0 unit test | model cards re-read at write-up | **answered** 2026-09-30: both run with model-card prompts; the fix moved 4 of 2,880 verdicts (Q2 doc section 12.1) |
+| P2 | strict or inconsistent? | J1 margins, J3 determinism and format flips | Qwen judge, hand labels | **answered except hand labels**: neither. Determinism 200/200, format flips 3.9%, gap holds over thresholds 0.3-0.7; Qwen agrees in sign, differs in level; info judge slightly lenient (gold 0.891 on no-comment). Hand labels pending: 16 human + 64 Claude, `--stage handscore` |
 | P3 | DCT and MAG discovery on TQA | D1, D3, G0, G1 | D-R1 second seed, two G0 phrasings | |
 | P4 | dataset dependent? | D1 table, X matrix | the reverse X cells | |
 | P5 | MAG and DCT directions on cities | X cities column | two cities readouts, oracle positive control | |
 | P6 | DCT works on TQA? | D3 | S-beh split halves, D-R1 | |
-| P7 | quantify the dataset difference | the card | C1, C2, C3 agree on the form-vs-content row | |
+| P7 | quantify the dataset difference | the card | C1, C2, C3 agree on the form-vs-content row | **form-vs-content row answered**: C1 p = 0.76, C2 in-support OR 1.40 (p = 0.61), C3 truncation 0.500 -> 0.297 vs 0.266 base. All three say form. Rest of the card waits on J-B and J-D |
 | P8 | TQA DCT truthfulness direction on cities | X cell TQA S-beh -> cities | S-geo cell, potency-matched random DCT factor | |
