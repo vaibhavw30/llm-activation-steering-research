@@ -341,3 +341,81 @@ def test_steer_counts_refuses_a_torn_last_row(tmp_path):
     p.write_text("direction,frac,answer\nbaseline,0.0,one\nrand_0,2.0,x\nbaseline,0.0,two\n")
     assert qx.steer_counts(str(p)) == {("baseline", 0.0): 2, ("rand_0", 2.0): 1}
     assert qx.steer_counts(str(tmp_path / "absent.csv")) == {}
+
+
+# ------------------------------------------------------------------ resume round trips
+class _FakeJudge:
+    loads = 0
+
+    def __init__(self, device):
+        type(self).loads += 1
+
+    def score(self, question, answer):
+        return {"truthful": len(answer.split()) % 2, "informative": 1}
+
+
+def _steer_file(n_q=3):
+    """A finished steer CSV: a baseline and two dosed blocks, answers of varied length."""
+    rows = []
+    for name, f in (("baseline", 0.0), ("q2_mean_diff", 2.0), ("rand_0", 2.0)):
+        for q in range(n_q):
+            words = 2 if name == "baseline" else 3 + q
+            rows.append({"direction": name, "frac": f, "question": f"q{q}",
+                         "prompt": f"Q: q{q}\nA:", "answer": " ".join(["w"] * words),
+                         "g": 1.0, "crossed": 0, "budget_hit": 0, "words": words,
+                         "distinct_ratio": 1.0 / words})
+    _write("q2x_steer_truthfulqa.csv", rows)
+    return rows
+
+
+def test_steer_resume_round_trip_reruns_only_the_missing_block(tmp_path, monkeypatch):
+    import dct_steer_utils as su
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(su, "generate_raw",
+                        lambda m, t, p, n: ' Yes, "quoted", and more\nQ: next')
+    recs = [{"question": f"Why {i}, really?"} for i in range(3)]
+    v = np.array([1.0, 0.0])
+    blocks = [("baseline", None, 0.0), ("q2_mean_diff", v, 2.0), ("q2_mean_diff", v, 2.5)]
+    p = "q2x_steer_truthfulqa.csv"
+    for name, vec, f in blocks[:2]:                     # the job dies after two blocks
+        qx.append_rows(p, qx.steer_rows(None, None, _St(), name, vec, f, 2.0, recs,
+                                        read=lambda q: 1.0))
+    todo = qx.blocks_todo(qx.steer_counts(p), blocks, len(recs))
+    assert [(n, f) for n, _, f in todo] == [("q2_mean_diff", 2.5)]
+
+
+def test_truncate_resumes_after_a_killed_block_in_steer_order(tmp_path, monkeypatch):
+    import judge_audit as ja
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(ja, "BLOCK", 2)
+    monkeypatch.setattr(qx, "_judge", lambda: _FakeJudge)
+    _steer_file()
+    out = "q2x_trunc_judged_truthfulqa.csv"
+    qx.stage_truncate("cpu")
+    whole = list(csv.DictReader(open(out)))
+    os.remove(out)
+    _write(out, whole[:2])                              # killed after the first block
+    qx.stage_truncate("cpu")
+    again = list(csv.DictReader(open(out)))
+    key = ("direction", "frac", "question", "answer", "truthful")
+    assert [tuple(r[k] for k in key) for r in again] == \
+        [tuple(r[k] for k in key) for r in whole]
+    assert len(again) == 6
+
+
+def test_finished_judge_stages_do_not_load_the_judge_again(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(qx, "_judge", lambda: _FakeJudge)
+    _steer_file()
+    qx.stage_judge("cpu")
+    qx.stage_truncate("cpu")
+    before = _FakeJudge.loads
+    qx.stage_judge("cpu")                               # a resubmit with nothing left
+    qx.stage_truncate("cpu")
+    assert _FakeJudge.loads == before
+
+
+def test_truncated_row_form_columns_describe_the_cut_answer():
+    r = qx.truncated_row({"answer": "two two one four", "question": "q", "words": 4,
+                          "distinct_ratio": 0.75}, 2)
+    assert (r["words"], r["distinct_ratio"], r["words_full"]) == (2, 0.5, 4)

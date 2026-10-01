@@ -91,11 +91,13 @@ def distinct_ratio(answer):
 
 def truncated_row(row, base_words):
     """C3 for one row: the answer cut to its question's baseline word count (at least one
-    word), with the full text kept beside it."""
+    word), with the full text kept beside it. `words` and `distinct_ratio` describe the cut
+    text; the full answer's word count stays as `words_full`."""
     from judge_audit import truncate_words
     text, was_cut = truncate_words(row["answer"], base_words)
     return dict(row, answer_full=row["answer"], answer=text, cut=int(was_cut),
-                words_base=int(base_words))
+                words_base=int(base_words), words_full=len(str(row["answer"]).split()),
+                words=len(text.split()), distinct_ratio=distinct_ratio(text))
 
 
 def holm(ps):
@@ -358,11 +360,22 @@ def _judge():
     return TruthJudge
 
 
+def _judged_all(rows, out):
+    """out already holds a verdict for every row: a resubmit skips the stage without
+    loading a 7B judge to find nothing to do."""
+    if os.path.exists(out) and len(td.read_csv(out)) >= len(rows):
+        print(f"[q2x] {out} complete, skipping", flush=True)
+        return True
+    return False
+
+
 def stage_judge(device):
     from judge_audit import judge_resumable
+    rows, out = td.read_csv(path(f"q2x_steer_{DS}.csv")), path(f"q2x_judged_{DS}.csv")
+    if _judged_all(rows, out):
+        return
     tj = _judge()(device)
-    judge_resumable(td.read_csv(path(f"q2x_steer_{DS}.csv")), tj.score,
-                    path(f"q2x_judged_{DS}.csv"))
+    judge_resumable(rows, tj.score, out)
 
 
 def stage_truncate(device):
@@ -374,8 +387,11 @@ def stage_truncate(device):
            if r["direction"] != "baseline"]
     print(f"[q2x] truncate: {sum(c['cut'] for c in cut)} of {len(cut)} answers cut to "
           "their question's baseline length", flush=True)
+    out = path(f"q2x_trunc_judged_{DS}.csv")
+    if _judged_all(cut, out):
+        return
     tj = _judge()(device)
-    judge_resumable(cut, tj.score, path(f"q2x_trunc_judged_{DS}.csv"))
+    judge_resumable(cut, tj.score, out)
 
 
 def stage_summary():

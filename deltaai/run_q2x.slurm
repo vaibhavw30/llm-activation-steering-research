@@ -8,7 +8,7 @@
 #SBATCH --gpu-bind=verbose,closest
 #SBATCH --gpus-per-node=1
 #SBATCH --mem=96g
-#SBATCH --time=02:30:00
+#SBATCH --time=03:00:00
 #SBATCH --output=tqa_q2x_%j.out
 
 # Round 4, Q2x (docs/superpowers/specs/2026-09-30-round4-q2x-v1-design.md). Q2's
