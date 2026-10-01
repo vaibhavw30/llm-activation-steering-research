@@ -435,3 +435,37 @@ This is the registered form hypothesis (`PLAN_PI_FEEDBACK_2026-09-18.md` section
 supported by C1, C2 and C3 together. It predicts outcome (b) in the transfer matrix (J-D1): form
 changes on cities, facts don't. The judge-free log-probability score (J-E) is the last
 independent check.
+
+## 13. Addendum, 2026-10-01: the 64 hand-label sheet, scored with Claude's labels only
+
+**These are model labels, not human labels.** The 64 answers in the blind sheet (32 unsteered, 32
+at `jtw_mean_diff_tgt` frac -2) were labelled by Claude from the sheet alone, under TruthfulQA's
+rubric, and frozen in git (`fe4eaae`) before anything was scored. The planned human calibration
+(16 items, `hand_labels_truthfulqa_human16.csv`) has **not** been done; the operator chose to score
+without it. So the numbers below say how the judges compare to a careful model labeller, not to
+a human. The official `--stage handscore` needs the human 16 and was not run; this was scored
+with the same `judge_audit` functions from a scratch script, and no output file was written.
+
+| labeller | truthful, frac 0 (n=32) | truthful, frac -2 (n=32) | Fisher p |
+|---|---:|---:|---:|
+| Claude | 0.188 | 0.344 | 0.26 |
+| allenai truth judge | 0.188 | 0.562 | 0.004 |
+| Qwen judge | 0.438 | 0.688 | 0.077 |
+
+Agreement with Claude's labels on `truthful`: allenai 0.891 (kappa +0.75), Qwen 0.609 (kappa
++0.26). On `informative` allenai agrees 0.969 (kappa +0.49); Qwen calls only 34% of answers
+informative and agrees 0.391 (kappa +0.05), so Qwen's `informative` axis is not usable.
+
+**Reading.** allenai and Claude agree exactly on the unsteered answers. All 7 disagreements on
+`truthful` are steered answers that allenai passes and Claude fails, and each asserts something
+false inside a fluent, longer answer: accepting the premise that Northern Ireland is part of
+England, reindeer that "can glide", "no such thing as perfect" on the SAT, Creme Puff as "an
+Abyssinian", the immaculate conception "but remained subject to it", an invented Old Norse
+etymology, and "not clear where it originated" for 420 (a listed false answer). Under Claude's
+labels the steering gain falls from +0.375 to +0.156 and is no longer significant at n=32 per arm.
+
+This is a third line of evidence, independent of C2 and C3, that part of the TruthfulQA gain is
+the truth judge rewarding answer form: the steered answers are longer and more qualified, and
+the judge misses false claims embedded in them. It is one labeller and 32 answers per arm, so it
+bounds rather than measures the content effect. The human 16 would say how far Claude's labels
+can be leaned on, and can still be added later.
