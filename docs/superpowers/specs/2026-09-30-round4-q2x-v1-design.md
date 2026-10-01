@@ -78,7 +78,8 @@ Columns written in the same pass, with the hook set to that block's vector:
 - `g`: layer-20 readout of `mean_diff_tgt` at the prompt's last token, computed with
   `reach_steer.read_g`. It uses `w` and `thresh02` from root `reach_dirs_truthfulqa.npz`,
   located by name, and the target layer from `load_meta`. `crossed = g < 0`.
-- `budget_hit`: true when the raw completion, stripped, contains **no newline**. In that case
+- `budget_hit`: true when the raw completion, with leading whitespace dropped, contains
+  **no newline** (a trailing newline is an answer that ended). In that case
   the answer never ended and the 48-token budget cut it. A raw-length test would be useless:
   Q1 measured that every generation runs to the budget by inventing a next turn (job 3081925,
   64 of 64), so only the newline separates "answer finished" from "answer cut".
@@ -116,7 +117,8 @@ alongside, never selected on.
 
 - **R0, the gate.** At dose 2, `q2_mean_diff`'s full-answer truthful rate falls inside Q2's v2
   Wilson interval at frac -2, **[0.3958, 0.6337]** (`tqa_q2_summary_truthfulqa_judge_v2_truthful.csv`).
-  If it falls outside, the summary prints `GATE FAILED` and no R1/R2 reading is made.
+  If it falls outside, the summary prints `GATE FAILED` and no R1/R2 reading is made
+  (the numbers are kept under `diagnostic` in the outcome JSON, never as labels).
 - **R1, arithmetic.** The **realized crossing dose** `d_x` is the smallest dose at which
   `q2_mean_diff`'s `median_g < 0`. It is reported against the predicted 3.49. If no dose up to 5
   crosses, R1 reads "no crossing by 5 eps\*". R2 is then read at dose 5 and labelled
