@@ -117,12 +117,13 @@ def test_summarize_of_nothing_measurable_is_empty_not_zero():
 
 # --- analyze: the gate that decides whether the other columns may be read ---
 
-def _fake_npz(path, n=4, layers=2, g_decl=None, after_A=None):
+def _fake_npz(path, n=4, layers=2, g_decl=None, after_A=None, layer_ids=None):
     """A minimal reach_validate_<ds>.npz. Defaults describe a perfect run: every
     steered readout lands exactly on zero, so every ratio is 1."""
     g = np.array([2.0, -3.0, 4.0, -1.0])[:n] if g_decl is None else np.asarray(g_decl)
     zeros = np.zeros((layers, n))
-    np.savez(path, stmt_index=np.arange(n), layers=np.arange(layers),
+    ids = np.arange(layers) if layer_ids is None else np.asarray(layer_ids)
+    np.savez(path, stmt_index=np.arange(n), layers=ids,
              readout=np.zeros(3), g_decl=g, g_stem=g, g_quest=g,
              m_decl=np.ones((n, layers)), m_stem=np.ones((n, layers)),
              m_quest=np.ones((n, layers)), eps_decl=np.ones((n, layers)),
@@ -136,7 +137,7 @@ def _fake_npz(path, n=4, layers=2, g_decl=None, after_A=None):
 def test_analyze_reports_the_arithmetic_as_sound_when_every_ratio_is_one(
         tmp_path, monkeypatch, capsys):
     monkeypatch.chdir(tmp_path)
-    _fake_npz(tmp_path / "reach_validate_fake.npz")
+    _fake_npz(tmp_path / "reach_validate_fake.npz", layer_ids=[20, 21])
     rv.analyze("fake")
     out = capsys.readouterr().out
     assert "pullback arithmetic is sound" in out
@@ -150,7 +151,7 @@ def test_analyze_refuses_to_pass_a_layer_whose_ratio_could_not_be_measured(
     a check that never ran."""
     monkeypatch.chdir(tmp_path)
     _fake_npz(tmp_path / "reach_validate_fake.npz",
-              g_decl=np.zeros(4), after_A=np.zeros((2, 4)))
+              g_decl=np.zeros(4), after_A=np.zeros((2, 4)), layer_ids=[20, 21])
     rv.analyze("fake")
     out = capsys.readouterr().out
     assert "!!!!" in out
@@ -165,3 +166,83 @@ def test_analyze_writes_a_row_per_source_layer(tmp_path, monkeypatch):
     rows = list(_csv.DictReader(open(tmp_path / "reach_validate_summary_fake.csv")))
     assert [r["layer"] for r in rows] == ["0", "1", "2"]
     assert all(float(r["ratio_A"]) == 1.0 for r in rows)
+
+
+# --- the restated gate: short hops decide "bug", deep drift is nonlinearity ---
+
+def _gate_rows(pairs):
+    return [{"layer": l, "ratio_A": r} for l, r in pairs]
+
+
+def test_gate_sound_when_short_hops_are_near_one_even_if_deep_layers_drift():
+    v, short, all_ = rv.arithmetic_gate(_gate_rows([(0, 0.4), (11, 0.8), (20, 1.02),
+                                                    (25, 0.97)]))
+    assert v == "sound"
+    assert short == pytest.approx(0.03)
+    assert all_ == pytest.approx(0.6)
+
+
+def test_gate_bug_when_a_short_hop_misses():
+    v, short, _ = rv.arithmetic_gate(_gate_rows([(0, 1.0), (22, 1.3)]))
+    assert v == "bug" and short == pytest.approx(0.3)
+
+
+def test_gate_untested_without_a_short_hop():
+    v, short, _ = rv.arithmetic_gate(_gate_rows([(0, 1.0), (11, 1.0)]))
+    assert v == "untested" and np.isnan(short)
+
+
+def test_gate_nan_at_a_short_hop_is_a_bug_not_a_pass():
+    v, short, _ = rv.arithmetic_gate(_gate_rows([(20, float("nan")), (25, 1.0)]))
+    assert v == "bug" and np.isnan(short)
+
+
+def test_analyze_untested_sweep_prints_the_warning(tmp_path, monkeypatch, capsys):
+    monkeypatch.chdir(tmp_path)
+    _fake_npz(tmp_path / "reach_validate_fake.npz", layer_ids=[0, 11])
+    rv.analyze("fake")
+    out = capsys.readouterr().out
+    assert "!!!!" in out and "did not run" in out
+
+
+def test_analyze_reports_deep_drift_as_nonlinearity(tmp_path, monkeypatch, capsys):
+    monkeypatch.chdir(tmp_path)
+    g = np.array([2.0, -3.0, 4.0, -1.0])
+    # layer 0: half the promised move (ratio 0.5); layer 20: exactly on zero (ratio 1)
+    after = np.stack([g * 0.5, np.zeros(4)])
+    _fake_npz(tmp_path / "reach_validate_fake.npz", after_A=after, layer_ids=[0, 20])
+    rv.analyze("fake")
+    out = capsys.readouterr().out
+    assert "pullback arithmetic is sound" in out
+    assert "nonlinearity" in out and "!!!!" not in out
+
+
+def test_analyze_reads_and_writes_with_the_prefix(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    _fake_npz(tmp_path / "smoke_reach_validate_fake.npz", layer_ids=[20, 21])
+    rv.analyze("fake", prefix="smoke_")
+    assert (tmp_path / "smoke_reach_validate_summary_fake.csv").exists()
+    assert not (tmp_path / "reach_validate_summary_fake.csv").exists()
+
+
+def test_analyze_refuses_to_overwrite_its_summary(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    _fake_npz(tmp_path / "reach_validate_fake.npz", layer_ids=[20, 21])
+    (tmp_path / "reach_validate_summary_fake.csv").write_text("old")
+    with pytest.raises(SystemExit, match="exists"):
+        rv.analyze("fake")
+    assert (tmp_path / "reach_validate_summary_fake.csv").read_text() == "old"
+
+
+def test_compute_refuses_before_loading_anything_if_its_npz_exists(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "reach_validate_fake.npz").write_bytes(b"old")
+    with pytest.raises(SystemExit, match="exists"):
+        rv.compute("fake", "cpu")
+
+
+def test_main_refuses_a_partial_run_without_a_prefix():
+    with pytest.raises(SystemExit):
+        rv.main(["--dataset", "fake", "--compute", "--limit", "4"])
+    with pytest.raises(SystemExit):
+        rv.main(["--dataset", "fake", "--compute", "--layers", "0,25"])

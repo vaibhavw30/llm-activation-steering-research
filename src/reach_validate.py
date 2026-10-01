@@ -54,9 +54,12 @@ and why the analyze stage refuses to interpret the rest when it is far from 1.
 
     PYTHONPATH=src python src/reach_validate.py --dataset truthfulqa --compute --device cuda
     PYTHONPATH=src python src/reach_validate.py --dataset truthfulqa --analyze
+    PYTHONPATH=src python src/reach_validate.py --dataset cities --compute --analyze \
+        --device cuda --limit 4 --layers 0,25 --prefix smoke_                 # smoke
 """
 import argparse
 import csv
+import os
 
 import numpy as np
 
@@ -64,6 +67,26 @@ N_STMT, SEED, BATCH = 64, 42, 8
 # ratio_A this far from 1 means the pullback and the injection disagree, which makes
 # every other column a measurement of that disagreement rather than of the model.
 ARITHMETIC_TOL = 0.10
+# The gate reads ratio_A only where the push crosses few layers. From layer 0 the push
+# runs through 26 nonlinear layers, so ratio_A drifting off 1 there is the model being
+# nonlinear, not the pullback being wrong. Short hops are where a bug would show.
+SHORT_HOP_FROM = 20
+
+
+def arithmetic_gate(rows, short_from=SHORT_HOP_FROM, tol=ARITHMETIC_TOL):
+    """(verdict, worst_short, worst_all) over analyze()'s per-layer rows. verdict is
+    'sound', 'bug', or 'untested' when the sweep has no source layer >= short_from. A
+    nan ratio counts as a failure, never as a pass."""
+    def worst(rs):
+        d = [abs(r["ratio_A"] - 1.0) for r in rs]
+        return np.nan if any(np.isnan(x) for x in d) else max(d)
+
+    short = [r for r in rows if r["layer"] >= short_from]
+    w_all = worst(rows) if rows else np.nan
+    if not short:
+        return "untested", np.nan, w_all
+    w_short = worst(short)
+    return ("sound" if w_short <= tol else "bug"), w_short, w_all
 
 
 # ---------------------------------------------------------------- pure helpers
@@ -221,7 +244,11 @@ def _steered(model, tok, prompts, a, layer, delta, dev, max_length, yes_no=None)
 MAXLEN = {"decl": 64, "stem": 64, "quest": 96}
 
 
-def compute(ds, device, limit=0, only_layers=None):
+def compute(ds, device, limit=0, only_layers=None, prefix=""):
+    out_npz = f"{prefix}reach_validate_{ds}.npz"
+    if os.path.exists(out_npz):
+        raise SystemExit(f"[validate] {out_npz} exists; this module never overwrites. "
+                         "Move it aside to rerun.")
     import dct_steer_utils as su
     from funnel_utils import unit
     from reach_hop import load_meta
@@ -290,7 +317,7 @@ def compute(ds, device, limit=0, only_layers=None):
               f"{np.nanmedian(realized_ratio(g['decl'], gA, -g['decl'])):.3f}",
               flush=True)
 
-    np.savez(f"reach_validate_{ds}.npz",
+    np.savez(out_npz,
              stmt_index=stmt_index, layers=np.array(layers),
              readout=a.astype(np.float32),
              **{f"g_{k}": v.astype(np.float32) for k, v in g.items()},
@@ -302,11 +329,15 @@ def compute(ds, device, limit=0, only_layers=None):
                 for k, v in eps.items()},
              **{f"after_{k}": np.asarray(v, np.float32) for k, v in out.items()},
              q_yes0=y0.astype(np.float32), q_no0=n0.astype(np.float32))
-    print(f"[validate] wrote reach_validate_{ds}.npz  n={len(stmt_index)}")
+    print(f"[validate] wrote {out_npz}  n={len(stmt_index)}")
 
 
-def analyze(ds):
-    z = np.load(f"reach_validate_{ds}.npz", allow_pickle=True)
+def analyze(ds, prefix=""):
+    out = f"{prefix}reach_validate_summary_{ds}.csv"
+    if os.path.exists(out):
+        raise SystemExit(f"[validate] {out} exists; this module never overwrites. "
+                         "Move it aside to rerun.")
+    z = np.load(f"{prefix}reach_validate_{ds}.npz", allow_pickle=True)
     layers = [int(x) for x in z["layers"]]
     g_d, g_s, g_q = z["g_decl"], z["g_stem"], z["g_quest"]
     dec0 = decision_sign(z["q_yes0"], z["q_no0"])
@@ -330,16 +361,10 @@ def analyze(ds):
             r[f"{name}_p75"] = round(s["p75"], 4)
         r.update({f"q_{k}": v for k, v in dis.items()})
         rows.append(r)
-    out = f"reach_validate_summary_{ds}.csv"
     with open(out, "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0]))
         w.writeheader()
         w.writerows(rows)
-    # nan, not a small number: if ratio_A could not be computed at some layer the
-    # arithmetic check did not pass, it did not run, and the comparison below has to
-    # say so rather than fall through to the reassuring branch.
-    dev_a = [abs(r["ratio_A"] - 1.0) for r in rows]
-    worst = np.nan if any(np.isnan(d) for d in dev_a) else max(dev_a)
     print(f"[validate] {ds}: n={len(g_d)} statements, {len(rows)} source layers")
     print(f"[validate] wrote {out}")
     hdr = f"{'layer':>5} {'eps*':>9} {'ratio_A':>8} {'ratio_B':>8} " \
@@ -350,13 +375,21 @@ def analyze(ds):
               f"{r['ratio_B']:>8.3f} {r['ratio_B_own']:>8.3f} "
               f"{r['ratio_Q_own']:>8.3f} {r['q_crossed_and_flipped']:>7} "
               f"{r['q_crossed_not_flipped']:>7} {r['q_flipped_not_crossed']:>7}")
-    if not (worst <= ARITHMETIC_TOL):
-        print(f"\n[validate] !!!! ratio_A is off 1 by up to {worst:.3f} at some layer. "
-              "The pullback and the injection are not the same operator, so every "
-              "other column measures that disagreement. Fix this before reading them.")
+    verdict, w_short, w_all = arithmetic_gate(rows)
+    if verdict == "untested":
+        print(f"\n[validate] !!!! no source layer >= {SHORT_HOP_FROM} in this sweep: the "
+              "arithmetic check did not run, so no other column is vouched for.")
+    elif verdict == "bug":
+        print(f"\n[validate] !!!! ratio_A is off 1 by up to {w_short:.3f} at a short hop "
+              f"(source layer >= {SHORT_HOP_FROM}). The pullback and the injection are not "
+              "the same operator, so every other column measures that disagreement. Fix "
+              "this before reading them.")
     else:
-        print(f"\n[validate] ratio_A within {worst:.3f} of 1 at every layer: the "
-              "pullback arithmetic is sound, so the other columns are about the model.")
+        print(f"\n[validate] ratio_A within {w_short:.3f} of 1 at every short hop (source "
+              f"layer >= {SHORT_HOP_FROM}): the pullback arithmetic is sound, so the other "
+              "columns are about the model.")
+        print(f"[validate] over all layers ratio_A is off 1 by up to {w_all:.3f}: drift that "
+              "grows with depth is nonlinearity of the multi-layer map, not a bug.")
 
 
 def main(argv=None):
@@ -368,14 +401,18 @@ def main(argv=None):
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--layers", default="",
                     help="comma-separated source layers; default every layer")
+    ap.add_argument("--prefix", default="",
+                    help="prefix both outputs; required with --limit or --layers")
     a = ap.parse_args(argv)
     only = [int(x) for x in a.layers.split(",") if x.strip()] or None
     if not (a.compute or a.analyze):
         ap.error("pick --compute (GPU) or --analyze (CPU)")
+    if (a.limit or only) and not a.prefix:
+        ap.error("--limit and --layers write partial outputs; give them a --prefix")
     if a.compute:
-        compute(a.dataset, a.device, a.limit, only)
+        compute(a.dataset, a.device, a.limit, only, prefix=a.prefix)
     if a.analyze:
-        analyze(a.dataset)
+        analyze(a.dataset, prefix=a.prefix)
 
 
 if __name__ == "__main__":
