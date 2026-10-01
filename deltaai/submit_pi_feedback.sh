@@ -1,5 +1,6 @@
 #!/bin/bash
-# submit_pi_feedback.sh <round|tokgeom>: submit one round of docs/PLAN_PI_FEEDBACK_2026-09-18.md.
+# submit_pi_feedback.sh <round|tokgeom>: submit one round of docs/PLAN_PI_FEEDBACK_2026-09-18.md
+# (round4: docs/superpowers/specs/2026-09-30-round4-q2x-v1-design.md).
 # CLUSTER, from the repo root, after the rsync and the ACCOUNT_NAME sed.
 #
 #   bash deltaai/submit_pi_feedback.sh round1
@@ -18,7 +19,8 @@ case "${1:-}" in
   # One short job; submit it into whichever slot frees first.
   tokgeom) files=(deltaai/run_token_geom_country_of.slurm) ;;
   round3) files=(deltaai/run_tqa_mc.slurm) ;;
-  *) echo "usage: $0 round1|round2|round3|tokgeom"; exit 2 ;;
+  round4) files=(deltaai/run_q2x.slurm deltaai/run_reach_validate.slurm) ;;
+  *) echo "usage: $0 round1|round2|round3|round4|tokgeom"; exit 2 ;;
 esac
 
 if [ $((have + ${#files[@]})) -gt $LIMIT ]; then
@@ -41,7 +43,7 @@ if [ ${#files[@]} -gt 1 ]; then
   if [ "$1" = round1 ]; then
     second=$(sbatch --parsable --dependency=afterok:$first "${files[1]}")
   else
-    second=$(sbatch --parsable "${files[1]}")      # round 2's two jobs are independent
+    second=$(sbatch --parsable "${files[1]}")      # rounds 2 and 4: independent jobs
   fi
   echo "submitted ${files[1]} as $second"
 fi
